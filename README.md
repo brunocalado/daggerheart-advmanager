@@ -1,14 +1,19 @@
 # Daggerheart: 💀 Adversary Manager 💀
 
-<p align="center"><img width="500" src="images/logo.webp"></p>
+<p align="center"><img width="500" src="assets/images/logo.webp"></p>
 
 This module allows you to dynamically change an opponent's tier. For example: if you have a Tier 1 Bear, you can use the module to update its sheet to Tier 3 stats.
 
 ## Macros 
 
-AM.ManageToken()
-AM.QuickPreview()
+Open the manager
+```js
+AM.Manage()
+```
 
+```js
+AM.QuickPreview()
+```
 
 ## 🚀 Installation
 
