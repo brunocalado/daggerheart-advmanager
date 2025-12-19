@@ -1,0 +1,57 @@
+{
+  "id": "daggerheart-advmanager",
+  "title": "Daggerheart: Adversary Manager",
+  "version": "0.0.1",
+  
+  "description": "This module allows you to dynamically change an opponent's tier. For example: if you have a Tier 1 Bear, you can use the module to update its sheet to Tier 3 stats.",
+
+	"media": [{
+		"type": "setup",
+		"url": "modules/daggerheart-advmanager/assets/images/thumbnail.webp",
+		"thumbnail": "modules/daggerheart-advmanager/assets/images/thumbnail.webp"
+	}], 
+  
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "authors": [
+    {
+      "name": "Mestre Digital",
+      "flags": {}
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "daggerheart",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  },  
+
+  "packs": [
+    {
+      "label": "Features",
+      "type": "Item",
+      "name": "features",
+      "path": "packs/features",
+      "system": "daggerheart",
+      "ownership": {
+        "PLAYER": "NONE",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {},
+      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
+    }
+  ],  
+  
+  "esmodules": ["scripts/module.js"],
+  "styles": ["styles/style.css"],
+  
+  "url": "https://github.com/brunocalado/daggerheart-advmanager",
+  "manifest": "https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json",
+  "download": "https://codeload.github.com/brunocalado/daggerheart-advmanager/zip/main"
+  
+}

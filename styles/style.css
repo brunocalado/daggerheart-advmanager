@@ -1,0 +1,155 @@
+.dh-adv-manager-content {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--color-text-light-primary);
+}
+
+.status-header {
+    text-align: center;
+    border-bottom: 1px solid var(--color-border-light-2);
+    padding-bottom: 0.5rem;
+}
+
+.status-header h3 {
+    margin: 0;
+    font-size: 1.4em;
+    font-family: var(--font-primary);
+}
+
+/* Actor List Styles */
+.actor-list-container {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #444;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.actor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border-bottom: 1px solid #333;
+}
+
+.actor-name {
+    font-weight: bold;
+    font-size: 0.95em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+}
+
+.actor-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-tier {
+    background: #333;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 0.8em;
+    border: 1px solid #555;
+    color: #ccc;
+}
+
+.status-linked {
+    color: #98fb98;
+}
+
+.status-unlinked {
+    color: #ffd700;
+}
+
+/* Tier Selector Buttons */
+.tier-selector {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.tier-option {
+    flex: 1;
+}
+
+/* Hide actual radio buttons */
+.tier-option input[type="radio"] {
+    display: none;
+}
+
+/* Style Labels as Buttons */
+.tier-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #555;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: all 0.2s;
+    color: #ccc;
+}
+
+.tier-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #999;
+    color: #fff;
+}
+
+/* Selected State */
+.tier-option input[type="radio"]:checked + .tier-btn {
+    background: #ff6400; /* Daggerheart Orange */
+    border-color: #ff9c5a;
+    color: #fff;
+    box-shadow: 0 0 8px rgba(255, 100, 0, 0.5);
+}
+
+/* Current Tier (Disabled) State */
+.tier-btn.current {
+    background: #444;
+    border-color: #333;
+    color: #777;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Footer Button */
+.sheet-footer {
+    margin-top: 10px;
+}
+
+.sheet-footer button {
+    width: 100%;
+    padding: 8px;
+    font-size: 1.1em;
+    background: linear-gradient(to bottom, #4a4a4a, #2a2a2a);
+    border: 1px solid #000;
+    color: #fff;
+}
+
+.sheet-footer button:hover {
+    background: linear-gradient(to bottom, #5a5a5a, #3a3a3a);
+}
+
+/* Chat Output */
+.daggerheart-chat p {
+    margin: 4px 0;
+    line-height: 1.4;
+}

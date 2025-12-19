@@ -1,0 +1,41 @@
+<div class="dh-adv-manager-content">
+    
+    <div class="status-header">
+        <h3>Selected Adversaries</h3>
+    </div>
+
+    <!-- Scrollable Actor List -->
+    <div class="actor-list-container">
+        {{#each actorList}}
+        <div class="actor-item">
+            <span class="actor-name">{{this.name}}</span>
+            <div class="actor-badges">
+                <span class="badge-tier">T{{this.tier}}</span>
+                <i class="fas {{this.linkIcon}} {{this.linkClass}}" title="{{#if this.isLinked}}Linked{{else}}Unlinked{{/if}}"></i>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label>Select Target Tier:</label>
+        
+        <div class="tier-selector">
+            {{#each tiers}}
+            <div class="tier-option">
+                <input type="radio" name="selectedTier" id="tier-{{this.value}}" value="{{this.value}}" {{#if this.disabled}}disabled{{/if}}>
+                <label for="tier-{{this.value}}" class="tier-btn {{#if this.disabled}}current{{/if}}">
+                    {{this.value}}
+                </label>
+            </div>
+            {{/each}}
+        </div>
+
+    </div>
+
+    <footer class="sheet-footer">
+        <button type="submit">
+            <i class="fas fa-save"></i> Apply Changes
+        </button>
+    </footer>
+</div>
