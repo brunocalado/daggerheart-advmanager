@@ -19,7 +19,7 @@ AM.QuickPreview()
 
 Install via the Foundry VTT Module browser or use this manifest link:
 
-* `https://raw.githubusercontent.com/brunocalado/daggerheart-store/main/module.json`
+* `https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json`
 
 ## ⚖️ Credits and License
 

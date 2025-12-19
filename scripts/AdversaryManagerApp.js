@@ -604,7 +604,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             }
         }
 
-        // --- 6. Add Suggested Features (NEW) ---
+        // --- 6. Add Suggested Features ---
         const newFeatures = await AdversaryManagerApp.handleNewFeatures(actor, typeKey, newTier, currentTier, featureLog);
         
         // --- Execute Update ---

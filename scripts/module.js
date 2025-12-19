@@ -5,7 +5,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 export const MODULE_ID = "daggerheart-advmanager";
 export const SETTING_CHAT_LOG = "enableChatLog";
 export const SETTING_UPDATE_EXP = "autoUpdateExperiences";
-export const SETTING_ADD_FEATURES = "autoAddFeatures"; // Novo Setting
+export const SETTING_ADD_FEATURES = "autoAddFeatures";
 export const SKULL_IMAGE_PATH = "modules/daggerheart-advmanager/assets/images/skull.webp";
 
 // --- Main Logic ---
@@ -30,7 +30,7 @@ function manageControlledToken() {
 }
 
 /**
- * Seletor de Ator usando ApplicationV2
+ * Actor Selector using ApplicationV2
  */
 class ActorSelectorApp extends HandlebarsApplicationMixin(ApplicationV2) {
     static DEFAULT_OPTIONS = {
@@ -116,7 +116,7 @@ async function manageActorFromDirectory() {
 }
 
 /**
- * Função Unificada
+ * Unified Management Function
  */
 function manage() {
     if (canvas.tokens.controlled.length > 0) {
