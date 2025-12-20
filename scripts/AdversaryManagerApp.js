@@ -74,7 +74,8 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
 
     static getRollFromRange(rangeString) {
         if (!rangeString) return null;
-        const parts = rangeString.toString().split(/[–-]/).map(p => parseInt(p.trim())).filter(n => !isNaN(n));
+        // Supports new format (X/Y) as well as legacy formats (X-Y, X–Y)
+        const parts = rangeString.toString().split(/[\/–-]/).map(p => parseInt(p.trim())).filter(n => !isNaN(n));
         
         if (parts.length >= 2) {
             const min = parts[0];
@@ -88,6 +89,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
 
     static getRollFromSignedRange(rangeString) {
         if (!rangeString) return null;
+        // Regex extracts signed numbers correctly regardless of separator (e.g., "+0/+2" or "+0 to +2")
         const matches = rangeString.toString().match(/[+-]?\d+/g);
         if (!matches) return null;
         if (matches.length >= 2) {
@@ -703,7 +705,8 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             <header class="card-header flexrow" style="background: #191919 !important; padding: 8px; border-bottom: 2px solid #C9A060;">
                 <h3 class="noborder" style="margin: 0; font-weight: bold; color: #C9A060 !important; font-family: 'Aleo', serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 100%;">
                     Batch Update: Tier ${targetTier}
-                </h3>\n            </header>
+                </h3>
+            </header>
             <div class="card-content" style="background-image: url('${bgImage}'); background-repeat: no-repeat; background-position: center; background-size: cover; padding: 20px; min-height: ${minHeight};
             display: flex; align-items: center; justify-content: center; text-align: center; position: relative;">
                 <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 0;"></div>
