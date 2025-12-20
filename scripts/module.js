@@ -1,5 +1,6 @@
 import { AdversaryManagerApp } from "./AdversaryManagerApp.js"; 
 import { AdversaryLivePreviewApp } from "./AdversaryLivePreviewApp.js";
+import { CompendiumManagerApp } from "./CompendiumManagerApp.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -8,30 +9,23 @@ export const MODULE_ID = "daggerheart-advmanager";
 export const SETTING_CHAT_LOG = "enableChatLog";
 export const SETTING_UPDATE_EXP = "autoUpdateExperiences";
 export const SETTING_ADD_FEATURES = "autoAddFeatures";
-export const SETTING_IMPORT_FOLDER = "importFolderName"; // Nova Setting
+export const SETTING_IMPORT_FOLDER = "importFolderName";
+export const SETTING_EXTRA_COMPENDIUMS = "extraCompendiums";
 export const SKULL_IMAGE_PATH = "modules/daggerheart-advmanager/assets/images/skull.webp";
+
+// Settings for Persistence (Client Side - Per User)
+export const SETTING_LAST_SOURCE = "lastSource";
+export const SETTING_LAST_FILTER_TIER = "lastFilterTier";
 
 // --- Main Logic ---
 
-/**
- * Unified Management Function
- * - 0 Tokens: Live Preview (Manual Selection)
- * - 1 Token: Live Preview (Focused)
- * - >1 Tokens: Batch Manager (Old Interface)
- */
 function manage() {
     const tokens = canvas.tokens.controlled;
     
-    // 1. Strict Check for Broken Links (Token points to an ID that is not in game.actors)
-    // Note: Synthetic actors (unlinked) have actorId null or point to a base actor.
-    // If a token is linked (actorLink: true) but the actor is missing from the directory, token.actor might be null or valid cached data depending on Foundry version.
-    // We check specifically: Is there an actorId? If yes, is it in game.actors?
-    
+    // 1. Strict Check for Broken Links
     const brokenToken = tokens.find(t => {
         const actorId = t.document.actorId;
-        // If it has an ID, but that ID is not in the world collection -> Broken
         if (actorId && !game.actors.has(actorId)) return true;
-        // If it fails to produce an actor object at all -> Broken
         if (!t.actor) return true;
         return false;
     });
@@ -47,14 +41,10 @@ function manage() {
         .filter(a => a && a.type === "adversary");
 
     if (validActors.length === 0) {
-        // Case 0: No valid tokens selected (or non-adversaries selected) -> Open Empty Live Preview
-        // Note: We deliberately don't pass an actor here so it defaults to World list
         new AdversaryLivePreviewApp().render(true);
     } else if (validActors.length === 1) {
-        // Case 1: Exactly 1 valid token -> Focused Live Preview
         new AdversaryLivePreviewApp({ actor: validActors[0] }).render(true);
     } else {
-        // Case 2: Multiple tokens -> Batch Manager
         new AdversaryManagerApp({ actors: validActors }).render(true);
     }
 }
@@ -91,25 +81,47 @@ Hooks.once("init", () => {
 
     game.settings.register(MODULE_ID, SETTING_IMPORT_FOLDER, {
         name: "Compendium Import Folder",
-        hint: "Name of the folder where adversaries imported from the Compendium will be created.",
+        hint: "Name of the folder where adversaries imported from Compendiums will be created.",
         scope: "world",
         config: true,
         type: String,
         default: "Imported Adversaries"
     });
+
+    // Hidden setting to store selected extra compendiums
+    game.settings.register(MODULE_ID, SETTING_EXTRA_COMPENDIUMS, {
+        name: "Extra Compendiums",
+        scope: "world",
+        config: false,
+        type: Array,
+        default: []
+    });
+
+    // --- Persistence Settings (Client Scope) ---
+    game.settings.register(MODULE_ID, SETTING_LAST_SOURCE, {
+        scope: "client",
+        config: false,
+        type: String,
+        default: "world"
+    });
+
+    game.settings.register(MODULE_ID, SETTING_LAST_FILTER_TIER, {
+        scope: "client",
+        config: false,
+        type: String,
+        default: "all"
+    });
 });
 
 Hooks.once("ready", () => {
-    // Register Global API
     globalThis.AM = {
         Manage: manage, 
-        LivePreview: () => new AdversaryLivePreviewApp().render(true)
-        // QuickPreview removed entirely
+        LivePreview: () => new AdversaryLivePreviewApp().render(true),
+        CompendiumManager: () => new CompendiumManagerApp().render(true)
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });
 
-// Hook: Daggerheart System Menu (Left Sidebar Button)
 Hooks.on("renderDaggerheartMenu", (app, html) => {
     const element = (html instanceof jQuery) ? html[0] : html;
     
@@ -138,7 +150,6 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
     }
 });
 
-// Hook: Actor Directory (Right Sidebar Button)
 Hooks.on("renderActorDirectory", (app, html) => {
     const $html = $(html);
     const actionButtons = $html.find(".header-actions");
