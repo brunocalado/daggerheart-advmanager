@@ -163,20 +163,35 @@
     flex-direction: column;
 }
 
-/* Combo Box Styling */
+/* Combo Box Container Layout */
+.actor-selection-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.filter-wrapper {
+    flex: 0 0 30%; /* Takes 30% width */
+}
+
+.actor-wrapper {
+    flex: 1; /* Takes remaining width */
+}
+
+/* Shared Select Styling */
 .select-wrapper {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.main-actor-select {
+.main-actor-select, .filter-tier-select {
     width: 100%;
-    height: 40px; /* Definida altura fixa para evitar cortes */
-    line-height: 1.2; /* Melhor espaçamento vertical */
-    padding: 0 40px 0 10px; /* Padding Right 40px para a seta não cobrir o texto */
-    background-color: #222; /* Forced Background */
-    color: #eee; /* Forced Text Color */
+    height: 40px;
+    line-height: 1.2;
+    padding: 0 30px 0 10px;
+    background-color: #222;
+    color: #eee;
     border: 1px solid var(--color-border-light-2);
     border-radius: 4px;
     font-size: 1.1em;
@@ -185,32 +200,32 @@
     -moz-appearance: none;
     cursor: pointer;
     z-index: 2;
-    white-space: nowrap; /* Impede quebra de linha indesejada */
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Adiciona ... se o texto for muito longo */
+    text-overflow: ellipsis;
 }
 
-/* FORCE OPTION COLORS for browser compatibility */
-.main-actor-select option {
+/* FORCE OPTION COLORS */
+.main-actor-select option, .filter-tier-select option {
     background-color: #222;
     color: #eee;
     padding: 5px;
 }
 
-.main-actor-select:focus {
+.main-actor-select:focus, .filter-tier-select:focus {
     border-color: #ff9c5a;
     outline: none;
 }
 
 .select-arrow {
     position: absolute;
-    right: 15px;
+    right: 10px;
     color: #888;
     pointer-events: none;
     z-index: 3;
-    /* Centraliza a seta verticalmente */
     top: 50%;
     transform: translateY(-50%);
+    font-size: 0.8em;
 }
 
 /* Tier Tabs */

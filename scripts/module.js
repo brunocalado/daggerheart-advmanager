@@ -1,4 +1,4 @@
-import { AdversaryManagerApp } from "./AdversaryManagerApp.js";
+import { AdversaryManagerApp } from "./AdversaryManagerApp.js"; 
 import { AdversaryLivePreviewApp } from "./AdversaryLivePreviewApp.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -12,124 +12,43 @@ export const SKULL_IMAGE_PATH = "modules/daggerheart-advmanager/assets/images/sk
 
 // --- Main Logic ---
 
-function manageControlledToken() {
+/**
+ * Unified Management Function
+ * - 0 Tokens: Live Preview (Manual Selection)
+ * - 1 Token: Live Preview (Focused)
+ * - >1 Tokens: Batch Manager (Old Interface)
+ */
+function manage() {
     const tokens = canvas.tokens.controlled;
-    if (tokens.length === 0) {
-        ui.notifications.warn("Please select a token first.");
+    
+    // 1. Check for Broken Links (Token exists but Actor is null/deleted)
+    const brokenToken = tokens.find(t => t.document.actorId && !t.actor);
+    if (brokenToken) {
+        ui.notifications.error(`O token "${brokenToken.name}" não possui um Ator correspondente (provavelmente foi deletado).`);
         return;
     }
 
+    // 2. Filter valid Adversary actors
     const validActors = tokens
         .map(t => t.actor)
         .filter(a => a && a.type === "adversary");
 
     if (validActors.length === 0) {
-        ui.notifications.warn("No valid Adversary tokens selected.");
-        return;
-    }
-
-    new AdversaryManagerApp({ actors: validActors }).render(true);
-}
-
-/**
- * Actor Selector using ApplicationV2
- */
-class ActorSelectorApp extends HandlebarsApplicationMixin(ApplicationV2) {
-    static DEFAULT_OPTIONS = {
-        id: "adv-manager-selector",
-        tag: "form",
-        window: {
-            title: "Select Adversary",
-            icon: "fas fa-users",
-            resizable: false,
-            width: 350, 
-            height: "auto"
-        },
-        position: { width: 350, height: "auto" },
-        form: {
-            handler: ActorSelectorApp.submitHandler,
-            closeOnSubmit: true
-        }
-    };
-
-    static PARTS = {
-        form: {
-            template: "modules/daggerheart-advmanager/templates/selector.hbs"
-        }
-    };
-
-    async _prepareContext(_options) {
-        const adversaries = game.actors
-            .filter(a => a.type === "adversary")
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map(a => ({ id: a.id, name: a.name }));
-
-        return { adversaries };
-    }
-
-    _onRender(context, options) {
-        super._onRender(context, options);
-        
-        const html = this.element;
-        const searchInput = html.querySelector(".filter-actors");
-        const select = html.querySelector(".actor-select");
-
-        if (searchInput && select) {
-            searchInput.addEventListener("input", (e) => {
-                const query = e.target.value.toLowerCase();
-                let hasVisible = false;
-
-                for (const option of select.options) {
-                    const match = option.text.toLowerCase().includes(query);
-                    if (match) {
-                        option.style.display = "";
-                        option.disabled = false; 
-                        hasVisible = true;
-                    } else {
-                        option.style.display = "none";
-                        option.disabled = true; 
-                    }
-                }
-            });
-        }
-    }
-
-    static async submitHandler(event, form, formData) {
-        const actorId = formData.object.actorId;
-        if (!actorId) {
-            ui.notifications.warn("Please select an adversary from the list.");
-            return;
-        }
-        
-        const actor = game.actors.get(actorId);
-        if (actor) {
-            new AdversaryManagerApp({ actor: actor }).render(true);
-        }
-    }
-}
-
-async function manageActorFromDirectory() {
-    const hasAdversaries = game.actors.some(a => a.type === "adversary");
-    if (!hasAdversaries) {
-        ui.notifications.warn("No Actors of type 'adversary' found in the world.");
-        return;
-    }
-    new ActorSelectorApp().render(true);
-}
-
-/**
- * Unified Management Function
- */
-function manage() {
-    if (canvas.tokens.controlled.length > 0) {
-        manageControlledToken();
+        // Case 0: No valid tokens -> Live Preview for manual search
+        // Note: If tokens were selected but weren't adversaries, we just open the empty preview.
+        new AdversaryLivePreviewApp().render(true);
+    } else if (validActors.length === 1) {
+        // Case 1: Exactly 1 valid token -> Focused Live Preview
+        new AdversaryLivePreviewApp({ actor: validActors[0] }).render(true);
     } else {
-        manageActorFromDirectory();
+        // Case 2: Multiple tokens -> Batch Manager
+        new AdversaryManagerApp({ actors: validActors }).render(true);
     }
 }
 
 /**
  * Quick Preview
+ * (Utility for chat)
  */
 async function quickPreview() {
     const tokens = canvas.tokens.controlled;
@@ -138,9 +57,14 @@ async function quickPreview() {
         return;
     }
 
+    // Check broken link here too
     const token = tokens[0];
-    const actor = token.actor;
+    if (token.document.actorId && !token.actor) {
+        ui.notifications.error(`O token "${token.name}" não possui um Ator correspondente.`);
+        return;
+    }
 
+    const actor = token.actor;
     if (!actor) return;
 
     // --- 1. Gather Stats ---
@@ -325,13 +249,11 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
     // Registra a API Global
     globalThis.AM = {
-        Manage: manage,
-        ManageToken: manageControlledToken,
-        ManageActor: manageActorFromDirectory,
+        Manage: manage, 
         QuickPreview: quickPreview,
-        LivePreview: () => new AdversaryLivePreviewApp().render(true) // NOVA FUNÇÃO
+        LivePreview: () => new AdversaryLivePreviewApp().render(true)
     };
-    console.log("Adversary Manager | Ready. Use AM.LivePreview() to see changes in real-time.");
+    console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });
 
 // Hook: Daggerheart System Menu (Left Sidebar Button)

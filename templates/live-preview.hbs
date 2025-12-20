@@ -1,18 +1,30 @@
 <div class="dh-adv-manager-content preview-container">
     
-    <!-- Top Control: Actor Selection -->
+    <!-- Top Control: Actor Selection & Filter -->
     <div class="preview-controls form-group">
         <label><i class="fas fa-user-circle"></i> Select Adversary:</label>
         
-        <!-- Removed data-action to prevent click hijacking. Event handled in _onRender -->
-        <div class="select-wrapper">
-            <select name="actorSelect" class="main-actor-select">
-                <option value="" disabled {{#unless selectedActorId}}selected{{/unless}}>-- Choose an Adversary --</option>
-                {{#each adversaries}}
-                <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
-                {{/each}}
-            </select>
-            <i class="fas fa-chevron-down select-arrow"></i>
+        <div class="actor-selection-row">
+            <!-- Filter by Tier -->
+            <div class="select-wrapper filter-wrapper">
+                <select name="filterTier" class="filter-tier-select">
+                    {{#each filterOptions}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                </select>
+                <i class="fas fa-filter select-arrow"></i>
+            </div>
+
+            <!-- Main Actor Selector -->
+            <div class="select-wrapper actor-wrapper">
+                <select name="actorSelect" class="main-actor-select">
+                    <option value="" disabled {{#unless selectedActorId}}selected{{/unless}}>-- Choose an Adversary --</option>
+                    {{#each adversaries}}
+                    <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
+                    {{/each}}
+                </select>
+                <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
         </div>
     </div>
 
@@ -38,7 +50,12 @@
         
         <!-- Left Column: Current State -->
         <div class="preview-column current-column">
-            <h3 class="col-header">Current (T{{currentStats.tier}})</h3>
+            <h3 class="col-header">
+                Current (T{{currentStats.tier}})
+                {{#if linkData}}
+                    <i class="fas {{linkData.icon}} {{linkData.cssClass}}" title="{{linkData.label}}" style="font-size: 0.7em; vertical-align: middle; margin-left: 5px;"></i>
+                {{/if}}
+            </h3>
             
             <div class="stat-row">
                 <span class="stat-label">Difficulty</span>
