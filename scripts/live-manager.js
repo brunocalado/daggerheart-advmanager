@@ -18,7 +18,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.selectedActorId = this.initialActor ? this.initialActor.id : (options.actorId || null);
         this.targetTier = options.targetTier || 1;
         this.previewData = null;
-        this.overrides = { features: {} }; // Stores manual inputs
+        
+        // Store overrides separated by type
+        this.overrides = { 
+            features: {
+                names: {},
+                damage: {}
+            }
+        };
 
         // Initialize from persistent settings, fallback to defaults
         this.filterTier = game.settings.get(MODULE_ID, SETTING_LAST_FILTER_TIER) || "all"; 
@@ -172,6 +179,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!this.selectedActorId && displayedAdversaries.length > 0) {
              this.selectedActorId = displayedAdversaries[0].id;
         } else if (this.selectedActorId && !displayedAdversaries.find(a => a.id === this.selectedActorId)) {
+             // If selected actor is not in the filtered list (e.g. after filter change), select first available
+             // But if we specifically asked for an ID (via applyChanges), we might need to handle it better.
+             // For now, default to first or null.
              if (displayedAdversaries.length > 0) this.selectedActorId = displayedAdversaries[0].id;
              else this.selectedActorId = null;
         }
@@ -185,6 +195,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let previewStats = null;
         let actor = null;
         let featurePreviewData = []; 
+        let newFeaturesPreview = [];
         let linkData = null;
         let damageOptions = []; 
         let isMinion = false;
@@ -239,15 +250,63 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     previewStats.thresholdsDisplay = "None"; 
                     previewStats.hpDisplay = "(Fixed)"; 
                 }
+                
+                // Get New Features List
+                if (simResult.newFeaturesList && simResult.newFeaturesList.length > 0) {
+                    newFeaturesPreview = simResult.newFeaturesList.map(item => ({
+                        name: item.name,
+                        img: item.img
+                    }));
+                }
 
                 // Prepare Structured Feature Data
                 featurePreviewData = simResult.structuredFeatures.map(f => {
-                    const overrideVal = this.overrides.features && this.overrides.features[f.itemId];
+                    // Check override based on type
+                    let overrideVal = undefined;
+                    
+                    if (f.type === 'damage' || f.type === 'name_horde') {
+                         overrideVal = this.overrides.features.damage[f.itemId];
+                    } else {
+                         overrideVal = this.overrides.features.names[f.itemId];
+                    }
+                    
+                    let displayFrom = f.from;
+                    
+                    // Display Feature Name + Old Damage (Same Style)
+                    if (f.type === 'damage') {
+                        // Use consistent bold style for name, lighter for old value
+                        displayFrom = `<strong>${f.itemName}</strong> <span class="old-value-sub">(${f.from})</span>`;
+                    } else if (f.type === 'name_horde') {
+                        // Horde usually has name=damage, handle display gracefully
+                        displayFrom = `<strong>${f.from}</strong>`;
+                    } else {
+                        displayFrom = `<strong>${f.from}</strong>`;
+                    }
+
+                    // Determine if we should show a dropdown (for Damage or Horde types)
+                    let featureOptions = null;
+                    if (f.type === 'damage' || f.type === 'name_horde') {
+                         const currentVal = overrideVal !== undefined ? overrideVal : f.to;
+                         
+                         // Create options from benchmark damage_rolls
+                         featureOptions = damageOptions.map(d => ({
+                             value: d.value,
+                             label: d.label,
+                             selected: d.value === currentVal
+                         }));
+
+                         // Ensure current value is present if it's custom or outside standard range
+                         if (!featureOptions.find(o => o.value === currentVal)) {
+                             featureOptions.unshift({ value: currentVal, label: currentVal, selected: true });
+                         }
+                    }
+
                     return {
                         itemId: f.itemId,
-                        originalName: f.from,
+                        originalName: displayFrom,
                         newName: overrideVal !== undefined ? overrideVal : f.to,
-                        isRenamed: f.type.startsWith("name_") 
+                        isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde', // Horde treated as damage override for UI
+                        options: featureOptions // Pass options for the combobox
                     };
                 });
             }
@@ -285,6 +344,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             currentStats,
             previewStats,
             featurePreviewData, 
+            newFeaturesPreview,
             tiers,
             linkData,
             sourceOptions,
@@ -316,8 +376,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('change', (e) => this._onOverrideChange(e, input));
         });
 
-        // Bind Feature Override Inputs
-        html.querySelectorAll('.feature-override-input').forEach(input => {
+        // Bind Feature Override Inputs AND Selects
+        html.querySelectorAll('.feature-override-input, .feature-override-select').forEach(input => {
             input.addEventListener('change', (e) => this._onFeatureOverrideChange(e, input));
         });
 
@@ -337,13 +397,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     _onFeatureOverrideChange(event, target) {
         const itemId = target.dataset.itemid;
         const value = target.value;
+        const isDamage = target.classList.contains('feature-override-select');
         
-        if (!this.overrides.features) {
-            this.overrides.features = {};
+        // Ensure structure exists
+        if (!this.overrides.features) this.overrides.features = { names: {}, damage: {} };
+        if (!this.overrides.features.names) this.overrides.features.names = {};
+        if (!this.overrides.features.damage) this.overrides.features.damage = {};
+
+        if (isDamage) {
+            this.overrides.features.damage[itemId] = value;
+            // Clear any potential name override if we switched to damage mode
+            delete this.overrides.features.names[itemId];
+        } else {
+            this.overrides.features.names[itemId] = value;
         }
-        
-        // Update the overrides object
-        this.overrides.features[itemId] = value;
     }
 
     // --- Stats Helpers (Standard) ---
@@ -422,17 +489,36 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         sim.damage = damageParts.join(", ") || "None";
 
         const featureLog = [];
-        const structuredFeatures = [];
+        const structuredFeatures = []; // This will be populated by processFeatureUpdate
+        
+        // Run Feature Update Logic (Simulation)
         if (actorData.items) {
             for (const item of actorData.items) {
-                const res = Manager.processFeatureUpdate(item, targetTier, currentTier, benchmark, featureLog, this.overrides.features);
-                if (res && res.structured) {
-                    structuredFeatures.push(...res.structured);
+                // Pass the specific override maps
+                const result = Manager.processFeatureUpdate(
+                    item, 
+                    targetTier, 
+                    currentTier, 
+                    benchmark, 
+                    featureLog, 
+                    this.overrides.features.names, 
+                    this.overrides.features.damage
+                );
+                if (result && result.structured) {
+                    structuredFeatures.push(...result.structured);
                 }
             }
         }
         
-        return { stats: sim, features: featureLog, structuredFeatures };
+        // Run New Feature Logic (Simulation)
+        const newFeatures = await Manager.handleNewFeatures(actor, typeKey, targetTier, currentTier, featureLog);
+
+        return { 
+            stats: sim, 
+            features: featureLog, 
+            structuredFeatures: structuredFeatures,
+            newFeaturesList: newFeatures.toCreate 
+        };
     }
 
     // --- Actions ---
@@ -446,7 +532,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.stopPropagation();
         this.source = target.value;
         this.selectedActorId = null;
-        this.overrides = { features: {} }; 
+        this.overrides = { features: { names: {}, damage: {} } }; 
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
         this.render();
     }
@@ -470,7 +556,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.preventDefault();
         event.stopPropagation();
         this.selectedActorId = target.value;
-        this.overrides = { features: {} }; 
+        this.overrides = { features: { names: {}, damage: {} } }; 
         const actor = await this._getActor(this.selectedActorId);
         if (actor) {
             this.targetTier = Number(actor.system.tier) || 1;
@@ -482,7 +568,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const tier = Number(target.dataset.tier);
         if (tier) {
             this.targetTier = tier;
-            this.overrides = { features: {} }; 
+            this.overrides = { features: { names: {}, damage: {} } }; 
             this.render();
         }
     }
@@ -494,6 +580,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!actor) return;
 
         try {
+            // 1. Handle Import from Compendium
             if (this.source !== "world") {
                 const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
                 let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
@@ -504,17 +591,38 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const pack = game.packs.get(this.source);
                 actor = await game.actors.importFromCompendium(pack, this.selectedActorId, { folder: folder.id });
                 
+                // FORCE SOURCE UPDATE AND SAVE
                 if (actor) {
                     this.source = "world";
                     this.selectedActorId = actor.id;
+                    await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, "world");
                 }
             }
 
+            // 2. Perform Update
             const result = await Manager.updateSingleActor(actor, this.targetTier, this.overrides);
             
             if (!result) {
                 ui.notifications.warn("No changes were necessary.");
+            } else {
+                ui.notifications.info(`Updated ${actor.name} to Tier ${this.targetTier}`);
             }
+
+            // 3. SYNC FILTERS TO NEW ACTOR STATE
+            // Ensure the actor is visible and selected in the dropdowns
+
+            // Update Tier Filter to match the NEW tier of the actor
+            this.filterTier = String(this.targetTier); 
+            await game.settings.set(MODULE_ID, SETTING_LAST_FILTER_TIER, this.filterTier);
+
+            // Update Type Filter to match the actor's type
+            const typeKey = (actor.system.type || "standard").toLowerCase();
+            this.filterType = typeKey; 
+
+            // Clear overrides after successful apply
+            this.overrides = { features: { names: {}, damage: {} } };
+
+            // Re-render to update the UI dropdowns
             this.render();
 
         } catch (e) {

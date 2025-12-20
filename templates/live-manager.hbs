@@ -1,225 +1,254 @@
 <div class="dh-adv-manager-content preview-container">
-
-<!-- Top Control: Actor Selection & Filter -->
-<div class="preview-controls form-group">
-    <label><i class="fas fa-user-circle"></i> Select Adversary:</label>
     
-    <div class="actor-selection-row">
+    <!-- Top Control: Actor Selection & Filter -->
+    <div class="preview-controls form-group">
+        <label><i class="fas fa-user-circle"></i> Select Adversary:</label>
         
-        <!-- Source Selector -->
-        <div class="select-wrapper source-wrapper">
-            <select name="source" class="source-select">
-                {{#each sourceOptions}}
-                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
-                {{/each}}
-            </select>
-            <i class="fas fa-database select-arrow"></i>
-        </div>
+        <div class="actor-selection-row">
+            
+            <!-- Source Selector -->
+            <div class="select-wrapper source-wrapper">
+                <select name="source" class="source-select">
+                    {{#each sourceOptions}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                </select>
+                <i class="fas fa-database select-arrow"></i>
+            </div>
 
-        <!-- Settings Button -->
-        <button type="button" data-action="openSettings" class="settings-btn" title="Manage Compendiums">
-            <i class="fas fa-cog"></i>
-        </button>
+            <!-- Settings Button -->
+            <button type="button" data-action="openSettings" class="settings-btn" title="Manage Compendiums">
+                <i class="fas fa-cog"></i>
+            </button>
 
-        <!-- Filter by Tier -->
-        <div class="select-wrapper filter-wrapper small-filter">
-            <select name="filterTier" class="filter-tier-select">
-                {{#each filterOptions}}
-                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
-                {{/each}}
-            </select>
-            <i class="fas fa-filter select-arrow"></i>
-        </div>
+            <!-- Filter by Tier -->
+            <div class="select-wrapper filter-wrapper small-filter">
+                <select name="filterTier" class="filter-tier-select">
+                    {{#each filterOptions}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                </select>
+                <i class="fas fa-filter select-arrow"></i>
+            </div>
 
-        <!-- Filter by Type -->
-        <div class="select-wrapper filter-wrapper small-filter">
-            <select name="filterType" class="filter-type-select">
-                {{#each typeOptions}}
-                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
-                {{/each}}
-            </select>
-            <i class="fas fa-paw select-arrow"></i>
-        </div>
+            <!-- Filter by Type -->
+            <div class="select-wrapper filter-wrapper small-filter">
+                <select name="filterType" class="filter-type-select">
+                    {{#each typeOptions}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                </select>
+                <i class="fas fa-paw select-arrow"></i>
+            </div>
 
-        <!-- Main Actor Selector -->
-        <div class="select-wrapper actor-wrapper">
-            <select name="actorSelect" class="main-actor-select">
-                <option value="" disabled {{#unless selectedActorId}}selected{{/unless}}>-- Choose an Adversary --</option>
-                {{#each adversaries}}
-                <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
-                {{/each}}
-            </select>
-            <i class="fas fa-chevron-down select-arrow"></i>
+            <!-- Main Actor Selector -->
+            <div class="select-wrapper actor-wrapper">
+                <select name="actorSelect" class="main-actor-select">
+                    <option value="" disabled {{#unless selectedActorId}}selected{{/unless}}>-- Choose an Adversary --</option>
+                    {{#each adversaries}}
+                    <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
+                    {{/each}}
+                </select>
+                <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
         </div>
     </div>
-</div>
 
-{{#if hasActor}}
-
-<!-- Tier Selection Tabs -->
-<div class="tier-tabs">
-    <label>Target Tier:</label>
-    <div class="tier-buttons">
-        {{#each tiers}}
-        <button type="button" 
-                class="tier-tab-btn {{this.cssClass}}" 
-                data-action="selectTier" 
-                data-tier="{{this.value}}">
-            {{this.label}}
-        </button>
-        {{/each}}
-    </div>
-</div>
-
-<!-- Split View Body -->
-<div class="preview-body">
+    {{#if hasActor}}
     
-    <!-- Left Column: Current State -->
-    <div class="preview-column current-column">
-        <h3 class="col-header">
-            Current (T{{currentStats.tier}})
-            {{#if linkData}}
-                <i class="fas {{linkData.icon}} {{linkData.cssClass}}" title="{{linkData.label}}" style="font-size: 0.7em; vertical-align: middle; margin-left: 5px;"></i>
-            {{/if}}
-        </h3>
-        
-        <div class="stat-row">
-            <span class="stat-label">Difficulty</span>
-            <span class="stat-value">{{currentStats.difficulty}}</span>
-        </div>
-        <div class="stat-row">
-            <span class="stat-label">HP</span>
-            <span class="stat-value">{{currentStats.hp}}</span>
-        </div>
-        <div class="stat-row">
-            <span class="stat-label">Stress</span>
-            <span class="stat-value">{{currentStats.stress}}</span>
-        </div>
-        <div class="stat-row">
-            <span class="stat-label">Thresholds</span>
-            <span class="stat-value">{{currentStats.thresholds}}</span>
-        </div>
-        <div class="stat-row">
-            <span class="stat-label">Attack Bonus</span>
-            <span class="stat-value">{{currentStats.attackMod}}</span>
-        </div>
-        <div class="stat-group">
-            <span class="stat-label">Attack Damage</span>
-            <div class="stat-block">{{currentStats.damage}}</div>
+    <!-- Tier Selection Tabs -->
+    <div class="tier-tabs">
+        <label>Target Tier:</label>
+        <div class="tier-buttons">
+            {{#each tiers}}
+            <button type="button" 
+                    class="tier-tab-btn {{this.cssClass}}" 
+                    data-action="selectTier" 
+                    data-tier="{{this.value}}">
+                {{this.label}}
+            </button>
+            {{/each}}
         </div>
     </div>
 
-    <!-- Right Column: Preview State -->
-    <div class="preview-column future-column">
-        <h3 class="col-header future-header">Preview (T{{previewStats.tier}})</h3>
+    <!-- Split View Body -->
+    <div class="preview-body">
         
-        {{#if previewStats.error}}
-            <div class="error-msg">{{previewStats.error}}</div>
-        {{else}}
+        <!-- Left Column: Current State -->
+        <div class="preview-column current-column">
+            <h3 class="col-header">
+                Current (T{{currentStats.tier}})
+                {{#if linkData}}
+                    <i class="fas {{linkData.icon}} {{linkData.cssClass}}" title="{{linkData.label}}" style="font-size: 0.7em; vertical-align: middle; margin-left: 5px;"></i>
+                {{/if}}
+            </h3>
+            
             <div class="stat-row">
                 <span class="stat-label">Difficulty</span>
-                <div class="stat-input-group">
-                    <span class="stat-value-hint">{{{previewStats.difficultyDisplay}}}</span>
-                    <input type="number" class="override-input" data-field="difficulty" value="{{previewStats.difficulty}}" title="Manual Override">
-                </div>
+                <span class="stat-value">{{currentStats.difficulty}}</span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">HP</span>
-                <div class="stat-input-group">
-                    <span class="stat-value-hint">{{{previewStats.hpDisplay}}}</span>
-                    <input type="number" class="override-input" data-field="hp" value="{{previewStats.hp}}" title="Manual Override" {{#if previewStats.isMinion}}disabled{{/if}}>
-                </div>
+                <span class="stat-value">{{currentStats.hp}}</span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">Stress</span>
-                <div class="stat-input-group">
-                    <span class="stat-value-hint">{{{previewStats.stressDisplay}}}</span>
-                    <input type="number" class="override-input" data-field="stress" value="{{previewStats.stress}}" title="Manual Override">
-                </div>
+                <span class="stat-value">{{currentStats.stress}}</span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">Thresholds</span>
-                <div class="stat-input-group dual-input">
-                    <span class="stat-value-hint">{{{previewStats.thresholdsDisplay}}}</span>
-                    {{#if previewStats.isMinion}}
-                        <!-- Hidden or disabled -->
-                    {{else}}
-                        <input type="number" class="override-input small" data-field="major" value="{{previewStats.major}}" placeholder="Maj" title="Major">
-                        /
-                        <input type="number" class="override-input small" data-field="severe" value="{{previewStats.severe}}" placeholder="Sev" title="Severe">
-                    {{/if}}
-                </div>
+                <span class="stat-value">{{currentStats.thresholds}}</span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">Attack Bonus</span>
-                <div class="stat-input-group">
-                    <span class="stat-value-hint">{{{previewStats.attackModDisplay}}}</span>
-                    <input type="number" class="override-input" data-field="attackMod" value="{{previewStats.attackMod}}" title="Manual Override">
-                </div>
+                <span class="stat-value">{{currentStats.attackMod}}</span>
             </div>
             <div class="stat-group">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span class="stat-label">Attack Damage</span>
-                    <div class="select-wrapper" style="width: 120px;">
-                        <select class="damage-preset-select" data-field="damageFormula">
-                            <option value="">-- Preset --</option>
-                            {{#each damageOptions}}
-                            <option value="{{this.value}}">{{this.label}}</option>
-                            {{/each}}
-                        </select>
+                <span class="stat-label">Attack Damage</span>
+                <div class="stat-block">{{currentStats.damage}}</div>
+            </div>
+        </div>
+
+        <!-- Right Column: Preview State -->
+        <div class="preview-column future-column">
+            <h3 class="col-header future-header">Preview (T{{previewStats.tier}})</h3>
+            
+            {{#if previewStats.error}}
+                <div class="error-msg">{{previewStats.error}}</div>
+            {{else}}
+                <div class="stat-row">
+                    <span class="stat-label">Difficulty</span>
+                    <div class="stat-input-group">
+                        <span class="stat-value-hint">{{{previewStats.difficultyDisplay}}}</span>
+                        <input type="number" class="override-input" data-field="difficulty" value="{{previewStats.difficulty}}" title="Manual Override">
                     </div>
                 </div>
-                <div class="stat-block">{{{previewStats.damage}}}</div>
-            </div>
+                <div class="stat-row">
+                    <span class="stat-label">HP</span>
+                    <div class="stat-input-group">
+                        <span class="stat-value-hint">{{{previewStats.hpDisplay}}}</span>
+                        <input type="number" class="override-input" data-field="hp" value="{{previewStats.hp}}" title="Manual Override" {{#if previewStats.isMinion}}disabled{{/if}}>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Stress</span>
+                    <div class="stat-input-group">
+                        <span class="stat-value-hint">{{{previewStats.stressDisplay}}}</span>
+                        <input type="number" class="override-input" data-field="stress" value="{{previewStats.stress}}" title="Manual Override">
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Thresholds</span>
+                    <div class="stat-input-group dual-input">
+                        <span class="stat-value-hint">{{{previewStats.thresholdsDisplay}}}</span>
+                        {{#if previewStats.isMinion}}
+                            <!-- Hidden or disabled -->
+                        {{else}}
+                            <input type="number" class="override-input small" data-field="major" value="{{previewStats.major}}" placeholder="Maj" title="Major">
+                            /
+                            <input type="number" class="override-input small" data-field="severe" value="{{previewStats.severe}}" placeholder="Sev" title="Severe">
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Attack Bonus</span>
+                    <div class="stat-input-group">
+                        <span class="stat-value-hint">{{{previewStats.attackModDisplay}}}</span>
+                        <input type="number" class="override-input" data-field="attackMod" value="{{previewStats.attackMod}}" title="Manual Override">
+                    </div>
+                </div>
+                <div class="stat-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="stat-label">Attack Damage</span>
+                        <div class="select-wrapper" style="width: 120px;">
+                            <select class="damage-preset-select" data-field="damageFormula">
+                                <option value="">-- Preset --</option>
+                                {{#each damageOptions}}
+                                <option value="{{this.value}}">{{this.label}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="stat-block">{{{previewStats.damage}}}</div>
+                </div>
 
-            <!-- FEATURES SECTION -->
-            <div class="features-preview-section">
-                <h4 class="features-header">Feature Changes</h4>
-                {{#if featurePreviewData.length}}
-                    <div class="feature-changes-list">
-                        {{#each featurePreviewData}}
-                            <div class="feature-change-row">
-                                <div class="feature-label">
-                                    {{{this.originalName}}} &rarr;
+                <!-- FEATURES SECTION -->
+                <div class="features-preview-section">
+                    <h4 class="features-header">Feature Changes</h4>
+                    {{#if featurePreviewData.length}}
+                        <div class="feature-changes-list">
+                            {{#each featurePreviewData}}
+                                <div class="feature-change-row">
+                                    <div class="feature-label">
+                                        {{{this.originalName}}} <i class="fas fa-arrow-right" style="font-size: 0.8em; opacity: 0.5; margin: 0 5px;"></i>
+                                    </div>
+                                    
+                                    <div class="feature-control">
+                                        {{#if this.options}}
+                                            <!-- Combobox for damage features -->
+                                            <select class="feature-override-select" data-itemid="{{this.itemId}}">
+                                                {{#each this.options}}
+                                                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                                                {{/each}}
+                                            </select>
+                                        {{else}}
+                                            <!-- Fallback to text input if renamed (minion) or static text -->
+                                            {{#if this.isRenamed}}
+                                                <input type="text" class="feature-override-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" title="Rename Feature">
+                                            {{else}}
+                                                <div class="feature-new-static">{{this.newName}}</div>
+                                            {{/if}}
+                                        {{/if}}
+                                    </div>
                                 </div>
-                                {{#if this.isRenamed}}
-                                    <input type="text" class="feature-override-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" title="Rename Feature">
-                                {{else}}
-                                    <div class="feature-new-static">{{this.newName}}</div>
-                                {{/if}}
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <div class="no-changes">No modified features.</div>
+                    {{/if}}
+                </div>
+
+                <!-- NEW FEATURES SECTION -->
+                {{#if newFeaturesPreview.length}}
+                <div class="features-preview-section">
+                    <h4 class="features-header" style="color: #98fb98;">New Suggested Features</h4>
+                    <div class="feature-changes-list">
+                        {{#each newFeaturesPreview}}
+                            <div class="feature-change-row new-feature-row">
+                                <div class="feature-label">
+                                    <i class="fas fa-plus-circle" style="color: #98fb98; margin-right: 5px;"></i>
+                                    <strong>{{this.name}}</strong>
+                                </div>
                             </div>
                         {{/each}}
                     </div>
-                {{else}}
-                    <div class="no-changes">No feature changes predicted.</div>
+                </div>
                 {{/if}}
-            </div>
-            
-            <div class="preview-note">
-                <i class="fas fa-info-circle"></i> Edit values to override random rolls.
-            </div>
-        {{/if}}
+                
+                <div class="preview-note">
+                    <i class="fas fa-info-circle"></i> Edit values to override random rolls.
+                </div>
+            {{/if}}
+        </div>
+
     </div>
 
-</div>
+    <!-- Footer Action -->
+    <footer class="sheet-footer">
+        <button type="button" data-action="applyChanges" class="apply-btn">
+            {{#if (eq linkData null)}}
+                <i class="fas fa-file-import"></i> Import & Apply Tier {{previewStats.tier}}
+            {{else}}
+                <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
+            {{/if}}
+        </button>
+    </footer>
 
-<!-- Footer Action -->
-<footer class="sheet-footer">
-    <button type="button" data-action="applyChanges" class="apply-btn">
-        {{#if (eq linkData null)}}
-            <i class="fas fa-file-import"></i> Import & Apply Tier {{previewStats.tier}}
-        {{else}}
-            <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
-        {{/if}}
-    </button>
-</footer>
-
-{{else}}
-<div class="empty-state">
-    <i class="fas fa-skull" style="font-size: 4em; opacity: 0.3; margin-bottom: 20px;"></i>
-    <p>Select an Adversary from the list above to begin preview.</p>
-</div>
-{{/if}}
-
+    {{else}}
+    <div class="empty-state">
+        <i class="fas fa-skull" style="font-size: 4em; opacity: 0.3; margin-bottom: 20px;"></i>
+        <p>Select an Adversary from the list above to begin preview.</p>
+    </div>
+    {{/if}}
 
 </div>

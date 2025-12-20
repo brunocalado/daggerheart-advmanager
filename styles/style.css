@@ -448,6 +448,7 @@ select:focus {
     gap: 5px;
 }
 
+/* UPDATED: Flex Row for Features */
 .feature-change-row {
     background: rgba(0,0,0,0.3);
     padding: 6px;
@@ -455,20 +456,44 @@ select:focus {
     font-size: 0.9em;
     color: #ccc;
     border-left: 3px solid #9c27b0;
+    
+    /* Layout change: Side by Side */
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.feature-change-row.new-feature-row {
+    border-left-color: #98fb98;
 }
 
 .feature-label {
+    /* Limit width so combo box fits nicely */
+    flex: 1;
     font-weight: bold;
-    color: #bbb;
-    font-size: 0.9em;
+    color: #eee;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+}
+
+.feature-control {
+    flex: 0 0 45%; /* Reserve space for the control */
+    display: flex;
+    justify-content: flex-end;
 }
 
 .feature-new-static {
     font-weight: bold;
     color: #ea80fc;
+}
+
+.old-value-sub {
+    font-weight: normal;
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-left: 5px;
 }
 
 .feature-override-input {
@@ -482,6 +507,23 @@ select:focus {
 }
 
 .feature-override-input:focus {
+    border-color: #ea80fc;
+    outline: none;
+}
+
+/* Feature Select Style */
+.feature-override-select {
+    width: 100%;
+    height: 28px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #555;
+    color: #ea80fc;
+    border-radius: 3px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.feature-override-select:focus {
     border-color: #ea80fc;
     outline: none;
 }

@@ -246,12 +246,40 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         return null;
     }
 
-    static updateDamageParts(parts, newTier, currentTier, benchmark) {
+    static updateDamageParts(parts, newTier, currentTier, benchmark, forceFormula = null) {
         let hasChanges = false;
         const changes = [];
 
         if (!parts || !Array.isArray(parts)) return { hasChanges, changes };
 
+        // If a manual override formula is provided, apply it to the first valid part
+        if (forceFormula) {
+            const parsed = Manager.parseDamageString(forceFormula);
+            if (parsed) {
+                const part = parts.find(p => p.value);
+                if (part) {
+                    let oldFormula = part.value.custom?.enabled ? part.value.custom.formula : (part.value.dice ? `${part.value.flatMultiplier}${part.value.dice}` : `${part.value.flatMultiplier}`);
+                    
+                    if (parsed.die === null) {
+                        part.value.flatMultiplier = parsed.count;
+                        part.value.dice = "";
+                        part.value.bonus = null;
+                        part.value.custom = { enabled: false };
+                    } else {
+                        part.value.flatMultiplier = parsed.count;
+                        part.value.dice = parsed.die;
+                        part.value.bonus = parsed.bonus;
+                        part.value.custom = { enabled: false };
+                    }
+                    
+                    hasChanges = true;
+                    changes.push({ from: oldFormula, to: forceFormula, isCustom: false, labelSuffix: "" });
+                    return { hasChanges, changes };
+                }
+            }
+        }
+
+        // Standard logic
         parts.forEach(part => {
             if (part.value) {
                 const update = Manager.processDamageValue(part.value, newTier, currentTier, benchmark.damage_rolls);
@@ -279,23 +307,25 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
      * @param {Number} currentTier 
      * @param {Object} benchmark 
      * @param {Array} changeLog (Optional) - legacy array of strings
-     * @param {Object} featureOverrides (Optional) - map of itemId -> newName
+     * @param {Object} nameOverrides (Optional) - map of itemId -> newName
+     * @param {Object} damageOverrides (Optional) - map of itemId -> newDamageFormula
      * @returns {Object|null} Update object or null
      */
-    static processFeatureUpdate(itemData, newTier, currentTier, benchmark, changeLog = [], featureOverrides = {}) {
+    static processFeatureUpdate(itemData, newTier, currentTier, benchmark, changeLog = [], nameOverrides = {}, damageOverrides = {}) {
         let hasChanges = false;
         const system = foundry.utils.deepClone(itemData.system);
         const replacements = [];
         const structuredChanges = []; // Stores details for UI inputs
         
         let actionsRaw = system.actions;
+        let manualDamage = damageOverrides[itemData._id] || null;
         
         // 1. Process Actions & Damage
         if (actionsRaw) {
             for (const actionId in actionsRaw) {
                 const action = actionsRaw[actionId];
                 if (action.damage && action.damage.parts) {
-                    const result = Manager.updateDamageParts(action.damage.parts, newTier, currentTier, benchmark);
+                    const result = Manager.updateDamageParts(action.damage.parts, newTier, currentTier, benchmark, manualDamage);
                     if (result.hasChanges) {
                         hasChanges = true;
                         result.changes.forEach(c => {
@@ -324,16 +354,14 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         let updateDesc = false;
         let minionVal = null;
 
-        // Check for manual overrides first
-        if (featureOverrides && featureOverrides[itemData._id]) {
-            // User provided a specific name for this feature
-            newName = featureOverrides[itemData._id];
+        // Check for manual name overrides first
+        if (nameOverrides && nameOverrides[itemData._id]) {
+            newName = nameOverrides[itemData._id];
             if (newName !== itemData.name) {
                 changeLog.push(`<strong>Name Override:</strong> ${itemData.name} -> ${newName}`);
                 hasChanges = true;
             }
             // For minions/horde, we assume the user typed the Full string "Minion (5)"
-            // We try to extract values to update description if possible
             const mMatch = newName.match(/^Minion\s*\((\d+)\)$/i);
             if (mMatch) {
                 minionVal = parseInt(mMatch[1]);
@@ -348,32 +376,37 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const oldDmgInName = hordeMatch[1];
                 let newDmgStr = null;
 
-                const matchingRep = replacements.find(r => r.from === oldDmgInName && !r.labelSuffix); 
-                
-                if (matchingRep) {
-                    newDmgStr = matchingRep.to;
+                // Priority: Manual Damage Override > Calculated Replacement > Standard Calc
+                if (manualDamage) {
+                    newDmgStr = manualDamage;
                 } else {
-                    const parsed = Manager.parseDamageString(oldDmgInName);
-                    if (parsed) {
-                         let bonusInput = parsed.bonus;
-                         if (parsed.die === null) bonusInput = parsed.count; 
+                    const matchingRep = replacements.find(r => r.from === oldDmgInName && !r.labelSuffix); 
+                    if (matchingRep) {
+                        newDmgStr = matchingRep.to;
+                    } else {
+                        // Fallback calc if action didn't trigger it
+                        const parsed = Manager.parseDamageString(oldDmgInName);
+                        if (parsed) {
+                             let bonusInput = parsed.bonus;
+                             if (parsed.die === null) bonusInput = parsed.count; 
 
-                         const newDmg = Manager.calculateNewDamage(
-                             parsed.die, 
-                             bonusInput, 
-                             newTier, 
-                             currentTier, 
-                             benchmark.damage_rolls
-                         );
+                             const newDmg = Manager.calculateNewDamage(
+                                 parsed.die, 
+                                 bonusInput, 
+                                 newTier, 
+                                 currentTier, 
+                                 benchmark.damage_rolls
+                             );
 
-                         if (newDmg.die === null) {
-                             newDmgStr = `${newDmg.bonus}`;
-                         } else {
-                             const sign = newDmg.bonus >= 0 ? "+" : "";
-                             const bonusStr = newDmg.bonus !== 0 ? `${sign}${newDmg.bonus}` : "";
-                             newDmgStr = `${newDmg.count}${newDmg.die}${bonusStr}`;
-                         }
-                         replacements.push({ from: oldDmgInName, to: newDmgStr });
+                             if (newDmg.die === null) {
+                                 newDmgStr = `${newDmg.bonus}`;
+                             } else {
+                                 const sign = newDmg.bonus >= 0 ? "+" : "";
+                                 const bonusStr = newDmg.bonus !== 0 ? `${sign}${newDmg.bonus}` : "";
+                                 newDmgStr = `${newDmg.count}${newDmg.die}${bonusStr}`;
+                             }
+                             replacements.push({ from: oldDmgInName, to: newDmgStr });
+                        }
                     }
                 }
 
@@ -498,7 +531,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         const pickedName = candidates[Math.floor(Math.random() * candidates.length)];
         
         const pack = game.packs.get("daggerheart-advmanager.features");
-        if (!pack) return { toCreate: [], toDelete: [] };
+        if (!pack) return { toCreate: [], toDelete: [] }; // No pack, no feature
 
         const index = await pack.getIndex();
         const entry = index.find(e => e.name === pickedName);
@@ -526,7 +559,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     /**
      * UPDATE SINGLE ACTOR - NOW ACCEPTS MANUAL OVERRIDES
-     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, features: { itemId: newName } }
+     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, features: { names: {}, damage: {} } }
      */
     static async updateSingleActor(actor, newTier, overrides = {}) {
         const actorData = actor.toObject();
@@ -651,11 +684,15 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         // --- 5. Update Features (Items) ---
+        // Ensure overrides structure exists for features
+        const featureNames = (overrides.features && overrides.features.names) ? overrides.features.names : {};
+        const featureDamage = (overrides.features && overrides.features.damage) ? overrides.features.damage : {};
+
         const itemsToUpdate = [];
         if (actorData.items) {
             for (const item of actorData.items) {
-                // Pass overrides.features map
-                const result = Manager.processFeatureUpdate(item, newTier, currentTier, benchmark, featureLog, overrides.features);
+                // Pass overrides separated
+                const result = Manager.processFeatureUpdate(item, newTier, currentTier, benchmark, featureLog, featureNames, featureDamage);
                 if (result) {
                     itemsToUpdate.push(result.update);
                     if (result.structured) structuredFeatureChanges.push(...result.structured);
@@ -678,7 +715,8 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             newTier: newTier,
             statsLog: statsLog,
             featureLog: featureLog,
-            structuredFeatures: structuredFeatureChanges // Return for UI
+            structuredFeatures: structuredFeatureChanges, // Return for UI
+            newFeaturesList: newFeatures.toCreate // Return raw new features for UI preview
         };
     }
 
