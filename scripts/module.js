@@ -1,4 +1,6 @@
 import { AdversaryManagerApp } from "./AdversaryManagerApp.js";
+import { AdversaryLivePreviewApp } from "./AdversaryLivePreviewApp.js";
+
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 // --- Settings Constants ---
@@ -321,13 +323,15 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", () => {
+    // Registra a API Global
     globalThis.AM = {
         Manage: manage,
         ManageToken: manageControlledToken,
         ManageActor: manageActorFromDirectory,
-        QuickPreview: quickPreview
+        QuickPreview: quickPreview,
+        LivePreview: () => new AdversaryLivePreviewApp().render(true) // NOVA FUNÇÃO
     };
-    console.log("Adversary Manager | Ready. Use AM.Manage(), AM.ManageActor() or AM.QuickPreview()");
+    console.log("Adversary Manager | Ready. Use AM.LivePreview() to see changes in real-time.");
 });
 
 // Hook: Daggerheart System Menu (Left Sidebar Button)

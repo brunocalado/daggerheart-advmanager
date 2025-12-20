@@ -1,3 +1,4 @@
+/* --- Existing Styles --- */
 .dh-adv-manager-content {
     padding: 0.5rem;
     display: flex;
@@ -152,4 +153,238 @@
 .daggerheart-chat p {
     margin: 4px 0;
     line-height: 1.4;
+}
+
+/* --- NEW STYLES FOR LIVE PREVIEW --- */
+
+.preview-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Combo Box Styling */
+.select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.main-actor-select {
+    width: 100%;
+    height: 40px; /* Definida altura fixa para evitar cortes */
+    line-height: 1.2; /* Melhor espaçamento vertical */
+    padding: 0 40px 0 10px; /* Padding Right 40px para a seta não cobrir o texto */
+    background-color: #222; /* Forced Background */
+    color: #eee; /* Forced Text Color */
+    border: 1px solid var(--color-border-light-2);
+    border-radius: 4px;
+    font-size: 1.1em;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    z-index: 2;
+    white-space: nowrap; /* Impede quebra de linha indesejada */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adiciona ... se o texto for muito longo */
+}
+
+/* FORCE OPTION COLORS for browser compatibility */
+.main-actor-select option {
+    background-color: #222;
+    color: #eee;
+    padding: 5px;
+}
+
+.main-actor-select:focus {
+    border-color: #ff9c5a;
+    outline: none;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 15px;
+    color: #888;
+    pointer-events: none;
+    z-index: 3;
+    /* Centraliza a seta verticalmente */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Tier Tabs */
+.tier-tabs {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.tier-buttons {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.tier-tab-btn {
+    background: #222;
+    color: #888;
+    border: 1px solid #444;
+    flex: 1;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tier-tab-btn:hover {
+    background: #333;
+    color: #fff;
+}
+
+.tier-tab-btn.active {
+    background: #ff6400;
+    color: #fff;
+    border-color: #ff9c5a;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Preview Grid */
+.preview-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.preview-column {
+    background: rgba(0,0,0,0.2);
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #333;
+}
+
+.future-column {
+    background: rgba(255, 100, 0, 0.05);
+    border: 1px solid #663300;
+}
+
+.col-header {
+    text-align: center;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    color: #ccc;
+    font-family: 'Aleo', serif;
+}
+
+.future-header {
+    color: #ff9c5a;
+}
+
+/* Stat Rows */
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.stat-label {
+    font-weight: bold;
+    color: #888;
+}
+
+.stat-value {
+    color: #eee;
+    text-align: right;
+}
+
+.stat-group {
+    margin-top: 8px;
+}
+
+.stat-block {
+    background: rgba(0,0,0,0.3);
+    padding: 5px;
+    border-radius: 3px;
+    margin-top: 2px;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+/* Features List */
+.features-preview-section {
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 156, 90, 0.3);
+    padding-top: 10px;
+}
+
+.features-header {
+    color: #ff9c5a;
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+}
+
+.feature-changes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.feature-changes-list li {
+    background: rgba(0,0,0,0.3);
+    padding: 6px;
+    margin-bottom: 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    color: #ccc;
+    border-left: 3px solid #ff6400;
+}
+
+.no-changes {
+    color: #666;
+    font-style: italic;
+}
+
+/* Visual Diffs */
+.range-hint {
+    font-size: 0.8em;
+    color: #888;
+    font-style: italic;
+}
+
+.stat-changed {
+    color: #ff9c5a;
+    font-weight: bold;
+}
+
+.preview-note {
+    margin-top: 15px;
+    font-size: 0.8em;
+    font-style: italic;
+    color: #aaa;
+    text-align: center;
+    background: rgba(0,0,0,0.3);
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+}
+
+.apply-btn {
+    background: linear-gradient(to bottom, #8a4a00, #5a2a00) !important;
+    border: 1px solid #ff6400 !important;
+}
+
+.apply-btn:hover {
+    background: linear-gradient(to bottom, #a05a00, #7a3a00) !important;
 }

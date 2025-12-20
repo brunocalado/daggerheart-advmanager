@@ -1,0 +1,137 @@
+<div class="dh-adv-manager-content preview-container">
+    
+    <!-- Top Control: Actor Selection -->
+    <div class="preview-controls form-group">
+        <label><i class="fas fa-user-circle"></i> Select Adversary:</label>
+        
+        <!-- Removed data-action to prevent click hijacking. Event handled in _onRender -->
+        <div class="select-wrapper">
+            <select name="actorSelect" class="main-actor-select">
+                <option value="" disabled {{#unless selectedActorId}}selected{{/unless}}>-- Choose an Adversary --</option>
+                {{#each adversaries}}
+                <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
+                {{/each}}
+            </select>
+            <i class="fas fa-chevron-down select-arrow"></i>
+        </div>
+    </div>
+
+    {{#if hasActor}}
+    
+    <!-- Tier Selection Tabs -->
+    <div class="tier-tabs">
+        <label>Target Tier:</label>
+        <div class="tier-buttons">
+            {{#each tiers}}
+            <button type="button" 
+                    class="tier-tab-btn {{this.cssClass}}" 
+                    data-action="selectTier" 
+                    data-tier="{{this.value}}">
+                {{this.label}}
+            </button>
+            {{/each}}
+        </div>
+    </div>
+
+    <!-- Split View Body -->
+    <div class="preview-body">
+        
+        <!-- Left Column: Current State -->
+        <div class="preview-column current-column">
+            <h3 class="col-header">Current (T{{currentStats.tier}})</h3>
+            
+            <div class="stat-row">
+                <span class="stat-label">Difficulty</span>
+                <span class="stat-value">{{currentStats.difficulty}}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">HP</span>
+                <span class="stat-value">{{currentStats.hp}}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Stress</span>
+                <span class="stat-value">{{currentStats.stress}}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Thresholds</span>
+                <span class="stat-value">{{currentStats.thresholds}}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Atk Mod</span>
+                <span class="stat-value">{{currentStats.attackMod}}</span>
+            </div>
+            <div class="stat-group">
+                <span class="stat-label">Attack Dmg</span>
+                <div class="stat-block">{{currentStats.damage}}</div>
+            </div>
+        </div>
+
+        <!-- Right Column: Preview State -->
+        <div class="preview-column future-column">
+            <h3 class="col-header future-header">Preview (T{{previewStats.tier}})</h3>
+            
+            {{#if previewStats.error}}
+                <div class="error-msg">{{previewStats.error}}</div>
+            {{else}}
+                <div class="stat-row">
+                    <span class="stat-label">Difficulty</span>
+                    <span class="stat-value">{{{previewStats.difficulty}}}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">HP</span>
+                    <span class="stat-value">{{{previewStats.hp}}}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Stress</span>
+                    <span class="stat-value">{{{previewStats.stress}}}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Thresholds</span>
+                    <span class="stat-value">{{{previewStats.thresholds}}}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Atk Mod</span>
+                    <span class="stat-value">{{{previewStats.attackMod}}}</span>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-label">Attack Dmg</span>
+                    <div class="stat-block">{{{previewStats.damage}}}</div>
+                </div>
+
+                <!-- FEATURES SECTION -->
+                <div class="features-preview-section">
+                    <h4 class="features-header">Feature Changes</h4>
+                    {{#if featurePreviewLog.length}}
+                        <ul class="feature-changes-list">
+                            {{#each featurePreviewLog}}
+                                <li>{{{this}}}</li>
+                            {{/each}}
+                        </ul>
+                    {{else}}
+                        <div class="no-changes">No feature changes predicted.</div>
+                    {{/if}}
+                </div>
+                
+                <div class="preview-note">
+                    <i class="fas fa-info-circle"></i> Values shown are simulated. Clicking Apply may re-roll stats within range.
+                </div>
+            {{/if}}
+        </div>
+
+    </div>
+
+    <!-- Footer Action -->
+    <footer class="sheet-footer">
+        <button type="button" data-action="applyChanges" class="apply-btn">
+            <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
+        </button>
+    </footer>
+
+    {{else}}
+    <div class="empty-state">
+        <i class="fas fa-skull" style="font-size: 4em; opacity: 0.3; margin-bottom: 20px;"></i>
+        <p>Select an Adversary from the list above to begin preview.</p>
+    </div>
+    {{/if}}
+
+</div>
