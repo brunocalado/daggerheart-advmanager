@@ -212,7 +212,7 @@
     align-items: center;
 }
 
-.main-actor-select, .filter-tier-select, .source-select, .filter-type-select, .damage-preset-select {
+.main-actor-select, .filter-tier-select, .source-select, .filter-type-select {
     width: 100%;
     height: 40px;
     line-height: 1.2;
@@ -232,9 +232,28 @@
     text-overflow: ellipsis;
 }
 
+/* UPDATED: Centered Text */
 .damage-preset-select {
-    height: 28px; /* Smaller for inline */
+    width: 100%;
+    height: 28px;
+    line-height: 1.2;
+    padding: 0 5px; /* Reduced padding since we are centering */
+    background: rgba(0, 0, 0, 0.5); 
+    color: #ea80fc; 
+    border: 1px solid #555; 
+    border-radius: 3px; 
     font-size: 0.9em;
+    font-weight: bold; 
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    z-index: 2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;      /* Center text */
+    text-align-last: center; /* Center text for Chrome/Foundry */
 }
 
 /* FORCE OPTION COLORS */
@@ -386,11 +405,9 @@ select:focus {
 }
 
 .stat-value-hint {
-    font-size: 1.0em; /* Increased Size for readability */
-    color: #ccc; /* Improved Contrast */
+    /* Updated styles handled by .range-hint primarily, but this container aligns it */
     min-width: 60px;
     text-align: right;
-    font-family: monospace; /* Monospace helps alignment */
 }
 
 .dual-input {
@@ -474,11 +491,12 @@ select:focus {
     font-style: italic;
 }
 
-/* Visual Diffs */
+/* UPDATED: Visual Diffs & Range Hints */
 .range-hint {
-    font-size: 0.8em;
-    color: #888;
+    font-size: 0.95em; /* Increased size */
+    color: #e0e0e0;    /* Much lighter/brighter color for visibility */
     font-style: italic;
+    opacity: 0.9;
 }
 
 .stat-changed {

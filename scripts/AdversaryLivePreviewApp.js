@@ -30,7 +30,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         id: "daggerheart-live-preview",
         tag: "form",
         window: {
-            title: "Adversary Live Preview",
+            title: "Adversary Live Manager", // UPDATED TITLE
             icon: "fas fa-eye",
             resizable: true,
             width: 1000,
@@ -237,7 +237,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
 
                 if (isMinion) {
                     previewStats.thresholdsDisplay = "None"; 
-                    previewStats.hpDisplay = "1 (Fixed)";
+                    previewStats.hpDisplay = "(Fixed)"; // UPDATED: Just the label, removed the value "1"
                 }
 
                 // Prepare Structured Feature Data
@@ -316,7 +316,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             input.addEventListener('change', (e) => this._onOverrideChange(e, input));
         });
 
-        // Bind Feature Override Inputs (FIXED: Now properly bound)
+        // Bind Feature Override Inputs
         html.querySelectorAll('.feature-override-input').forEach(input => {
             input.addEventListener('change', (e) => this._onFeatureOverrideChange(e, input));
         });
@@ -344,9 +344,6 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         
         // Update the overrides object
         this.overrides.features[itemId] = value;
-        
-        // Note: No re-render needed for text inputs as focus loss handles value update, 
-        // but if logic depended on it, we'd render. Keeping it simple to avoid focus loss issues.
     }
 
     // --- Stats Helpers (Standard) ---
@@ -396,11 +393,12 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             }
         }
 
-        sim.difficulty = `${sim.difficultyRaw} <span class="range-hint">(${benchmark.difficulty})</span>`;
-        sim.hp = `${sim.hpRaw} <span class="range-hint">(${benchmark.hp})</span>`;
-        sim.stress = `${sim.stressRaw} <span class="range-hint">(${benchmark.stress})</span>`;
-        sim.thresholds = `${sim.majorRaw}/${sim.severeRaw} <span class="range-hint">(${benchmark.threshold_min} - ${benchmark.threshold_max})</span>`;
-        sim.attackMod = `${sim.attackModRaw} <span class="range-hint">(${benchmark.attack_modifier})</span>`;
+        // UPDATED: Removed raw value from display strings, kept only range hint
+        sim.difficulty = `<span class="range-hint">(${benchmark.difficulty})</span>`;
+        sim.hp = `<span class="range-hint">(${benchmark.hp})</span>`;
+        sim.stress = `<span class="range-hint">(${benchmark.stress})</span>`;
+        sim.thresholds = `<span class="range-hint">(${benchmark.threshold_min} - ${benchmark.threshold_max})</span>`;
+        sim.attackMod = `<span class="range-hint">(${benchmark.attack_modifier})</span>`;
         sim.tier = targetTier;
 
         const damageParts = [];
