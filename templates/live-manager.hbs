@@ -107,6 +107,13 @@
                 <span class="stat-label">Attack Damage</span>
                 <div class="stat-block">{{currentStats.damage}}</div>
             </div>
+            
+            {{#if currentStats.halvedDamage}}
+            <div class="stat-group">
+                <span class="stat-label">Halved Damage (Horde)</span>
+                <div class="stat-block">{{currentStats.halvedDamage}}</div>
+            </div>
+            {{/if}}
         </div>
 
         <!-- Right Column: Preview State -->
@@ -171,6 +178,13 @@
                     </div>
                     <div class="stat-block">{{{previewStats.damage}}}</div>
                 </div>
+
+                {{#if previewStats.halvedDamage}}
+                <div class="stat-group">
+                    <span class="stat-label">Halved Damage (Horde)</span>
+                    <div class="stat-block">{{{previewStats.halvedDamage}}}</div>
+                </div>
+                {{/if}}
 
                 <!-- FEATURES SECTION -->
                 <div class="features-preview-section">

@@ -287,6 +287,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     attackModDisplay: simResult.stats.attackMod,
                     
                     damage: simResult.stats.damage, 
+                    halvedDamage: simResult.stats.halvedDamage, // NEW: Pass halved damage to preview
                     tier: this.targetTier,
                     isMinion: isMinion
                 };
@@ -497,12 +498,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     _extractStats(actorData, tier) {
         const sys = actorData.system;
         const damageParts = [];
+        const halvedParts = []; // NEW: Extract halved damage for Horde
+        
         if (sys.attack?.damage?.parts) {
             sys.attack.damage.parts.forEach(p => {
                 if(p.value) {
                     let formula = p.value.custom?.enabled ? p.value.custom.formula : 
                         (p.value.dice ? `${p.value.flatMultiplier || 1}${p.value.dice}${p.value.bonus ? (p.value.bonus > 0 ? '+'+p.value.bonus : p.value.bonus) : ''}` : p.value.flatMultiplier);
                     damageParts.push(formula);
+                }
+                // NEW: Handle Secondary/Alt Damage (used by Horde)
+                if (p.valueAlt) {
+                    let formula = p.valueAlt.custom?.enabled ? p.valueAlt.custom.formula : 
+                        (p.valueAlt.dice ? `${p.valueAlt.flatMultiplier || 1}${p.valueAlt.dice}${p.valueAlt.bonus ? (p.valueAlt.bonus > 0 ? '+'+p.valueAlt.bonus : p.valueAlt.bonus) : ''}` : p.valueAlt.flatMultiplier);
+                    halvedParts.push(formula);
                 }
             });
         }
@@ -513,7 +522,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             stress: sys.resources?.stress?.max,
             thresholds: `${sys.damageThresholds?.major} / ${sys.damageThresholds?.severe}`,
             attackMod: sys.attack?.roll?.bonus,
-            damage: damageParts.join(", ") || "None"
+            damage: damageParts.join(", ") || "None",
+            halvedDamage: halvedParts.join(", ") || null // NEW: Return extracted halved damage
         };
     }
 
@@ -549,6 +559,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         sim.tier = targetTier;
 
         const damageParts = [];
+        const halvedParts = []; // NEW: Array for simulated halved damage
+
         if (actorData.system.attack?.damage?.parts) {
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
             tempParts.forEach(part => {
@@ -569,9 +581,25 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                          damageParts.push(existing);
                     }
                 }
+
+                // NEW: Handle Halved Damage Logic for Horde
+                if (part.valueAlt && benchmark.halved_damage_x) {
+                    const result = Manager.processDamageValue(part.valueAlt, targetTier, currentTier, benchmark.halved_damage_x);
+                    if (result) {
+                        halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
+                    } else {
+                         // Fallback display existing
+                         let existing = "";
+                         if (part.valueAlt.custom?.enabled) existing = part.valueAlt.custom.formula;
+                         else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
+                         else existing = part.valueAlt.flatMultiplier;
+                         halvedParts.push(existing);
+                    }
+                }
             });
         }
         sim.damage = damageParts.join(", ") || "None";
+        sim.halvedDamage = halvedParts.join(", ") || null; // NEW: Set halved damage string
 
         const featureLog = [];
         const structuredFeatures = []; // This will be populated by processFeatureUpdate
