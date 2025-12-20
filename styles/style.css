@@ -528,6 +528,23 @@ select:focus {
     outline: none;
 }
 
+/* MINION VALUE INPUT */
+.minion-val-input {
+    width: 40px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid #ea80fc;
+    color: #ea80fc;
+    text-align: center;
+    border-radius: 3px;
+    padding: 2px;
+    font-weight: bold;
+}
+
+.minion-val-input:focus {
+    outline: none;
+    box-shadow: 0 0 5px #ea80fc;
+}
+
 .no-changes {
     color: #666;
     font-style: italic;

@@ -261,15 +261,19 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                     let oldFormula = part.value.custom?.enabled ? part.value.custom.formula : (part.value.dice ? `${part.value.flatMultiplier}${part.value.dice}` : `${part.value.flatMultiplier}`);
                     
                     if (parsed.die === null) {
+                        // Flat damage (Minion style or fixed)
+                        if (!part.value.custom) part.value.custom = {};
+                        part.value.custom.enabled = true;
+                        part.value.custom.formula = `${parsed.count}`;
                         part.value.flatMultiplier = parsed.count;
-                        part.value.dice = "";
+                        part.value.dice = ""; // Clear dice
                         part.value.bonus = null;
-                        part.value.custom = { enabled: false };
                     } else {
+                        // Dice damage
                         part.value.flatMultiplier = parsed.count;
                         part.value.dice = parsed.die;
                         part.value.bonus = parsed.bonus;
-                        part.value.custom = { enabled: false };
+                        if (part.value.custom) part.value.custom.enabled = false;
                     }
                     
                     hasChanges = true;
@@ -281,6 +285,30 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // Standard logic
         parts.forEach(part => {
+            // MINION CHECK: If benchmark has 'basic_attack_y', use it instead of scaling
+            if (benchmark.basic_attack_y && part.value) {
+                const currentFormula = part.value.custom?.enabled ? part.value.custom.formula : `${part.value.flatMultiplier}`;
+                const newVal = Manager.getRollFromRange(benchmark.basic_attack_y);
+                
+                if (newVal !== null) {
+                    // Minions use custom formula for flat damage
+                    if (!part.value.custom) part.value.custom = {};
+                    
+                    part.value.custom.enabled = true;
+                    part.value.custom.formula = String(newVal);
+                    part.value.flatMultiplier = newVal;
+                    // Usually we don't clear dice for minions if they have a visual dice set, but for damage calc, formula is king.
+                    
+                    // Only record change if value actually changed
+                    if (currentFormula !== String(newVal)) {
+                        hasChanges = true;
+                        changes.push({ from: currentFormula, to: String(newVal), isCustom: true, labelSuffix: "" });
+                    }
+                    return; // Skip standard processing for this part
+                }
+            }
+
+            // Normal Adversary Logic
             if (part.value) {
                 const update = Manager.processDamageValue(part.value, newTier, currentTier, benchmark.damage_rolls);
                 if (update) {
@@ -426,7 +454,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
-            // Minion Logic
+            // Minion Logic (Renaming Feature)
             const minionMatch = itemData.name.trim().match(/^Minion\s*\((\d+)\)$/i);
             if (minionMatch && benchmark.minion_feature_x) {
                 const newVal = Manager.getRollFromRange(benchmark.minion_feature_x);

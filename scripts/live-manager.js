@@ -13,10 +13,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     
     constructor(options = {}) {
         super(options);
-        this.initialActor = options.actor || null;
         
+        // Initial setup
+        this.initialActor = options.actor || null;
         this.selectedActorId = this.initialActor ? this.initialActor.id : (options.actorId || null);
-        this.targetTier = options.targetTier || 1;
+        
+        // Default target tier based on actor or default
+        this.targetTier = options.targetTier || (this.initialActor ? (Number(this.initialActor.system.tier) || 1) : 1);
         this.previewData = null;
         
         // Store overrides separated by type
@@ -27,10 +30,18 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         };
 
-        // Initialize from persistent settings, fallback to defaults
-        this.filterTier = game.settings.get(MODULE_ID, SETTING_LAST_FILTER_TIER) || "all"; 
-        this.source = game.settings.get(MODULE_ID, SETTING_LAST_SOURCE) || "world"; 
-        this.filterType = "all"; // New Type Filter
+        // Initialize Settings
+        if (this.initialActor) {
+            // FORCE overrides for the provided actor so it's not filtered out
+            this.filterTier = String(Number(this.initialActor.system.tier) || 1);
+            this.filterType = (this.initialActor.system.type || "standard").toLowerCase();
+            this.source = "world"; // Token actors are effectively world/scene context
+        } else {
+            // Use saved persistence if no specific actor was requested
+            this.filterTier = game.settings.get(MODULE_ID, SETTING_LAST_FILTER_TIER) || "all"; 
+            this.source = game.settings.get(MODULE_ID, SETTING_LAST_SOURCE) || "world"; 
+            this.filterType = "all"; 
+        }
     }
 
     static DEFAULT_OPTIONS = {
@@ -90,6 +101,27 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     /**
+     * Update the Live Manager to show a specific actor.
+     * Designed to be called by external hooks (like controlToken).
+     */
+    async updateSelectedActor(actor) {
+        if (!actor) return;
+        this.source = "world";
+        this.initialActor = actor; // Update initial reference
+        this.selectedActorId = actor.id;
+        this.targetTier = Number(actor.system.tier) || 1;
+        
+        // Reset overrides to avoid confusion
+        this.overrides = { features: { names: {}, damage: {} } }; 
+        
+        // Sync filter settings to match this new actor so they don't look weird
+        this.filterTier = String(this.targetTier); 
+        this.filterType = (actor.system.type || "standard").toLowerCase();
+
+        this.render();
+    }
+
+    /**
      * Prepare data for the Handlebars template
      */
     async _prepareContext(_options) {
@@ -132,6 +164,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     advType: (a.system.type || "standard").toLowerCase() 
                 }));
             
+            // If we have an initial actor selected (from token selection), ensure it's in the list
             if (this.initialActor && !game.actors.has(this.initialActor.id)) {
                 if (!rawAdversaries.find(a => a.id === this.initialActor.id)) {
                     rawAdversaries.push({
@@ -179,9 +212,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!this.selectedActorId && displayedAdversaries.length > 0) {
              this.selectedActorId = displayedAdversaries[0].id;
         } else if (this.selectedActorId && !displayedAdversaries.find(a => a.id === this.selectedActorId)) {
-             // If selected actor is not in the filtered list (e.g. after filter change), select first available
-             // But if we specifically asked for an ID (via applyChanges), we might need to handle it better.
-             // For now, default to first or null.
              if (displayedAdversaries.length > 0) this.selectedActorId = displayedAdversaries[0].id;
              else this.selectedActorId = null;
         }
@@ -223,8 +253,23 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const simResult = await this._simulateStats(actor, this.targetTier, currentTier);
                 
                 const benchmark = ADVERSARY_BENCHMARKS[typeKey]?.tiers[`tier_${this.targetTier}`];
-                if (benchmark && benchmark.damage_rolls && Array.isArray(benchmark.damage_rolls)) {
-                    damageOptions = benchmark.damage_rolls.map(d => ({ value: d, label: d }));
+                
+                // Determine Damage Options
+                if (benchmark) {
+                    if (benchmark.damage_rolls && Array.isArray(benchmark.damage_rolls)) {
+                        damageOptions = benchmark.damage_rolls.map(d => ({ value: d, label: d }));
+                    } else if (benchmark.basic_attack_y) {
+                        const parts = benchmark.basic_attack_y.toString().split(/[/-]/).map(n => parseInt(n));
+                        if (parts.length >= 2) {
+                            const min = Math.min(...parts);
+                            const max = Math.max(...parts);
+                            for (let i = min; i <= max; i++) {
+                                damageOptions.push({ value: String(i), label: String(i) });
+                            }
+                        } else {
+                            damageOptions.push({ value: benchmark.basic_attack_y, label: benchmark.basic_attack_y });
+                        }
+                    }
                 }
 
                 previewStats = {
@@ -288,7 +333,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     if (f.type === 'damage' || f.type === 'name_horde') {
                          const currentVal = overrideVal !== undefined ? overrideVal : f.to;
                          
-                         // Create options from benchmark damage_rolls
+                         // Create options from benchmark damage_rolls OR basic_attack_y options
                          featureOptions = damageOptions.map(d => ({
                              value: d.value,
                              label: d.label,
@@ -305,8 +350,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         itemId: f.itemId,
                         originalName: displayFrom,
                         newName: overrideVal !== undefined ? overrideVal : f.to,
-                        isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde', // Horde treated as damage override for UI
-                        options: featureOptions // Pass options for the combobox
+                        // UPDATED: Minion names are now treated as static text, not renamed inputs
+                        isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion', 
+                        options: featureOptions 
                     };
                 });
             }
@@ -472,7 +518,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (actorData.system.attack?.damage?.parts) {
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
             tempParts.forEach(part => {
-                if (part.value) {
+                // Check if minion style damage override
+                if (benchmark.basic_attack_y && part.value) {
+                     // We simulate the change here just for display
+                     const newVal = Manager.getRollFromRange(benchmark.basic_attack_y);
+                     damageParts.push(`<span class="stat-changed">${newVal}</span>`);
+                } else if (part.value) {
                     const result = Manager.processDamageValue(part.value, targetTier, currentTier, benchmark.damage_rolls);
                     if (result) {
                         damageParts.push(`<span class="stat-changed">${result.to}</span>`);
@@ -605,7 +656,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (!result) {
                 ui.notifications.warn("No changes were necessary.");
             } else {
-                ui.notifications.info(`Updated ${actor.name} to Tier ${this.targetTier}`);
+                // Success Notification Removed as per request
+                // ui.notifications.info(`Updated ${actor.name} to Tier ${this.targetTier}`);
             }
 
             // 3. SYNC FILTERS TO NEW ACTOR STATE

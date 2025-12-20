@@ -123,6 +123,25 @@ Hooks.once("ready", () => {
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });
 
+// --- Token Selection Hook for Live Preview ---
+Hooks.on("controlToken", (token, controlled) => {
+    if (!controlled) return;
+    
+    // Only proceed if exactly one token is selected
+    const tokens = canvas.tokens.controlled;
+    if (tokens.length !== 1) return;
+    
+    const actor = tokens[0].actor;
+    if (!actor || actor.type !== "adversary") return;
+
+    // Find if LiveManager is open
+    const app = Object.values(ui.windows).find(w => w.id === "daggerheart-live-preview");
+    if (app) {
+        // Call the update method on the instance
+        app.updateSelectedActor(actor);
+    }
+});
+
 Hooks.on("renderDaggerheartMenu", (app, html) => {
     const element = (html instanceof HTMLElement) ? html : html[0];
     

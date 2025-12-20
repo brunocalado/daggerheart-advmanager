@@ -191,8 +191,13 @@
                                                     <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
                                                 {{/each}}
                                             </select>
+                                        {{else if this.isMinionFeature}}
+                                            <!-- SPECIAL: Minion Numeric Input -->
+                                            <div class="minion-group" style="display:flex; align-items:center; gap:2px; font-weight:bold; color:#ea80fc;">
+                                                Minion ( <input type="number" class="minion-val-input" data-itemid="{{this.itemId}}" value="{{this.minionValue}}"> )
+                                            </div>
                                         {{else}}
-                                            <!-- Fallback to text input if renamed (minion) or static text -->
+                                            <!-- Fallback to text input if renamed or static text -->
                                             {{#if this.isRenamed}}
                                                 <input type="text" class="feature-override-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" title="Rename Feature">
                                             {{else}}
