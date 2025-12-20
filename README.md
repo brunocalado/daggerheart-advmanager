@@ -11,10 +11,6 @@ Open the manager
 AM.Manage()
 ```
 
-```js
-AM.QuickPreview()
-```
-
 ## 🚀 Installation
 
 Install via the Foundry VTT Module browser or use this manifest link:

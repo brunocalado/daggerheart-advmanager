@@ -170,12 +170,17 @@
     width: 100%;
 }
 
+/* Flex sizing for 3 columns: Source | Tier | Actor */
+.source-wrapper {
+    flex: 0 0 25%;
+}
+
 .filter-wrapper {
-    flex: 0 0 30%; /* Takes 30% width */
+    flex: 0 0 20%; 
 }
 
 .actor-wrapper {
-    flex: 1; /* Takes remaining width */
+    flex: 1; 
 }
 
 /* Shared Select Styling */
@@ -185,7 +190,7 @@
     align-items: center;
 }
 
-.main-actor-select, .filter-tier-select {
+.main-actor-select, .filter-tier-select, .source-select {
     width: 100%;
     height: 40px;
     line-height: 1.2;
@@ -206,13 +211,13 @@
 }
 
 /* FORCE OPTION COLORS */
-.main-actor-select option, .filter-tier-select option {
+.main-actor-select option, .filter-tier-select option, .source-select option {
     background-color: #222;
     color: #eee;
     padding: 5px;
 }
 
-.main-actor-select:focus, .filter-tier-select:focus {
+.main-actor-select:focus, .filter-tier-select:focus, .source-select:focus {
     border-color: #ff9c5a;
     outline: none;
 }

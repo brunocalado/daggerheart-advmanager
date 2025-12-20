@@ -1,11 +1,12 @@
 import { AdversaryManagerApp } from "./AdversaryManagerApp.js";
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
+import { MODULE_ID, SETTING_IMPORT_FOLDER } from "./module.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
  * Live Preview Application for Daggerheart Adversaries.
- * Allows selecting an actor and previewing changes in real-time.
+ * Allows selecting an actor (World or Compendium) and previewing changes in real-time.
  */
 export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(ApplicationV2) {
     
@@ -18,7 +19,8 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         this.selectedActorId = this.initialActor ? this.initialActor.id : (options.actorId || null);
         this.targetTier = options.targetTier || 1;
         this.previewData = null;
-        this.filterTier = "all"; // Default filter state
+        this.filterTier = "all"; // Default tier filter
+        this.source = "world"; // 'world' or 'compendium'
     }
 
     static DEFAULT_OPTIONS = {
@@ -28,12 +30,12 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             title: "Adversary Live Preview",
             icon: "fas fa-eye",
             resizable: true,
-            width: 900,
+            width: 950, // Slightly wider for extra control
             height: 750
         },
-        position: { width: 900, height: 750 },
+        position: { width: 950, height: 750 },
         actions: {
-            // "selectActor" and "filterTier" removed to be handled manually in _onRender
+            // Manual handling in _onRender for selects
             selectTier: AdversaryLivePreviewApp.prototype._onSelectTier,
             applyChanges: AdversaryLivePreviewApp.prototype._onApplyChanges
         },
@@ -51,60 +53,91 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
     };
 
     /**
-     * Helper to get the actual actor object, handling both World Actors and Synthetic (Token) Actors.
+     * Helper to get the actual actor object.
+     * Handles World, Synthetic, and asynchronous Compendium fetches.
      */
-    _getActor(actorId) {
+    async _getActor(actorId) {
         if (!actorId) return null;
         
-        // 1. Check if it matches the initial synthetic actor passed
+        // 1. Synthetic / Initial Actor passed in constructor
         if (this.initialActor && this.initialActor.id === actorId) {
             return this.initialActor;
         }
 
-        // 2. Try to find in the world
-        return game.actors.get(actorId);
+        // 2. World Actor
+        if (this.source === "world") {
+            return game.actors.get(actorId);
+        }
+
+        // 3. Compendium Actor
+        if (this.source === "compendium") {
+            const pack = game.packs.get("daggerheart.adversaries");
+            if (pack) {
+                // Must fetch the full document to display stats
+                return await pack.getDocument(actorId);
+            }
+        }
+
+        return null;
     }
 
     /**
      * Prepare data for the Handlebars template
      */
     async _prepareContext(_options) {
-        // 1. Get List of World Adversaries (Raw first to allow filtering)
-        let allAdversaries = game.actors
-            .filter(a => a.type === "adversary")
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map(a => ({ 
-                id: a.id, 
-                name: a.name, 
-                tier: Number(a.system.tier) || 1, // Store tier for filtering
-                selected: a.id === this.selectedActorId 
-            }));
+        let rawAdversaries = [];
 
-        // 2. If we have a synthetic initial actor, ensure it's in the list
-        if (this.initialActor && !game.actors.has(this.initialActor.id)) {
-            // Check if already added (to avoid duplicates if re-rendering)
-            if (!allAdversaries.find(a => a.id === this.initialActor.id)) {
-                allAdversaries.unshift({
-                    id: this.initialActor.id,
-                    name: `${this.initialActor.name} (Token)`,
-                    tier: Number(this.initialActor.system.tier) || 1,
-                    selected: this.initialActor.id === this.selectedActorId
-                });
+        // 1. Fetch List based on Source
+        if (this.source === "world") {
+            rawAdversaries = game.actors
+                .filter(a => a.type === "adversary")
+                .map(a => ({ 
+                    id: a.id, 
+                    name: a.name, 
+                    tier: Number(a.system.tier) || 1
+                }));
+            
+            // Add synthetic actor if not in world
+            if (this.initialActor && !game.actors.has(this.initialActor.id)) {
+                if (!rawAdversaries.find(a => a.id === this.initialActor.id)) {
+                    rawAdversaries.push({
+                        id: this.initialActor.id,
+                        name: `${this.initialActor.name} (Token)`,
+                        tier: Number(this.initialActor.system.tier) || 1
+                    });
+                }
+            }
+        } else if (this.source === "compendium") {
+            const pack = game.packs.get("daggerheart.adversaries");
+            if (pack) {
+                // Get index first for list display (faster)
+                const index = await pack.getIndex({ fields: ["system.tier", "type"] });
+                rawAdversaries = index
+                    .filter(i => i.type === "adversary")
+                    .map(i => ({
+                        id: i._id,
+                        name: i.name,
+                        tier: Number(i.system?.tier) || 1
+                    }));
             }
         }
+
+        // Sort alphabetically
+        rawAdversaries.sort((a, b) => a.name.localeCompare(b.name));
+
+        // 2. Mark selected state
+        let allAdversaries = rawAdversaries.map(a => ({
+            ...a,
+            selected: a.id === this.selectedActorId
+        }));
 
         // 3. Apply Tier Filter
         let displayedAdversaries = allAdversaries;
         if (this.filterTier !== "all") {
             displayedAdversaries = allAdversaries.filter(a => a.tier === Number(this.filterTier));
         }
-        
-        // Ensure selected actor is visible even if it doesn't match filter (optional UX choice, but good practice)
-        // If the selected actor is hidden by filter, it might look confusing. 
-        // For now, let's respect the filter strictly, but if the selected actor is filtered out, 
-        // the select box will naturally just show the first available option or empty depending on browser.
-        
-        // 4. Prepare Current & Preview Data if Actor Selected
+
+        // 4. Prepare Current & Preview Data
         let currentStats = null;
         let previewStats = null;
         let actor = null;
@@ -112,12 +145,13 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         let linkData = null;
 
         if (this.selectedActorId) {
-            actor = this._getActor(this.selectedActorId);
+            // Note: _getActor is async now because of Compendium
+            actor = await this._getActor(this.selectedActorId);
             
             if (actor) {
                 const currentTier = Number(actor.system.tier) || 1;
                 
-                // Determine Link Status
+                // Determine Link Status (Only relevant for World/Token actors really)
                 const isLinked = actor.isToken ? actor.token?.actorLink : actor.prototypeToken?.actorLink;
                 
                 linkData = {
@@ -127,17 +161,18 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
                     label: isLinked ? "Linked" : "Unlinked"
                 };
 
-                // Extrai estatísticas atuais
+                // Compendium actors don't have link status really, just static
+                if (this.source === "compendium") linkData = null;
+
                 currentStats = this._extractStats(actor.toObject(), currentTier);
                 
-                // Simula estatísticas futuras
                 const simResult = await this._simulateStats(actor, this.targetTier, currentTier);
                 previewStats = simResult.stats;
                 featurePreviewLog = simResult.features;
             }
         }
 
-        // 5. Prepare Tier Buttons
+        // 5. Tier Buttons
         const tiers = [1, 2, 3, 4].map(t => ({
             value: t,
             label: `Tier ${t}`,
@@ -145,7 +180,13 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             cssClass: t === this.targetTier ? "active" : ""
         }));
 
-        // 6. Filter Options
+        // 6. Source Options
+        const sourceOptions = [
+            { value: "world", label: "World", selected: this.source === "world" },
+            { value: "compendium", label: "System Compendium", selected: this.source === "compendium" }
+        ];
+
+        // 7. Filter Options
         const filterOptions = [
             { value: "all", label: "All Tiers", selected: this.filterTier === "all" },
             { value: "1", label: "Tier 1", selected: this.filterTier === "1" },
@@ -163,41 +204,39 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             featurePreviewLog,
             tiers,
             linkData,
+            sourceOptions,
             filterOptions,
             actorName: actor?.name || "None"
         };
     }
 
-    /**
-     * Post-Render hook to bind specific events like 'change' for the select box.
-     */
     _onRender(context, options) {
         super._onRender(context, options);
         
-        // 1. Bind Main Actor Select
-        const selectElement = this.element.querySelector('.main-actor-select');
-        if (selectElement) {
-            selectElement.addEventListener('change', (event) => {
-                this._onSelectActor(event, selectElement);
-            });
+        const html = this.element;
+
+        // Bind Source Select
+        const sourceSelect = html.querySelector('.source-select');
+        if (sourceSelect) {
+            sourceSelect.addEventListener('change', (e) => this._onSelectSource(e, sourceSelect));
         }
 
-        // 2. Bind Filter Tier Select
-        const filterElement = this.element.querySelector('.filter-tier-select');
-        if (filterElement) {
-            filterElement.addEventListener('change', (event) => {
-                this._onFilterTier(event, filterElement);
-            });
+        // Bind Filter Tier Select
+        const filterSelect = html.querySelector('.filter-tier-select');
+        if (filterSelect) {
+            filterSelect.addEventListener('change', (e) => this._onFilterTier(e, filterSelect));
+        }
+
+        // Bind Main Actor Select
+        const actorSelect = html.querySelector('.main-actor-select');
+        if (actorSelect) {
+            actorSelect.addEventListener('change', (e) => this._onSelectActor(e, actorSelect));
         }
     }
 
-    /**
-     * Extracts displayable stats from an actor object
-     */
+    // --- Stats Helpers (Identical to previous) ---
     _extractStats(actorData, tier) {
         const sys = actorData.system;
-        
-        // Format Damage strings from items (Sheet Attack)
         const damageParts = [];
         if (sys.attack?.damage?.parts) {
             sys.attack.damage.parts.forEach(p => {
@@ -208,9 +247,8 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
                 }
             });
         }
-
         return {
-            tier: tier,
+            tier,
             difficulty: sys.difficulty,
             hp: sys.resources?.hitPoints?.max,
             stress: sys.resources?.stress?.max,
@@ -220,9 +258,6 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         };
     }
 
-    /**
-     * Simulates the stats for the target tier based on module rules
-     */
     async _simulateStats(actor, targetTier, currentTier) {
         const actorData = actor.toObject();
         const typeKey = (actorData.system.type || "standard").toLowerCase();
@@ -232,8 +267,6 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [] };
 
         const sim = {};
-
-        // --- 1. Basic Stats Simulation ---
         sim.difficulty = this._formatRange(benchmark.difficulty);
         sim.hp = this._formatRange(benchmark.hp);
         sim.stress = this._formatRange(benchmark.stress);
@@ -241,11 +274,9 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         sim.attackMod = benchmark.attack_modifier;
         sim.tier = targetTier;
 
-        // --- 2. Sheet Damage Simulation ---
         const damageParts = [];
         if (actorData.system.attack?.damage?.parts) {
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
-            
             tempParts.forEach(part => {
                 if (part.value) {
                     const result = AdversaryManagerApp.processDamageValue(part.value, targetTier, currentTier, benchmark.damage_rolls);
@@ -263,17 +294,12 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         }
         sim.damage = damageParts.join(", ") || "None";
 
-        // --- 3. Features Simulation ---
         const featureLog = [];
-        
-        // A) Existing Items Update Simulation
         if (actorData.items) {
             for (const item of actorData.items) {
                 AdversaryManagerApp.processFeatureUpdate(item, targetTier, currentTier, benchmark, featureLog);
             }
         }
-
-        // B) Suggested Features Simulation
         if (game.settings.get("daggerheart-advmanager", "autoAddFeatures") && targetTier > currentTier) {
             if (benchmark.suggested_features && Array.isArray(benchmark.suggested_features) && benchmark.suggested_features.length > 0) {
                  const suggestions = benchmark.suggested_features.map(s => s.replace("(X)", `(${targetTier})`));
@@ -281,7 +307,6 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
                  featureLog.push(`<span style="color:#00e676;">Potential New Feature from:</span> ${potential}`);
             }
         }
-
         return { stats: sim, features: featureLog };
     }
 
@@ -291,28 +316,31 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         return `${rolled} <span class="range-hint">(${val})</span>`;
     }
 
-    /* -------------------------------------------- */
-    /* Event Listeners & Actions                   */
-    /* -------------------------------------------- */
+    // --- Actions ---
 
-    async _onSelectActor(event, target) {
+    async _onSelectSource(event, target) {
         event.preventDefault();
         event.stopPropagation();
-        
-        this.selectedActorId = target.value;
-        const actor = this._getActor(this.selectedActorId);
-        
-        if (actor) {
-            this.targetTier = Number(actor.system.tier) || 1;
-        }
+        this.source = target.value;
+        this.selectedActorId = null; // Reset selection on source change
         this.render();
     }
 
     async _onFilterTier(event, target) {
         event.preventDefault();
         event.stopPropagation();
-        
         this.filterTier = target.value;
+        this.render();
+    }
+
+    async _onSelectActor(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectedActorId = target.value;
+        const actor = await this._getActor(this.selectedActorId);
+        if (actor) {
+            this.targetTier = Number(actor.system.tier) || 1;
+        }
         this.render();
     }
 
@@ -327,24 +355,49 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
     async _onApplyChanges(event, target) {
         if (!this.selectedActorId) return;
         
-        const actor = this._getActor(this.selectedActorId);
+        let actor = await this._getActor(this.selectedActorId);
         if (!actor) return;
 
         try {
-            ui.notifications.info(`Applying Tier ${this.targetTier} to ${actor.name}...`);
+            // Logic for Compendium: Import first, then update
+            if (this.source === "compendium") {
+                // Notifications suppressed per request
+                
+                // 1. Get or Create Folder
+                const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
+                let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
+                if (!folder) {
+                    // Create folder with specific purple color
+                    folder = await Folder.create({ name: folderName, type: "Actor", color: "#430047" });
+                }
+
+                // 2. Import Actor
+                const pack = game.packs.get("daggerheart.adversaries");
+                actor = await game.actors.importFromCompendium(pack, this.selectedActorId, { folder: folder.id });
+                
+                if (actor) {
+                    // Switch context to the new World actor so future edits on this screen affect the imported copy
+                    this.source = "world";
+                    this.selectedActorId = actor.id;
+                }
+            }
+
+            // Normal Update Logic (Works for existing World actors or the newly imported one)
             const result = await AdversaryManagerApp.updateSingleActor(actor, this.targetTier);
             
             if (result) {
-                if (game.settings.get("daggerheart-advmanager", "enableChatLog")) {
+                if (game.settings.get(MODULE_ID, "enableChatLog")) {
                     AdversaryManagerApp.sendBatchChatLog([result], this.targetTier);
                 }
+                // Success notification suppressed per request
             } else {
                 ui.notifications.warn("No changes were necessary.");
             }
             this.render();
+
         } catch (e) {
             console.error(e);
-            ui.notifications.error("Error applying changes.");
+            ui.notifications.error("Error applying changes. Check console.");
         }
     }
 }

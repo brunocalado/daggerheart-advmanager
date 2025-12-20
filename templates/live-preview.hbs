@@ -5,6 +5,16 @@
         <label><i class="fas fa-user-circle"></i> Select Adversary:</label>
         
         <div class="actor-selection-row">
+            <!-- Source Selector -->
+            <div class="select-wrapper source-wrapper">
+                <select name="source" class="source-select">
+                    {{#each sourceOptions}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                </select>
+                <i class="fas fa-database select-arrow"></i>
+            </div>
+
             <!-- Filter by Tier -->
             <div class="select-wrapper filter-wrapper">
                 <select name="filterTier" class="filter-tier-select">
@@ -140,7 +150,11 @@
     <!-- Footer Action -->
     <footer class="sheet-footer">
         <button type="button" data-action="applyChanges" class="apply-btn">
-            <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
+            {{#if (eq linkData null)}}
+                <i class="fas fa-file-import"></i> Import & Apply Tier {{previewStats.tier}}
+            {{else}}
+                <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
+            {{/if}}
         </button>
     </footer>
 
