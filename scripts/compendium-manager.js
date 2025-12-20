@@ -4,7 +4,7 @@ import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS } from "./module.js";
 /**
  * Application to select which Actor Compendiums should be available in the Live Preview.
  */
-export class CompendiumManagerApp extends HandlebarsApplicationMixin(ApplicationV2) {
+export class CompendiumManager extends HandlebarsApplicationMixin(ApplicationV2) {
     
     static DEFAULT_OPTIONS = {
         id: "daggerheart-compendium-manager",
@@ -18,7 +18,7 @@ export class CompendiumManagerApp extends HandlebarsApplicationMixin(Application
         },
         position: { width: 400, height: "auto" },
         form: {
-            handler: CompendiumManagerApp.submitHandler,
+            handler: CompendiumManager.submitHandler,
             closeOnSubmit: true
         }
     };
@@ -65,7 +65,5 @@ export class CompendiumManagerApp extends HandlebarsApplicationMixin(Application
 
         await game.settings.set(MODULE_ID, SETTING_EXTRA_COMPENDIUMS, selected);
         ui.notifications.info("Compendium sources updated.");
-        
-        // Ideally, we could refresh the Live Preview if open, but user can re-open it.
     }
 }

@@ -2,7 +2,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
 import { MODULE_ID, SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SETTING_ADD_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
 
-export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV2) {
+export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
     
     constructor(options = {}) {
         super(options);
@@ -27,7 +27,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             height: "auto"
         },
         form: {
-            handler: AdversaryManagerApp.submitHandler,
+            handler: Manager.submitHandler,
             closeOnSubmit: true
         }
     };
@@ -137,7 +137,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             const tierDiff = newTier - currentTier;
             result = { count: 0, die: null, bonus: currentBonus + (tierDiff * 2) };
         } else {
-            const options = (damageRolls || []).map(str => AdversaryManagerApp.parseDamageString(str)).filter(o => o !== null && o.die !== null);
+            const options = (damageRolls || []).map(str => Manager.parseDamageString(str)).filter(o => o !== null && o.die !== null);
             
             let chosenOption = options.find(o => o.die === currentDie);
             if (!chosenOption) {
@@ -174,7 +174,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         let oldFormula = "";
 
         if (val.custom?.enabled === true && val.custom.formula) {
-            const parsed = AdversaryManagerApp.parseDamageString(val.custom.formula);
+            const parsed = Manager.parseDamageString(val.custom.formula);
             oldFormula = val.custom.formula;
 
             if (parsed && parsed.die === null) return null; 
@@ -202,7 +202,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
 
         const bonusInput = isFlatFixed ? (isCustom ? currentCount : currentBonus) : currentBonus;
         
-        const newDmg = AdversaryManagerApp.calculateNewDamage(currentDie, bonusInput, newTier, currentTier, damageRolls);
+        const newDmg = Manager.calculateNewDamage(currentDie, bonusInput, newTier, currentTier, damageRolls);
 
         let newFormula = "";
         let changesApplied = false;
@@ -254,14 +254,14 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
 
         parts.forEach(part => {
             if (part.value) {
-                const update = AdversaryManagerApp.processDamageValue(part.value, newTier, currentTier, benchmark.damage_rolls);
+                const update = Manager.processDamageValue(part.value, newTier, currentTier, benchmark.damage_rolls);
                 if (update) {
                     hasChanges = true;
                     changes.push({ ...update, labelSuffix: "" });
                 }
             }
             if (part.valueAlt && benchmark.halved_damage_x) {
-                const updateAlt = AdversaryManagerApp.processDamageValue(part.valueAlt, newTier, currentTier, benchmark.halved_damage_x);
+                const updateAlt = Manager.processDamageValue(part.valueAlt, newTier, currentTier, benchmark.halved_damage_x);
                 if (updateAlt) {
                     hasChanges = true;
                     changes.push({ ...updateAlt, labelSuffix: " (Alt)" });
@@ -295,7 +295,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             for (const actionId in actionsRaw) {
                 const action = actionsRaw[actionId];
                 if (action.damage && action.damage.parts) {
-                    const result = AdversaryManagerApp.updateDamageParts(action.damage.parts, newTier, currentTier, benchmark);
+                    const result = Manager.updateDamageParts(action.damage.parts, newTier, currentTier, benchmark);
                     if (result.hasChanges) {
                         hasChanges = true;
                         result.changes.forEach(c => {
@@ -353,12 +353,12 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
                 if (matchingRep) {
                     newDmgStr = matchingRep.to;
                 } else {
-                    const parsed = AdversaryManagerApp.parseDamageString(oldDmgInName);
+                    const parsed = Manager.parseDamageString(oldDmgInName);
                     if (parsed) {
                          let bonusInput = parsed.bonus;
                          if (parsed.die === null) bonusInput = parsed.count; 
 
-                         const newDmg = AdversaryManagerApp.calculateNewDamage(
+                         const newDmg = Manager.calculateNewDamage(
                              parsed.die, 
                              bonusInput, 
                              newTier, 
@@ -396,7 +396,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             // Minion Logic
             const minionMatch = itemData.name.trim().match(/^Minion\s*\((\d+)\)$/i);
             if (minionMatch && benchmark.minion_feature_x) {
-                const newVal = AdversaryManagerApp.getRollFromRange(benchmark.minion_feature_x);
+                const newVal = Manager.getRollFromRange(benchmark.minion_feature_x);
                 if (newVal !== null) {
                     newName = `Minion (${newVal})`;
                     minionVal = newVal;
@@ -418,7 +418,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
 
         // Apply Name Change
         if (hasChanges && itemData.name !== newName) {
-            itemData.name = newName; // Note: We don't mutate original if cloned properly outside
+            itemData.name = newName; 
         }
 
         // Apply Description Updates (Minion)
@@ -555,15 +555,15 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         // --- 2. Update Stats (With Overrides) ---
         
         // Difficulty
-        const diff = overrides.difficulty !== undefined ? Number(overrides.difficulty) : AdversaryManagerApp.getRollFromRange(benchmark.difficulty);
+        const diff = overrides.difficulty !== undefined ? Number(overrides.difficulty) : Manager.getRollFromRange(benchmark.difficulty);
         if (diff) { updateData["system.difficulty"] = diff; statsLog.push(`<strong>Diff:</strong> ${actorData.system.difficulty} -> ${diff}`); }
 
         // HP
-        const hp = overrides.hp !== undefined ? Number(overrides.hp) : AdversaryManagerApp.getRollFromRange(benchmark.hp);
+        const hp = overrides.hp !== undefined ? Number(overrides.hp) : Manager.getRollFromRange(benchmark.hp);
         if (hp) { updateData["system.resources.hitPoints.max"] = hp; updateData["system.resources.hitPoints.value"] = 0; statsLog.push(`<strong>HP:</strong> ${actorData.system.resources.hitPoints.max} -> ${hp}`); }
 
         // Stress
-        const stress = overrides.stress !== undefined ? Number(overrides.stress) : AdversaryManagerApp.getRollFromRange(benchmark.stress);
+        const stress = overrides.stress !== undefined ? Number(overrides.stress) : Manager.getRollFromRange(benchmark.stress);
         if (stress) { updateData["system.resources.stress.max"] = stress; statsLog.push(`<strong>Stress:</strong> ${actorData.system.resources.stress.max} -> ${stress}`); }
 
         // Thresholds
@@ -572,8 +572,8 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             if (overrides.major && overrides.severe) {
                 major = Number(overrides.major); severe = Number(overrides.severe);
             } else {
-                const minPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_min);
-                const maxPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_max);
+                const minPair = Manager.parseThresholdPair(benchmark.threshold_min);
+                const maxPair = Manager.parseThresholdPair(benchmark.threshold_max);
                 if (minPair && maxPair) {
                     major = Math.floor(Math.random() * (maxPair.major - minPair.major + 1)) + minPair.major;
                     severe = Math.floor(Math.random() * (maxPair.severe - minPair.severe + 1)) + minPair.severe;
@@ -587,7 +587,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         }
 
         // Attack Mod
-        const atkMod = overrides.attackMod !== undefined ? Number(overrides.attackMod) : AdversaryManagerApp.getRollFromSignedRange(benchmark.attack_modifier);
+        const atkMod = overrides.attackMod !== undefined ? Number(overrides.attackMod) : Manager.getRollFromSignedRange(benchmark.attack_modifier);
         if (atkMod !== null && !isNaN(atkMod)) {
             updateData["system.attack.roll.bonus"] = atkMod;
             const oldAtk = actorData.system.attack.roll.bonus;
@@ -600,10 +600,9 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             const sheetDamageParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
             
             // Check for full damage string override
-            // Note: If user selected a preset damage, we try to apply that to the first part
             if (overrides.damageFormula && sheetDamageParts.length > 0) {
                 // Parse override string
-                const parsed = AdversaryManagerApp.parseDamageString(overrides.damageFormula);
+                const parsed = Manager.parseDamageString(overrides.damageFormula);
                 if (parsed) {
                     const part = sheetDamageParts[0];
                     if (part.value) {
@@ -622,7 +621,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
                 }
             } else {
                 // Standard Logic
-                const result = AdversaryManagerApp.updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
+                const result = Manager.updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
                 if (result.hasChanges) {
                     updateData["system.attack.damage.parts"] = sheetDamageParts;
                     result.changes.forEach(c => {
@@ -656,7 +655,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         if (actorData.items) {
             for (const item of actorData.items) {
                 // Pass overrides.features map
-                const result = AdversaryManagerApp.processFeatureUpdate(item, newTier, currentTier, benchmark, featureLog, overrides.features);
+                const result = Manager.processFeatureUpdate(item, newTier, currentTier, benchmark, featureLog, overrides.features);
                 if (result) {
                     itemsToUpdate.push(result.update);
                     if (result.structured) structuredFeatureChanges.push(...result.structured);
@@ -665,7 +664,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         }
 
         // --- 6. Add Suggested Features ---
-        const newFeatures = await AdversaryManagerApp.handleNewFeatures(actor, typeKey, newTier, currentTier, featureLog);
+        const newFeatures = await Manager.handleNewFeatures(actor, typeKey, newTier, currentTier, featureLog);
         
         // --- Execute Update ---
         await actor.update(updateData);
@@ -684,7 +683,7 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
     }
 
     static async submitHandler(event, form, formData) {
-        // Batch logic remains same (no manual overrides supported in batch)
+        // Batch logic
         const app = this;
         const newTier = Number(formData.object.selectedTier);
         if (!newTier) return;
@@ -692,20 +691,19 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         let updatedCount = 0;
         for (const actor of app.actors) {
             try {
-                const result = await AdversaryManagerApp.updateSingleActor(actor, newTier);
+                const result = await Manager.updateSingleActor(actor, newTier);
                 if (result) { updatedCount++; batchResults.push(result); }
             } catch (err) { console.error(err); }
         }
         if (updatedCount > 0) {
             if (game.settings.get(MODULE_ID, SETTING_CHAT_LOG) && batchResults.length > 0) {
-                AdversaryManagerApp.sendBatchChatLog(batchResults, newTier);
+                Manager.sendBatchChatLog(batchResults, newTier);
             }
             app.close(); 
         } else { ui.notifications.info("No Adversaries updated."); }
     }
 
     static sendBatchChatLog(results, targetTier) {
-        // Standard chat log logic...
         const bgImage = SKULL_IMAGE_PATH;
         let consolidatedContent = "";
         results.forEach((res, index) => {

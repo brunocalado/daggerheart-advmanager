@@ -1,6 +1,6 @@
-import { AdversaryManagerApp } from "./AdversaryManagerApp.js"; 
-import { AdversaryLivePreviewApp } from "./AdversaryLivePreviewApp.js";
-import { CompendiumManagerApp } from "./CompendiumManagerApp.js";
+import { Manager } from "./manager.js"; 
+import { LiveManager } from "./live-manager.js";
+import { CompendiumManager } from "./compendium-manager.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -31,7 +31,7 @@ function manage() {
     });
 
     if (brokenToken) {
-        ui.notifications.error(`Erro: O token "${brokenToken.name}" referencia um Ator que não existe mais no diretório (provavelmente foi deletado).`);
+        ui.notifications.error(`Error: The token "${brokenToken.name}" references an Actor that no longer exists in the directory.`);
         return;
     }
 
@@ -41,11 +41,11 @@ function manage() {
         .filter(a => a && a.type === "adversary");
 
     if (validActors.length === 0) {
-        new AdversaryLivePreviewApp().render(true);
+        new LiveManager().render(true);
     } else if (validActors.length === 1) {
-        new AdversaryLivePreviewApp({ actor: validActors[0] }).render(true);
+        new LiveManager({ actor: validActors[0] }).render(true);
     } else {
-        new AdversaryManagerApp({ actors: validActors }).render(true);
+        new Manager({ actors: validActors }).render(true);
     }
 }
 
@@ -85,7 +85,7 @@ Hooks.once("init", () => {
         scope: "world",
         config: true,
         type: String,
-        default: "💀 Imported Adversaries" // Updated Default
+        default: "💀 Imported Adversaries"
     });
 
     // Hidden setting to store selected extra compendiums
@@ -114,16 +114,17 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", () => {
+    // Expose API globally
     globalThis.AM = {
         Manage: manage, 
-        LivePreview: () => new AdversaryLivePreviewApp().render(true),
-        CompendiumManager: () => new CompendiumManagerApp().render(true)
+        LiveManager: () => new LiveManager().render(true),
+        CompendiumManager: () => new CompendiumManager().render(true)
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });
 
 Hooks.on("renderDaggerheartMenu", (app, html) => {
-    const element = (html instanceof jQuery) ? html[0] : html;
+    const element = (html instanceof HTMLElement) ? html : html[0];
     
     const myButton = document.createElement("button");
     myButton.type = "button";
@@ -151,21 +152,24 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
 });
 
 Hooks.on("renderActorDirectory", (app, html) => {
-    const $html = $(html);
-    const actionButtons = $html.find(".header-actions");
+    // V13 Standard: Ensure we are working with an HTMLElement
+    const element = (html instanceof HTMLElement) ? html : html[0];
+    const actionButtons = element.querySelector(".header-actions");
     
-    const btn = $(`
-        <button type="button" class="create-actor" style="flex: 0 0 100%; max-width: 100%; margin-top: 6px;">
-            <i class="fas fa-skull"></i> Manage Adversaries
-        </button>
-    `);
+    if (actionButtons) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.classList.add("create-actor");
+        btn.style.flex = "0 0 100%";
+        btn.style.maxWidth = "100%";
+        btn.style.marginTop = "6px";
+        btn.innerHTML = `<i class="fas fa-skull"></i> Manage Adversaries`;
+        
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            manage();
+        });
 
-    btn.click((e) => {
-        e.preventDefault();
-        manage();
-    });
-
-    if (actionButtons.length) {
-        actionButtons.append(btn);
+        actionButtons.appendChild(btn);
     }
 });

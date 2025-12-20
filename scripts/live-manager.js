@@ -1,15 +1,15 @@
-import { AdversaryManagerApp } from "./AdversaryManagerApp.js";
+import { Manager } from "./manager.js";
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
 import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER } from "./module.js";
-import { CompendiumManagerApp } from "./CompendiumManagerApp.js";
+import { CompendiumManager } from "./compendium-manager.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
- * Live Preview Application for Daggerheart Adversaries.
+ * Live Manager Application for Daggerheart Adversaries.
  * Allows selecting an actor (World or Compendium) and previewing changes in real-time.
  */
-export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(ApplicationV2) {
+export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     
     constructor(options = {}) {
         super(options);
@@ -30,7 +30,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         id: "daggerheart-live-preview",
         tag: "form",
         window: {
-            title: "Adversary Live Manager", // UPDATED TITLE
+            title: "Adversary Live Manager",
             icon: "fas fa-eye",
             resizable: true,
             width: 1000,
@@ -38,19 +38,19 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         },
         position: { width: 1000, height: 750 },
         actions: {
-            selectTier: AdversaryLivePreviewApp.prototype._onSelectTier,
-            applyChanges: AdversaryLivePreviewApp.prototype._onApplyChanges,
-            openSettings: AdversaryLivePreviewApp.prototype._onOpenSettings
+            selectTier: LiveManager.prototype._onSelectTier,
+            applyChanges: LiveManager.prototype._onApplyChanges,
+            openSettings: LiveManager.prototype._onOpenSettings
         },
         form: {
-            handler: AdversaryLivePreviewApp.prototype.submitHandler,
+            handler: LiveManager.prototype.submitHandler,
             closeOnSubmit: false
         }
     };
 
     static PARTS = {
         form: {
-            template: "modules/daggerheart-advmanager/templates/live-preview.hbs",
+            template: "modules/daggerheart-advmanager/templates/live-manager.hbs",
             scrollable: [".preview-body"]
         }
     };
@@ -237,7 +237,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
 
                 if (isMinion) {
                     previewStats.thresholdsDisplay = "None"; 
-                    previewStats.hpDisplay = "(Fixed)"; // UPDATED: Just the label, removed the value "1"
+                    previewStats.hpDisplay = "(Fixed)"; 
                 }
 
                 // Prepare Structured Feature Data
@@ -379,21 +379,21 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [], structuredFeatures: [] };
 
         const sim = {};
-        sim.difficultyRaw = AdversaryManagerApp.getRollFromRange(benchmark.difficulty);
-        sim.hpRaw = AdversaryManagerApp.getRollFromRange(benchmark.hp);
-        sim.stressRaw = AdversaryManagerApp.getRollFromRange(benchmark.stress);
-        sim.attackModRaw = AdversaryManagerApp.getRollFromSignedRange(benchmark.attack_modifier);
+        sim.difficultyRaw = Manager.getRollFromRange(benchmark.difficulty);
+        sim.hpRaw = Manager.getRollFromRange(benchmark.hp);
+        sim.stressRaw = Manager.getRollFromRange(benchmark.stress);
+        sim.attackModRaw = Manager.getRollFromSignedRange(benchmark.attack_modifier);
         
         if (benchmark.threshold_min && benchmark.threshold_max) {
-            const minPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_min);
-            const maxPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_max);
+            const minPair = Manager.parseThresholdPair(benchmark.threshold_min);
+            const maxPair = Manager.parseThresholdPair(benchmark.threshold_max);
             if (minPair && maxPair) {
                 sim.majorRaw = Math.floor(Math.random() * (maxPair.major - minPair.major + 1)) + minPair.major;
                 sim.severeRaw = Math.floor(Math.random() * (maxPair.severe - minPair.severe + 1)) + minPair.severe;
             }
         }
 
-        // UPDATED: Removed raw value from display strings, kept only range hint
+        // Display strings
         sim.difficulty = `<span class="range-hint">(${benchmark.difficulty})</span>`;
         sim.hp = `<span class="range-hint">(${benchmark.hp})</span>`;
         sim.stress = `<span class="range-hint">(${benchmark.stress})</span>`;
@@ -406,7 +406,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
             tempParts.forEach(part => {
                 if (part.value) {
-                    const result = AdversaryManagerApp.processDamageValue(part.value, targetTier, currentTier, benchmark.damage_rolls);
+                    const result = Manager.processDamageValue(part.value, targetTier, currentTier, benchmark.damage_rolls);
                     if (result) {
                         damageParts.push(`<span class="stat-changed">${result.to}</span>`);
                     } else {
@@ -425,7 +425,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         const structuredFeatures = [];
         if (actorData.items) {
             for (const item of actorData.items) {
-                const res = AdversaryManagerApp.processFeatureUpdate(item, targetTier, currentTier, benchmark, featureLog, this.overrides.features);
+                const res = Manager.processFeatureUpdate(item, targetTier, currentTier, benchmark, featureLog, this.overrides.features);
                 if (res && res.structured) {
                     structuredFeatures.push(...res.structured);
                 }
@@ -438,7 +438,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
     // --- Actions ---
 
     async _onOpenSettings(event, target) {
-        new CompendiumManagerApp().render(true);
+        new CompendiumManager().render(true);
     }
 
     async _onSelectSource(event, target) {
@@ -510,7 +510,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
                 }
             }
 
-            const result = await AdversaryManagerApp.updateSingleActor(actor, this.targetTier, this.overrides);
+            const result = await Manager.updateSingleActor(actor, this.targetTier, this.overrides);
             
             if (!result) {
                 ui.notifications.warn("No changes were necessary.");
