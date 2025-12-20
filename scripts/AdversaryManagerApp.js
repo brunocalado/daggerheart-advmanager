@@ -74,7 +74,6 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
 
     static getRollFromRange(rangeString) {
         if (!rangeString) return null;
-        // Supports new format (X/Y) as well as legacy formats (X-Y, X–Y)
         const parts = rangeString.toString().split(/[\/–-]/).map(p => parseInt(p.trim())).filter(n => !isNaN(n));
         
         if (parts.length >= 2) {
@@ -89,7 +88,6 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
 
     static getRollFromSignedRange(rangeString) {
         if (!rangeString) return null;
-        // Regex extracts signed numbers correctly regardless of separator (e.g., "+0/+2" or "+0 to +2")
         const matches = rangeString.toString().match(/[+-]?\d+/g);
         if (!matches) return null;
         if (matches.length >= 2) {
@@ -274,10 +272,21 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         return { hasChanges, changes };
     }
 
-    static processFeatureUpdate(itemData, newTier, currentTier, benchmark, changeLog = []) {
+    /**
+     * Process Features (Items).
+     * @param {Object} itemData 
+     * @param {Number} newTier 
+     * @param {Number} currentTier 
+     * @param {Object} benchmark 
+     * @param {Array} changeLog (Optional) - legacy array of strings
+     * @param {Object} featureOverrides (Optional) - map of itemId -> newName
+     * @returns {Object|null} Update object or null
+     */
+    static processFeatureUpdate(itemData, newTier, currentTier, benchmark, changeLog = [], featureOverrides = {}) {
         let hasChanges = false;
         const system = foundry.utils.deepClone(itemData.system);
         const replacements = [];
+        const structuredChanges = []; // Stores details for UI inputs
         
         let actionsRaw = system.actions;
         
@@ -286,91 +295,142 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             for (const actionId in actionsRaw) {
                 const action = actionsRaw[actionId];
                 if (action.damage && action.damage.parts) {
-                    
                     const result = AdversaryManagerApp.updateDamageParts(action.damage.parts, newTier, currentTier, benchmark);
-                    
                     if (result.hasChanges) {
                         hasChanges = true;
                         result.changes.forEach(c => {
                             const customLabel = c.isCustom ? " (Custom)" : "";
                             const altLabel = c.labelSuffix || "";
-                            changeLog.push(`<strong>${itemData.name}:</strong> ${c.from} -> ${c.to}${customLabel}${altLabel}`);
+                            const logMsg = `<strong>${itemData.name}:</strong> ${c.from} -> ${c.to}${customLabel}${altLabel}`;
+                            changeLog.push(logMsg);
                             replacements.push(c);
+                            
+                            // Track for UI
+                            structuredChanges.push({
+                                itemId: itemData._id,
+                                itemName: itemData.name,
+                                type: "damage",
+                                from: c.from,
+                                to: c.to
+                            });
                         });
                     }
                 }
             }
         }
 
-        // 2. Process "Horde (Damage)" Feature Name
-        const hordeMatch = itemData.name.trim().match(/^Horde\s*\((.+)\)$/i);
-        if (hordeMatch) {
-            const oldDmgInName = hordeMatch[1];
-            let newDmgStr = null;
+        // 2. Process Name Updates (Horde/Minion)
+        let newName = itemData.name;
+        let updateDesc = false;
+        let minionVal = null;
 
-            const matchingRep = replacements.find(r => r.from === oldDmgInName && !r.labelSuffix); 
-            
-            if (matchingRep) {
-                newDmgStr = matchingRep.to;
-            } else {
-                const parsed = AdversaryManagerApp.parseDamageString(oldDmgInName);
-                if (parsed) {
-                     let bonusInput = parsed.bonus;
-                     if (parsed.die === null) bonusInput = parsed.count; 
-
-                     const newDmg = AdversaryManagerApp.calculateNewDamage(
-                         parsed.die, 
-                         bonusInput, 
-                         newTier, 
-                         currentTier, 
-                         benchmark.damage_rolls
-                     );
-
-                     if (newDmg.die === null) {
-                         newDmgStr = `${newDmg.bonus}`;
-                     } else {
-                         const sign = newDmg.bonus >= 0 ? "+" : "";
-                         const bonusStr = newDmg.bonus !== 0 ? `${sign}${newDmg.bonus}` : "";
-                         newDmgStr = `${newDmg.count}${newDmg.die}${bonusStr}`;
-                     }
-                     replacements.push({ from: oldDmgInName, to: newDmgStr });
-                }
+        // Check for manual overrides first
+        if (featureOverrides && featureOverrides[itemData._id]) {
+            // User provided a specific name for this feature
+            newName = featureOverrides[itemData._id];
+            if (newName !== itemData.name) {
+                changeLog.push(`<strong>Name Override:</strong> ${itemData.name} -> ${newName}`);
+                hasChanges = true;
             }
-
-            if (newDmgStr) {
-                const newName = `Horde (${newDmgStr})`;
-                if (itemData.name !== newName) {
-                    changeLog.push(`<strong>Name Update:</strong> ${itemData.name} -> ${newName}`);
-                    itemData.name = newName;
-                    hasChanges = true;
-                }
+            // For minions/horde, we assume the user typed the Full string "Minion (5)"
+            // We try to extract values to update description if possible
+            const mMatch = newName.match(/^Minion\s*\((\d+)\)$/i);
+            if (mMatch) {
+                minionVal = parseInt(mMatch[1]);
+                updateDesc = true;
             }
-        }
-
-        // 3. Process "Minion (X)" Feature Name & Description
-        const minionMatch = itemData.name.trim().match(/^Minion\s*\((\d+)\)$/i);
-        if (minionMatch && benchmark.minion_feature_x) {
-            const newVal = AdversaryManagerApp.getRollFromRange(benchmark.minion_feature_x);
+        } else {
+            // Automatic Calculation
             
-            if (newVal !== null) {
-                const newName = `Minion (${newVal})`;
+            // Horde Logic
+            const hordeMatch = itemData.name.trim().match(/^Horde\s*\((.+)\)$/i);
+            if (hordeMatch) {
+                const oldDmgInName = hordeMatch[1];
+                let newDmgStr = null;
+
+                const matchingRep = replacements.find(r => r.from === oldDmgInName && !r.labelSuffix); 
                 
-                // Construct the specific Minion Description
-                const newDesc = `<p>This adversary is defeated when they take any damage. For every <strong>${newVal}</strong> damage a PC deals to this adversary, defeat an additional Minion within range the attack would succeed against.</p>`;
+                if (matchingRep) {
+                    newDmgStr = matchingRep.to;
+                } else {
+                    const parsed = AdversaryManagerApp.parseDamageString(oldDmgInName);
+                    if (parsed) {
+                         let bonusInput = parsed.bonus;
+                         if (parsed.die === null) bonusInput = parsed.count; 
 
-                if (itemData.name !== newName || system.description !== newDesc) {
+                         const newDmg = AdversaryManagerApp.calculateNewDamage(
+                             parsed.die, 
+                             bonusInput, 
+                             newTier, 
+                             currentTier, 
+                             benchmark.damage_rolls
+                         );
+
+                         if (newDmg.die === null) {
+                             newDmgStr = `${newDmg.bonus}`;
+                         } else {
+                             const sign = newDmg.bonus >= 0 ? "+" : "";
+                             const bonusStr = newDmg.bonus !== 0 ? `${sign}${newDmg.bonus}` : "";
+                             newDmgStr = `${newDmg.count}${newDmg.die}${bonusStr}`;
+                         }
+                         replacements.push({ from: oldDmgInName, to: newDmgStr });
+                    }
+                }
+
+                if (newDmgStr) {
+                    newName = `Horde (${newDmgStr})`;
                     if (itemData.name !== newName) {
                         changeLog.push(`<strong>Name Update:</strong> ${itemData.name} -> ${newName}`);
-                        itemData.name = newName;
+                        hasChanges = true;
+                        structuredChanges.push({
+                            itemId: itemData._id,
+                            itemName: itemData.name,
+                            type: "name_horde",
+                            from: itemData.name,
+                            to: newName
+                        });
                     }
-                    
-                    system.description = newDesc;
-                    hasChanges = true;
+                }
+            }
+
+            // Minion Logic
+            const minionMatch = itemData.name.trim().match(/^Minion\s*\((\d+)\)$/i);
+            if (minionMatch && benchmark.minion_feature_x) {
+                const newVal = AdversaryManagerApp.getRollFromRange(benchmark.minion_feature_x);
+                if (newVal !== null) {
+                    newName = `Minion (${newVal})`;
+                    minionVal = newVal;
+                    if (itemData.name !== newName) {
+                        changeLog.push(`<strong>Name Update:</strong> ${itemData.name} -> ${newName}`);
+                        hasChanges = true;
+                        updateDesc = true;
+                        structuredChanges.push({
+                            itemId: itemData._id,
+                            itemName: itemData.name,
+                            type: "name_minion",
+                            from: itemData.name,
+                            to: newName
+                        });
+                    }
                 }
             }
         }
 
-        // 4. Apply Replacements
+        // Apply Name Change
+        if (hasChanges && itemData.name !== newName) {
+            itemData.name = newName; // Note: We don't mutate original if cloned properly outside
+        }
+
+        // Apply Description Updates (Minion)
+        if (updateDesc && minionVal !== null) {
+            const newDesc = `<p>This adversary is defeated when they take any damage. For every <strong>${minionVal}</strong> damage a PC deals to this adversary, defeat an additional Minion within range the attack would succeed against.</p>`;
+            if (system.description !== newDesc) {
+                system.description = newDesc;
+                hasChanges = true;
+            }
+        }
+
+        // 4. Apply Text Replacements (for descriptions using old numbers)
         if (hasChanges && replacements.length > 0) {
             const performReplacement = (text) => {
                 if (!text) return text;
@@ -401,7 +461,10 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         }
 
         if (hasChanges) {
-            return { _id: itemData._id, system: system, name: itemData.name };
+            return { 
+                update: { _id: itemData._id, system: system, name: newName },
+                structured: structuredChanges
+            };
         }
         return null;
     }
@@ -409,8 +472,6 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
     // --- Add Suggested Features Logic ---
     static async handleNewFeatures(actor, typeKey, newTier, currentTier, changeLog) {
         if (!game.settings.get(MODULE_ID, SETTING_ADD_FEATURES)) return { toCreate: [], toDelete: [] };
-        
-        // Only trigger on Tier UP
         if (newTier <= currentTier) return { toCreate: [], toDelete: [] };
 
         const benchmarkRoot = ADVERSARY_BENCHMARKS[typeKey];
@@ -422,7 +483,6 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
             return { toCreate: [], toDelete: [] };
         }
 
-        // Pre-resolve "Relentless (X)" based on target Tier
         const resolvedSuggestions = tierBenchmark.suggested_features.map(name => {
             if (name.includes("Relentless (X)")) {
                 return `Relentless (${newTier})`;
@@ -431,42 +491,26 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         });
 
         const currentItems = actor.items.contents || actor.items;
-        
-        // Filter candidate features
         const candidates = resolvedSuggestions.filter(name => !currentItems.some(i => i.name === name));
         
         if (candidates.length === 0) return { toCreate: [], toDelete: [] };
 
-        // Pick one random candidate
         const pickedName = candidates[Math.floor(Math.random() * candidates.length)];
         
-        // Get Compendium
         const pack = game.packs.get("daggerheart-advmanager.features");
-        if (!pack) {
-            console.warn("Adversary Manager | Compendium 'daggerheart-advmanager.features' not found.");
-            return { toCreate: [], toDelete: [] };
-        }
+        if (!pack) return { toCreate: [], toDelete: [] };
 
-        // Find entry in compendium
         const index = await pack.getIndex();
         const entry = index.find(e => e.name === pickedName);
-        
-        if (!entry) {
-            console.warn(`Adversary Manager | Feature '${pickedName}' not found in compendium.`);
-            return { toCreate: [], toDelete: [] };
-        }
+        if (!entry) return { toCreate: [], toDelete: [] };
 
         const featureData = (await pack.getDocument(entry._id)).toObject();
         const toCreate = [featureData];
         const toDelete = [];
 
-        // Special Case: Relentless (X) Replacement Logic
-        // Check for ANY existing Relentless if we are adding a new Relentless
         const relentlessMatch = pickedName.match(/^Relentless\s*\((\d+)\)$/i);
         if (relentlessMatch) {
-            // Find ANY existing Relentless to replace
             const existingRelentless = currentItems.find(i => i.name.match(/^Relentless\s*\((\d+)\)$/i));
-
             if (existingRelentless) {
                 toDelete.push(existingRelentless.id);
                 changeLog.push(`<strong>New Feature:</strong> ${pickedName} (Replaced ${existingRelentless.name})`);
@@ -480,7 +524,11 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         return { toCreate, toDelete };
     }
 
-    static async updateSingleActor(actor, newTier) {
+    /**
+     * UPDATE SINGLE ACTOR - NOW ACCEPTS MANUAL OVERRIDES
+     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, features: { itemId: newName } }
+     */
+    static async updateSingleActor(actor, newTier, overrides = {}) {
         const actorData = actor.toObject();
         const currentTier = Number(actorData.system.tier) || 1;
 
@@ -490,12 +538,9 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         const typeKey = (actorData.system.type || "standard").toLowerCase();
         const statsLog = [];
         const featureLog = [];
+        const structuredFeatureChanges = []; // For UI reporting
 
-        if (!ADVERSARY_BENCHMARKS[typeKey]) {
-            console.warn(`Type ${typeKey} not found for ${actor.name}`);
-            return null;
-        }
-
+        if (!ADVERSARY_BENCHMARKS[typeKey]) return null;
         const benchmark = ADVERSARY_BENCHMARKS[typeKey].tiers[`tier_${newTier}`];
         if (!benchmark) return null;
 
@@ -503,48 +548,47 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         let newName = actorData.name;
         const tierTagRegex = /\s*\(T\d+\)$/;
         const newTag = ` (T${newTier})`;
-
-        if (tierTagRegex.test(newName)) {
-            newName = newName.replace(tierTagRegex, newTag);
-        } else {
-            newName = newName + newTag;
-        }
+        if (tierTagRegex.test(newName)) newName = newName.replace(tierTagRegex, newTag);
+        else newName = newName + newTag;
         updateData["name"] = newName;
 
-        // --- 2. Update Stats ---
-        const diff = AdversaryManagerApp.getRollFromRange(benchmark.difficulty);
-        if (diff) {
-            updateData["system.difficulty"] = diff;
-            statsLog.push(`<strong>Diff:</strong> ${actorData.system.difficulty} -> ${diff}`);
-        }
+        // --- 2. Update Stats (With Overrides) ---
+        
+        // Difficulty
+        const diff = overrides.difficulty !== undefined ? Number(overrides.difficulty) : AdversaryManagerApp.getRollFromRange(benchmark.difficulty);
+        if (diff) { updateData["system.difficulty"] = diff; statsLog.push(`<strong>Diff:</strong> ${actorData.system.difficulty} -> ${diff}`); }
 
-        const hp = AdversaryManagerApp.getRollFromRange(benchmark.hp);
-        if (hp) {
-            updateData["system.resources.hitPoints.max"] = hp;
-            updateData["system.resources.hitPoints.value"] = 0; 
-            statsLog.push(`<strong>HP:</strong> ${actorData.system.resources.hitPoints.max} -> ${hp}`);
-        }
+        // HP
+        const hp = overrides.hp !== undefined ? Number(overrides.hp) : AdversaryManagerApp.getRollFromRange(benchmark.hp);
+        if (hp) { updateData["system.resources.hitPoints.max"] = hp; updateData["system.resources.hitPoints.value"] = 0; statsLog.push(`<strong>HP:</strong> ${actorData.system.resources.hitPoints.max} -> ${hp}`); }
 
-        const stress = AdversaryManagerApp.getRollFromRange(benchmark.stress);
-        if (stress) {
-            updateData["system.resources.stress.max"] = stress;
-            statsLog.push(`<strong>Stress:</strong> ${actorData.system.resources.stress.max} -> ${stress}`);
-        }
+        // Stress
+        const stress = overrides.stress !== undefined ? Number(overrides.stress) : AdversaryManagerApp.getRollFromRange(benchmark.stress);
+        if (stress) { updateData["system.resources.stress.max"] = stress; statsLog.push(`<strong>Stress:</strong> ${actorData.system.resources.stress.max} -> ${stress}`); }
 
+        // Thresholds
         if (benchmark.threshold_min && benchmark.threshold_max) {
-            const minPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_min);
-            const maxPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_max);
-            if (minPair && maxPair) {
-                const major = Math.floor(Math.random() * (maxPair.major - minPair.major + 1)) + minPair.major;
-                const severe = Math.floor(Math.random() * (maxPair.severe - minPair.severe + 1)) + minPair.severe;
+            let major, severe;
+            if (overrides.major && overrides.severe) {
+                major = Number(overrides.major); severe = Number(overrides.severe);
+            } else {
+                const minPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_min);
+                const maxPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_max);
+                if (minPair && maxPair) {
+                    major = Math.floor(Math.random() * (maxPair.major - minPair.major + 1)) + minPair.major;
+                    severe = Math.floor(Math.random() * (maxPair.severe - minPair.severe + 1)) + minPair.severe;
+                }
+            }
+            if (major && severe) {
                 updateData["system.damageThresholds.major"] = major;
                 updateData["system.damageThresholds.severe"] = severe;
                 statsLog.push(`<strong>Dmg Thresh:</strong> ${actorData.system.damageThresholds.major}/${actorData.system.damageThresholds.severe} -> ${major}/${severe}`);
             }
         }
 
-        const atkMod = AdversaryManagerApp.getRollFromSignedRange(benchmark.attack_modifier);
-        if (atkMod !== null) {
+        // Attack Mod
+        const atkMod = overrides.attackMod !== undefined ? Number(overrides.attackMod) : AdversaryManagerApp.getRollFromSignedRange(benchmark.attack_modifier);
+        if (atkMod !== null && !isNaN(atkMod)) {
             updateData["system.attack.roll.bonus"] = atkMod;
             const oldAtk = actorData.system.attack.roll.bonus;
             const sign = atkMod >= 0 ? "+" : "";
@@ -554,18 +598,41 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         // --- 3. Update Sheet Damage (Main Attack) ---
         if (actorData.system.attack && actorData.system.attack.damage && actorData.system.attack.damage.parts) {
             const sheetDamageParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
-            const result = AdversaryManagerApp.updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
             
-            if (result.hasChanges) {
-                updateData["system.attack.damage.parts"] = sheetDamageParts;
-                result.changes.forEach(c => {
-                    const label = c.isCustom ? " (Custom)" : "";
-                    statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}${label}`);
-                });
+            // Check for full damage string override
+            // Note: If user selected a preset damage, we try to apply that to the first part
+            if (overrides.damageFormula && sheetDamageParts.length > 0) {
+                // Parse override string
+                const parsed = AdversaryManagerApp.parseDamageString(overrides.damageFormula);
+                if (parsed) {
+                    const part = sheetDamageParts[0];
+                    if (part.value) {
+                        if (parsed.die === null) {
+                            part.value.flatMultiplier = parsed.count;
+                            part.value.dice = "";
+                            part.value.bonus = null;
+                        } else {
+                            part.value.flatMultiplier = parsed.count;
+                            part.value.dice = parsed.die;
+                            part.value.bonus = parsed.bonus;
+                        }
+                        updateData["system.attack.damage.parts"] = sheetDamageParts;
+                        statsLog.push(`<strong>Sheet Dmg:</strong> (Manual) -> ${overrides.damageFormula}`);
+                    }
+                }
+            } else {
+                // Standard Logic
+                const result = AdversaryManagerApp.updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
+                if (result.hasChanges) {
+                    updateData["system.attack.damage.parts"] = sheetDamageParts;
+                    result.changes.forEach(c => {
+                        statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
+                    });
+                }
             }
         }
 
-        // --- 4. Update Experiences ---
+        // --- 4. Update Experiences (Standard) ---
         if (game.settings.get(MODULE_ID, SETTING_UPDATE_EXP)) {
             if (actorData.system.experiences) {
                 const tierDiff = newTier - currentTier;
@@ -574,26 +641,13 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
                     let newVal = currentVal + tierDiff;
                     if (newVal < 2) newVal = 2;
                     if (newVal > 5) newVal = 5;
-
-                    if (newVal !== currentVal) {
-                        updateData[`system.experiences.${key}.value`] = newVal;
-                        statsLog.push(`<strong>Exp (${exp.name}):</strong> ${currentVal} -> ${newVal}`);
-                    }
+                    if (newVal !== currentVal) updateData[`system.experiences.${key}.value`] = newVal;
                 }
             }
-
-            const isLowTier = currentTier <= 2;
-            const isHighTier = newTier >= 3;
-
-            if (isLowTier && isHighTier) {
+            if (currentTier <= 2 && newTier >= 3) {
                 const newExpValue = newTier === 3 ? 3 : 4;
                 const newExpId = foundry.utils.randomID();
-                updateData[`system.experiences.${newExpId}`] = {
-                    name: "New Experience",
-                    value: newExpValue,
-                    description: "Added by Adversary Manager"
-                };
-                statsLog.push(`<strong>New Exp:</strong> Added "New Experience" (${newExpValue})`);
+                updateData[`system.experiences.${newExpId}`] = { name: "New Experience", value: newExpValue, description: "Added by Adversary Manager" };
             }
         }
 
@@ -601,8 +655,12 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         const itemsToUpdate = [];
         if (actorData.items) {
             for (const item of actorData.items) {
-                const change = AdversaryManagerApp.processFeatureUpdate(item, newTier, currentTier, benchmark, featureLog);
-                if (change) itemsToUpdate.push(change);
+                // Pass overrides.features map
+                const result = AdversaryManagerApp.processFeatureUpdate(item, newTier, currentTier, benchmark, featureLog, overrides.features);
+                if (result) {
+                    itemsToUpdate.push(result.update);
+                    if (result.structured) structuredFeatureChanges.push(...result.structured);
+                }
             }
         }
 
@@ -611,116 +669,52 @@ export class AdversaryManagerApp extends HandlebarsApplicationMixin(ApplicationV
         
         // --- Execute Update ---
         await actor.update(updateData);
-        
-        // Handle Item Updates
-        if (itemsToUpdate.length > 0) {
-            await actor.updateEmbeddedDocuments("Item", itemsToUpdate);
-        }
-        
-        // Handle Item Creation (New Features)
-        if (newFeatures.toCreate.length > 0) {
-            await actor.createEmbeddedDocuments("Item", newFeatures.toCreate);
-        }
-
-        // Handle Item Deletion (Replaced Features)
-        if (newFeatures.toDelete.length > 0) {
-            await actor.deleteEmbeddedDocuments("Item", newFeatures.toDelete);
-        }
+        if (itemsToUpdate.length > 0) await actor.updateEmbeddedDocuments("Item", itemsToUpdate);
+        if (newFeatures.toCreate.length > 0) await actor.createEmbeddedDocuments("Item", newFeatures.toCreate);
+        if (newFeatures.toDelete.length > 0) await actor.deleteEmbeddedDocuments("Item", newFeatures.toDelete);
 
         return {
             actor: actor,
             currentTier: currentTier,
             newTier: newTier,
             statsLog: statsLog,
-            featureLog: featureLog
+            featureLog: featureLog,
+            structuredFeatures: structuredFeatureChanges // Return for UI
         };
     }
 
     static async submitHandler(event, form, formData) {
+        // Batch logic remains same (no manual overrides supported in batch)
         const app = this;
         const newTier = Number(formData.object.selectedTier);
-        
         if (!newTier) return;
-
         const batchResults = [];
         let updatedCount = 0;
-        
         for (const actor of app.actors) {
             try {
                 const result = await AdversaryManagerApp.updateSingleActor(actor, newTier);
-                if (result) {
-                    updatedCount++;
-                    batchResults.push(result);
-                }
-            } catch (err) {
-                console.error(`Failed to update ${actor.name}:`, err);
-                ui.notifications.error(`Failed to update ${actor.name}. Check console.`);
-            }
+                if (result) { updatedCount++; batchResults.push(result); }
+            } catch (err) { console.error(err); }
         }
-
         if (updatedCount > 0) {
             if (game.settings.get(MODULE_ID, SETTING_CHAT_LOG) && batchResults.length > 0) {
                 AdversaryManagerApp.sendBatchChatLog(batchResults, newTier);
             }
             app.close(); 
-        } else {
-            ui.notifications.info("No Adversaries needed updating (all were already at target tier).");
-        }
+        } else { ui.notifications.info("No Adversaries updated."); }
     }
 
     static sendBatchChatLog(results, targetTier) {
+        // Standard chat log logic...
         const bgImage = SKULL_IMAGE_PATH;
-        const minHeight = "150px";
         let consolidatedContent = "";
-
         results.forEach((res, index) => {
-            let actorBlock = "";
-            const { actor, currentTier, statsLog, featureLog } = res;
-
-            actorBlock += `<div style="font-weight: bold; font-size: 1.1em; color: #ff9c5a; margin-bottom: 4px; text-transform: uppercase;">
-                ${actor.name} (T${currentTier} &rarr; T${targetTier})
-            </div>`;
-
-            if (statsLog.length > 0) {
-                actorBlock += `<div style="font-size: 0.9em; margin-bottom: 4px; color: #ccc;">${statsLog.join(" | ")}</div>`;
-            }
-
-            if (featureLog.length > 0) {
-                featureLog.forEach(log => {
-                    actorBlock += `<div style="font-size: 0.9em; margin-left: 5px;">• ${log}</div>`;
-                });
-            } else {
-                actorBlock += `<div style="font-size: 0.8em; font-style: italic; color: #777;">No features changed.</div>`;
-            }
-
-            consolidatedContent += actorBlock;
-
-            if (index < results.length - 1) {
-                consolidatedContent += `<hr style="border: 0; border-top: 1px solid rgba(201, 160, 96, 0.5); margin: 8px 0;">`;
-            }
+            let actorBlock = `<div style="font-weight: bold; font-size: 1.1em; color: #ff9c5a; margin-bottom: 4px; text-transform: uppercase;">${res.actor.name} (T${res.currentTier} &rarr; T${targetTier})</div>`;
+            if (res.statsLog.length > 0) actorBlock += `<div style="font-size: 0.9em; margin-bottom: 4px; color: #ccc;">${res.statsLog.join(" | ")}</div>`;
+            if (res.featureLog.length > 0) res.featureLog.forEach(log => { actorBlock += `<div style="font-size: 0.9em; margin-left: 5px;">• ${log}</div>`; });
+            consolidatedContent += actorBlock + (index < results.length - 1 ? `<hr style="border: 0; border-top: 1px solid rgba(201, 160, 96, 0.5); margin: 8px 0;">` : "");
         });
-
-        const finalHtml = `
-        <div class="chat-card" style="border: 2px solid #C9A060; border-radius: 8px; overflow: hidden;">
-            <header class="card-header flexrow" style="background: #191919 !important; padding: 8px; border-bottom: 2px solid #C9A060;">
-                <h3 class="noborder" style="margin: 0; font-weight: bold; color: #C9A060 !important; font-family: 'Aleo', serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 100%;">
-                    Batch Update: Tier ${targetTier}
-                </h3>
-            </header>
-            <div class="card-content" style="background-image: url('${bgImage}'); background-repeat: no-repeat; background-position: center; background-size: cover; padding: 20px; min-height: ${minHeight};
-            display: flex; align-items: center; justify-content: center; text-align: center; position: relative;">
-                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 0;"></div>
-                <span style="color: #ffffff !important; font-size: 1.0em; text-shadow: 0px 0px 8px #000000; position: relative; z-index: 1; font-family: 'Lato', sans-serif; line-height: 1.4; width: 100%; text-align: left;">
-                    ${consolidatedContent}
-                </span>
-            </div>
-        </div>
-        `;
-
-        ChatMessage.create({
-            content: finalHtml,
-            whisper: ChatMessage.getWhisperRecipients("GM"),
-            speaker: ChatMessage.getSpeaker({ alias: "Adversary Manager" })
-        });
+        const finalHtml = `<div class="chat-card" style="border: 2px solid #C9A060; border-radius: 8px; overflow: hidden;"><header class="card-header flexrow" style="background: #191919 !important; padding: 8px; border-bottom: 2px solid #C9A060;"><h3 class="noborder" style="margin: 0; font-weight: bold; color: #C9A060 !important; font-family: 'Aleo', serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 100%;">Batch Update: Tier ${targetTier}</h3></header><div class="card-content" style="background-image: url('${bgImage}'); background-repeat: no-repeat; background-position: center; background-size: cover; padding: 20px; min-height: 150px; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;"><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 0;"></div><span style="color: #ffffff !important; font-size: 1.0em; text-shadow: 0px 0px 8px #000000; position: relative; z-index: 1; font-family: 'Lato', sans-serif; line-height: 1.4; width: 100%; text-align: left;">${consolidatedContent}</span></div></div>`;
+        ChatMessage.create({ content: finalHtml, whisper: ChatMessage.getWhisperRecipients("GM"), speaker: ChatMessage.getSpeaker({ alias: "Adversary Manager" }) });
     }
 }

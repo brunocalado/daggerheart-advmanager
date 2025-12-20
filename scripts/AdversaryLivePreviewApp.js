@@ -18,10 +18,12 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         this.selectedActorId = this.initialActor ? this.initialActor.id : (options.actorId || null);
         this.targetTier = options.targetTier || 1;
         this.previewData = null;
+        this.overrides = { features: {} }; // Stores manual inputs
 
         // Initialize from persistent settings, fallback to defaults
         this.filterTier = game.settings.get(MODULE_ID, SETTING_LAST_FILTER_TIER) || "all"; 
         this.source = game.settings.get(MODULE_ID, SETTING_LAST_SOURCE) || "world"; 
+        this.filterType = "all"; // New Type Filter
     }
 
     static DEFAULT_OPTIONS = {
@@ -31,10 +33,10 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             title: "Adversary Live Preview",
             icon: "fas fa-eye",
             resizable: true,
-            width: 950,
+            width: 1000,
             height: 750
         },
-        position: { width: 950, height: 750 },
+        position: { width: 1000, height: 750 },
         actions: {
             selectTier: AdversaryLivePreviewApp.prototype._onSelectTier,
             applyChanges: AdversaryLivePreviewApp.prototype._onApplyChanges,
@@ -59,23 +61,19 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
     async _getActor(actorId) {
         if (!actorId) return null;
         
-        // 1. Synthetic / Initial Actor
         if (this.initialActor && this.initialActor.id === actorId) {
             return this.initialActor;
         }
 
-        // 2. World Actor
         if (this.source === "world") {
             return game.actors.get(actorId);
         }
 
-        // 3. System Compendium
         if (this.source === "daggerheart.adversaries") {
             const pack = game.packs.get("daggerheart.adversaries");
             if (pack) return await pack.getDocument(actorId);
         }
 
-        // 4. Extra Compendiums (Dynamic Source)
         if (this.source !== "world" && this.source !== "daggerheart.adversaries") {
             const pack = game.packs.get(this.source);
             if (pack) return await pack.getDocument(actorId);
@@ -96,10 +94,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             { value: "daggerheart.adversaries", label: "System Compendium", selected: this.source === "daggerheart.adversaries" }
         ];
 
-        // Add User-Selected Compendiums
         const extraCompendiums = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
-        
-        // Safety check: if current source is invalid (e.g. compendium unselected), reset to world
         let currentSourceIsValid = (this.source === "world" || this.source === "daggerheart.adversaries");
 
         extraCompendiums.forEach(packId => {
@@ -116,7 +111,6 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
 
         if (!currentSourceIsValid) {
             this.source = "world";
-            // Update UI to reflect fallback
             sourceOptions.forEach(o => o.selected = (o.value === "world"));
         }
 
@@ -127,7 +121,8 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
                 .map(a => ({ 
                     id: a.id, 
                     name: a.name, 
-                    tier: Number(a.system.tier) || 1
+                    tier: Number(a.system.tier) || 1,
+                    advType: (a.system.type || "standard").toLowerCase() 
                 }));
             
             if (this.initialActor && !game.actors.has(this.initialActor.id)) {
@@ -135,20 +130,22 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
                     rawAdversaries.push({
                         id: this.initialActor.id,
                         name: `${this.initialActor.name} (Token)`,
-                        tier: Number(this.initialActor.system.tier) || 1
+                        tier: Number(this.initialActor.system.tier) || 1,
+                        advType: (this.initialActor.system.type || "standard").toLowerCase()
                     });
                 }
             }
         } else {
             const pack = game.packs.get(this.source);
             if (pack) {
-                const index = await pack.getIndex({ fields: ["system.tier", "type"] });
+                const index = await pack.getIndex({ fields: ["system.tier", "system.type", "type"] });
                 rawAdversaries = index
                     .filter(i => i.type === "adversary")
                     .map(i => ({
                         id: i._id,
                         name: i.name,
-                        tier: Number(i.system?.tier) || 1
+                        tier: Number(i.system?.tier) || 1,
+                        advType: (i.system?.type || "standard").toLowerCase()
                     }));
             }
         }
@@ -160,25 +157,46 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             selected: a.id === this.selectedActorId
         }));
 
+        // --- Filters ---
         let displayedAdversaries = allAdversaries;
+        
         if (this.filterTier !== "all") {
-            displayedAdversaries = allAdversaries.filter(a => a.tier === Number(this.filterTier));
+            displayedAdversaries = displayedAdversaries.filter(a => a.tier === Number(this.filterTier));
         }
 
-        // --- Prepare Stats ---
+        if (this.filterType !== "all") {
+            displayedAdversaries = displayedAdversaries.filter(a => a.advType === this.filterType);
+        }
+
+        // --- Auto-Select logic if current selection is invalid ---
+        if (!this.selectedActorId && displayedAdversaries.length > 0) {
+             this.selectedActorId = displayedAdversaries[0].id;
+        } else if (this.selectedActorId && !displayedAdversaries.find(a => a.id === this.selectedActorId)) {
+             if (displayedAdversaries.length > 0) this.selectedActorId = displayedAdversaries[0].id;
+             else this.selectedActorId = null;
+        }
+
+        // Map for Template
+        displayedAdversaries = displayedAdversaries.map(a => ({
+            ...a, selected: a.id === this.selectedActorId
+        }));
+
         let currentStats = null;
         let previewStats = null;
         let actor = null;
-        let featurePreviewLog = [];
+        let featurePreviewData = []; 
         let linkData = null;
+        let damageOptions = []; 
+        let isMinion = false;
 
         if (this.selectedActorId) {
             actor = await this._getActor(this.selectedActorId);
             
             if (actor) {
                 const currentTier = Number(actor.system.tier) || 1;
-                
                 const isLinked = actor.isToken ? actor.token?.actorLink : actor.prototypeToken?.actorLink;
+                const typeKey = (actor.system.type || "standard").toLowerCase();
+                isMinion = typeKey === "minion";
                 
                 linkData = {
                     isLinked: isLinked,
@@ -192,8 +210,46 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
                 currentStats = this._extractStats(actor.toObject(), currentTier);
                 
                 const simResult = await this._simulateStats(actor, this.targetTier, currentTier);
-                previewStats = simResult.stats;
-                featurePreviewLog = simResult.features;
+                
+                const benchmark = ADVERSARY_BENCHMARKS[typeKey]?.tiers[`tier_${this.targetTier}`];
+                if (benchmark && benchmark.damage_rolls && Array.isArray(benchmark.damage_rolls)) {
+                    damageOptions = benchmark.damage_rolls.map(d => ({ value: d, label: d }));
+                }
+
+                previewStats = {
+                    difficulty: this.overrides.difficulty !== undefined ? this.overrides.difficulty : simResult.stats.difficultyRaw,
+                    hp: this.overrides.hp !== undefined ? this.overrides.hp : simResult.stats.hpRaw,
+                    stress: this.overrides.stress !== undefined ? this.overrides.stress : simResult.stats.stressRaw,
+                    major: this.overrides.major !== undefined ? this.overrides.major : simResult.stats.majorRaw,
+                    severe: this.overrides.severe !== undefined ? this.overrides.severe : simResult.stats.severeRaw,
+                    attackMod: this.overrides.attackMod !== undefined ? this.overrides.attackMod : simResult.stats.attackModRaw,
+                    
+                    difficultyDisplay: simResult.stats.difficulty,
+                    hpDisplay: simResult.stats.hp,
+                    stressDisplay: simResult.stats.stress,
+                    thresholdsDisplay: simResult.stats.thresholds,
+                    attackModDisplay: simResult.stats.attackMod,
+                    
+                    damage: simResult.stats.damage, 
+                    tier: this.targetTier,
+                    isMinion: isMinion
+                };
+
+                if (isMinion) {
+                    previewStats.thresholdsDisplay = "None"; 
+                    previewStats.hpDisplay = "1 (Fixed)";
+                }
+
+                // Prepare Structured Feature Data
+                featurePreviewData = simResult.structuredFeatures.map(f => {
+                    const overrideVal = this.overrides.features && this.overrides.features[f.itemId];
+                    return {
+                        itemId: f.itemId,
+                        originalName: f.from,
+                        newName: overrideVal !== undefined ? overrideVal : f.to,
+                        isRenamed: f.type.startsWith("name_") 
+                    };
+                });
             }
         }
 
@@ -212,17 +268,29 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
             { value: "4", label: "Tier 4", selected: this.filterTier === "4" }
         ];
 
+        const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
+        const typeOptions = [
+            { value: "all", label: "All Types", selected: this.filterType === "all" },
+            ...typeKeys.map(k => ({ 
+                value: k, 
+                label: k.charAt(0).toUpperCase() + k.slice(1), 
+                selected: this.filterType === k 
+            }))
+        ];
+
         return {
             adversaries: displayedAdversaries,
             hasActor: !!actor,
             selectedActorId: this.selectedActorId,
             currentStats,
             previewStats,
-            featurePreviewLog,
+            featurePreviewData, 
             tiers,
             linkData,
             sourceOptions,
             filterOptions,
+            typeOptions,
+            damageOptions,
             actorName: actor?.name || "None"
         };
     }
@@ -237,8 +305,48 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         const filterSelect = html.querySelector('.filter-tier-select');
         if (filterSelect) filterSelect.addEventListener('change', (e) => this._onFilterTier(e, filterSelect));
 
+        const typeSelect = html.querySelector('.filter-type-select');
+        if (typeSelect) typeSelect.addEventListener('change', (e) => this._onFilterType(e, typeSelect));
+
         const actorSelect = html.querySelector('.main-actor-select');
         if (actorSelect) actorSelect.addEventListener('change', (e) => this._onSelectActor(e, actorSelect));
+
+        // Bind Override Inputs
+        html.querySelectorAll('.override-input').forEach(input => {
+            input.addEventListener('change', (e) => this._onOverrideChange(e, input));
+        });
+
+        // Bind Feature Override Inputs (FIXED: Now properly bound)
+        html.querySelectorAll('.feature-override-input').forEach(input => {
+            input.addEventListener('change', (e) => this._onFeatureOverrideChange(e, input));
+        });
+
+        // Bind Damage Preset Select
+        const damagePreset = html.querySelector('.damage-preset-select');
+        if (damagePreset) {
+            damagePreset.addEventListener('change', (e) => this._onOverrideChange(e, damagePreset));
+        }
+    }
+
+    _onOverrideChange(event, target) {
+        const field = target.dataset.field;
+        const value = target.value;
+        this.overrides[field] = value;
+    }
+
+    _onFeatureOverrideChange(event, target) {
+        const itemId = target.dataset.itemid;
+        const value = target.value;
+        
+        if (!this.overrides.features) {
+            this.overrides.features = {};
+        }
+        
+        // Update the overrides object
+        this.overrides.features[itemId] = value;
+        
+        // Note: No re-render needed for text inputs as focus loss handles value update, 
+        // but if logic depended on it, we'd render. Keeping it simple to avoid focus loss issues.
     }
 
     // --- Stats Helpers (Standard) ---
@@ -269,16 +377,30 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         const actorData = actor.toObject();
         const typeKey = (actorData.system.type || "standard").toLowerCase();
         
-        if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: "Unknown Type" }, features: [] };
+        if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: "Unknown Type" }, features: [], structuredFeatures: [] };
         const benchmark = ADVERSARY_BENCHMARKS[typeKey].tiers[`tier_${targetTier}`];
-        if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [] };
+        if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [], structuredFeatures: [] };
 
         const sim = {};
-        sim.difficulty = this._formatRange(benchmark.difficulty);
-        sim.hp = this._formatRange(benchmark.hp);
-        sim.stress = this._formatRange(benchmark.stress);
-        sim.thresholds = `${benchmark.threshold_min} - ${benchmark.threshold_max}`;
-        sim.attackMod = benchmark.attack_modifier;
+        sim.difficultyRaw = AdversaryManagerApp.getRollFromRange(benchmark.difficulty);
+        sim.hpRaw = AdversaryManagerApp.getRollFromRange(benchmark.hp);
+        sim.stressRaw = AdversaryManagerApp.getRollFromRange(benchmark.stress);
+        sim.attackModRaw = AdversaryManagerApp.getRollFromSignedRange(benchmark.attack_modifier);
+        
+        if (benchmark.threshold_min && benchmark.threshold_max) {
+            const minPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_min);
+            const maxPair = AdversaryManagerApp.parseThresholdPair(benchmark.threshold_max);
+            if (minPair && maxPair) {
+                sim.majorRaw = Math.floor(Math.random() * (maxPair.major - minPair.major + 1)) + minPair.major;
+                sim.severeRaw = Math.floor(Math.random() * (maxPair.severe - minPair.severe + 1)) + minPair.severe;
+            }
+        }
+
+        sim.difficulty = `${sim.difficultyRaw} <span class="range-hint">(${benchmark.difficulty})</span>`;
+        sim.hp = `${sim.hpRaw} <span class="range-hint">(${benchmark.hp})</span>`;
+        sim.stress = `${sim.stressRaw} <span class="range-hint">(${benchmark.stress})</span>`;
+        sim.thresholds = `${sim.majorRaw}/${sim.severeRaw} <span class="range-hint">(${benchmark.threshold_min} - ${benchmark.threshold_max})</span>`;
+        sim.attackMod = `${sim.attackModRaw} <span class="range-hint">(${benchmark.attack_modifier})</span>`;
         sim.tier = targetTier;
 
         const damageParts = [];
@@ -302,31 +424,22 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         sim.damage = damageParts.join(", ") || "None";
 
         const featureLog = [];
+        const structuredFeatures = [];
         if (actorData.items) {
             for (const item of actorData.items) {
-                AdversaryManagerApp.processFeatureUpdate(item, targetTier, currentTier, benchmark, featureLog);
+                const res = AdversaryManagerApp.processFeatureUpdate(item, targetTier, currentTier, benchmark, featureLog, this.overrides.features);
+                if (res && res.structured) {
+                    structuredFeatures.push(...res.structured);
+                }
             }
         }
-        if (game.settings.get("daggerheart-advmanager", "autoAddFeatures") && targetTier > currentTier) {
-            if (benchmark.suggested_features && Array.isArray(benchmark.suggested_features) && benchmark.suggested_features.length > 0) {
-                 const suggestions = benchmark.suggested_features.map(s => s.replace("(X)", `(${targetTier})`));
-                 const potential = suggestions.join(", ");
-                 featureLog.push(`<span style="color:#00e676;">Potential New Feature from:</span> ${potential}`);
-            }
-        }
-        return { stats: sim, features: featureLog };
-    }
-
-    _formatRange(val) {
-        if(!val) return "-";
-        const rolled = AdversaryManagerApp.getRollFromRange(val);
-        return `${rolled} <span class="range-hint">(${val})</span>`;
+        
+        return { stats: sim, features: featureLog, structuredFeatures };
     }
 
     // --- Actions ---
 
     async _onOpenSettings(event, target) {
-        // Open the Compendium Manager
         new CompendiumManagerApp().render(true);
     }
 
@@ -335,10 +448,8 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         event.stopPropagation();
         this.source = target.value;
         this.selectedActorId = null;
-        
-        // Save Setting
+        this.overrides = { features: {} }; 
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
-        
         this.render();
     }
 
@@ -346,10 +457,14 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         event.preventDefault();
         event.stopPropagation();
         this.filterTier = target.value;
-        
-        // Save Setting
         await game.settings.set(MODULE_ID, SETTING_LAST_FILTER_TIER, this.filterTier);
-        
+        this.render();
+    }
+
+    async _onFilterType(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.filterType = target.value;
         this.render();
     }
 
@@ -357,6 +472,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         event.preventDefault();
         event.stopPropagation();
         this.selectedActorId = target.value;
+        this.overrides = { features: {} }; 
         const actor = await this._getActor(this.selectedActorId);
         if (actor) {
             this.targetTier = Number(actor.system.tier) || 1;
@@ -368,6 +484,7 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
         const tier = Number(target.dataset.tier);
         if (tier) {
             this.targetTier = tier;
+            this.overrides = { features: {} }; 
             this.render();
         }
     }
@@ -395,14 +512,9 @@ export class AdversaryLivePreviewApp extends HandlebarsApplicationMixin(Applicat
                 }
             }
 
-            const result = await AdversaryManagerApp.updateSingleActor(actor, this.targetTier);
+            const result = await AdversaryManagerApp.updateSingleActor(actor, this.targetTier, this.overrides);
             
-            if (result) {
-                // LOGGING SUPPRESSED HERE FOR LIVE PREVIEW
-                // if (game.settings.get(MODULE_ID, "enableChatLog")) {
-                //    AdversaryManagerApp.sendBatchChatLog([result], this.targetTier);
-                // }
-            } else {
+            if (!result) {
                 ui.notifications.warn("No changes were necessary.");
             }
             this.render();

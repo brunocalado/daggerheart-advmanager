@@ -85,7 +85,7 @@ Hooks.once("init", () => {
         scope: "world",
         config: true,
         type: String,
-        default: "Imported Adversaries"
+        default: "💀 Imported Adversaries" // Updated Default
     });
 
     // Hidden setting to store selected extra compendiums
