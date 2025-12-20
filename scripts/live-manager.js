@@ -346,13 +346,24 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                          }
                     }
 
+                    // MINION LOGIC
+                    const isMinionFeature = f.type === 'name_minion';
+                    let minionValue = "";
+                    if (isMinionFeature) {
+                        const targetStr = overrideVal !== undefined ? overrideVal : f.to;
+                        const match = targetStr.toString().match(/\((\d+)\)/);
+                        if (match) minionValue = match[1];
+                    }
+
                     return {
                         itemId: f.itemId,
                         originalName: displayFrom,
                         newName: overrideVal !== undefined ? overrideVal : f.to,
-                        // UPDATED: Minion names are now treated as static text, not renamed inputs
+                        // UPDATED: Minion names are now treated as static text for rename check
                         isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion', 
-                        options: featureOptions 
+                        options: featureOptions,
+                        isMinionFeature: isMinionFeature,
+                        minionValue: minionValue
                     };
                 });
             }
@@ -427,6 +438,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('change', (e) => this._onFeatureOverrideChange(e, input));
         });
 
+        // Bind Minion Value Input
+        html.querySelectorAll('.minion-val-input').forEach(input => {
+            input.addEventListener('change', (e) => this._onMinionOverrideChange(e, input));
+            input.addEventListener('click', (e) => e.stopPropagation());
+        });
+
         // Bind Damage Preset Select
         const damagePreset = html.querySelector('.damage-preset-select');
         if (damagePreset) {
@@ -457,6 +474,23 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         } else {
             this.overrides.features.names[itemId] = value;
         }
+    }
+
+    _onMinionOverrideChange(event, target) {
+        const itemId = target.dataset.itemid;
+        const val = parseInt(target.value);
+        
+        if (!this.overrides.features) this.overrides.features = { names: {}, damage: {} };
+        if (!this.overrides.features.names) this.overrides.features.names = {};
+
+        if (!isNaN(val)) {
+            // Reconstruct the full name which Manager.js expects
+            this.overrides.features.names[itemId] = `Minion (${val})`;
+        } else {
+            delete this.overrides.features.names[itemId];
+        }
+        // Force refresh to update descriptions if needed
+        this.render();
     }
 
     // --- Stats Helpers (Standard) ---
@@ -557,6 +591,31 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 );
                 if (result && result.structured) {
                     structuredFeatures.push(...result.structured);
+                }
+            }
+        }
+
+        // --- FIX: Ensure Overridden Items Persist in UI ---
+        // If an override makes the new value equal to the original value, Manager.processFeatureUpdate
+        // returns null (no changes). We must manually inject these back into structuredFeatures so the UI row stays visible.
+        const allItems = actorData.items instanceof Array ? actorData.items : actorData.items.contents || [];
+
+        // Check Name Overrides (includes Minion feature)
+        for (const [itemId, overrideVal] of Object.entries(this.overrides.features.names)) {
+            // Only add if not already present in the change list
+            if (!structuredFeatures.find(f => f.itemId === itemId)) {
+                const item = allItems.find(i => i._id === itemId);
+                if (item) {
+                     const isMinion = item.name.trim().match(/^Minion\s*\((\d+)\)$/i);
+                     const type = isMinion ? "name_minion" : "name_override";
+                     
+                     structuredFeatures.push({
+                        itemId: itemId,
+                        itemName: item.name,
+                        type: type,
+                        from: item.name,
+                        to: overrideVal
+                     });
                 }
             }
         }
