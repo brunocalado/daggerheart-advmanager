@@ -40,7 +40,7 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
     * *Optional:* Adjust stats manually or check/uncheck suggested features.
 5.  Click **Apply** to update the actor.
 
-<p align="center"><img width="500" src="assets/docs/system-button.webp"></p>
+<p align="center"><img width="500" src="docs/system-button.webp"></p>
 
 ## 🚀 Installation
 
