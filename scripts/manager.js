@@ -128,6 +128,23 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         return null;
     }
 
+    static resolveFeatureName(name, tier) {
+        if (name.includes("Relentless (X)")) {
+            return `Relentless (${tier})`;
+        }
+        return name;
+    }
+
+    static getAvailableFeaturesForTier(typeKey, tier) {
+        const benchmarkRoot = ADVERSARY_BENCHMARKS[typeKey];
+        if (!benchmarkRoot) return [];
+        const tierBenchmark = benchmarkRoot.tiers[`tier_${tier}`];
+        if (!tierBenchmark || !tierBenchmark.suggested_features || !Array.isArray(tierBenchmark.suggested_features)) {
+            return [];
+        }
+        return tierBenchmark.suggested_features.map(name => Manager.resolveFeatureName(name, tier));
+    }
+
     // --- Core Logic ---
 
     static calculateNewDamage(currentDie, currentBonus, newTier, currentTier, damageRolls) {
@@ -530,56 +547,69 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         return null;
     }
 
-    // --- Add Suggested Features Logic ---
-    static async handleNewFeatures(actor, typeKey, newTier, currentTier, changeLog) {
+    /**
+     * Handle adding suggested features.
+     * @param {Object} actor 
+     * @param {String} typeKey 
+     * @param {Number} newTier 
+     * @param {Number} currentTier 
+     * @param {Array} changeLog 
+     * @param {Array<String>} specificFeatureNames (Optional) - If present, only these features will be added. If null/empty, random selection occurs (default behavior).
+     * @returns 
+     */
+    static async handleNewFeatures(actor, typeKey, newTier, currentTier, changeLog, specificFeatureNames = null) {
         if (!game.settings.get(MODULE_ID, SETTING_ADD_FEATURES)) return { toCreate: [], toDelete: [] };
         if (newTier <= currentTier) return { toCreate: [], toDelete: [] };
 
-        const benchmarkRoot = ADVERSARY_BENCHMARKS[typeKey];
-        if (!benchmarkRoot) return { toCreate: [], toDelete: [] };
+        const currentItems = actor.items.contents || actor.items;
+        let featuresToAdd = [];
 
-        const tierBenchmark = benchmarkRoot.tiers[`tier_${newTier}`];
-        
-        if (!tierBenchmark || !tierBenchmark.suggested_features || !Array.isArray(tierBenchmark.suggested_features) || tierBenchmark.suggested_features.length === 0) {
-            return { toCreate: [], toDelete: [] };
+        if (specificFeatureNames && Array.isArray(specificFeatureNames)) {
+            // --- UI/MANUAL MODE: User selected specific features ---
+            // Filter out any features the actor already has
+            featuresToAdd = specificFeatureNames.filter(name => !currentItems.some(i => i.name === name));
+        } else {
+            // --- AUTOMATIC/BATCH MODE: Pick random ---
+            const possibleFeatures = Manager.getAvailableFeaturesForTier(typeKey, newTier);
+            if (possibleFeatures.length === 0) return { toCreate: [], toDelete: [] };
+
+            const candidates = possibleFeatures.filter(name => !currentItems.some(i => i.name === name));
+            if (candidates.length === 0) return { toCreate: [], toDelete: [] };
+
+            const pickedName = candidates[Math.floor(Math.random() * candidates.length)];
+            featuresToAdd.push(pickedName);
         }
 
-        const resolvedSuggestions = tierBenchmark.suggested_features.map(name => {
-            if (name.includes("Relentless (X)")) {
-                return `Relentless (${newTier})`;
-            }
-            return name;
-        });
+        if (featuresToAdd.length === 0) return { toCreate: [], toDelete: [] };
 
-        const currentItems = actor.items.contents || actor.items;
-        const candidates = resolvedSuggestions.filter(name => !currentItems.some(i => i.name === name));
-        
-        if (candidates.length === 0) return { toCreate: [], toDelete: [] };
-
-        const pickedName = candidates[Math.floor(Math.random() * candidates.length)];
-        
+        // Fetch Items
         const pack = game.packs.get("daggerheart-advmanager.features");
-        if (!pack) return { toCreate: [], toDelete: [] }; // No pack, no feature
+        if (!pack) return { toCreate: [], toDelete: [] }; 
 
         const index = await pack.getIndex();
-        const entry = index.find(e => e.name === pickedName);
-        if (!entry) return { toCreate: [], toDelete: [] };
-
-        const featureData = (await pack.getDocument(entry._id)).toObject();
-        const toCreate = [featureData];
+        const toCreate = [];
         const toDelete = [];
 
-        const relentlessMatch = pickedName.match(/^Relentless\s*\((\d+)\)$/i);
-        if (relentlessMatch) {
-            const existingRelentless = currentItems.find(i => i.name.match(/^Relentless\s*\((\d+)\)$/i));
-            if (existingRelentless) {
-                toDelete.push(existingRelentless.id);
-                changeLog.push(`<strong>New Feature:</strong> ${pickedName} (Replaced ${existingRelentless.name})`);
+        for (const featureName of featuresToAdd) {
+            const entry = index.find(e => e.name === featureName);
+            if (!entry) continue;
+
+            const featureData = (await pack.getDocument(entry._id)).toObject();
+            toCreate.push(featureData);
+
+            // Handle Relentless Replacement Logic
+            const relentlessMatch = featureName.match(/^Relentless\s*\((\d+)\)$/i);
+            if (relentlessMatch) {
+                const existingRelentless = currentItems.find(i => i.name.match(/^Relentless\s*\((\d+)\)$/i));
+                if (existingRelentless) {
+                    toDelete.push(existingRelentless.id);
+                    changeLog.push(`<strong>New Feature:</strong> ${featureName} (Replaced ${existingRelentless.name})`);
+                } else {
+                    changeLog.push(`<strong>New Feature:</strong> ${featureName}`);
+                }
             } else {
-                changeLog.push(`<strong>New Feature:</strong> ${pickedName}`);
+                changeLog.push(`<strong>New Feature:</strong> ${featureName}`);
             }
-        } else {
-            changeLog.push(`<strong>New Feature:</strong> ${pickedName}`);
         }
 
         return { toCreate, toDelete };
@@ -587,7 +617,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     /**
      * UPDATE SINGLE ACTOR - NOW ACCEPTS MANUAL OVERRIDES
-     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula, features: { names: {}, damage: {} } }
+     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula, suggestedFeatures: [], features: { names: {}, damage: {} } }
      */
     static async updateSingleActor(actor, newTier, overrides = {}) {
         const actorData = actor.toObject();
@@ -701,20 +731,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                  }
             }
 
-            // Standard Logic if overrides didn't strictly replace everything, 
-            // but for simplicity we rely on Manager.updateDamageParts handling normal logic 
-            // OR simple assignment if we want to bypass randomization completely.
-            
-            // If overrides exist, we manually set them above. Now we check standard logic for any parts not overridden?
-            // Actually, updateDamageParts runs logic for ALL parts.
-            // If we manually touched parts above, we should be careful.
-            // BUT: updateDamageParts takes the CURRENT state of parts.
-            // If we modified them above, updateDamageParts will try to update them AGAIN based on tier shift.
-            // This is tricky.
-            // Better approach: Pass override string to updateDamageParts?
-            // updateDamageParts supports single `forceFormula` but not `forceHalved`.
-            // Let's stick to the current flow: If override exists, we set it and DON'T run standard randomizer for that part?
-            
             // Simplified approach: Run standard updater FIRST, then apply overrides ON TOP.
             const result = Manager.updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
             if (result.hasChanges) {
@@ -809,8 +825,15 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // --- 6. Add Suggested Features ---
-        const newFeatures = await Manager.handleNewFeatures(actor, typeKey, newTier, currentTier, featureLog);
+        // --- 6. Add Suggested Features (Updated to accept manual list) ---
+        const newFeatures = await Manager.handleNewFeatures(
+            actor, 
+            typeKey, 
+            newTier, 
+            currentTier, 
+            featureLog, 
+            overrides.suggestedFeatures // Pass selected features
+        );
         
         // --- Execute Update ---
         await actor.update(updateData);
@@ -825,7 +848,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             statsLog: statsLog,
             featureLog: featureLog,
             structuredFeatures: structuredFeatureChanges, // Return for UI
-            newFeaturesList: newFeatures.toCreate // Return raw new features for UI preview
+            newFeaturesList: newFeatures.toCreate // Return raw new features for UI preview (though mostly useful for visual feedback of what WOULD be created)
         };
     }
 

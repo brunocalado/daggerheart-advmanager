@@ -27,8 +27,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             features: {
                 names: {},
                 damage: {}
-            }
-            // flat keys: difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula
+            },
+            suggestedFeatures: null // Null indicates not initialized yet
         };
 
         // Initialize Settings
@@ -113,7 +113,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.targetTier = Number(actor.system.tier) || 1;
         
         // Reset overrides to avoid confusion
-        this.overrides = { features: { names: {}, damage: {} } }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null }; 
         
         // Sync filter settings to match this new actor so they don't look weird
         this.filterTier = String(this.targetTier); 
@@ -166,9 +166,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }));
             
             // If we have an initial actor selected (from token selection), ensure it's in the list
-            // FIX: Ensure we use the Token's CURRENT data (Tier/Type) to override the list entry.
-            // This prevents the filter (which is set to the Token's new Tier) from hiding the entry
-            // because the World Actor (same ID) is still at the old Tier.
             if (this.initialActor) {
                 const matchIndex = rawAdversaries.findIndex(a => a.id === this.initialActor.id);
                 
@@ -180,10 +177,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 };
 
                 if (matchIndex > -1) {
-                    // Overwrite the existing World Actor entry with the Token Actor data
                     rawAdversaries[matchIndex] = tokenData;
                 } else {
-                    // If not in the list (e.g. compendium import), add it
                     rawAdversaries.push(tokenData);
                 }
             }
@@ -237,10 +232,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let previewStats = null;
         let actor = null;
         let featurePreviewData = []; 
-        let newFeaturesPreview = [];
+        let allSuggestedFeatures = []; // Changed from newFeaturesPreview to include all potential with checked state
         let linkData = null;
         let damageOptions = []; 
-        let halvedDamageOptions = []; // New option list for Hordes
+        let halvedDamageOptions = []; 
         let isMinion = false;
         let portraitImg = null;
 
@@ -282,7 +277,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 const benchmark = ADVERSARY_BENCHMARKS[typeKey]?.tiers[`tier_${this.targetTier}`];
                 
-                // Determine Damage Options (Standard Attack)
+                // Determine Damage Options
                 if (benchmark) {
                     if (benchmark.damage_rolls && Array.isArray(benchmark.damage_rolls)) {
                         damageOptions = benchmark.damage_rolls.map(d => ({ value: d, label: d }));
@@ -298,8 +293,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                             damageOptions.push({ value: benchmark.basic_attack_y, label: benchmark.basic_attack_y });
                         }
                     }
-
-                    // Determine Halved Damage Options (Horde)
                     if (benchmark.halved_damage_x && Array.isArray(benchmark.halved_damage_x)) {
                         halvedDamageOptions = benchmark.halved_damage_x.map(d => ({ value: d, label: d }));
                     }
@@ -330,19 +323,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     previewStats.hpDisplay = "(Fixed)"; 
                 }
                 
-                // Get New Features List
-                if (simResult.newFeaturesList && simResult.newFeaturesList.length > 0) {
-                    newFeaturesPreview = simResult.newFeaturesList.map(item => ({
-                        name: item.name,
-                        img: item.img
-                    }));
-                }
+                // Get Suggested Features List for UI Checkboxes
+                allSuggestedFeatures = simResult.suggestedFeatures;
 
                 // Prepare Structured Feature Data
                 featurePreviewData = simResult.structuredFeatures.map(f => {
-                    // Check override based on type
                     let overrideVal = undefined;
-                    
                     if (f.type === 'damage' || f.type === 'name_horde') {
                          overrideVal = this.overrides.features.damage[f.itemId];
                     } else {
@@ -350,37 +336,27 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
                     
                     let displayFrom = f.from;
-                    
-                    // Display Feature Name + Old Damage (Same Style)
                     if (f.type === 'damage') {
-                        // Use consistent bold style for name, lighter for old value
                         displayFrom = `<strong>${f.itemName}</strong> <span class="old-value-sub">(${f.from})</span>`;
                     } else if (f.type === 'name_horde') {
-                        // Horde usually has name=damage, handle display gracefully
                         displayFrom = `<strong>${f.from}</strong>`;
                     } else {
                         displayFrom = `<strong>${f.from}</strong>`;
                     }
 
-                    // Determine if we should show a dropdown (for Damage or Horde types)
                     let featureOptions = null;
                     if (f.type === 'damage' || f.type === 'name_horde') {
                          const currentVal = overrideVal !== undefined ? overrideVal : f.to;
-                         
-                         // Create options from benchmark damage_rolls OR basic_attack_y options
                          featureOptions = damageOptions.map(d => ({
                              value: d.value,
                              label: d.label,
                              selected: d.value === currentVal
                          }));
-
-                         // Ensure current value is present if it's custom or outside standard range
                          if (!featureOptions.find(o => o.value === currentVal)) {
                              featureOptions.unshift({ value: currentVal, label: currentVal, selected: true });
                          }
                     }
 
-                    // MINION LOGIC
                     const isMinionFeature = f.type === 'name_minion';
                     let minionValue = "";
                     if (isMinionFeature) {
@@ -393,7 +369,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         itemId: f.itemId,
                         originalName: displayFrom,
                         newName: overrideVal !== undefined ? overrideVal : f.to,
-                        // UPDATED: Minion names are now treated as static text for rename check
                         isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion', 
                         options: featureOptions,
                         isMinionFeature: isMinionFeature,
@@ -435,16 +410,16 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             currentStats,
             previewStats,
             featurePreviewData, 
-            newFeaturesPreview,
+            allSuggestedFeatures, // Passed to template for checkboxes
             tiers,
             linkData,
             sourceOptions,
             filterOptions,
             typeOptions,
             damageOptions,
-            halvedDamageOptions, // New option for template
+            halvedDamageOptions,
             actorName: actor?.name || "None",
-            portraitImg: portraitImg // Passed to template
+            portraitImg: portraitImg
         };
     }
 
@@ -464,41 +439,59 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorSelect = html.querySelector('.main-actor-select');
         if (actorSelect) actorSelect.addEventListener('change', (e) => this._onSelectActor(e, actorSelect));
 
-        // Bind Override Inputs
         html.querySelectorAll('.override-input').forEach(input => {
             input.addEventListener('change', (e) => this._onOverrideChange(e, input));
         });
 
-        // Bind Feature Override Inputs AND Selects
         html.querySelectorAll('.feature-override-input, .feature-override-select').forEach(input => {
             input.addEventListener('change', (e) => this._onFeatureOverrideChange(e, input));
         });
 
-        // Bind Minion Value Input
         html.querySelectorAll('.minion-val-input').forEach(input => {
             input.addEventListener('change', (e) => this._onMinionOverrideChange(e, input));
             input.addEventListener('click', (e) => e.stopPropagation());
         });
 
-        // Bind Damage Preset Select
         const damagePreset = html.querySelector('.damage-preset-select');
         if (damagePreset) {
             damagePreset.addEventListener('change', (e) => this._onOverrideChange(e, damagePreset));
         }
 
-        // Bind Halved Damage Preset Select
         const halvedDamagePreset = html.querySelector('.damage-preset-select[data-field="halvedDamageFormula"]');
         if (halvedDamagePreset) {
             halvedDamagePreset.addEventListener('change', (e) => this._onOverrideChange(e, halvedDamagePreset));
         }
+
+        // NEW: Bind Feature Checkboxes
+        html.querySelectorAll('.feature-checkbox').forEach(input => {
+            input.addEventListener('change', (e) => this._onFeatureCheckboxChange(e, input));
+        });
     }
 
     _onOverrideChange(event, target) {
         const field = target.dataset.field;
         const value = target.value;
         this.overrides[field] = value;
-        // force re-render to update the display text based on selection
         this.render();
+    }
+
+    _onFeatureCheckboxChange(event, target) {
+        const featureName = target.dataset.feature;
+        const isChecked = target.checked;
+
+        if (!this.overrides.suggestedFeatures) {
+            this.overrides.suggestedFeatures = [];
+        }
+
+        if (isChecked) {
+            if (!this.overrides.suggestedFeatures.includes(featureName)) {
+                this.overrides.suggestedFeatures.push(featureName);
+            }
+        } else {
+            this.overrides.suggestedFeatures = this.overrides.suggestedFeatures.filter(f => f !== featureName);
+        }
+        // No need to re-render for checkboxes normally, but to keep state consistency
+        // we can leave it. Daggerheart features don't affect stats immediately.
     }
 
     _onFeatureOverrideChange(event, target) {
@@ -506,14 +499,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const value = target.value;
         const isDamage = target.classList.contains('feature-override-select');
         
-        // Ensure structure exists
         if (!this.overrides.features) this.overrides.features = { names: {}, damage: {} };
         if (!this.overrides.features.names) this.overrides.features.names = {};
         if (!this.overrides.features.damage) this.overrides.features.damage = {};
 
         if (isDamage) {
             this.overrides.features.damage[itemId] = value;
-            // Clear any potential name override if we switched to damage mode
             delete this.overrides.features.names[itemId];
         } else {
             this.overrides.features.names[itemId] = value;
@@ -528,20 +519,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!this.overrides.features.names) this.overrides.features.names = {};
 
         if (!isNaN(val)) {
-            // Reconstruct the full name which Manager.js expects
             this.overrides.features.names[itemId] = `Minion (${val})`;
         } else {
             delete this.overrides.features.names[itemId];
         }
-        // Force refresh to update descriptions if needed
         this.render();
     }
 
-    // --- Stats Helpers (Standard) ---
     _extractStats(actorData, tier) {
         const sys = actorData.system;
         const damageParts = [];
-        const halvedParts = []; // NEW: Extract halved damage for Horde
+        const halvedParts = []; 
         
         if (sys.attack?.damage?.parts) {
             sys.attack.damage.parts.forEach(p => {
@@ -550,7 +538,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         (p.value.dice ? `${p.value.flatMultiplier || 1}${p.value.dice}${p.value.bonus ? (p.value.bonus > 0 ? '+'+p.value.bonus : p.value.bonus) : ''}` : p.value.flatMultiplier);
                     damageParts.push(formula);
                 }
-                // NEW: Handle Secondary/Alt Damage (used by Horde)
                 if (p.valueAlt) {
                     let formula = p.valueAlt.custom?.enabled ? p.valueAlt.custom.formula : 
                         (p.valueAlt.dice ? `${p.valueAlt.flatMultiplier || 1}${p.valueAlt.dice}${p.valueAlt.bonus ? (p.valueAlt.bonus > 0 ? '+'+p.valueAlt.bonus : p.valueAlt.bonus) : ''}` : p.valueAlt.flatMultiplier);
@@ -566,7 +553,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             thresholds: `${sys.damageThresholds?.major} / ${sys.damageThresholds?.severe}`,
             attackMod: sys.attack?.roll?.bonus,
             damage: damageParts.join(", ") || "None",
-            halvedDamage: halvedParts.join(", ") || null // NEW: Return extracted halved damage
+            halvedDamage: halvedParts.join(", ") || null
         };
     }
 
@@ -602,20 +589,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         sim.tier = targetTier;
 
         const damageParts = [];
-        const halvedParts = []; // NEW: Array for simulated halved damage
+        const halvedParts = []; 
 
         if (actorData.system.attack?.damage?.parts) {
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
             tempParts.forEach(part => {
                 
                 // --- MAIN ATTACK DAMAGE ---
-                // If override exists, use it immediately
                 if (this.overrides.damageFormula) {
                     damageParts.push(`<span class="stat-changed">${this.overrides.damageFormula}</span>`);
                 } else {
-                    // Check if minion style damage override
                     if (benchmark.basic_attack_y && part.value) {
-                         // We simulate the change here just for display
                          const newVal = Manager.getRollFromRange(benchmark.basic_attack_y);
                          damageParts.push(`<span class="stat-changed">${newVal}</span>`);
                     } else if (part.value) {
@@ -641,7 +625,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         if (result) {
                             halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
                         } else {
-                             // Fallback display existing
                              let existing = "";
                              if (part.valueAlt.custom?.enabled) existing = part.valueAlt.custom.formula;
                              else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
@@ -653,15 +636,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             });
         }
         sim.damage = damageParts.join(", ") || "None";
-        sim.halvedDamage = halvedParts.join(", ") || null; // NEW: Set halved damage string
+        sim.halvedDamage = halvedParts.join(", ") || null;
 
         const featureLog = [];
-        const structuredFeatures = []; // This will be populated by processFeatureUpdate
+        const structuredFeatures = [];
         
-        // Run Feature Update Logic (Simulation)
         if (actorData.items) {
             for (const item of actorData.items) {
-                // Pass the specific override maps
                 const result = Manager.processFeatureUpdate(
                     item, 
                     targetTier, 
@@ -677,14 +658,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // --- FIX: Ensure Overridden Items Persist in UI ---
-        // If an override makes the new value equal to the original value, Manager.processFeatureUpdate
-        // returns null (no changes). We must manually inject these back into structuredFeatures so the UI row stays visible.
         const allItems = actorData.items instanceof Array ? actorData.items : actorData.items.contents || [];
-
-        // Check Name Overrides (includes Minion feature)
         for (const [itemId, overrideVal] of Object.entries(this.overrides.features.names)) {
-            // Only add if not already present in the change list
             if (!structuredFeatures.find(f => f.itemId === itemId)) {
                 const item = allItems.find(i => i._id === itemId);
                 if (item) {
@@ -702,14 +677,34 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
         
-        // Run New Feature Logic (Simulation)
-        const newFeatures = await Manager.handleNewFeatures(actor, typeKey, targetTier, currentTier, featureLog);
+        // --- SUGGESTED FEATURES LOGIC ---
+        // 1. Get ALL possible features for this Tier (resolved for Relentless X)
+        const possibleFeatures = Manager.getAvailableFeaturesForTier(typeKey, targetTier);
+        
+        // 2. Filter out already owned features to avoid duplicates
+        const validCandidates = possibleFeatures.filter(name => !allItems.some(i => i.name === name));
+
+        // 3. Initialize default selection if null (random pick)
+        if (this.overrides.suggestedFeatures === null) {
+            this.overrides.suggestedFeatures = [];
+            if (validCandidates.length > 0) {
+                 // Pick one random one to start
+                 const picked = validCandidates[Math.floor(Math.random() * validCandidates.length)];
+                 this.overrides.suggestedFeatures.push(picked);
+            }
+        }
+
+        // 4. Map to UI Objects with checked state
+        const suggestedFeatures = validCandidates.map(name => ({
+            name: name,
+            checked: this.overrides.suggestedFeatures.includes(name)
+        }));
 
         return { 
             stats: sim, 
             features: featureLog, 
             structuredFeatures: structuredFeatures,
-            newFeaturesList: newFeatures.toCreate 
+            suggestedFeatures: suggestedFeatures // Return the UI list
         };
     }
 
@@ -724,7 +719,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.stopPropagation();
         this.source = target.value;
         this.selectedActorId = null;
-        this.overrides = { features: { names: {}, damage: {} } }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null }; 
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
         this.render();
     }
@@ -748,7 +743,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.preventDefault();
         event.stopPropagation();
         this.selectedActorId = target.value;
-        this.overrides = { features: { names: {}, damage: {} } }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null }; 
         const actor = await this._getActor(this.selectedActorId);
         if (actor) {
             this.targetTier = Number(actor.system.tier) || 1;
@@ -760,7 +755,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const tier = Number(target.dataset.tier);
         if (tier) {
             this.targetTier = tier;
-            this.overrides = { features: { names: {}, damage: {} } }; 
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null }; 
             this.render();
         }
     }
@@ -772,7 +767,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!actor) return;
 
         try {
-            // 1. Handle Import from Compendium
             if (this.source !== "world") {
                 const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
                 let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
@@ -783,7 +777,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const pack = game.packs.get(this.source);
                 actor = await game.actors.importFromCompendium(pack, this.selectedActorId, { folder: folder.id });
                 
-                // FORCE SOURCE UPDATE AND SAVE
                 if (actor) {
                     this.source = "world";
                     this.selectedActorId = actor.id;
@@ -791,31 +784,21 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
-            // 2. Perform Update
+            // Perform Update (Pass the selected features list)
             const result = await Manager.updateSingleActor(actor, this.targetTier, this.overrides);
             
             if (!result) {
                 ui.notifications.warn("No changes were necessary.");
-            } else {
-                // Success Notification Removed as per request
-                // ui.notifications.info(`Updated ${actor.name} to Tier ${this.targetTier}`);
             }
 
-            // 3. SYNC FILTERS TO NEW ACTOR STATE
-            // Ensure the actor is visible and selected in the dropdowns
-
-            // Update Tier Filter to match the NEW tier of the actor
             this.filterTier = String(this.targetTier); 
             await game.settings.set(MODULE_ID, SETTING_LAST_FILTER_TIER, this.filterTier);
 
-            // Update Type Filter to match the actor's type
             const typeKey = (actor.system.type || "standard").toLowerCase();
             this.filterType = typeKey; 
 
-            // Clear overrides after successful apply
-            this.overrides = { features: { names: {}, damage: {} } };
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null };
 
-            // Re-render to update the UI dropdowns
             this.render();
 
         } catch (e) {

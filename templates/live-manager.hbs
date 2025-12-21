@@ -2,7 +2,6 @@
     
     <!-- Top Control: Actor Selection & Filter -->
     <div class="preview-controls form-group">
-        <!-- REMOVED: Select Adversary label as requested -->
         
         <div class="actor-selection-row">
             
@@ -110,7 +109,6 @@
             
             {{#if currentStats.halvedDamage}}
             <div class="stat-group">
-                <!-- UPDATED: Removed '(Horde)' suffix -->
                 <span class="stat-label">Halved Damage</span>
                 <div class="stat-block">{{currentStats.halvedDamage}}</div>
             </div>
@@ -192,7 +190,6 @@
 
                 {{#if previewStats.halvedDamage}}
                 <div class="stat-group">
-                    <!-- UPDATED: Removed '(Horde)' suffix and Added Combo Box -->
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="stat-label">Halved Damage</span>
                         <div class="select-wrapper" style="width: 120px;">
@@ -249,17 +246,17 @@
                     {{/if}}
                 </div>
 
-                <!-- NEW FEATURES SECTION -->
-                {{#if newFeaturesPreview.length}}
+                <!-- NEW FEATURES SECTION (CHECKBOXES) -->
+                {{#if allSuggestedFeatures.length}}
                 <div class="features-preview-section">
                     <h4 class="features-header" style="color: #98fb98;">New Suggested Features</h4>
                     <div class="feature-changes-list">
-                        {{#each newFeaturesPreview}}
+                        {{#each allSuggestedFeatures}}
                             <div class="feature-change-row new-feature-row">
-                                <div class="feature-label">
-                                    <i class="fas fa-plus-circle" style="color: #98fb98; margin-right: 5px;"></i>
-                                    <strong>{{this.name}}</strong>
-                                </div>
+                                <label class="feature-label" style="cursor: pointer; display: flex; align-items: center; width: 100%;">
+                                    <input type="checkbox" class="feature-checkbox" data-feature="{{this.name}}" {{#if this.checked}}checked{{/if}} style="margin-right: 8px;">
+                                    <strong style="color: #eee;">{{this.name}}</strong>
+                                </label>
                             </div>
                         {{/each}}
                     </div>
