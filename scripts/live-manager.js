@@ -166,14 +166,25 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }));
             
             // If we have an initial actor selected (from token selection), ensure it's in the list
-            if (this.initialActor && !game.actors.has(this.initialActor.id)) {
-                if (!rawAdversaries.find(a => a.id === this.initialActor.id)) {
-                    rawAdversaries.push({
-                        id: this.initialActor.id,
-                        name: `${this.initialActor.name} (Token)`,
-                        tier: Number(this.initialActor.system.tier) || 1,
-                        advType: (this.initialActor.system.type || "standard").toLowerCase()
-                    });
+            // FIX: Ensure we use the Token's CURRENT data (Tier/Type) to override the list entry.
+            // This prevents the filter (which is set to the Token's new Tier) from hiding the entry
+            // because the World Actor (same ID) is still at the old Tier.
+            if (this.initialActor) {
+                const matchIndex = rawAdversaries.findIndex(a => a.id === this.initialActor.id);
+                
+                const tokenData = {
+                    id: this.initialActor.id,
+                    name: this.initialActor.name + (this.initialActor.isToken ? " (Token)" : ""),
+                    tier: Number(this.initialActor.system.tier) || 1,
+                    advType: (this.initialActor.system.type || "standard").toLowerCase()
+                };
+
+                if (matchIndex > -1) {
+                    // Overwrite the existing World Actor entry with the Token Actor data
+                    rawAdversaries[matchIndex] = tokenData;
+                } else {
+                    // If not in the list (e.g. compendium import), add it
+                    rawAdversaries.push(tokenData);
                 }
             }
         } else {

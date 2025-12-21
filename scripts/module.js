@@ -40,6 +40,18 @@ function manage() {
         .map(t => t.actor)
         .filter(a => a && a.type === "adversary");
 
+    // CHECK FOR EXISTING WINDOW
+    const existingApp = Object.values(ui.windows).find(w => w.id === "daggerheart-live-preview");
+    
+    if (existingApp) {
+        // If window exists, update it instead of creating new
+        if (validActors.length === 1) {
+            existingApp.updateSelectedActor(validActors[0]);
+        }
+        existingApp.render(true, { focus: true });
+        return;
+    }
+
     if (validActors.length === 0) {
         new LiveManager().render(true);
     } else if (validActors.length === 1) {
