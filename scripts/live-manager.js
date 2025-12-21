@@ -1,6 +1,6 @@
 import { Manager } from "./manager.js";
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
-import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER } from "./module.js";
+import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -229,6 +229,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let linkData = null;
         let damageOptions = []; 
         let isMinion = false;
+        let portraitImg = null;
 
         if (this.selectedActorId) {
             actor = await this._getActor(this.selectedActorId);
@@ -239,6 +240,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const typeKey = (actor.system.type || "standard").toLowerCase();
                 isMinion = typeKey === "minion";
                 
+                // --- Portrait Logic ---
+                const rawImg = actor.img;
+                const defaultIcons = [
+                    "systems/daggerheart/assets/icons/documents/actors/dragon-head.svg",
+                    "icons/svg/mystery-man.svg"
+                ];
+
+                if (!rawImg || defaultIcons.includes(rawImg)) {
+                    portraitImg = SKULL_IMAGE_PATH;
+                } else {
+                    portraitImg = rawImg;
+                }
+                // ---------------------
+
                 linkData = {
                     isLinked: isLinked,
                     icon: isLinked ? "fa-link" : "fa-unlink",
@@ -409,7 +424,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             filterOptions,
             typeOptions,
             damageOptions,
-            actorName: actor?.name || "None"
+            actorName: actor?.name || "None",
+            portraitImg: portraitImg // Passed to template
         };
     }
 

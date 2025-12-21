@@ -114,6 +114,16 @@
                 <div class="stat-block">{{currentStats.halvedDamage}}</div>
             </div>
             {{/if}}
+
+            <!-- PORTRAIT DISPLAY SECTION -->
+            {{#if portraitImg}}
+            <div class="portrait-display-wrapper">
+                <div class="portrait-display">
+                    <img src="{{portraitImg}}" alt="{{actorName}}" class="actor-portrait">
+                </div>
+            </div>
+            {{/if}}
+
         </div>
 
         <!-- Right Column: Preview State -->
