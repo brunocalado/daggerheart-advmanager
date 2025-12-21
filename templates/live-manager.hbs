@@ -110,7 +110,8 @@
             
             {{#if currentStats.halvedDamage}}
             <div class="stat-group">
-                <span class="stat-label">Halved Damage (Horde)</span>
+                <!-- UPDATED: Removed '(Horde)' suffix -->
+                <span class="stat-label">Halved Damage</span>
                 <div class="stat-block">{{currentStats.halvedDamage}}</div>
             </div>
             {{/if}}
@@ -191,7 +192,18 @@
 
                 {{#if previewStats.halvedDamage}}
                 <div class="stat-group">
-                    <span class="stat-label">Halved Damage (Horde)</span>
+                    <!-- UPDATED: Removed '(Horde)' suffix and Added Combo Box -->
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="stat-label">Halved Damage</span>
+                        <div class="select-wrapper" style="width: 120px;">
+                            <select class="damage-preset-select" data-field="halvedDamageFormula">
+                                <option value="">-- Preset --</option>
+                                {{#each halvedDamageOptions}}
+                                <option value="{{this.value}}">{{this.label}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    </div>
                     <div class="stat-block">{{{previewStats.halvedDamage}}}</div>
                 </div>
                 {{/if}}

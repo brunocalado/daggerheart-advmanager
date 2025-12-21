@@ -28,6 +28,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 names: {},
                 damage: {}
             }
+            // flat keys: difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula
         };
 
         // Initialize Settings
@@ -228,6 +229,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let newFeaturesPreview = [];
         let linkData = null;
         let damageOptions = []; 
+        let halvedDamageOptions = []; // New option list for Hordes
         let isMinion = false;
         let portraitImg = null;
 
@@ -269,7 +271,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 const benchmark = ADVERSARY_BENCHMARKS[typeKey]?.tiers[`tier_${this.targetTier}`];
                 
-                // Determine Damage Options
+                // Determine Damage Options (Standard Attack)
                 if (benchmark) {
                     if (benchmark.damage_rolls && Array.isArray(benchmark.damage_rolls)) {
                         damageOptions = benchmark.damage_rolls.map(d => ({ value: d, label: d }));
@@ -284,6 +286,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         } else {
                             damageOptions.push({ value: benchmark.basic_attack_y, label: benchmark.basic_attack_y });
                         }
+                    }
+
+                    // Determine Halved Damage Options (Horde)
+                    if (benchmark.halved_damage_x && Array.isArray(benchmark.halved_damage_x)) {
+                        halvedDamageOptions = benchmark.halved_damage_x.map(d => ({ value: d, label: d }));
                     }
                 }
 
@@ -302,7 +309,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     attackModDisplay: simResult.stats.attackMod,
                     
                     damage: simResult.stats.damage, 
-                    halvedDamage: simResult.stats.halvedDamage, // NEW: Pass halved damage to preview
+                    halvedDamage: simResult.stats.halvedDamage, 
                     tier: this.targetTier,
                     isMinion: isMinion
                 };
@@ -424,6 +431,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             filterOptions,
             typeOptions,
             damageOptions,
+            halvedDamageOptions, // New option for template
             actorName: actor?.name || "None",
             portraitImg: portraitImg // Passed to template
         };
@@ -466,12 +474,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (damagePreset) {
             damagePreset.addEventListener('change', (e) => this._onOverrideChange(e, damagePreset));
         }
+
+        // Bind Halved Damage Preset Select
+        const halvedDamagePreset = html.querySelector('.damage-preset-select[data-field="halvedDamageFormula"]');
+        if (halvedDamagePreset) {
+            halvedDamagePreset.addEventListener('change', (e) => this._onOverrideChange(e, halvedDamagePreset));
+        }
     }
 
     _onOverrideChange(event, target) {
         const field = target.dataset.field;
         const value = target.value;
         this.overrides[field] = value;
+        // force re-render to update the display text based on selection
+        this.render();
     }
 
     _onFeatureOverrideChange(event, target) {
@@ -580,36 +596,47 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (actorData.system.attack?.damage?.parts) {
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
             tempParts.forEach(part => {
-                // Check if minion style damage override
-                if (benchmark.basic_attack_y && part.value) {
-                     // We simulate the change here just for display
-                     const newVal = Manager.getRollFromRange(benchmark.basic_attack_y);
-                     damageParts.push(`<span class="stat-changed">${newVal}</span>`);
-                } else if (part.value) {
-                    const result = Manager.processDamageValue(part.value, targetTier, currentTier, benchmark.damage_rolls);
-                    if (result) {
-                        damageParts.push(`<span class="stat-changed">${result.to}</span>`);
-                    } else {
-                        let existing = "";
-                         if (part.value.custom?.enabled) existing = part.value.custom.formula;
-                         else if (part.value.dice) existing = `${part.value.flatMultiplier||1}${part.value.dice}${part.value.bonus ? (part.value.bonus>0?'+'+part.value.bonus:part.value.bonus):''}`;
-                         else existing = part.value.flatMultiplier;
-                         damageParts.push(existing);
+                
+                // --- MAIN ATTACK DAMAGE ---
+                // If override exists, use it immediately
+                if (this.overrides.damageFormula) {
+                    damageParts.push(`<span class="stat-changed">${this.overrides.damageFormula}</span>`);
+                } else {
+                    // Check if minion style damage override
+                    if (benchmark.basic_attack_y && part.value) {
+                         // We simulate the change here just for display
+                         const newVal = Manager.getRollFromRange(benchmark.basic_attack_y);
+                         damageParts.push(`<span class="stat-changed">${newVal}</span>`);
+                    } else if (part.value) {
+                        const result = Manager.processDamageValue(part.value, targetTier, currentTier, benchmark.damage_rolls);
+                        if (result) {
+                            damageParts.push(`<span class="stat-changed">${result.to}</span>`);
+                        } else {
+                            let existing = "";
+                             if (part.value.custom?.enabled) existing = part.value.custom.formula;
+                             else if (part.value.dice) existing = `${part.value.flatMultiplier||1}${part.value.dice}${part.value.bonus ? (part.value.bonus>0?'+'+part.value.bonus:part.value.bonus):''}`;
+                             else existing = part.value.flatMultiplier;
+                             damageParts.push(existing);
+                        }
                     }
                 }
 
-                // NEW: Handle Halved Damage Logic for Horde
+                // --- HALVED DAMAGE (HORDE) ---
                 if (part.valueAlt && benchmark.halved_damage_x) {
-                    const result = Manager.processDamageValue(part.valueAlt, targetTier, currentTier, benchmark.halved_damage_x);
-                    if (result) {
-                        halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
+                    if (this.overrides.halvedDamageFormula) {
+                        halvedParts.push(`<span class="stat-changed">${this.overrides.halvedDamageFormula}</span>`);
                     } else {
-                         // Fallback display existing
-                         let existing = "";
-                         if (part.valueAlt.custom?.enabled) existing = part.valueAlt.custom.formula;
-                         else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
-                         else existing = part.valueAlt.flatMultiplier;
-                         halvedParts.push(existing);
+                        const result = Manager.processDamageValue(part.valueAlt, targetTier, currentTier, benchmark.halved_damage_x);
+                        if (result) {
+                            halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
+                        } else {
+                             // Fallback display existing
+                             let existing = "";
+                             if (part.valueAlt.custom?.enabled) existing = part.valueAlt.custom.formula;
+                             else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
+                             else existing = part.valueAlt.flatMultiplier;
+                             halvedParts.push(existing);
+                        }
                     }
                 }
             });

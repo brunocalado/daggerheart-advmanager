@@ -1,4 +1,5 @@
-# Daggerheart: 💀 Adversary Manager 💀
+# 💀 Adversary Manager 💀
+**for Daggerheart**
 
 <p align="center"><img width="500" src="assets/images/logo.webp"></p>
 

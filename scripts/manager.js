@@ -587,7 +587,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     /**
      * UPDATE SINGLE ACTOR - NOW ACCEPTS MANUAL OVERRIDES
-     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, features: { names: {}, damage: {} } }
+     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula, features: { names: {}, damage: {} } }
      */
     static async updateSingleActor(actor, newTier, overrides = {}) {
         const actorData = actor.toObject();
@@ -676,18 +676,99 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                             part.value.dice = parsed.die;
                             part.value.bonus = parsed.bonus;
                         }
-                        updateData["system.attack.damage.parts"] = sheetDamageParts;
-                        statsLog.push(`<strong>Sheet Dmg:</strong> (Manual) -> ${overrides.damageFormula}`);
+                        // Update object so subsequent checks use it?
+                        // No, just update the data structure
                     }
                 }
-            } else {
-                // Standard Logic
-                const result = Manager.updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
-                if (result.hasChanges) {
-                    updateData["system.attack.damage.parts"] = sheetDamageParts;
-                    result.changes.forEach(c => {
-                        statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
-                    });
+            }
+            
+            // NEW: Check for halved damage override (Horde)
+            if (overrides.halvedDamageFormula && sheetDamageParts.length > 0) {
+                 const parsed = Manager.parseDamageString(overrides.halvedDamageFormula);
+                 if (parsed) {
+                     const part = sheetDamageParts[0]; // Assume first part usually carries the alt value
+                     if (part.valueAlt) {
+                         if (parsed.die === null) {
+                            part.valueAlt.flatMultiplier = parsed.count;
+                            part.valueAlt.dice = "";
+                            part.valueAlt.bonus = null;
+                         } else {
+                            part.valueAlt.flatMultiplier = parsed.count;
+                            part.valueAlt.dice = parsed.die;
+                            part.valueAlt.bonus = parsed.bonus;
+                         }
+                     }
+                 }
+            }
+
+            // Standard Logic if overrides didn't strictly replace everything, 
+            // but for simplicity we rely on Manager.updateDamageParts handling normal logic 
+            // OR simple assignment if we want to bypass randomization completely.
+            
+            // If overrides exist, we manually set them above. Now we check standard logic for any parts not overridden?
+            // Actually, updateDamageParts runs logic for ALL parts.
+            // If we manually touched parts above, we should be careful.
+            // BUT: updateDamageParts takes the CURRENT state of parts.
+            // If we modified them above, updateDamageParts will try to update them AGAIN based on tier shift.
+            // This is tricky.
+            // Better approach: Pass override string to updateDamageParts?
+            // updateDamageParts supports single `forceFormula` but not `forceHalved`.
+            // Let's stick to the current flow: If override exists, we set it and DON'T run standard randomizer for that part?
+            
+            // Simplified approach: Run standard updater FIRST, then apply overrides ON TOP.
+            const result = Manager.updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
+            if (result.hasChanges) {
+                // Apply standard changes first
+                updateData["system.attack.damage.parts"] = sheetDamageParts;
+                result.changes.forEach(c => {
+                    statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
+                });
+            }
+            
+            // NOW Apply Overrides (Overrides win)
+            if (overrides.damageFormula && sheetDamageParts.length > 0) {
+                const parsed = Manager.parseDamageString(overrides.damageFormula);
+                if (parsed && sheetDamageParts[0].value) {
+                     const part = sheetDamageParts[0];
+                     // Reset custom if switching to dice, set custom if switching to flat? 
+                     // Daggerheart logic is flexible. Let's just set the primitive values.
+                     if (parsed.die === null) {
+                        part.value.flatMultiplier = parsed.count;
+                        part.value.dice = "";
+                        part.value.bonus = null;
+                        if (!part.value.custom) part.value.custom = {};
+                        part.value.custom.enabled = true;
+                        part.value.custom.formula = String(parsed.count);
+                     } else {
+                        part.value.flatMultiplier = parsed.count;
+                        part.value.dice = parsed.die;
+                        part.value.bonus = parsed.bonus;
+                        if (part.value.custom) part.value.custom.enabled = false;
+                     }
+                     updateData["system.attack.damage.parts"] = sheetDamageParts;
+                     statsLog.push(`<strong>Sheet Dmg (Manual):</strong> ${overrides.damageFormula}`);
+                }
+            }
+
+            if (overrides.halvedDamageFormula && sheetDamageParts.length > 0) {
+                const parsed = Manager.parseDamageString(overrides.halvedDamageFormula);
+                if (parsed && sheetDamageParts[0].valueAlt) {
+                     const part = sheetDamageParts[0];
+                     if (parsed.die === null) {
+                        part.valueAlt.flatMultiplier = parsed.count;
+                        part.valueAlt.dice = "";
+                        part.valueAlt.bonus = null;
+                        if (!part.valueAlt.custom) part.valueAlt.custom = {};
+                        part.valueAlt.custom.enabled = true;
+                        part.valueAlt.custom.formula = String(parsed.count);
+                     } else {
+                        part.valueAlt.flatMultiplier = parsed.count;
+                        part.valueAlt.dice = parsed.die;
+                        part.valueAlt.bonus = parsed.bonus;
+                        if (part.valueAlt.custom) part.valueAlt.custom.enabled = false;
+                     }
+                     updateData["system.attack.damage.parts"] = sheetDamageParts;
+                     statsLog.push(`<strong>Halved Dmg (Manual):</strong> ${overrides.halvedDamageFormula}`);
                 }
             }
         }
