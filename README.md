@@ -1,6 +1,16 @@
-# 💀 Daggerheart: Adversary Manager
+# 💀 Adversary Manager 💀
+**for Daggerheart**
+
+<p align="center"><img width="500" src="assets/images/logo.webp"></p>
 
 An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversaries across Tiers, manage their stats, and preview changes with a powerful live dashboard.
+
+<video src="https://github.com/user-attachments/assets/a875027b-eb4a-4637-a4f5-7c61064da22d" 
+       controls 
+       width="720"
+       autoplay 
+       loop 
+       muted></video>
 
 ## 🌟 Overview & Features
 
@@ -29,6 +39,8 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 4.  Review the changes in the **Live Preview**.
     * *Optional:* Adjust stats manually or check/uncheck suggested features.
 5.  Click **Apply** to update the actor.
+
+<p align="center"><img width="500" src="assets/docs/system-button.webp"></p>
 
 ## 🚀 Installation
 
