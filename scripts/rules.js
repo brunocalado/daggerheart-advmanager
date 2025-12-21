@@ -80,3 +80,54 @@ export const ADVERSARY_BENCHMARKS = {
       }
     }
 };
+
+export const PC_BENCHMARKS = {
+  "tier_1": {
+    "evasion": "8/14",
+    "hp": "5/9",
+    "stress": "6/8",
+    "base_damage_thresholds": "6/13",
+    "threshold_modifiers_major": "+0/+4",
+    "threshold_modifiers_severe": "-1/+6",
+    "base_armor_score": "3",
+    "armor_modifiers": "+0/+4",
+    "standard_max_character_trait": 2,
+    "absolute_max_character_trait": 2
+  },
+  "tier_2": {
+    "evasion": "8/16",
+    "hp": "5/11",
+    "stress": "6/10",
+    "base_damage_thresholds": "9/20",
+    "threshold_modifiers_major": "+0/+10",
+    "threshold_modifiers_severe": "-2/+12",
+    "base_armor_score": "4",
+    "armor_modifiers": "+0/+4",
+    "standard_max_character_trait": 3,
+    "absolute_max_character_trait": 3
+  },
+  "tier_3": {
+    "evasion": "8/18",
+    "hp": "5/12",
+    "stress": "6/12",
+    "base_damage_thresholds": "11/27",
+    "threshold_modifiers_major": "+3/+16",
+    "threshold_modifiers_severe": "+1/+20",
+    "base_armor_score": "5",
+    "armor_modifiers": "+0/+5",
+    "standard_max_character_trait": 4,
+    "absolute_max_character_trait": 6
+  },
+  "tier_4": {
+    "evasion": "8/20",
+    "hp": "5/12",
+    "stress": "6/12",
+    "base_damage_thresholds": "13/36",
+    "threshold_modifiers_major": "+6/+22",
+    "threshold_modifiers_severe": "+4/+28",
+    "base_armor_score": "6",
+    "armor_modifiers": "+0/+6",
+    "standard_max_character_trait": 5,
+    "absolute_max_character_trait": 7
+  }
+};

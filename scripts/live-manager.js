@@ -315,7 +315,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     damage: simResult.stats.damage, 
                     halvedDamage: simResult.stats.halvedDamage, 
                     tier: this.targetTier,
-                    isMinion: isMinion
+                    isMinion: isMinion,
+                    hitChance: simResult.stats.hitChance, // Adversary hits PC
+                    hitChanceAgainst: simResult.stats.hitChanceAgainst // PC hits Adversary
                 };
 
                 if (isMinion) {
@@ -545,6 +547,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             });
         }
+        
+        // --- Calculate Hit Chance for Current Stats ---
+        const attackMod = Number(sys.attack?.roll?.bonus) || 0;
+        const hitChance = Manager.calculateHitChance(attackMod, tier);
+        
+        // --- Calculate Hit Chance Against Current Stats ---
+        const difficulty = Number(sys.difficulty) || 0;
+        const hitChanceAgainst = Manager.calculateHitChanceAgainst(difficulty, tier);
+
         return {
             tier,
             difficulty: sys.difficulty,
@@ -553,7 +564,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             thresholds: `${sys.damageThresholds?.major} / ${sys.damageThresholds?.severe}`,
             attackMod: sys.attack?.roll?.bonus,
             damage: damageParts.join(", ") || "None",
-            halvedDamage: halvedParts.join(", ") || null
+            halvedDamage: halvedParts.join(", ") || null,
+            hitChance: hitChance, // Pass the calculated hit chance object
+            hitChanceAgainst: hitChanceAgainst // Pass the calculated hit chance AGAINST object
         };
     }
 
@@ -587,6 +600,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         sim.thresholds = `<span class="range-hint">(${benchmark.threshold_min} - ${benchmark.threshold_max})</span>`;
         sim.attackMod = `<span class="range-hint">(${benchmark.attack_modifier})</span>`;
         sim.tier = targetTier;
+
+        // --- Calculate Hit Chances for PREVIEW Stats ---
+        // Use override if present, otherwise simulated value
+        const previewAttackMod = this.overrides.attackMod !== undefined ? Number(this.overrides.attackMod) : sim.attackModRaw;
+        sim.hitChance = Manager.calculateHitChance(previewAttackMod, targetTier);
+
+        const previewDifficulty = this.overrides.difficulty !== undefined ? Number(this.overrides.difficulty) : sim.difficultyRaw;
+        sim.hitChanceAgainst = Manager.calculateHitChanceAgainst(previewDifficulty, targetTier);
 
         const damageParts = [];
         const halvedParts = []; 

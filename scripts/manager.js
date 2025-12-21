@@ -1,5 +1,5 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-import { ADVERSARY_BENCHMARKS } from "./rules.js";
+import { ADVERSARY_BENCHMARKS, PC_BENCHMARKS } from "./rules.js";
 import { MODULE_ID, SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SETTING_ADD_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
 
 export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -143,6 +143,86 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             return [];
         }
         return tierBenchmark.suggested_features.map(name => Manager.resolveFeatureName(name, tier));
+    }
+
+    /**
+     * Calculates the hit probability of an adversary against a PC (1d20 vs Evasion).
+     * @param {Number} attackBonus 
+     * @param {Number} tier 
+     * @returns {Object|null}
+     */
+    static calculateHitChance(attackBonus, tier) {
+        if (isNaN(attackBonus) || !tier) return null;
+        
+        const pcStats = PC_BENCHMARKS[`tier_${tier}`];
+        if (!pcStats || !pcStats.evasion) return null;
+
+        const parts = pcStats.evasion.split("/").map(p => parseInt(p.trim()));
+        if (parts.length < 2) return null;
+        
+        const minEvasion = Math.min(...parts);
+        const maxEvasion = Math.max(...parts);
+
+        const calculateChance = (target) => {
+            let t = target;
+            if (t < 1) t = 1;
+            if (t > 20) return 0; 
+            return Math.round(((21 - t) / 20) * 100);
+        };
+
+        const bestCaseTarget = minEvasion - attackBonus;
+        const maxChance = calculateChance(bestCaseTarget);
+
+        const worstCaseTarget = maxEvasion - attackBonus;
+        const minChance = calculateChance(worstCaseTarget);
+
+        return {
+            text: `(Min: ${minChance}% | Max: ${maxChance}%)`,
+            tooltip: `Vs PC Tier ${tier} Evasion (${pcStats.evasion}):\nMin Evasion: ${maxChance}% chance to hit.\nMax Evasion: ${minChance}% chance to hit.`
+        };
+    }
+
+    /**
+     * Calculates the hit probability of a PC against the Adversary (2d12 vs Difficulty).
+     * Success if (Roll + Bonus >= Difficulty) OR (Doubles).
+     * @param {Number} difficulty 
+     * @param {Number} tier 
+     * @returns {Object|null}
+     */
+    static calculateHitChanceAgainst(difficulty, tier) {
+        if (!difficulty || isNaN(difficulty) || !tier) return null;
+
+        const pcStats = PC_BENCHMARKS[`tier_${tier}`];
+        if (!pcStats) return null;
+
+        const minBonus = pcStats.standard_max_character_trait || 0;
+        const maxBonus = pcStats.absolute_max_character_trait || 0;
+
+        const calculate = (bonus) => {
+            let hits = 0;
+            const totalOutcomes = 144; // 12 * 12
+
+            for (let d1 = 1; d1 <= 12; d1++) {
+                for (let d2 = 1; d2 <= 12; d2++) {
+                    // Success if doubles (Hope/Fear) OR meets difficulty
+                    if (d1 === d2 || (d1 + d2 + bonus >= difficulty)) {
+                        hits++;
+                    }
+                }
+            }
+            
+            // Use Math.round to get integer percentage (e.g. 58 instead of 58.33)
+            return Math.round((hits / totalOutcomes) * 100);
+        };
+
+        const minChance = calculate(minBonus);
+        const maxChance = calculate(maxBonus);
+
+        return {
+            text: `(Min: ${minChance}% | Max: ${maxChance}%)`,
+            // Cleaned up tooltip
+            tooltip: `PC Hit Chance (2d12 + Trait vs Diff ${difficulty}):\nStandard Trait (+${minBonus}): ${minChance}%\nMax Trait (+${maxBonus}): ${maxChance}%`
+        };
     }
 
     // --- Core Logic ---
@@ -547,16 +627,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         return null;
     }
 
-    /**
-     * Handle adding suggested features.
-     * @param {Object} actor 
-     * @param {String} typeKey 
-     * @param {Number} newTier 
-     * @param {Number} currentTier 
-     * @param {Array} changeLog 
-     * @param {Array<String>} specificFeatureNames (Optional) - If present, only these features will be added. If null/empty, random selection occurs (default behavior).
-     * @returns 
-     */
+    // --- Add Suggested Features Logic ---
     static async handleNewFeatures(actor, typeKey, newTier, currentTier, changeLog, specificFeatureNames = null) {
         if (!game.settings.get(MODULE_ID, SETTING_ADD_FEATURES)) return { toCreate: [], toDelete: [] };
         if (newTier <= currentTier) return { toCreate: [], toDelete: [] };
@@ -570,6 +641,9 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             featuresToAdd = specificFeatureNames.filter(name => !currentItems.some(i => i.name === name));
         } else {
             // --- AUTOMATIC/BATCH MODE: Pick random ---
+            const benchmarkRoot = ADVERSARY_BENCHMARKS[typeKey];
+            if (!benchmarkRoot) return { toCreate: [], toDelete: [] };
+
             const possibleFeatures = Manager.getAvailableFeaturesForTier(typeKey, newTier);
             if (possibleFeatures.length === 0) return { toCreate: [], toDelete: [] };
 
@@ -706,8 +780,8 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                             part.value.dice = parsed.die;
                             part.value.bonus = parsed.bonus;
                         }
-                        // Update object so subsequent checks use it?
-                        // No, just update the data structure
+                        updateData["system.attack.damage.parts"] = sheetDamageParts;
+                        statsLog.push(`<strong>Sheet Dmg (Manual):</strong> ${overrides.damageFormula}`);
                     }
                 }
             }
