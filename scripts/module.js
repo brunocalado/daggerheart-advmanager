@@ -156,19 +156,34 @@ Hooks.on("controlToken", (token, controlled) => {
     }
 });
 
+// --- Daggerheart System Menu Hook (Both Buttons) ---
 Hooks.on("renderDaggerheartMenu", (app, html) => {
     const element = (html instanceof HTMLElement) ? html : html[0];
     
-    const myButton = document.createElement("button");
-    myButton.type = "button";
-    myButton.innerHTML = `<i class="fas fa-skull"></i> Manage Adversaries`;
-    myButton.classList.add("dh-adv-btn"); 
-    myButton.style.marginTop = "10px";
-    myButton.style.width = "100%";
+    // Button 1: Manage Adversaries
+    const btnManage = document.createElement("button");
+    btnManage.type = "button";
+    btnManage.innerHTML = `<i class="fas fa-skull"></i> Manage Adversaries`;
+    btnManage.classList.add("dh-adv-btn"); 
+    btnManage.style.marginTop = "5px";
+    btnManage.style.width = "100%";
 
-    myButton.onclick = (event) => {
+    btnManage.onclick = (event) => {
         event.preventDefault();
         manage();
+    };
+
+    // Button 2: Compendium Stats
+    const btnStats = document.createElement("button");
+    btnStats.type = "button";
+    btnStats.innerHTML = `<i class="fas fa-chart-pie"></i> Compendium Stats`;
+    btnStats.classList.add("dh-adv-btn"); 
+    btnStats.style.marginTop = "5px";
+    btnStats.style.width = "100%";
+
+    btnStats.onclick = (event) => {
+        event.preventDefault();
+        new CompendiumStats().render(true);
     };
 
     const fieldset = element.querySelector("fieldset");
@@ -177,13 +192,16 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
         const legend = document.createElement("legend");
         legend.innerText = "Adversary Tools";
         newFieldset.appendChild(legend);
-        newFieldset.appendChild(myButton);
+        newFieldset.appendChild(btnManage);
+        newFieldset.appendChild(btnStats);
         fieldset.after(newFieldset);
     } else {
-        element.appendChild(myButton);
+        element.appendChild(btnManage);
+        element.appendChild(btnStats);
     }
 });
 
+// --- Actor Directory Hook (Manage Adversaries Only) ---
 Hooks.on("renderActorDirectory", (app, html) => {
     // V13 Standard: Ensure we are working with an HTMLElement
     const element = (html instanceof HTMLElement) ? html : html[0];

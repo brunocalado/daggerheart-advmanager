@@ -5,6 +5,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
     constructor(options = {}) {
         super(options);
         this.allActors = [];
+        this.featureIndex = null; // Store features index
         this.selectedType = "bruiser"; // Default selection
         this.statsCache = null;
         this.loading = true;
@@ -72,17 +73,32 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             });
         }
 
-        // Bind Feature Links (Click to Open)
+        // Bind Feature Links (Click & Drag)
         html.querySelectorAll('.feature-link').forEach(link => {
+            // Click to Open
             link.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const featureName = link.dataset.featureName;
                 await this._openFeatureSheet(featureName);
             });
+
+            // Drag Start
+            link.addEventListener('dragstart', (e) => {
+                const uuid = link.dataset.uuid;
+                if (!uuid) return;
+                
+                // Foundry Drag Data Format
+                const dragData = { 
+                    type: "Item", 
+                    uuid: uuid 
+                };
+                e.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+            });
         });
     }
 
     async _openFeatureSheet(featureName) {
+        // This is a fallback if UUID isn't on the element, though now we prioritize UUID
         const packName = "daggerheart-advmanager.all-features";
         const pack = game.packs.get(packName);
         
@@ -91,7 +107,6 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             return;
         }
 
-        // Find the item in the compendium index by name
         const index = await pack.getIndex();
         const entry = index.find(i => i.name === featureName);
 
@@ -111,6 +126,15 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         }
         // Load all documents to access deep data structure
         this.allActors = await pack.getDocuments();
+
+        // Load Features Index for UUID lookup
+        const featurePack = game.packs.get("daggerheart-advmanager.all-features");
+        if (featurePack) {
+            this.featureIndex = await featurePack.getIndex();
+        } else {
+            console.warn("Daggerheart Manager | Features compendium not found. Drag/Drop may not work for all items.");
+            this.featureIndex = new foundry.utils.Collection();
+        }
     }
 
     _calculateStats(type) {
@@ -183,7 +207,17 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
                     actor.items.forEach(item => {
                         // We store items by name to avoid duplicates
                         if (!data[tier].features.has(item.name)) {
-                            data[tier].features.set(item.name, item.img || "icons/svg/item-bag.svg");
+                            // Find UUID from the loaded index
+                            let uuid = "";
+                            const entry = this.featureIndex.find(i => i.name === item.name);
+                            if (entry) {
+                                uuid = entry.uuid; 
+                            }
+                            
+                            data[tier].features.set(item.name, { 
+                                img: item.img || "icons/svg/item-bag.svg",
+                                uuid: uuid
+                            });
                         }
                     });
                 }
@@ -237,7 +271,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             attackMod: [],
             damageRolls: new Set(),
             halvedDamageRolls: new Set(),
-            features: new Map() // Key: Name, Value: Icon
+            features: new Map() // Key: Name, Value: {img, uuid}
         };
     }
 
@@ -266,12 +300,15 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
     _getFeatureList(map) {
         if (!map.size) return "-";
         const sorted = Array.from(map.entries()).sort((a,b) => a[0].localeCompare(b[0]));
-        // Added 'feature-link' class and data attribute for click handling
-        return sorted.map(([name, img]) => 
-            `<div class="feature-entry feature-link" data-feature-name="${name}" title="Click to view Item">
-                <img src="${img}" class="feature-icon" alt="${name}"/>
+        
+        return sorted.map(([name, data]) => {
+            // Only make it draggable if we found a UUID
+            const draggableAttr = data.uuid ? `draggable="true" data-uuid="${data.uuid}"` : "";
+            
+            return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="Click to view, Drag to Sheet">
+                <img src="${data.img}" class="feature-icon" alt="${name}"/>
                 <span class="feature-name">${name}</span>
              </div>`
-        ).join("");
+        }).join("");
     }
 }
