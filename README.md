@@ -26,19 +26,34 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
     * Auto-updates Experience values based on Tier difference.
     * Suggests and adds new **Features** (e.g., *Relentless*, *Momentum*) appropriate for the target Tier.
     * Allows manual selection/deselection of features via checkboxes.
-* **🔧 Manual Overrides:** Full control to manually tweak any specific stat (HP, Damage, Name) directly in the preview window before confirming.
+* **🔧 Manual Overrides:** Full control to manually tweak any specific stat (HP, Damage, Name) directly in the preview window. Now supports text inputs with smart suggestions tooltips!
 * **📦 Batch & Compendium Support:**
     * Update multiple selected tokens on the canvas simultaneously.
     * Import and auto-scale adversaries directly from Compendiums into your world.
 
+### 📊 Compendium Statistics
+
+* **🔍 Stats Explorer:** Browse comprehensive statistics for every adversary type (Bruiser, Horde, etc.) across all 4 Tiers based on the system compendium.
+* **📋 Data Tables:** View calculated ranges for Difficulty, HP, Stress, Thresholds, Attack Modifiers, and Damage Rolls.
+* **🧩 Feature Browser:** See a list of all features found in the compendium for each Tier.
+* **🖐️ Drag & Drop:** Click to view feature details or **drag them directly onto an actor sheet** to add them!
+
 ## ⚙️ Instructions & Usage
 
-1.  **Select a Token** (or multiple) on the canvas.
-2.  Click the **"Manage Adversaries"** button in the Daggerheart side menu or Token HUD.
+### Live Manager (Scaling)
+1.  **Select a Token** (or multiple) on the canvas or don't select anything.
+2.  Click the **"Manage Adversaries"** button in the Daggerheart side menu or Actor tab.
 3.  Choose your **Target Tier** (1, 2, 3, or 4).
 4.  Review the changes in the **Live Preview**.
-    * *Optional:* Adjust stats manually or check/uncheck suggested features.
+    * *Optional:* Adjust stats manually by typing in the fields. Hover over the question mark `(?)` icons to see suggested benchmark values.
+    * Check/Uncheck suggested features.
 5.  Click **Apply** to update the actor.
+
+### Compendium Stats
+1. Click the **"Compendium Stats"** button in the Daggerheart side menu or the chart icon <i class="fas fa-chart-pie"></i> inside the Live Manager window.
+2. Select an **Adversary Type** (e.g., Bruiser, Social, Horde) from the dropdown.
+3. View the comparative table for Tiers 1-4.
+4. Drag any Feature from the "Features" row directly to an actor sheet or macro bar.
 
 <p align="center"><img width="350" src="docs/system-button.webp"></p>
 
