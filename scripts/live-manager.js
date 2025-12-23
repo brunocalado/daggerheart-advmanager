@@ -235,7 +235,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let allSuggestedFeatures = []; // Changed from newFeaturesPreview to include all potential with checked state
         let linkData = null;
         let damageOptions = []; 
-        let halvedDamageOptions = []; 
+        let halvedDamageOptions = [];
+        let damageTooltip = ""; // NEW: Tooltip for damage options
+        let halvedDamageTooltip = ""; // NEW: Tooltip for halved damage options
         let isMinion = false;
         let portraitImg = null;
 
@@ -297,6 +299,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         halvedDamageOptions = benchmark.halved_damage_x.map(d => ({ value: d, label: d }));
                     }
                 }
+                
+                // Build Tooltips
+                if (damageOptions.length > 0) {
+                    damageTooltip = "Suggested:<br>" + damageOptions.map(o => `• ${o.label}`).join("<br>");
+                }
+                
+                if (halvedDamageOptions.length > 0) {
+                    halvedDamageTooltip = "Suggested:<br>" + halvedDamageOptions.map(o => `• ${o.label}`).join("<br>");
+                }
 
                 previewStats = {
                     difficulty: this.overrides.difficulty !== undefined ? this.overrides.difficulty : simResult.stats.difficultyRaw,
@@ -312,8 +323,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     thresholdsDisplay: simResult.stats.thresholds,
                     attackModDisplay: simResult.stats.attackMod,
                     
-                    damage: simResult.stats.damage, 
+                    damage: simResult.stats.damage,
+                    mainDamageFormula: simResult.stats.mainDamageRaw, // Raw value for input
                     halvedDamage: simResult.stats.halvedDamage, 
+                    mainHalvedDamageFormula: simResult.stats.mainHalvedDamageRaw, // Raw value for input
+                    
                     tier: this.targetTier,
                     isMinion: isMinion,
                     hitChance: simResult.stats.hitChance, // Adversary hits PC
@@ -347,6 +361,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
 
                     let featureOptions = null;
+                    let optionsTooltip = ""; // NEW: Tooltip string
+
                     if (f.type === 'damage' || f.type === 'name_horde') {
                          const currentVal = overrideVal !== undefined ? overrideVal : f.to;
                          featureOptions = damageOptions.map(d => ({
@@ -354,8 +370,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                              label: d.label,
                              selected: d.value === currentVal
                          }));
-                         if (!featureOptions.find(o => o.value === currentVal)) {
-                             featureOptions.unshift({ value: currentVal, label: currentVal, selected: true });
+                         
+                         // Generate Tooltip text for options
+                         if (featureOptions.length > 0) {
+                             optionsTooltip = "Suggested:<br>" + featureOptions.map(o => `• ${o.label}`).join("<br>");
                          }
                     }
 
@@ -372,7 +390,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         originalName: displayFrom,
                         newName: overrideVal !== undefined ? overrideVal : f.to,
                         isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion', 
-                        options: featureOptions,
+                        options: featureOptions, // Still pass options if we check for existence
+                        optionsTooltip: optionsTooltip, // New Tooltip Data
                         isMinionFeature: isMinionFeature,
                         minionValue: minionValue
                     };
@@ -418,8 +437,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             sourceOptions,
             filterOptions,
             typeOptions,
-            damageOptions,
+            damageOptions, // Still used? Potentially not for select anymore
             halvedDamageOptions,
+            damageTooltip, // NEW
+            halvedDamageTooltip, // NEW
             actorName: actor?.name || "None",
             portraitImg: portraitImg
         };
@@ -445,6 +466,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('change', (e) => this._onOverrideChange(e, input));
         });
 
+        // Updated selector to include the new feature-damage-input
         html.querySelectorAll('.feature-override-input, .feature-override-select').forEach(input => {
             input.addEventListener('change', (e) => this._onFeatureOverrideChange(e, input));
         });
@@ -454,15 +476,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('click', (e) => e.stopPropagation());
         });
 
-        const damagePreset = html.querySelector('.damage-preset-select');
-        if (damagePreset) {
-            damagePreset.addEventListener('change', (e) => this._onOverrideChange(e, damagePreset));
-        }
-
-        const halvedDamagePreset = html.querySelector('.damage-preset-select[data-field="halvedDamageFormula"]');
-        if (halvedDamagePreset) {
-            halvedDamagePreset.addEventListener('change', (e) => this._onOverrideChange(e, halvedDamagePreset));
-        }
+        // No longer using damage-preset-select listeners as they are replaced by override-input listeners above
 
         // NEW: Bind Feature Checkboxes
         html.querySelectorAll('.feature-checkbox').forEach(input => {
@@ -499,7 +513,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     _onFeatureOverrideChange(event, target) {
         const itemId = target.dataset.itemid;
         const value = target.value;
-        const isDamage = target.classList.contains('feature-override-select');
+        // Updated check: It is damage if it is a select OR the specific damage input class
+        const isDamage = target.classList.contains('feature-override-select') || target.classList.contains('feature-damage-input');
         
         if (!this.overrides.features) this.overrides.features = { names: {}, damage: {} };
         if (!this.overrides.features.names) this.overrides.features.names = {};
@@ -611,53 +626,71 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const damageParts = [];
         const halvedParts = []; 
+        let mainDamageRaw = ""; // New Raw Value
+        let mainHalvedDamageRaw = ""; // New Raw Value
 
         if (actorData.system.attack?.damage?.parts) {
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
-            tempParts.forEach(part => {
+            tempParts.forEach((part, index) => {
                 
                 // --- MAIN ATTACK DAMAGE ---
+                let rawVal = "";
                 if (this.overrides.damageFormula) {
+                    rawVal = this.overrides.damageFormula;
                     damageParts.push(`<span class="stat-changed">${this.overrides.damageFormula}</span>`);
                 } else {
                     if (benchmark.basic_attack_y && part.value) {
                          const newVal = Manager.getRollFromRange(benchmark.basic_attack_y);
+                         rawVal = String(newVal);
                          damageParts.push(`<span class="stat-changed">${newVal}</span>`);
                     } else if (part.value) {
                         const result = Manager.processDamageValue(part.value, targetTier, currentTier, benchmark.damage_rolls);
                         if (result) {
+                            rawVal = result.to;
                             damageParts.push(`<span class="stat-changed">${result.to}</span>`);
                         } else {
-                            let existing = "";
+                             let existing = "";
                              if (part.value.custom?.enabled) existing = part.value.custom.formula;
                              else if (part.value.dice) existing = `${part.value.flatMultiplier||1}${part.value.dice}${part.value.bonus ? (part.value.bonus>0?'+'+part.value.bonus:part.value.bonus):''}`;
                              else existing = part.value.flatMultiplier;
+                             rawVal = existing;
                              damageParts.push(existing);
                         }
                     }
                 }
+                
+                // Capture first part as main raw
+                if (index === 0) mainDamageRaw = rawVal;
 
                 // --- HALVED DAMAGE (HORDE) ---
                 if (part.valueAlt && benchmark.halved_damage_x) {
+                    let rawHalved = "";
                     if (this.overrides.halvedDamageFormula) {
+                        rawHalved = this.overrides.halvedDamageFormula;
                         halvedParts.push(`<span class="stat-changed">${this.overrides.halvedDamageFormula}</span>`);
                     } else {
                         const result = Manager.processDamageValue(part.valueAlt, targetTier, currentTier, benchmark.halved_damage_x);
                         if (result) {
+                            rawHalved = result.to;
                             halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
                         } else {
                              let existing = "";
                              if (part.valueAlt.custom?.enabled) existing = part.valueAlt.custom.formula;
                              else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
                              else existing = part.valueAlt.flatMultiplier;
+                             rawHalved = existing;
                              halvedParts.push(existing);
                         }
                     }
+                    if (index === 0) mainHalvedDamageRaw = rawHalved;
                 }
             });
         }
         sim.damage = damageParts.join(", ") || "None";
+        sim.mainDamageRaw = mainDamageRaw;
+        
         sim.halvedDamage = halvedParts.join(", ") || null;
+        sim.mainHalvedDamageRaw = mainHalvedDamageRaw;
 
         const featureLog = [];
         const structuredFeatures = [];

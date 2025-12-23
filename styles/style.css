@@ -256,14 +256,14 @@
     text-align-last: center; /* Center text for Chrome/Foundry */
 }
 
-/* FORCE OPTION COLORS */
-select option {
+/* FORCE OPTION COLORS - SCOPED TO AVOID BLEEDING INTO SYSTEM SHEET */
+.dh-adv-manager-content select option {
     background-color: #222;
     color: #eee;
     padding: 5px;
 }
 
-select:focus {
+.dh-adv-manager-content select:focus {
     border-color: #ea80fc; /* Light Purple Border */
     outline: none;
 }
@@ -509,6 +509,7 @@ select:focus {
     padding: 4px;
     border-radius: 3px;
     font-weight: bold;
+    text-align: right; /* UPDATED: Aligns text to right */
 }
 
 .feature-override-input:focus {
@@ -599,7 +600,7 @@ select:focus {
 
 /* PORTRAIT STYLES */
 .portrait-display-wrapper {
-    margin-top: auto; /* Pushes it to the bottom of the flex column */
+    margin-top: 5px; /* REPLACED margin-top: auto with fixed margin, name handles flex push */
     padding-top: 15px;
     display: flex;
     justify-content: center;
@@ -622,4 +623,46 @@ select:focus {
     height: 100%;
     object-fit: cover;
     display: block;
+}
+
+/* NEW: Styles for Text Input + Suggestion Icon */
+.feature-input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 70%; /* 30% Smaller as requested (100% - 30% = 70%) */
+    margin-left: auto; /* Push to the right */
+    justify-content: flex-end;
+}
+
+.suggestion-icon {
+    color: #aaa;
+    cursor: help;
+    font-size: 0.9em;
+    transition: color 0.2s;
+    flex-shrink: 0;
+}
+
+.suggestion-icon:hover {
+    color: #ea80fc;
+}
+
+/* Ensure the input takes remaining space inside the 70% group */
+.feature-input-group .feature-override-input {
+    flex: 1;
+}
+
+/* NEW: Actor Name Header Styles */
+.actor-preview-name {
+    margin-top: auto; /* This pushes the name + image to the bottom */
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #ea80fc;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    font-family: 'Aleo', serif;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(234, 128, 252, 0.3);
+    margin-bottom: 10px;
 }

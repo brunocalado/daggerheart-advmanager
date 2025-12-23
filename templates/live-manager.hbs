@@ -123,6 +123,11 @@
                 <div class="stat-block">{{currentStats.halvedDamage}}</div>
             </div>
             {{/if}}
+            
+            <!-- NEW: Actor Name Header -->
+            <div class="actor-preview-name">
+                {{actorName}}
+            </div>
 
             <!-- PORTRAIT DISPLAY SECTION -->
             {{#if portraitImg}}
@@ -196,13 +201,10 @@
                 <div class="stat-group">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="stat-label">Attack Damage</span>
-                        <div class="select-wrapper" style="width: 120px;">
-                            <select class="damage-preset-select" data-field="damageFormula">
-                                <option value="">-- Preset --</option>
-                                {{#each damageOptions}}
-                                <option value="{{this.value}}">{{this.label}}</option>
-                                {{/each}}
-                            </select>
+                        <!-- REPLACED: Select with Input Group -->
+                        <div class="feature-input-group" style="width: 100%; max-width: 150px;">
+                            <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{damageTooltip}}}"></i>
+                            <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
                     <div class="stat-block">{{{previewStats.damage}}}</div>
@@ -212,13 +214,10 @@
                 <div class="stat-group">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="stat-label">Halved Damage (Horde)</span>
-                        <div class="select-wrapper" style="width: 120px;">
-                            <select class="damage-preset-select" data-field="halvedDamageFormula">
-                                <option value="">-- Preset --</option>
-                                {{#each halvedDamageOptions}}
-                                <option value="{{this.value}}">{{this.label}}</option>
-                                {{/each}}
-                            </select>
+                        <!-- REPLACED: Select with Input Group -->
+                        <div class="feature-input-group" style="width: 100%; max-width: 150px;">
+                            <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{halvedDamageTooltip}}}"></i>
+                            <input type="text" class="override-input" data-field="halvedDamageFormula" value="{{previewStats.mainHalvedDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
                     <div class="stat-block">{{{previewStats.halvedDamage}}}</div>
@@ -239,11 +238,10 @@
                                     <div class="feature-control">
                                         {{#if this.options}}
                                             <!-- Combobox for damage features -->
-                                            <select class="feature-override-select" data-itemid="{{this.itemId}}">
-                                                {{#each this.options}}
-                                                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
-                                                {{/each}}
-                                            </select>
+                                            <div class="feature-input-group">
+                                                <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{this.optionsTooltip}}}"></i>
+                                                <input type="text" class="feature-override-input feature-damage-input" data-itemid="{{this.itemId}}" value="{{this.newName}}">
+                                            </div>
                                         {{else if this.isMinionFeature}}
                                             <!-- SPECIAL: Minion Numeric Input -->
                                             <div class="minion-group" style="display:flex; align-items:center; gap:2px; font-weight:bold; color:#ea80fc;">
