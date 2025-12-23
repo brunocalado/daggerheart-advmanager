@@ -14,6 +14,8 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 ## 🌟 Overview & Features
 
+<p align="center"><img width="1400" src="assets/images/views.webp"></p>
+
 ### 🛠️ Adversary Scaling & Management
 
 * **📈 Instant Tier Scaling:** Effortlessly scale any Adversary (Standard, Minion, Horde, Solo, etc.) from Tier 1 to 4 using official benchmarks.
