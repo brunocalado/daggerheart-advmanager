@@ -1,0 +1,76 @@
+<div class="dh-adv-manager-content">
+    {{#if loading}}
+        <div class="loading-state" style="text-align: center; padding: 20px;">
+            <i class="fas fa-spinner fa-spin fa-3x"></i>
+            <p>Reading Compendium Data...</p>
+        </div>
+    {{else}}
+        <div class="form-group stats-controls">
+            <label style="font-weight: bold; font-size: 1.2em;">Adversary Type:</label>
+            <div class="select-wrapper" style="flex: 1;">
+                <select class="stats-type-select">
+                    {{#each typeOptions}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                </select>
+                <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
+        </div>
+
+        <div class="stats-table-container">
+            <table class="dh-stats-table">
+                <thead>
+                    <tr>
+                        <th class="col-type">Type</th>
+                        {{#each headers}}
+                        <th>{{this}}</th>
+                        {{/each}}
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each stats}}
+                    <tr>
+                        <td class="row-label">{{this.label}}</td>
+                        <td>
+                            {{#if this.isList}}
+                                <div class="{{#if this.isFeatures}}feature-list{{else}}damage-list{{/if}}">
+                                    {{{this.t1}}}
+                                </div>
+                            {{else}}
+                                {{this.t1}}
+                            {{/if}}
+                        </td>
+                        <td>
+                            {{#if this.isList}}
+                                <div class="{{#if this.isFeatures}}feature-list{{else}}damage-list{{/if}}">
+                                    {{{this.t2}}}
+                                </div>
+                            {{else}}
+                                {{this.t2}}
+                            {{/if}}
+                        </td>
+                        <td>
+                            {{#if this.isList}}
+                                <div class="{{#if this.isFeatures}}feature-list{{else}}damage-list{{/if}}">
+                                    {{{this.t3}}}
+                                </div>
+                            {{else}}
+                                {{this.t3}}
+                            {{/if}}
+                        </td>
+                        <td>
+                            {{#if this.isList}}
+                                <div class="{{#if this.isFeatures}}feature-list{{else}}damage-list{{/if}}">
+                                    {{{this.t4}}}
+                                </div>
+                            {{else}}
+                                {{this.t4}}
+                            {{/if}}
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    {{/if}}
+</div>

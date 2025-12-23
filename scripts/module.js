@@ -1,6 +1,7 @@
 import { Manager } from "./manager.js"; 
 import { LiveManager } from "./live-manager.js";
 import { CompendiumManager } from "./compendium-manager.js";
+import { CompendiumStats } from "./compendium-stats.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -130,7 +131,8 @@ Hooks.once("ready", () => {
     globalThis.AM = {
         Manage: manage, 
         LiveManager: () => new LiveManager().render(true),
-        CompendiumManager: () => new CompendiumManager().render(true)
+        CompendiumManager: () => new CompendiumManager().render(true),
+        CompendiumStats: () => new CompendiumStats().render(true)
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });

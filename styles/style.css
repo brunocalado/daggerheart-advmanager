@@ -666,3 +666,117 @@
     border-bottom: 1px solid rgba(234, 128, 252, 0.3);
     margin-bottom: 10px;
 }
+
+/* --- COMPENDIUM STATS TABLE --- */
+.stats-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.stats-type-select {
+    width: 100%;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 1.1em;
+    background: #222;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 4px;
+}
+
+.dh-stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.dh-stats-table th, .dh-stats-table td {
+    padding: 10px;
+    border: 1px solid #444;
+    text-align: center;
+    vertical-align: top; /* Align top since features list can be long */
+}
+
+.dh-stats-table th {
+    background: #191919;
+    color: #ea80fc;
+    font-family: 'Aleo', serif;
+    font-size: 1.1em;
+    text-transform: uppercase;
+}
+
+.dh-stats-table th.col-type {
+    width: 15%;
+    background: #111;
+    color: #ccc;
+}
+
+.dh-stats-table tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dh-stats-table tr:hover {
+    background: rgba(156, 39, 176, 0.1);
+}
+
+.dh-stats-table td.row-label {
+    font-weight: bold;
+    color: #ddd;
+    text-align: left;
+    background: rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+}
+
+.damage-list {
+    font-size: 0.85em;
+    color: #ccc;
+    max-width: 200px;
+    margin: 0 auto;
+    word-wrap: break-word;
+}
+
+/* NEW: Feature List Styles */
+.feature-list {
+    text-align: left;
+    max-width: 250px;
+    margin: 0 auto;
+    max-height: 200px; /* Force scroll */
+    overflow-y: auto; /* Enable vertical scroll */
+    padding: 4px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.feature-entry {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    padding: 2px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+    cursor: pointer; /* Pointer to indicate clickable */
+    transition: background 0.2s;
+}
+
+.feature-entry:hover {
+    background: rgba(234, 128, 252, 0.2); /* Light Purple Hover */
+}
+
+.feature-icon {
+    width: 20px;
+    height: 20px;
+    border: 0;
+    flex-shrink: 0;
+}
+
+.feature-name {
+    font-size: 0.8em;
+    color: #ddd;
+    line-height: 1.2;
+}

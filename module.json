@@ -44,6 +44,32 @@
       },
       "flags": {},
       "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
+    },
+    {
+      "label": "All Features",
+      "type": "Item",
+      "name": "all-features",
+      "path": "packs/all-features",
+      "system": "daggerheart",
+      "ownership": {
+        "PLAYER": "NONE",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {},
+      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
+    }    
+  ],  
+
+  "packFolders": [
+    {
+      "name": "Adversary Manager",
+      "sorting": "a",
+      "color": "#5c0547",
+      "packs": [        
+        "features",        
+        "all-features"
+      ],
+      "folders": []
     }
   ],  
   
