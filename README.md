@@ -16,7 +16,7 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 <p align="center"><img width="1400" src="docs/views.webp"></p>
 
-<p align="center"><img width="1400" src="docs/view-diceprob.webp"></p>
+<p align="center"><img width="400" src="docs/view-diceprob.webp"></p>
 
 ### 🛠️ Adversary Scaling & Management
 
@@ -24,13 +24,11 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 * **👀 Live Preview Dashboard:** Compare "Current" stats vs. "Target Tier" stats side-by-side before applying any changes.
 * **🎲 Smart Math & Probabilities:**
     * Automatically recalculates HP, Stress, Difficulty, and Damage Thresholds.
-    * Scales Attack modifiers and Damage formulas (including Halved Damage for Hordes).
-    * **Hit Chance Calculator:** Displays the probability of the Adversary hitting a PC (and vice-versa) based on Tier rules.
-* **✨ Feature Automation:**
+    * Scales Attack modifiers and Damage formulas.
+* **✨ Experience/Feature Automation:**
     * Auto-updates Experience values based on Tier difference.
     * Suggests and adds new **Features** (e.g., *Relentless*, *Momentum*) appropriate for the target Tier.
-    * Allows manual selection/deselection of features via checkboxes.
-* **🔧 Manual Overrides:** Full control to manually tweak any specific stat (HP, Damage, Name) directly in the preview window. Now supports text inputs with smart suggestions tooltips!
+* **🔧 Manual Overrides:** Full control to manually tweak any specific stat (HP, Damage, Name) directly in the preview window.
 * **📦 Batch & Compendium Support:**
     * Update multiple selected tokens on the canvas simultaneously.
     * Import and auto-scale adversaries directly from Compendiums into your world.
@@ -44,8 +42,8 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 ### 🎲 Dice Probability Calculator
 
-* **Live Analysis:** Instantly calculate success, failure, and critical hit chances for standard Daggerheart rolls (2d12 vs Difficulty).
-* **Flexible Options:** Supports Advantage (d4-d20), Disadvantage, and flat numerical modifiers.
+* **Live Analysis:** Instantly calculate success, failure, and critical hit chances for Daggerheart rolls).
+* **Flexible Options:** Supports Advantage, Disadvantage, and flat numerical modifiers.
 * **Chat Integration:** Send detailed probability result cards to the chat log with a single click.
 
 ## ⚙️ Instructions & Usage
