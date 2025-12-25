@@ -213,10 +213,18 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
                             if (entry) {
                                 uuid = entry.uuid; 
                             }
+
+                            // Determine Feature Type Label
+                            let typeLabel = "";
+                            const form = item.system?.featureForm?.toLowerCase();
+                            if (form === "action") typeLabel = "(A)";
+                            else if (form === "passive") typeLabel = "(P)";
+                            else if (form === "reaction") typeLabel = "(R)";
                             
                             data[tier].features.set(item.name, { 
                                 img: item.img || "icons/svg/item-bag.svg",
-                                uuid: uuid
+                                uuid: uuid,
+                                typeLabel: typeLabel
                             });
                         }
                     });
@@ -271,7 +279,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             attackMod: [],
             damageRolls: new Set(),
             halvedDamageRolls: new Set(),
-            features: new Map() // Key: Name, Value: {img, uuid}
+            features: new Map() // Key: Name, Value: {img, uuid, typeLabel}
         };
     }
 
@@ -304,10 +312,12 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         return sorted.map(([name, data]) => {
             // Only make it draggable if we found a UUID
             const draggableAttr = data.uuid ? `draggable="true" data-uuid="${data.uuid}"` : "";
+            // Append Type Label if exists
+            const displayLabel = data.typeLabel ? `<span style="opacity: 0.7; margin-left: 4px;">${data.typeLabel}</span>` : "";
             
             return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="Click to view, Drag to Sheet">
                 <img src="${data.img}" class="feature-icon" alt="${name}"/>
-                <span class="feature-name">${name}</span>
+                <span class="feature-name">${name}${displayLabel}</span>
              </div>`
         }).join("");
     }
