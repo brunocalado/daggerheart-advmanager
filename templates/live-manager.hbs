@@ -51,9 +51,14 @@
                 <i class="fas fa-chevron-down select-arrow"></i>
             </div>
 
-            <!-- Stats Button (NEW) -->
+            <!-- Stats Button -->
             <button type="button" data-action="openStats" class="settings-btn" title="Compendium Stats">
                 <i class="fas fa-chart-pie"></i>
+            </button>
+
+            <!-- NEW Dice Probability Button -->
+            <button type="button" data-action="openDiceProb" class="settings-btn" title="Dice Probability">
+                <i class="fas fa-dice-d20"></i>
             </button>
         </div>
     </div>
@@ -262,6 +267,9 @@
                                         {{/if}}
                                     </div>
                                 </div>
+                            {{#if this.options}}
+                                <!-- No-Op to balance template logic structure if needed, but HBS handles each block -->
+                            {{/if}}
                             {{/each}}
                         </div>
                     {{else}}

@@ -3,6 +3,7 @@ import { ADVERSARY_BENCHMARKS } from "./rules.js";
 import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
+import { DiceProbability } from "./dice-probability.js"; // <--- IMPORTADO
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -61,7 +62,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             selectTier: LiveManager.prototype._onSelectTier,
             applyChanges: LiveManager.prototype._onApplyChanges,
             openSettings: LiveManager.prototype._onOpenSettings,
-            openStats: LiveManager.prototype._onOpenStats
+            openStats: LiveManager.prototype._onOpenStats,
+            openDiceProb: LiveManager.prototype._onOpenDiceProb // <--- NOVA AÇÃO
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -772,6 +774,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     async _onOpenStats(event, target) {
         new CompendiumStats().render(true);
+    }
+    
+    // --- NOVO MÉTODO PARA ABRIR DICE PROBABILITY ---
+    async _onOpenDiceProb(event, target) {
+        new DiceProbability().render(true);
     }
 
     async _onSelectSource(event, target) {

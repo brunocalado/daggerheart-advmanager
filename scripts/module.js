@@ -2,6 +2,7 @@ import { Manager } from "./manager.js";
 import { LiveManager } from "./live-manager.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
+import { DiceProbability } from "./dice-probability.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -132,7 +133,8 @@ Hooks.once("ready", () => {
         Manage: manage, 
         LiveManager: () => new LiveManager().render(true),
         CompendiumManager: () => new CompendiumManager().render(true),
-        CompendiumStats: () => new CompendiumStats().render(true)
+        CompendiumStats: () => new CompendiumStats().render(true),
+        DiceProbability: () => new DiceProbability().render(true)
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });
@@ -156,7 +158,7 @@ Hooks.on("controlToken", (token, controlled) => {
     }
 });
 
-// --- Daggerheart System Menu Hook (Both Buttons) ---
+// --- Daggerheart System Menu Hook (Button 3 Added) ---
 Hooks.on("renderDaggerheartMenu", (app, html) => {
     const element = (html instanceof HTMLElement) ? html : html[0];
     
@@ -186,6 +188,19 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
         new CompendiumStats().render(true);
     };
 
+    // Button 3: Dice Probability (NEW)
+    const btnProb = document.createElement("button");
+    btnProb.type = "button";
+    btnProb.innerHTML = `<i class="fas fa-dice-d20"></i> Dice Probability`;
+    btnProb.classList.add("dh-adv-btn"); 
+    btnProb.style.marginTop = "5px";
+    btnProb.style.width = "100%";
+
+    btnProb.onclick = (event) => {
+        event.preventDefault();
+        new DiceProbability().render(true);
+    };
+
     const fieldset = element.querySelector("fieldset");
     if (fieldset) {
         const newFieldset = document.createElement("fieldset");
@@ -194,14 +209,16 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
         newFieldset.appendChild(legend);
         newFieldset.appendChild(btnManage);
         newFieldset.appendChild(btnStats);
+        newFieldset.appendChild(btnProb); // Add 3rd button
         fieldset.after(newFieldset);
     } else {
         element.appendChild(btnManage);
         element.appendChild(btnStats);
+        element.appendChild(btnProb); // Add 3rd button
     }
 });
 
-// --- Actor Directory Hook (Manage Adversaries Only) ---
+// --- Actor Directory Hook (Manage Adversaries Only - No Change) ---
 Hooks.on("renderActorDirectory", (app, html) => {
     // V13 Standard: Ensure we are working with an HTMLElement
     const element = (html instanceof HTMLElement) ? html : html[0];

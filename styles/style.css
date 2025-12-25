@@ -212,7 +212,7 @@
     align-items: center;
 }
 
-.main-actor-select, .filter-tier-select, .source-select, .filter-type-select {
+.main-actor-select, .filter-tier-select, .source-select, .filter-type-select, .stats-type-select {
     width: 100%;
     height: 40px;
     line-height: 1.2;
@@ -305,6 +305,7 @@
 .tier-tab-btn:hover {
     background: #4a148c;
     color: #fff;
+    border-color: #ea80fc;
 }
 
 .tier-tab-btn.active {
@@ -779,4 +780,49 @@
     font-size: 0.8em;
     color: #ddd;
     line-height: 1.2;
+}
+
+/* PROBABILITY CALCULATOR STYLES */
+.probability-results .stat-row {
+    margin-bottom: 4px;
+}
+
+/* NEW: Roll Type Buttons */
+.roll-btn {
+    flex: 1;
+    background: #333;
+    color: #888;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: all 0.2s;
+    height: 40px; /* Match inputs */
+}
+
+.roll-btn:hover {
+    background: #4a148c;
+    color: #fff;
+    border-color: #ea80fc;
+}
+
+.roll-btn.active {
+    background: #9c27b0;
+    color: #fff;
+    border-color: #ea80fc;
+    box-shadow: 0 0 5px rgba(156, 39, 176, 0.5);
+}
+
+.roll-btn.small {
+    font-size: 0.8em;
+    height: 30px;
+    padding: 2px 4px;
+}
+
+.die-btn-group {
+    width: 70%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
 }

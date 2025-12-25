@@ -40,22 +40,15 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 * **🧩 Feature Browser:** See a list of all features found in the compendium for each Tier.
 * **🖐️ Drag & Drop:** Click to view feature details or **drag them directly onto an actor sheet** to add them!
 
+### 🎲 Dice Probability Calculator
+
+* **Live Analysis:** Instantly calculate success, failure, and critical hit chances for standard Daggerheart rolls (2d12 vs Difficulty).
+* **Flexible Options:** Supports Advantage (d4-d20), Disadvantage, and flat numerical modifiers.
+* **Chat Integration:** Send detailed probability result cards to the chat log with a single click.
+
 ## ⚙️ Instructions & Usage
 
-### Live Manager (Scaling)
-1.  **Select a Token** (or multiple) on the canvas or don't select anything.
-2.  Click the **"Manage Adversaries"** button in the Daggerheart side menu or Actor tab.
-3.  Choose your **Target Tier** (1, 2, 3, or 4).
-4.  Review the changes in the **Live Preview**.
-    * *Optional:* Adjust stats manually by typing in the fields. Hover over the question mark `(?)` icons to see suggested benchmark values.
-    * Check/Uncheck suggested features.
-5.  Click **Apply** to update the actor.
-
-### Compendium Stats
-1. Click the **"Compendium Stats"** button in the Daggerheart side menu or the chart icon <i class="fas fa-chart-pie"></i> inside the Live Manager window.
-2. Select an **Adversary Type** (e.g., Bruiser, Social, Horde) from the dropdown.
-3. View the comparative table for Tiers 1-4.
-4. Drag any Feature from the "Features" row directly to an actor sheet or macro bar.
+Access all functions (Adversary Manager, Compendium Stats, and Dice Probability) by clicking the buttons in the Daggerheart System Menu or Actor Directory, as shown below.
 
 <p align="center"><img width="350" src="docs/system-button.webp"></p>
 
