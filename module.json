@@ -1,7 +1,7 @@
 {
   "id": "daggerheart-advmanager",
   "title": "Daggerheart: Adversary Manager",
-  "version": "0.0.8",
+  "version": "0.0.9",
   
   "description": "This module allows you to dynamically change an opponent's tier. For example: if you have a Tier 1 Bear, you can use the module to update its sheet to Tier 3 stats.",
 
@@ -59,17 +59,30 @@
       },
       "flags": {},
       "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
+    },
+    {
+      "label": "Macros",
+      "type": "Macro",
+      "name": "macros",
+      "path": "packs/macros",
+      "system": "daggerheart",
+      "ownership": {
+        "PLAYER": "NONE",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     }    
   ],  
 
   "packFolders": [
     {
-      "name": "Adversary Manager",
+      "name": "💀 Adversary Manager 💀",
       "sorting": "a",
       "color": "#5c0547",
       "packs": [        
         "features",        
-        "all-features"
+        "all-features",
+        "macros"
       ],
       "folders": []
     }

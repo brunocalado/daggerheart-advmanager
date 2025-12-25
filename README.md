@@ -16,6 +16,8 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 <p align="center"><img width="1400" src="docs/views.webp"></p>
 
+<p align="center"><img width="1400" src="docs/view-diceprob.webp"></p>
+
 ### 🛠️ Adversary Scaling & Management
 
 * **📈 Instant Tier Scaling:** Effortlessly scale any Adversary (Standard, Minion, Horde, Solo, etc.) from Tier 1 to 4 using official benchmarks.
@@ -50,7 +52,24 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 Access all functions (Adversary Manager, Compendium Stats, and Dice Probability) by clicking the buttons in the Daggerheart System Menu or Actor Directory, as shown below.
 
-<p align="center"><img width="350" src="docs/system-button.webp"></p>
+<p align="center"><img width="600" src="docs/system-button.webp"></p>
+
+You can also use macros:
+
+```js
+// Adversary Manager
+AM.Manage();
+```
+
+```js
+// Compendium Stats
+AM.CompendiumStats();
+```
+
+```js
+// Dice Probability
+AM.DiceProbability();
+```
 
 ## 🚀 Installation
 
