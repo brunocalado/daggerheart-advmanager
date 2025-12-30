@@ -14,9 +14,11 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 ## 🌟 Overview & Features
 
-<p align="center"><img width="1400" src="docs/views.webp"></p>
+<p align="center"><img width="1400" src="docs/view-livemanager.webp"></p>
 
 <p align="center"><img width="1400" src="docs/view-encounterbuilder.webp"></p>
+
+<p align="center"><img width="1400" src="docs/view-compendiumstats.webp"></p>
 
 <p align="center"><img width="400" src="docs/view-diceprob.webp"></p>
 
