@@ -1,0 +1,200 @@
+<div class="dh-adv-manager-content encounter-builder">
+    
+    <div class="eb-layout">
+        
+        <!-- LEFT COLUMN: Library -->
+        <div class="eb-column eb-column-library">
+            
+            <div class="eb-controls">
+                <!-- Search -->
+                <div class="eb-search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="eb-search-input" placeholder="Search adversaries..." value="{{searchQuery}}">
+                    {{#if searchQuery}}
+                    <button type="button" data-action="clearSearch" class="clear-btn"><i class="fas fa-times"></i></button>
+                    {{/if}}
+                </div>
+
+                <!-- Filters -->
+                <div class="eb-filters-row">
+                    <!-- Source Selector -->
+                    <div class="select-wrapper eb-source-wrapper">
+                        <select name="filterSource" class="eb-source-select">
+                            {{#each sourceOptions}}
+                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                            {{/each}}
+                        </select>
+                        <i class="fas fa-database select-arrow"></i>
+                    </div>
+
+                    <!-- Type Selector -->
+                    <div class="select-wrapper eb-type-wrapper">
+                        <select name="filterType" class="eb-type-select">
+                            {{#each typeOptions}}
+                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                            {{/each}}
+                        </select>
+                        <i class="fas fa-paw select-arrow"></i>
+                    </div>
+
+                    <!-- Tier Buttons -->
+                    <div class="eb-tier-buttons">
+                        {{#each tiers}}
+                        <button type="button" class="tier-tab-btn {{this.cssClass}}" data-action="selectTier" data-tier="{{this.value}}">
+                            {{this.label}}
+                        </button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="eb-results-header">
+                Library ({{resultCount}})
+            </div>
+
+            <div class="eb-results-list">
+                {{#each adversaries}}
+                <div class="eb-adversary-row" data-uuid="{{this.uuid}}" data-action="openSheet">
+                    
+                    <div class="eb-row-actions-left">
+                        <!-- Add Button (Square now via CSS) -->
+                        <button type="button" class="eb-add-btn" data-action="addUnit" title="Add to Encounter">
+                            <i class="fas fa-plus"></i>
+                        </button>
+
+                        <!-- NEW: Edit Button -->
+                        <button type="button" class="eb-edit-btn" data-action="editAdversary" title="Edit in Live Manager">
+                            <i class="fas fa-sliders-h"></i>
+                        </button>
+                    </div>
+
+                    <div class="eb-row-main">
+                        <img src="{{this.img}}" class="eb-row-img" alt="{{this.name}}">
+                        <div class="eb-row-info">
+                            <div class="eb-row-name">{{this.name}}</div>
+                            <div class="eb-row-meta">
+                                <span class="eb-type-tag">{{this.type}}</span>
+                                {{#if this.isCompendium}}
+                                <i class="fas fa-book eb-compendium-icon" title="Compendium"></i>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="eb-row-tier">
+                        <span class="badge-tier">T{{this.tier}}</span>
+                    </div>
+                </div>
+                {{else}}
+                <div class="empty-state">
+                    <p>No adversaries found.</p>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Encounter Settings & List -->
+        <div class="eb-column eb-column-encounter">
+            
+            <!-- PC Configuration -->
+            <div class="eb-settings-panel">
+                <div class="eb-setting-row">
+                    <label># PCs:</label>
+                    <input type="number" class="pc-count-input" value="{{pcCount}}" min="0" max="10">
+                </div>
+                <div class="eb-setting-row">
+                    <label>PC Tier:</label>
+                    <div class="select-wrapper mini">
+                        <select class="pc-tier-select">
+                            {{#each pcTierOptions}}
+                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BP Calculation Header (High Contrast) -->
+            <div class="eb-bp-header">
+                <div class="bp-stat">
+                    <span class="bp-label">Budget Limit</span>
+                    <span class="bp-value">{{bpData.total}}</span>
+                    <span class="bp-sub">(Base: {{bpData.base}})</span>
+                </div>
+                <div class="bp-stat">
+                    <span class="bp-label">Current Cost</span>
+                    <span class="bp-value cost-{{bpData.statusColor}}">{{bpData.cost}}</span>
+                </div>
+            </div>
+
+            <!-- Modifiers List -->
+            <div class="eb-modifiers-list">
+                <div class="eb-results-header" style="margin-top:0;">Budget Modifiers</div>
+                {{#each bpData.modifiers}}
+                <div class="eb-modifier-row {{#if this.active}}active{{/if}} {{#if this.disabled}}disabled{{/if}}" 
+                     {{#if this.manual}}data-action="toggleModifier" data-key="{{this.key}}"{{/if}}>
+                    
+                    <div class="mod-check">
+                        {{#if this.active}}<i class="fas fa-check-square"></i>
+                        {{else}}<i class="fas fa-square"></i>{{/if}}
+                    </div>
+                    <div class="mod-info">
+                        <span class="mod-label">{{this.label}}</span>
+                        <span class="mod-val">{{this.val}}</span>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+
+            <!-- Encounter Units List -->
+            <div class="eb-encounter-list-wrapper">
+                <div class="eb-results-header">Adversaries</div>
+                <div class="eb-encounter-list">
+                    {{#each encounterList}}
+                    <div class="eb-encounter-item" data-uuid="{{this.uuid}}" data-entryid="{{this.entryId}}" data-action="openSheet">
+                        
+                        <div class="eb-row-main">
+                            <img src="{{this.img}}" class="eb-row-img small" alt="{{this.name}}">
+                            <div class="eb-row-info">
+                                <div class="eb-row-name">{{this.name}}</div>
+                                <div class="eb-row-meta">
+                                    <span class="eb-type-tag" style="font-size: 0.75em;">{{this.type}}</span>
+                                    <span class="badge-tier small">T{{this.tier}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="eb-item-actions">
+                            <!-- Damage Boost Button -->
+                            <button type="button" 
+                                    class="unit-boost-btn {{#if this.hasDamageBoost}}active{{/if}}" 
+                                    data-action="toggleUnitBoost" 
+                                    title="Add +1d4 Damage (Lowers Budget Limit)">
+                                <i class="fas fa-fire"></i>
+                            </button>
+
+                            <button type="button" class="eb-remove-btn" data-action="removeUnit" data-entryid="{{this.entryId}}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {{else}}
+                    <div class="empty-state small">
+                        <p>Add units from the library.</p>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
+            <!-- Create Button Footer -->
+            <div class="eb-action-footer">
+                <button type="button" class="eb-create-btn" data-action="createEncounter">
+                    <i class="fas fa-folder-plus"></i> Create Encounter
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

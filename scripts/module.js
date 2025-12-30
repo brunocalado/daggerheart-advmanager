@@ -3,6 +3,7 @@ import { LiveManager } from "./live-manager.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js";
+import { EncounterBuilder } from "./encounter-builder.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -12,6 +13,7 @@ export const SETTING_CHAT_LOG = "enableChatLog";
 export const SETTING_UPDATE_EXP = "autoUpdateExperiences";
 export const SETTING_ADD_FEATURES = "autoAddFeatures";
 export const SETTING_IMPORT_FOLDER = "importFolderName";
+export const SETTING_ENCOUNTER_FOLDER = "encounterFolderName"; // <--- NOVO
 export const SETTING_EXTRA_COMPENDIUMS = "extraCompendiums";
 export const SKULL_IMAGE_PATH = "modules/daggerheart-advmanager/assets/images/skull.webp";
 
@@ -46,7 +48,6 @@ function manage() {
     const existingApp = Object.values(ui.windows).find(w => w.id === "daggerheart-live-preview");
     
     if (existingApp) {
-        // If window exists, update it instead of creating new
         if (validActors.length === 1) {
             existingApp.updateSelectedActor(validActors[0]);
         }
@@ -102,7 +103,16 @@ Hooks.once("init", () => {
         default: "💀 Imported Adversaries"
     });
 
-    // Hidden setting to store selected extra compendiums
+    // NOVA CONFIGURAÇÃO
+    game.settings.register(MODULE_ID, SETTING_ENCOUNTER_FOLDER, {
+        name: "Encounter Folder Name",
+        hint: "Name of the root folder where encounters created by the builder will be stored.",
+        scope: "world",
+        config: true,
+        type: String,
+        default: "💀 My Encounters"
+    });
+
     game.settings.register(MODULE_ID, SETTING_EXTRA_COMPENDIUMS, {
         name: "Extra Compendiums",
         scope: "world",
@@ -128,78 +138,48 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", () => {
-    // Expose API globally
     globalThis.AM = {
         Manage: manage, 
         LiveManager: () => new LiveManager().render(true),
         CompendiumManager: () => new CompendiumManager().render(true),
         CompendiumStats: () => new CompendiumStats().render(true),
-        DiceProbability: () => new DiceProbability().render(true)
+        DiceProbability: () => new DiceProbability().render(true),
+        EncounterBuilder: () => new EncounterBuilder().render(true)
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });
 
-// --- Token Selection Hook for Live Preview ---
 Hooks.on("controlToken", (token, controlled) => {
     if (!controlled) return;
-    
-    // Only proceed if exactly one token is selected
     const tokens = canvas.tokens.controlled;
     if (tokens.length !== 1) return;
-    
     const actor = tokens[0].actor;
     if (!actor || actor.type !== "adversary") return;
 
-    // Find if LiveManager is open
     const app = Object.values(ui.windows).find(w => w.id === "daggerheart-live-preview");
     if (app) {
-        // Call the update method on the instance
         app.updateSelectedActor(actor);
     }
 });
 
-// --- Daggerheart System Menu Hook (Button 3 Added) ---
 Hooks.on("renderDaggerheartMenu", (app, html) => {
     const element = (html instanceof HTMLElement) ? html : html[0];
     
-    // Button 1: Manage Adversaries
-    const btnManage = document.createElement("button");
-    btnManage.type = "button";
-    btnManage.innerHTML = `<i class="fas fa-skull"></i> Manage Adversaries`;
-    btnManage.classList.add("dh-adv-btn"); 
-    btnManage.style.marginTop = "5px";
-    btnManage.style.width = "100%";
-
-    btnManage.onclick = (event) => {
-        event.preventDefault();
-        manage();
+    const createBtn = (text, icon, onClick) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
+        btn.classList.add("dh-adv-btn"); 
+        btn.style.marginTop = "5px";
+        btn.style.width = "100%";
+        btn.onclick = (e) => { e.preventDefault(); onClick(); };
+        return btn;
     };
 
-    // Button 2: Compendium Stats
-    const btnStats = document.createElement("button");
-    btnStats.type = "button";
-    btnStats.innerHTML = `<i class="fas fa-chart-pie"></i> Compendium Stats`;
-    btnStats.classList.add("dh-adv-btn"); 
-    btnStats.style.marginTop = "5px";
-    btnStats.style.width = "100%";
-
-    btnStats.onclick = (event) => {
-        event.preventDefault();
-        new CompendiumStats().render(true);
-    };
-
-    // Button 3: Dice Probability (NEW)
-    const btnProb = document.createElement("button");
-    btnProb.type = "button";
-    btnProb.innerHTML = `<i class="fas fa-dice-d20"></i> Dice Probability`;
-    btnProb.classList.add("dh-adv-btn"); 
-    btnProb.style.marginTop = "5px";
-    btnProb.style.width = "100%";
-
-    btnProb.onclick = (event) => {
-        event.preventDefault();
-        new DiceProbability().render(true);
-    };
+    const btnManage = createBtn("Manage Adversaries", "fa-skull", manage);
+    const btnStats = createBtn("Compendium Stats", "fa-chart-pie", () => new CompendiumStats().render(true));
+    const btnProb = createBtn("Dice Probability", "fa-dice-d20", () => new DiceProbability().render(true));
+    const btnBuilder = createBtn("Encounter Builder", "fa-dungeon", () => new EncounterBuilder().render(true));
 
     const fieldset = element.querySelector("fieldset");
     if (fieldset) {
@@ -208,19 +188,19 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
         legend.innerText = "Adversary Tools";
         newFieldset.appendChild(legend);
         newFieldset.appendChild(btnManage);
+        newFieldset.appendChild(btnBuilder);
         newFieldset.appendChild(btnStats);
-        newFieldset.appendChild(btnProb); // Add 3rd button
+        newFieldset.appendChild(btnProb); 
         fieldset.after(newFieldset);
     } else {
         element.appendChild(btnManage);
+        element.appendChild(btnBuilder);
         element.appendChild(btnStats);
-        element.appendChild(btnProb); // Add 3rd button
+        element.appendChild(btnProb);
     }
 });
 
-// --- Actor Directory Hook (Manage Adversaries Only - No Change) ---
 Hooks.on("renderActorDirectory", (app, html) => {
-    // V13 Standard: Ensure we are working with an HTMLElement
     const element = (html instanceof HTMLElement) ? html : html[0];
     const actionButtons = element.querySelector(".header-actions");
     
