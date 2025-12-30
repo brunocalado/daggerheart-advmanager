@@ -1,4 +1,4 @@
-import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER } from "./module.js";
+import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING_LAST_SOURCE } from "./module.js";
 import { LiveManager } from "./live-manager.js"; 
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -15,11 +15,14 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         this.searchQuery = "";
         this.filterType = "all";
         this.filterTier = "all"; 
-        this.filterSource = "all"; 
+        
+        // Persistent Source Filter
+        this.filterSource = game.settings.get(MODULE_ID, SETTING_LAST_SOURCE) || "all";
         
         // Encounter Settings
         this.pcCount = 4;
         this.pcTier = 1;
+        this.fearBudget = "0-1"; // Default Fear Budget
         
         // Manual Modifier States
         this.manualModifiers = {
@@ -130,6 +133,21 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         }));
         typeOptions.unshift({ value: "all", label: "All Types", selected: this.filterType === "all" });
 
+        // --- Fear Options (Clarified Labels) ---
+        const fearOptions = [
+            { value: "0-1", label: "Low (0–1 Fear)", selected: this.fearBudget === "0-1" },
+            { value: "1-3", label: "Moderate (1–3 Fear)", selected: this.fearBudget === "1-3" },
+            { value: "2-4", label: "High (2–4 Fear)", selected: this.fearBudget === "2-4" },
+            { value: "4-8", label: "Extreme (4–8 Fear)", selected: this.fearBudget === "4-8" },
+            { value: "6-12", label: "Insane (6–12 Fear)", selected: this.fearBudget === "6-12" }
+        ];
+
+        // --- PC Count Options (1 to 10) ---
+        const pcCountOptions = [];
+        for (let i = 1; i <= 10; i++) {
+            pcCountOptions.push({ value: i, label: i, selected: i === this.pcCount });
+        }
+
         // --- Calculate Tooltips for Encounter List ---
         const enrichedEncounterList = this.encounterList.map(unit => {
             const tier = unit.tier || 1;
@@ -158,7 +176,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             case "Deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
             default: skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp";
         }
-        
+
         bpData.skullImage = skullImg;
 
         return {
@@ -167,6 +185,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             tiers,
             typeOptions,
             sourceOptions,
+            fearOptions,
+            pcCountOptions, // Added PC Count Options
             searchQuery: this.searchQuery,
             resultCount: filtered.length,
             
@@ -269,24 +289,34 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         // --- Difficulty Calculation ---
         const diff = currentCost - limit;
+        
+        // Determine Base Level (0 to 4 scale for easier math)
+        // 0: Very Easy, 1: Easy, 2: Balanced, 3: Challenging, 4: Deadly
+        let level = 2; // Default Balanced
+
+        if (diff <= -2) level = 0; // Very Easy
+        else if (diff === -1) level = 1; // Easy
+        else if (diff === 0) level = 2; // Balanced
+        else if (diff === 1) level = 3; // Challenging
+        else if (diff >= 2) level = 4; // Deadly
+
+        // --- Apply Fear Shift ---
+        let shift = 0;
+        if (this.fearBudget === "2-4") shift = 1;
+        else if (this.fearBudget === "4-8" || this.fearBudget === "6-12") shift = 2;
+
+        level = Math.min(4, level + shift); // Cap at 4 (Deadly)
+
+        // Convert Level back to Label/Class
         let difficultyLabel = "Balanced";
         let difficultyClass = "diff-balanced";
 
-        if (diff <= -2) {
-            difficultyLabel = "Very Easy";
-            difficultyClass = "diff-very-easy";
-        } else if (diff === -1) {
-            difficultyLabel = "Easy";
-            difficultyClass = "diff-easy";
-        } else if (diff === 0) {
-            difficultyLabel = "Balanced";
-            difficultyClass = "diff-balanced";
-        } else if (diff === 1) {
-            difficultyLabel = "Challenging";
-            difficultyClass = "diff-challenging";
-        } else if (diff >= 2) {
-            difficultyLabel = "Deadly";
-            difficultyClass = "diff-deadly";
+        switch (level) {
+            case 0: difficultyLabel = "Very Easy"; difficultyClass = "diff-very-easy"; break;
+            case 1: difficultyLabel = "Easy"; difficultyClass = "diff-easy"; break;
+            case 2: difficultyLabel = "Balanced"; difficultyClass = "diff-balanced"; break;
+            case 3: difficultyLabel = "Challenging"; difficultyClass = "diff-challenging"; break;
+            case 4: difficultyLabel = "Deadly"; difficultyClass = "diff-deadly"; break;
         }
 
         const statusColor = (currentCost > limit) ? "red" : (currentCost === limit ? "green" : "gold");
@@ -375,14 +405,13 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             rootFolder = await Folder.create({ name: rootName, type: "Actor", color: "#430047" });
         }
 
-        // --- Folder Naming Logic ---
+        // --- Folder Naming Logic Updated ---
         const now = new Date();
         const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
         const dateString = now.toLocaleDateString().replace(/\//g, '-');
         
-        // Calculate Cost and Tier for Name
         let totalTier = 0;
-        const bpData = this._calculateBP(); // Recalculate to get current cost
+        const bpData = this._calculateBP(); 
         const currentBP = bpData.cost;
         
         this.encounterList.forEach(u => totalTier += (u.tier || 1));
@@ -529,11 +558,14 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const sourceSelect = html.querySelector('.eb-source-select');
         if (sourceSelect) sourceSelect.addEventListener('change', (e) => this._onFilterSource(e));
         
-        const pcCountInput = html.querySelector('.pc-count-input');
+        const pcCountInput = html.querySelector('.pc-count-select'); // Updated selector
         if (pcCountInput) pcCountInput.addEventListener('change', (e) => this._onUpdatePCSettings(e));
         
         const pcTierSelect = html.querySelector('.pc-tier-select');
         if (pcTierSelect) pcTierSelect.addEventListener('change', (e) => this._onUpdatePCSettings(e));
+
+        const fearSelect = html.querySelector('.pc-fear-select');
+        if (fearSelect) fearSelect.addEventListener('change', (e) => this._onUpdatePCSettings(e));
 
         const encounterItems = html.querySelectorAll('.eb-encounter-item');
         encounterItems.forEach(item => {
@@ -565,9 +597,10 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         this.render();
     }
 
-    _onFilterSource(event) {
+    async _onFilterSource(event) { // Make async to save setting
         event.preventDefault();
         this.filterSource = event.target.value;
+        await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.filterSource); // Persist source
         this.render();
     }
 
@@ -585,10 +618,14 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
     _onUpdatePCSettings(event) {
         event.preventDefault();
         const html = this.element;
-        const count = parseInt(html.querySelector('.pc-count-input').value) || 4;
+        
+        const count = parseInt(html.querySelector('.pc-count-select').value) || 4; // Updated selector
         const tier = parseInt(html.querySelector('.pc-tier-select').value) || 1;
-        this.pcCount = Math.max(0, Math.min(10, count)); 
+        const fear = html.querySelector('.pc-fear-select').value || "0-1";
+
+        this.pcCount = Math.max(1, Math.min(10, count)); // Ensure 1-10 range
         this.pcTier = tier;
+        this.fearBudget = fear;
         this.render();
     }
 

@@ -1,7 +1,7 @@
 {
   "id": "daggerheart-advmanager",
   "title": "Daggerheart: Adversary Manager",
-  "version": "0.1.1",
+  "version": "0.1.3",
   
   "description": "This module allows you to dynamically change an opponent's tier. For example: if you have a Tier 1 Bear, you can use the module to update its sheet to Tier 3 stats.",
 

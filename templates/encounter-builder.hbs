@@ -100,13 +100,32 @@
             <div class="eb-settings-panel">
                 <div class="eb-setting-row">
                     <label># PCs:</label>
-                    <input type="number" class="pc-count-input" value="{{pcCount}}" min="0" max="10">
+                    <div class="select-wrapper mini">
+                        <select class="pc-count-select">
+                            {{#each pcCountOptions}}
+                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
                 </div>
                 <div class="eb-setting-row">
                     <label>Party Tier:</label>
                     <div class="select-wrapper mini">
                         <select class="pc-tier-select">
                             {{#each pcTierOptions}}
+                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <!-- Fear Budget Selector -->
+                <div class="eb-setting-row">
+                    <label title="Spending more Fear increases the perceived difficulty level.">
+                        Fear Budget: <i class="fas fa-question-circle" style="font-size:0.8em; color:#888;"></i>
+                    </label>
+                    <div class="select-wrapper mini">
+                        <select class="pc-fear-select">
+                            {{#each fearOptions}}
                             <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
                             {{/each}}
                         </select>
