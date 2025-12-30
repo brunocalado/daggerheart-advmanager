@@ -16,6 +16,8 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 <p align="center"><img width="1400" src="docs/views.webp"></p>
 
+<p align="center"><img width="1400" src="docs/view-encounterbuilder.webp"></p>
+
 <p align="center"><img width="400" src="docs/view-diceprob.webp"></p>
 
 ### 🛠️ Adversary Scaling & Management
@@ -33,6 +35,13 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
     * Update multiple selected tokens on the canvas simultaneously.
     * Import and auto-scale adversaries directly from Compendiums into your world.
 
+### ⚔️ Encounter Builder
+
+* **🔎 Search & Library:** Robust search across World actors and System Compendiums with filters for Tier and Type.
+* **🧮 Smart Budgeting:** Automatic **Budget Point (BP)** calculation based on Party Size and Tier. Tracks current cost vs budget limit.
+* **💀 Difficulty Estimator:** Real-time difficulty assessment (Balanced, Challenging, Deadly, etc.) with visual indicators.
+* **⚡ Quick Deployment:** Build your encounter list, apply modifiers (e.g. Damage Boost), and **place tokens directly on the scene** (hidden by default) or organize them into folders.
+
 ### 📊 Compendium Statistics
 
 * **🔍 Stats Explorer:** Browse comprehensive statistics for every adversary type (Bruiser, Horde, etc.) across all 4 Tiers based on the system compendium.
@@ -42,13 +51,13 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 ### 🎲 Dice Probability Calculator
 
-* **Live Analysis:** Instantly calculate success, failure, and critical hit chances for Daggerheart rolls).
+* **Live Analysis:** Instantly calculate success, failure, and critical hit chances for Daggerheart rolls.
 * **Flexible Options:** Supports Advantage, Disadvantage, and flat numerical modifiers.
 * **Chat Integration:** Send detailed probability result cards to the chat log with a single click.
 
 ## ⚙️ Instructions & Usage
 
-Access all functions (Adversary Manager, Compendium Stats, and Dice Probability) by clicking the buttons in the Daggerheart System Menu or Actor Directory, as shown below.
+Access all functions (Adversary Manager, Encounter Builder, Compendium Stats, and Dice Probability) by clicking the buttons in the Daggerheart System Menu or Actor Directory, as shown below.
 
 <p align="center"><img width="600" src="docs/system-button.webp"></p>
 
@@ -57,6 +66,11 @@ You can also use macros:
 ```js
 // Adversary Manager
 AM.Manage();
+```
+
+```js
+// Encounter Builder
+AM.EncounterBuilder();
 ```
 
 ```js

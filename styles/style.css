@@ -102,20 +102,23 @@
 .feature-input-group .feature-override-input { flex: 1; }
 .actor-preview-name { margin-top: auto; text-align: center; font-size: 1.1em; font-weight: bold; color: #ea80fc; padding-top: 10px; padding-bottom: 5px; font-family: 'Aleo', serif; text-transform: uppercase; border-bottom: 1px solid rgba(234, 128, 252, 0.3); margin-bottom: 10px; }
 
-/* --- ENCOUNTER BUILDER UPDATES --- */
+/* --- ENCOUNTER BUILDER STYLES --- */
 
+/* Fix: Remove padding removal that was breaking alignment and ensure height inheritance */
 .encounter-builder {
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Ensure overflow is contained here */
 }
 
-/* Layout for 2 Columns */
+/* Fix: Flex Layout for 2 columns with explicit width/grow rules */
 .eb-layout {
     display: flex;
     gap: 15px;
     height: 100%;
     overflow: hidden;
+    flex: 1; /* Ensure layout takes full remaining space */
 }
 
 .eb-column {
@@ -127,6 +130,7 @@
 
 .eb-column-library {
     flex: 0 0 60%; /* Left side is wider */
+    min-width: 0; /* Prevent flex blowout */
 }
 
 .eb-column-encounter {
@@ -137,6 +141,7 @@
     padding-right: 2px; /* Scrollbar space */
     display: flex;
     flex-direction: column;
+    min-width: 0; /* Prevent flex blowout */
 }
 
 /* Controls */
@@ -148,6 +153,7 @@
     background: rgba(0,0,0,0.2);
     border-radius: 5px;
     border: 1px solid #444;
+    flex-shrink: 0; /* Prevent controls from shrinking */
 }
 
 .eb-search-wrapper { position: relative; width: 100%; }
@@ -172,6 +178,7 @@
     letter-spacing: 1px;
     border-bottom: 1px solid #444;
     padding-bottom: 5px;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .eb-encounter-header {
@@ -200,6 +207,7 @@
     flex-direction: column;
     gap: 5px;
     padding-right: 5px;
+    min-height: 0; /* Important for flex overflow scroll */
 }
 
 /* Rows */
@@ -213,6 +221,7 @@
     border: 1px solid transparent;
     cursor: pointer;
     transition: all 0.2s;
+    flex-shrink: 0; /* Ensure items don't squash */
 }
 
 .eb-adversary-row:hover, .eb-encounter-item:hover {
@@ -363,6 +372,7 @@
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #444;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .eb-setting-row {
@@ -399,12 +409,14 @@
 .eb-bp-header {
     display: flex;
     justify-content: space-between;
+    align-items: center; /* Center align items vertically */
     background: #222; /* Darker background */
     padding: 12px;
     border-radius: 5px;
     border: 2px solid #512da8; /* Stronger border */
     margin-bottom: 10px;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .bp-stat {
@@ -430,22 +442,84 @@
     text-shadow: 0 0 4px #000; /* Shadow for contrast */
 }
 
-.bp-sub {
-    font-size: 0.75em;
-    color: #b39ddb;
-    margin-top: 2px;
+/* UPDATED: Sub Badge Style */
+.bp-sub-badge {
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-align: center;
+    letter-spacing: 0.5px;
+    color: #b39ddb; /* Keep original color */
+    border: 1px solid #b39ddb; /* Add border */
+}
+
+/* NEW: Difficulty Skull Image Container */
+.bp-skull-container {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bp-skull-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)); /* Glow effect */
+}
+
+/* NEW: Difficulty Display */
+.bp-difficulty {
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.diff-very-easy {
+    color: #69f0ae; /* Bright Green */
+    border: 1px solid #69f0ae;
+}
+
+.diff-easy {
+    color: #b9f6ca; /* Light Green */
+    border: 1px solid #b9f6ca;
+}
+
+.diff-balanced {
+    color: #ffd740; /* Gold */
+    border: 1px solid #ffd740;
+}
+
+.diff-challenging {
+    color: #ff9800; /* Orange */
+    border: 1px solid #ff9800;
+}
+
+.diff-deadly {
+    color: #ff5252; /* Red */
+    border: 1px solid #ff5252;
 }
 
 .cost-red { color: #ff5252; text-shadow: 0 0 4px rgba(255, 82, 82, 0.4); }
 .cost-green { color: #69f0ae; text-shadow: 0 0 4px rgba(105, 240, 174, 0.4); }
 .cost-gold { color: #ffd740; text-shadow: 0 0 4px rgba(255, 215, 64, 0.4); }
 
-/* Modifiers List */
+/* Modifiers List - Removed Margin as Requested */
 .eb-modifiers-list {
-    margin-bottom: 15px;
+    margin-bottom: 0; /* Updated from 15px to 0 */
     background: rgba(0,0,0,0.1);
     border-radius: 5px;
     padding: 5px;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .eb-modifier-row {
@@ -499,6 +573,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-height: 0; /* Critical for flex child scroll */
 }
 
 .eb-encounter-list {
@@ -550,11 +625,17 @@
     padding-top: 10px;
     margin-top: 10px;
     border-top: 1px solid #444;
+    display: flex; /* NEW: Flex layout for footer */
+    gap: 10px;     /* Spacing between buttons */
+    flex-shrink: 0; /* Prevent shrinking */
+    /* Ensure footer stretches full width */
 }
 
+/* Updated Button Height to 40px */
 .eb-create-btn {
-    width: 100%;
-    padding: 10px;
+    flex: 1; /* Main button takes available space */
+    padding: 0 10px; /* Adjusted padding since height is fixed */
+    height: 40px; /* Explicit height - Updated from 50px */
     background: linear-gradient(to bottom, #6a1b9a, #4a148c);
     border: 1px solid #ea80fc;
     color: #fff;
@@ -567,9 +648,34 @@
     justify-content: center;
     gap: 10px;
     transition: all 0.2s;
+    box-sizing: border-box; /* Consistency */
 }
 
 .eb-create-btn:hover {
     background: linear-gradient(to bottom, #7b1fa2, #6a1b9a);
     box-shadow: 0 0 10px rgba(156, 39, 176, 0.4);
+}
+
+/* Updated Place Button Height to 40px */
+.eb-place-btn {
+    flex: 0 0 60px; /* Fixed width small button */
+    padding: 0 10px; /* Adjusted padding */
+    height: 40px; /* Explicit height to match create button - Updated from 50px */
+    background: #333;
+    border: 1px solid #555;
+    color: #ccc;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-sizing: border-box; /* Consistency */
+}
+
+.eb-place-btn:hover {
+    background: #4a148c;
+    color: #fff;
+    border-color: #ea80fc;
 }

@@ -13,7 +13,7 @@ export const SETTING_CHAT_LOG = "enableChatLog";
 export const SETTING_UPDATE_EXP = "autoUpdateExperiences";
 export const SETTING_ADD_FEATURES = "autoAddFeatures";
 export const SETTING_IMPORT_FOLDER = "importFolderName";
-export const SETTING_ENCOUNTER_FOLDER = "encounterFolderName"; // <--- NOVO
+export const SETTING_ENCOUNTER_FOLDER = "encounterFolderName";
 export const SETTING_EXTRA_COMPENDIUMS = "extraCompendiums";
 export const SKULL_IMAGE_PATH = "modules/daggerheart-advmanager/assets/images/skull.webp";
 
@@ -103,7 +103,6 @@ Hooks.once("init", () => {
         default: "💀 Imported Adversaries"
     });
 
-    // NOVA CONFIGURAÇÃO
     game.settings.register(MODULE_ID, SETTING_ENCOUNTER_FOLDER, {
         name: "Encounter Folder Name",
         hint: "Name of the root folder where encounters created by the builder will be stored.",
@@ -138,13 +137,14 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", () => {
+    // Expose API globally
     globalThis.AM = {
         Manage: manage, 
         LiveManager: () => new LiveManager().render(true),
         CompendiumManager: () => new CompendiumManager().render(true),
         CompendiumStats: () => new CompendiumStats().render(true),
         DiceProbability: () => new DiceProbability().render(true),
-        EncounterBuilder: () => new EncounterBuilder().render(true)
+        EncounterBuilder: () => new EncounterBuilder().render(true) // Função solicitada
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });

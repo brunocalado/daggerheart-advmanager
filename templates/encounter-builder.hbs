@@ -57,12 +57,12 @@
                 <div class="eb-adversary-row" data-uuid="{{this.uuid}}" data-action="openSheet">
                     
                     <div class="eb-row-actions-left">
-                        <!-- Add Button (Square now via CSS) -->
+                        <!-- Add Button -->
                         <button type="button" class="eb-add-btn" data-action="addUnit" title="Add to Encounter">
                             <i class="fas fa-plus"></i>
                         </button>
 
-                        <!-- NEW: Edit Button -->
+                        <!-- Edit Button -->
                         <button type="button" class="eb-edit-btn" data-action="editAdversary" title="Edit in Live Manager">
                             <i class="fas fa-sliders-h"></i>
                         </button>
@@ -103,7 +103,7 @@
                     <input type="number" class="pc-count-input" value="{{pcCount}}" min="0" max="10">
                 </div>
                 <div class="eb-setting-row">
-                    <label>PC Tier:</label>
+                    <label>Party Tier:</label>
                     <div class="select-wrapper mini">
                         <select class="pc-tier-select">
                             {{#each pcTierOptions}}
@@ -119,11 +119,18 @@
                 <div class="bp-stat">
                     <span class="bp-label">Budget Limit</span>
                     <span class="bp-value">{{bpData.total}}</span>
-                    <span class="bp-sub">(Base: {{bpData.base}})</span>
+                    <div class="bp-sub-badge">Base: {{bpData.base}}</div>
                 </div>
+                
+                <!-- Dynamic Skull Image -->
+                <div class="bp-skull-container">
+                    <img src="{{bpData.skullImage}}" class="bp-skull-img" alt="Difficulty Skull">
+                </div>
+
                 <div class="bp-stat">
                     <span class="bp-label">Current Cost</span>
                     <span class="bp-value cost-{{bpData.statusColor}}">{{bpData.cost}}</span>
+                    <div class="bp-difficulty {{bpData.difficultyClass}}">{{bpData.difficultyLabel}}</div>
                 </div>
             </div>
 
@@ -151,7 +158,7 @@
                 <div class="eb-results-header">Adversaries</div>
                 <div class="eb-encounter-list">
                     {{#each encounterList}}
-                    <div class="eb-encounter-item" data-uuid="{{this.uuid}}" data-entryid="{{this.entryId}}" data-action="openSheet">
+                    <div class="eb-encounter-item" draggable="true" data-uuid="{{this.uuid}}" data-entryid="{{this.entryId}}" data-action="openSheet">
                         
                         <div class="eb-row-main">
                             <img src="{{this.img}}" class="eb-row-img small" alt="{{this.name}}">
@@ -169,7 +176,7 @@
                             <button type="button" 
                                     class="unit-boost-btn {{#if this.hasDamageBoost}}active{{/if}}" 
                                     data-action="toggleUnitBoost" 
-                                    title="Add +1d4 Damage (Lowers Budget Limit)">
+                                    title="{{this.damageBoostTooltip}}">
                                 <i class="fas fa-fire"></i>
                             </button>
 
@@ -190,6 +197,10 @@
             <div class="eb-action-footer">
                 <button type="button" class="eb-create-btn" data-action="createEncounter">
                     <i class="fas fa-folder-plus"></i> Create Encounter
+                </button>
+                
+                <button type="button" class="eb-place-btn" data-action="placeEncounter" title="Create & Place Invisible">
+                    <i class="fas fa-street-view"></i>
                 </button>
             </div>
 

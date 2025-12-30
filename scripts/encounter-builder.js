@@ -1,5 +1,5 @@
 import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER } from "./module.js";
-import { LiveManager } from "./live-manager.js"; // Import needed for edit functionality
+import { LiveManager } from "./live-manager.js"; 
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -30,6 +30,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // List of added units
         this.encounterList = []; 
         
+        // State for "Place on Scene" functionality
+        this.lastCreatedActors = []; 
+        
         // Cache
         this._cachedAdversaries = null;
     }
@@ -55,7 +58,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             toggleUnitBoost: EncounterBuilder.prototype._onToggleUnitBoost,
             updatePCSettings: EncounterBuilder.prototype._onUpdatePCSettings,
             createEncounter: EncounterBuilder.prototype._onCreateEncounter,
-            editAdversary: EncounterBuilder.prototype._onEditAdversary // <--- NOVA AÇÃO
+            placeEncounter: EncounterBuilder.prototype._onPlaceEncounter,
+            editAdversary: EncounterBuilder.prototype._onEditAdversary
         },
         form: {
             handler: EncounterBuilder.prototype.submitHandler,
@@ -126,12 +130,45 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         }));
         typeOptions.unshift({ value: "all", label: "All Types", selected: this.filterType === "all" });
 
+        // --- Calculate Tooltips for Encounter List ---
+        const enrichedEncounterList = this.encounterList.map(unit => {
+            const tier = unit.tier || 1;
+            let die = "1d4";
+            if (tier === 2) die = "1d6";
+            else if (tier === 3) die = "1d8";
+            else if (tier >= 4) die = "1d10";
+            
+            return {
+                ...unit,
+                damageBoostTooltip: `Add +${die} Damage (Lowers Budget Limit)`
+            };
+        });
+
         // --- Budget Calculation ---
         const bpData = this._calculateBP();
 
+        // --- Determine Skull Image based on Difficulty ---
+        let skullImg = "";
+        switch (bpData.difficultyLabel) {
+            case "Very Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-very-easy.webp"; break;
+            case "Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-easy.webp"; break;
+            case "Balanced": skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp"; break;
+            case "Challenging": skullImg = "modules/daggerheart-advmanager/assets/images/skull-challenging.webp"; break;
+            case "Hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break; // Note: Prompt had duplicate logic for Hard/Challenging, mapping logic kept distinct if possible, otherwise fallback
+            case "Deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
+            default: skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp";
+        }
+        
+        // Handle the "Hard" case which wasn't strictly defined by unique logic in previous step but requested here
+        // If logic produces "Challenging" for +1, we might need to adjust or just map "Hard" image if logic changes.
+        // Assuming current logic: <=-2 Very Easy, -1 Easy, 0 Balanced, +1 Challenging, >=2 Deadly.
+        // If "Hard" is distinct, logic in _calculateBP needs update. For now using Challenging image for Challenging.
+
+        bpData.skullImage = skullImg;
+
         return {
             adversaries: filtered,
-            encounterList: this.encounterList,
+            encounterList: enrichedEncounterList, 
             tiers,
             typeOptions,
             sourceOptions,
@@ -143,7 +180,10 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             pcTier: this.pcTier,
             pcTierOptions: [1, 2, 3, 4].map(t => ({ value: t, label: `Tier ${t}`, selected: t === this.pcTier })),
             bpData: bpData,
-            manualModifiers: this.manualModifiers
+            manualModifiers: this.manualModifiers,
+            
+            // UI State
+            hasCreatedActors: this.lastCreatedActors.length > 0
         };
     }
 
@@ -190,7 +230,6 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         const modifiers = [];
 
-        // 1. Easier/Shorter (Manual)
         if (this.manualModifiers.easier) {
             limit -= 1;
             modifiers.push({ label: "Easier/Shorter", val: "-1", active: true, manual: true, key: 'easier' });
@@ -198,7 +237,6 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             modifiers.push({ label: "Easier/Shorter", val: "-1", active: false, manual: true, key: 'easier' });
         }
 
-        // 2. 2+ Solos (Auto)
         if (soloCount >= 2) {
             limit -= 2;
             modifiers.push({ label: "2+ Solos", val: "-2", active: true, manual: false });
@@ -206,15 +244,13 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             modifiers.push({ label: "2+ Solos", val: "-2", active: false, manual: false, disabled: true });
         }
 
-        // 3. Damage Boost (Auto)
         if (hasDamageBoost) {
             limit -= 2;
-            modifiers.push({ label: "Damage Boost (+1d4)", val: "-2", active: true, manual: false });
+            modifiers.push({ label: "Damage Boost", val: "-2", active: true, manual: false });
         } else {
-            modifiers.push({ label: "Damage Boost (+1d4)", val: "-2", active: false, manual: false, disabled: true });
+            modifiers.push({ label: "Damage Boost", val: "-2", active: false, manual: false, disabled: true });
         }
 
-        // 4. Lower Tier (Auto)
         if (hasLowerTier) {
             limit += 1;
             modifiers.push({ label: "Lower Tier Used", val: "+1", active: true, manual: false });
@@ -222,7 +258,6 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             modifiers.push({ label: "Lower Tier Used", val: "+1", active: false, manual: false, disabled: true });
         }
 
-        // 5. No Major Adversaries (Auto)
         if (this.encounterList.length > 0 && !hasSpecialType) {
             limit += 1;
             modifiers.push({ label: "No Major Adversaries", val: "+1", active: true, manual: false });
@@ -230,7 +265,6 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             modifiers.push({ label: "No Major Adversaries", val: "+1", active: false, manual: false, disabled: true });
         }
 
-        // 6. Harder/Longer (Manual)
         if (this.manualModifiers.harder) {
             limit += 2;
             modifiers.push({ label: "Harder/Longer", val: "+2", active: true, manual: true, key: 'harder' });
@@ -238,13 +272,39 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             modifiers.push({ label: "Harder/Longer", val: "+2", active: false, manual: true, key: 'harder' });
         }
 
+        // --- Difficulty Calculation ---
+        const diff = currentCost - limit;
+        let difficultyLabel = "Balanced";
+        let difficultyClass = "diff-balanced";
+
+        if (diff <= -2) {
+            difficultyLabel = "Very Easy";
+            difficultyClass = "diff-very-easy";
+        } else if (diff === -1) {
+            difficultyLabel = "Easy";
+            difficultyClass = "diff-easy";
+        } else if (diff === 0) {
+            difficultyLabel = "Balanced";
+            difficultyClass = "diff-balanced";
+        } else if (diff === 1) {
+            difficultyLabel = "Challenging";
+            difficultyClass = "diff-challenging";
+        } else if (diff >= 2) {
+            difficultyLabel = "Deadly";
+            difficultyClass = "diff-deadly";
+        }
+
+        const statusColor = (currentCost > limit) ? "red" : (currentCost === limit ? "green" : "gold");
+
         return {
             base: baseBP,
             total: limit,
             cost: currentCost,
             remaining: limit - currentCost,
             modifiers: modifiers,
-            statusColor: (currentCost > limit) ? "red" : (currentCost === limit ? "green" : "gold")
+            statusColor: statusColor,
+            difficultyLabel: difficultyLabel,
+            difficultyClass: difficultyClass
         };
     }
 
@@ -298,78 +358,163 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         };
     }
 
-    /* --- Actions --- */
+    async _executeCreateEncounter() {
+        if (this.encounterList.length === 0) {
+            ui.notifications.warn("No adversaries in the encounter to create.");
+            return [];
+        }
+
+        const featurePackId = "daggerheart-advmanager.features";
+        const featurePack = game.packs.get(featurePackId);
+        let featureIndex = null;
+        if (featurePack) {
+            featureIndex = await featurePack.getIndex();
+        } else {
+            console.warn(`Daggerheart AdvManager | Compendium '${featurePackId}' not found. Extra damage features will not be added.`);
+        }
+
+        const rootName = game.settings.get(MODULE_ID, SETTING_ENCOUNTER_FOLDER) || "💀 My Encounters";
+        
+        let rootFolder = game.folders.find(f => f.name === rootName && f.type === "Actor");
+        if (!rootFolder) {
+            rootFolder = await Folder.create({ name: rootName, type: "Actor", color: "#430047" });
+        }
+
+        // --- Folder Naming Logic Updated ---
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+        const dateString = now.toLocaleDateString().replace(/\//g, '-');
+        
+        // Calculate Cost and Tier for Name
+        let totalTier = 0;
+        const bpData = this._calculateBP(); // Recalculate to get current cost
+        const currentBP = bpData.cost;
+        
+        this.encounterList.forEach(u => totalTier += (u.tier || 1));
+        const avgTier = this.encounterList.length > 0 ? Math.round(totalTier / this.encounterList.length) : 1;
+
+        const subFolderName = `${dateString} ${timeString} BP${currentBP}/T${avgTier}`; 
+        
+        const subFolder = await Folder.create({ 
+            name: subFolderName, 
+            type: "Actor", 
+            folder: rootFolder.id, 
+            color: "#9c27b0" 
+        });
+
+        const createdActors = [];
+
+        for (const unit of this.encounterList) {
+            const originalActor = await fromUuid(unit.uuid);
+            if (!originalActor) continue;
+
+            let createdActor;
+            if (originalActor.compendium) {
+                createdActor = await game.actors.importFromCompendium(originalActor.compendium, originalActor.id, { 
+                    folder: subFolder.id
+                });
+            } else {
+                createdActor = await originalActor.clone({ 
+                    folder: subFolder.id 
+                }, { save: true });
+            }
+
+            if (createdActor) {
+                if (unit.hasDamageBoost && featurePack && featureIndex) {
+                    const tier = unit.tier || 1;
+                    let featureName = "More Damage (1d4)";
+
+                    if (tier === 1) featureName = "More Damage (1d4)";
+                    else if (tier === 2) featureName = "More Damage (1d6)";
+                    else if (tier === 3) featureName = "More Damage (1d8)";
+                    else if (tier >= 4) featureName = "More Damage (1d10)";
+
+                    const entry = featureIndex.find(i => i.name === featureName);
+                    
+                    if (entry) {
+                        const itemDoc = await featurePack.getDocument(entry._id);
+                        if (itemDoc) {
+                            await createdActor.createEmbeddedDocuments("Item", [itemDoc.toObject()]);
+                        }
+                    } else {
+                        console.warn(`Daggerheart AdvManager | Feature "${featureName}" not found in ${featurePackId}.`);
+                    }
+                }
+
+                createdActors.push(createdActor);
+            }
+        }
+        
+        return createdActors;
+    }
 
     async _onCreateEncounter(event, target) {
         event.preventDefault();
-        
-        if (this.encounterList.length === 0) {
-            ui.notifications.warn("No adversaries in the encounter to create.");
-            return;
-        }
-
         try {
-            // Get Folder Name from Settings
-            const rootName = game.settings.get(MODULE_ID, SETTING_ENCOUNTER_FOLDER) || "💀 My Encounters";
-            
-            // 1. Find/Create Root Folder
-            let rootFolder = game.folders.find(f => f.name === rootName && f.type === "Actor");
-            if (!rootFolder) {
-                rootFolder = await Folder.create({ name: rootName, type: "Actor", color: "#430047" });
+            const created = await this._executeCreateEncounter();
+            if (created && created.length > 0) {
+                this.lastCreatedActors = created;
             }
-
-            // 2. Create Subfolder
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
-            const dateString = now.toLocaleDateString().replace(/\//g, '-');
-            const subFolderName = `Encounter ${dateString} ${timeString}`;
-            
-            // CORRECT: use 'folder' property to set parent folder ID
-            const subFolder = await Folder.create({ 
-                name: subFolderName, 
-                type: "Actor", 
-                folder: rootFolder.id, 
-                color: "#9c27b0" 
-            });
-
-            // 3. Copy Adversaries
-            let count = 0;
-            for (const unit of this.encounterList) {
-                const originalActor = await fromUuid(unit.uuid);
-                if (!originalActor) continue;
-
-                if (originalActor.compendium) {
-                    await game.actors.importFromCompendium(originalActor.compendium, originalActor.id, { 
-                        folder: subFolder.id
-                    });
-                } else {
-                    await originalActor.clone({ 
-                        folder: subFolder.id 
-                    }, { save: true });
-                }
-                count++;
-            }
-
-            ui.notifications.info(`Encounter created: "${rootName}/${subFolderName}" with ${count} adversaries.`);
-            
         } catch (err) {
             console.error(err);
             ui.notifications.error("Failed to create encounter. Check console.");
         }
     }
 
-    // Opens LiveManager for the selected actor
+    async _onPlaceEncounter(event, target) {
+        event.preventDefault();
+
+        try {
+            const created = await this._executeCreateEncounter();
+            if (!created || created.length === 0) return; 
+            
+            this.lastCreatedActors = created; 
+            
+            const scene = canvas.scene;
+            if (!scene) {
+                ui.notifications.warn("No active scene to place tokens.");
+                return;
+            }
+
+            const tokensData = [];
+            const centerX = canvas.stage.pivot.x;
+            const centerY = canvas.stage.pivot.y;
+            const gridSize = canvas.grid.size;
+            
+            const cols = Math.ceil(Math.sqrt(created.length));
+            
+            for (let i = 0; i < created.length; i++) {
+                const actor = created[i];
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                
+                const x = centerX + (col * gridSize);
+                const y = centerY + (row * gridSize);
+
+                const protoToken = await actor.getTokenDocument();
+                const tokenData = protoToken.toObject();
+                
+                tokenData.x = x;
+                tokenData.y = y;
+                tokenData.hidden = true; 
+
+                tokensData.push(tokenData);
+            }
+
+            await scene.createEmbeddedDocuments("Token", tokensData);
+            
+        } catch (err) {
+            console.error(err);
+            ui.notifications.error("Failed to place encounter. Check console.");
+        }
+    }
+
     async _onEditAdversary(event, target) {
-        // Stop bubbling so we don't trigger the sheet opening
         event.stopPropagation();
-        
         const uuid = target.closest('[data-uuid]').dataset.uuid;
         if (!uuid) return;
-
         const actor = await fromUuid(uuid);
         if (actor) {
-            // Check if LiveManager is already imported/available in global scope or imported
-            // Since we imported it at the top, we can use it.
             new LiveManager({ actor: actor }).render(true);
         }
     }
@@ -394,6 +539,23 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         
         const pcTierSelect = html.querySelector('.pc-tier-select');
         if (pcTierSelect) pcTierSelect.addEventListener('change', (e) => this._onUpdatePCSettings(e));
+
+        const encounterItems = html.querySelectorAll('.eb-encounter-item');
+        encounterItems.forEach(item => {
+            item.setAttribute('draggable', 'true');
+            item.addEventListener('dragstart', this._onDragStart.bind(this));
+        });
+    }
+
+    _onDragStart(event) {
+        const item = event.target.closest('.eb-encounter-item');
+        const uuid = item.dataset.uuid;
+        if (!uuid) return;
+        const dragData = {
+            type: "Actor",
+            uuid: uuid
+        };
+        event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
     }
 
     _onSearch(event) {
@@ -454,9 +616,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     async _onOpenSheet(event, target) {
-        // If clicking a button inside the row, ignore
         if (event.target.closest('button')) return;
-        
         const uuid = target.closest('[data-uuid]').dataset.uuid;
         if (!uuid) return;
         const actor = await fromUuid(uuid);
