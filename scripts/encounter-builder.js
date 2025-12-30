@@ -154,16 +154,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             case "Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-easy.webp"; break;
             case "Balanced": skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp"; break;
             case "Challenging": skullImg = "modules/daggerheart-advmanager/assets/images/skull-challenging.webp"; break;
-            case "Hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break; // Note: Prompt had duplicate logic for Hard/Challenging, mapping logic kept distinct if possible, otherwise fallback
+            case "Hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break;
             case "Deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
             default: skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp";
         }
         
-        // Handle the "Hard" case which wasn't strictly defined by unique logic in previous step but requested here
-        // If logic produces "Challenging" for +1, we might need to adjust or just map "Hard" image if logic changes.
-        // Assuming current logic: <=-2 Very Easy, -1 Easy, 0 Balanced, +1 Challenging, >=2 Deadly.
-        // If "Hard" is distinct, logic in _calculateBP needs update. For now using Challenging image for Challenging.
-
         bpData.skullImage = skullImg;
 
         return {
@@ -380,7 +375,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             rootFolder = await Folder.create({ name: rootName, type: "Actor", color: "#430047" });
         }
 
-        // --- Folder Naming Logic Updated ---
+        // --- Folder Naming Logic ---
         const now = new Date();
         const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
         const dateString = now.toLocaleDateString().replace(/\//g, '-');

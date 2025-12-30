@@ -1,5 +1,5 @@
 /* ========================================= */
-/* SHARED & ADVERSARY MANAGER           */
+/* SHARED & ADVERSARY MANAGER                */
 /* ========================================= */
 
 .dh-adv-manager-content {
@@ -136,7 +136,7 @@
 }
 
 /* ========================================= */
-/* LIVE MANAGER                  */
+/* LIVE MANAGER                              */
 /* ========================================= */
 
 .preview-container {
@@ -571,7 +571,7 @@
 }
 
 /* ========================================= */
-/* COMPENDIUM STATS (RESTORED)      */
+/* COMPENDIUM STATS                          */
 /* ========================================= */
 
 .stats-controls {
@@ -687,7 +687,7 @@
 }
 
 /* ========================================= */
-/* DICE PROBABILITY (RESTORED)        */
+/* DICE PROBABILITY                          */
 /* ========================================= */
 
 .probability-results .stat-row {
@@ -734,7 +734,7 @@
 }
 
 /* ========================================= */
-/* ENCOUNTER BUILDER (NEW)          */
+/* ENCOUNTER BUILDER                         */
 /* ========================================= */
 
 .encounter-builder {
