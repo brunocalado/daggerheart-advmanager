@@ -1,6 +1,6 @@
 import { Manager } from "./manager.js";
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
-import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SKULL_IMAGE_PATH } from "./module.js";
+import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js"; 
@@ -123,7 +123,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const packIds = ["daggerheart-advmanager.features", "daggerheart.adversary-features"];
         
         // Prepare clean name (e.g., "Relentless (2)" or "Relentless (X)" becomes "Relentless")
-        // Regex: Matches start of string, captures name, allows optional space, matches parenthesis with ANYTHING inside that is not a closing parenthesis
         let cleanName = name;
         const match = name.match(/^(.*?)\s*\([^)]+\)$/);
         if (match) cleanName = match[1];
@@ -829,6 +828,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
         
+        // --- FEATURE FLAG CHECK ---
+        const enableSuggestions = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
+        if (!enableSuggestions) {
+            possibleFeatures = []; // FORCE EMPTY LIST TO HIDE SUGGESTIONS
+        }
+
         // 2. Filter out already owned features to avoid duplicates
         const validCandidates = possibleFeatures.filter(name => !allItems.some(i => i.name === name));
 

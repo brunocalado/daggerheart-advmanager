@@ -12,6 +12,7 @@ export const MODULE_ID = "daggerheart-advmanager";
 export const SETTING_CHAT_LOG = "enableChatLog";
 export const SETTING_UPDATE_EXP = "autoUpdateExperiences";
 export const SETTING_ADD_FEATURES = "autoAddFeatures";
+export const SETTING_SUGGEST_FEATURES = "enableFeatureSuggestions"; // <--- NOVA CONSTANTE
 export const SETTING_IMPORT_FOLDER = "importFolderName";
 export const SETTING_ENCOUNTER_FOLDER = "encounterFolderName";
 export const SETTING_EXTRA_COMPENDIUMS = "extraCompendiums";
@@ -94,6 +95,16 @@ Hooks.once("init", () => {
         default: true
     });
 
+    // --- NOVA CONFIGURAÇÃO ---
+    game.settings.register(MODULE_ID, SETTING_SUGGEST_FEATURES, {
+        name: "Enable Suggested Features",
+        hint: "If enabled, shows the 'New Suggested Features' section in the Live Manager preview.",
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: true
+    });
+
     game.settings.register(MODULE_ID, SETTING_IMPORT_FOLDER, {
         name: "Compendium Import Folder",
         hint: "Name of the folder where adversaries imported from Compendiums will be created.",
@@ -144,7 +155,7 @@ Hooks.once("ready", () => {
         CompendiumManager: () => new CompendiumManager().render(true),
         CompendiumStats: () => new CompendiumStats().render(true),
         DiceProbability: () => new DiceProbability().render(true),
-        EncounterBuilder: () => new EncounterBuilder().render(true) // Função solicitada
+        EncounterBuilder: () => new EncounterBuilder().render(true) 
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });
