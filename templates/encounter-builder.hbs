@@ -77,12 +77,14 @@
                                 {{#if this.isCompendium}}
                                 <i class="fas fa-book eb-compendium-icon" title="Compendium"></i>
                                 {{/if}}
+                                <span class="badge-tier small" style="margin-left:5px;">T{{this.tier}}</span>
+                                
+                                <!-- NEW: Special Features Display (Left) -->
+                                {{#each this.specialFeatures}}
+                                    <span class="feature-tag">{{this}}</span>
+                                {{/each}}
                             </div>
                         </div>
-                    </div>
-
-                    <div class="eb-row-tier">
-                        <span class="badge-tier">T{{this.tier}}</span>
                     </div>
                 </div>
                 {{else}}
@@ -98,37 +100,43 @@
             
             <!-- PC Configuration -->
             <div class="eb-settings-panel">
-                <div class="eb-setting-row">
-                    <label># PCs:</label>
-                    <div class="select-wrapper mini">
-                        <select class="pc-count-select">
-                            {{#each pcCountOptions}}
-                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
-                            {{/each}}
-                        </select>
+                <!-- Grouped Row: PC, Tier (moved left), Fear (moved right) -->
+                <div class="eb-settings-row-group">
+                    <div class="eb-setting-col pc-col">
+                        <label># PCs:</label>
+                        <div class="select-wrapper mini">
+                            <select class="pc-count-select">
+                                {{#each pcCountOptions}}
+                                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="eb-setting-row">
-                    <label>Party Tier:</label>
-                    <div class="select-wrapper mini">
-                        <select class="pc-tier-select">
-                            {{#each pcTierOptions}}
-                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
-                            {{/each}}
-                        </select>
+                    
+                    <!-- Moved Tier to Left -->
+                    <div class="eb-setting-col tier-col">
+                        <label>Party Tier:</label>
+                        <div class="select-wrapper mini">
+                            <select class="pc-tier-select">
+                                {{#each pcTierOptions}}
+                                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <!-- Fear Budget Selector -->
-                <div class="eb-setting-row">
-                    <label title="Spending more Fear increases the perceived difficulty level.">
-                        Fear Budget: <i class="fas fa-question-circle" style="font-size:0.8em; color:#888;"></i>
-                    </label>
-                    <div class="select-wrapper mini">
-                        <select class="pc-fear-select">
-                            {{#each fearOptions}}
-                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
-                            {{/each}}
-                        </select>
+
+                    <!-- Moved Fear to Right -->
+                    <div class="eb-setting-col fear-col">
+                        <label title="Spending more Fear increases the perceived difficulty level.">
+                            Fear Budget: <i class="fas fa-question-circle" style="font-size:0.8em; color:#888;"></i>
+                        </label>
+                        <div class="select-wrapper mini">
+                            <select class="pc-fear-select">
+                                {{#each fearOptions}}
+                                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -153,9 +161,8 @@
                 </div>
             </div>
 
-            <!-- Modifiers List -->
+            <!-- Modifiers List (Grid 2 Cols) -->
             <div class="eb-modifiers-list">
-                <div class="eb-results-header" style="margin-top:0;">Budget Modifiers</div>
                 {{#each bpData.modifiers}}
                 <div class="eb-modifier-row {{#if this.active}}active{{/if}} {{#if this.disabled}}disabled{{/if}}" 
                      {{#if this.manual}}data-action="toggleModifier" data-key="{{this.key}}"{{/if}}>
@@ -186,6 +193,11 @@
                                 <div class="eb-row-meta">
                                     <span class="eb-type-tag" style="font-size: 0.75em;">{{this.type}}</span>
                                     <span class="badge-tier small">T{{this.tier}}</span>
+                                    
+                                    <!-- Special Features Display (Right) -->
+                                    {{#each this.specialFeatures}}
+                                        <span class="feature-tag">{{this}}</span>
+                                    {{/each}}
                                 </div>
                             </div>
                         </div>

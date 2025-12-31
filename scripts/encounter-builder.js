@@ -50,10 +50,10 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             title: "Encounter Builder",
             icon: "fas fa-dungeon",
             resizable: true,
-            width: 1000,
+            width: 1100,
             height: 750
         },
-        position: { width: 1000, height: 750 },
+        position: { width: 1100, height: 750 },
         actions: {
             selectTier: EncounterBuilder.prototype._onSelectTier,
             openSheet: EncounterBuilder.prototype._onOpenSheet,
@@ -300,9 +300,22 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         else if (diff === 1) level = 3; // Challenging
         else if (diff >= 2) level = 4; // Deadly
 
+        // --- Apply Fear Shift ---
         let shift = 0;
         if (this.fearBudget === "2-4") shift = 1;
         else if (this.fearBudget === "4-8" || this.fearBudget === "6-12") shift = 2;
+
+        // --- NEW: Apply Synergy Shift (Momentum + Relentless) ---
+        const hasSynergy = this.encounterList.some(u => {
+            const feats = u.specialFeatures || [];
+            const hasRelentless = feats.some(f => f.startsWith("Relentless"));
+            const hasMomentum = feats.includes("Momentum");
+            return hasRelentless && hasMomentum;
+        });
+
+        if (hasSynergy) {
+            shift += 1;
+        }
 
         level = Math.min(4, level + shift);
 
@@ -356,6 +369,17 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     _formatActorData(actor) {
+        const specialFeatures = [];
+        if (actor.items) {
+            if (actor.items.some(i => i.name === "Momentum")) {
+                specialFeatures.push("Momentum");
+            }
+            const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
+            if (relentless) {
+                specialFeatures.push(relentless.name);
+            }
+        }
+
         return {
             uuid: actor.uuid,
             id: actor.id,
@@ -364,7 +388,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             type: (actor.system.type || "standard").toLowerCase(),
             img: actor.img,
             isCompendium: false,
-            packId: null
+            packId: null,
+            specialFeatures: specialFeatures 
         };
     }
 
@@ -377,7 +402,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             type: (indexEntry.system?.type || "standard").toLowerCase(),
             img: indexEntry.img,
             isCompendium: true,
-            packId: packId
+            packId: packId,
+            specialFeatures: [] 
         };
     }
 
@@ -457,8 +483,6 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
                         if (itemDoc) {
                             await createdActor.createEmbeddedDocuments("Item", [itemDoc.toObject()]);
                         }
-                    } else {
-                        console.warn(`Daggerheart AdvManager | Feature "${featureName}" not found in ${featurePackId}.`);
                     }
                 }
 
@@ -466,15 +490,16 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             }
         }
         
-        return createdActors;
+        return { actors: createdActors, folderName: `${rootName}/${subFolderName}` };
     }
 
     async _onCreateEncounter(event, target) {
         event.preventDefault();
         try {
-            const created = await this._executeCreateEncounter();
-            if (created && created.length > 0) {
-                this.lastCreatedActors = created;
+            const result = await this._executeCreateEncounter();
+            if (result && result.actors && result.actors.length > 0) {
+                this.lastCreatedActors = result.actors;
+                ui.notifications.info(`Encounter created in: "${result.folderName}". Check the Actor directory.`);
             }
         } catch (err) {
             console.error(err);
@@ -486,9 +511,10 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         event.preventDefault();
 
         try {
-            const created = await this._executeCreateEncounter();
-            if (!created || created.length === 0) return; 
+            const result = await this._executeCreateEncounter();
+            if (!result || !result.actors || result.actors.length === 0) return; 
             
+            const created = result.actors;
             this.lastCreatedActors = created; 
             
             const scene = canvas.scene;
@@ -523,6 +549,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             }
 
             await scene.createEmbeddedDocuments("Token", tokensData);
+            ui.notifications.info(`Encounter created and ${created.length} tokens placed on scene (Hidden).`);
             
         } catch (err) {
             console.error(err);
@@ -548,10 +575,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         const searchInput = html.querySelector('.eb-search-input');
         if (searchInput) {
-            // Restore Focus logic
             if (this._searchFocus) {
                 searchInput.focus();
-                // Move cursor to end
                 const len = searchInput.value.length;
                 searchInput.setSelectionRange(len, len);
                 this._searchFocus = false;
@@ -595,7 +620,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
     _onSearch(event) {
         event.preventDefault();
         this.searchQuery = event.target.value;
-        this._searchFocus = true; // Flag to restore focus
+        this._searchFocus = true; 
         this.render();
     }
 
@@ -672,10 +697,24 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const actorData = this._cachedAdversaries.find(a => a.uuid === uuid);
         
         if (actorData) {
+            // Retrieve Features (Momentum, Relentless)
+            const actor = await fromUuid(uuid);
+            const specialFeatures = [];
+            if (actor && actor.items) {
+                if (actor.items.some(i => i.name === "Momentum")) {
+                    specialFeatures.push("Momentum");
+                }
+                const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
+                if (relentless) {
+                    specialFeatures.push(relentless.name);
+                }
+            }
+
             this.encounterList.push({
                 entryId: foundry.utils.randomID(),
                 ...actorData,
-                hasDamageBoost: false
+                hasDamageBoost: false,
+                specialFeatures: specialFeatures 
             });
             this.render();
         }

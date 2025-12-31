@@ -131,3 +131,53 @@ export const PC_BENCHMARKS = {
     "absolute_max_character_trait": 7
   }
 };
+
+export const POWERFUL_FEATURES = {
+  "summoner": [
+    "Won't Stay Dead",
+    "Blood and Souls",
+    "Unending Battle",
+    "Split",
+    "Deadly Companion",
+    "Reinforcements",
+    "Endless Legions",
+    "The Best Muscle Money Can Buy",
+    "Open the Gates of Death",
+    "Drain and Multiply",
+    "More Where That Came From",
+    "Summon Tormentors",
+    "Ashen Vengeance",
+    "All-Consuming Rage",
+    "I Have Never Known Defeat",
+    "The Hunt Is On",
+    "Summoning Ritual",
+    "Fallen Hounds",
+    "Grow Saplings",
+    "Guards, Seize Them!",
+    "Crownsguard"
+  ],
+  "spotlighter": [
+    "The Root of Villainy",
+    "Group Attack",
+    "Split",
+    "For the Realm!",
+    "Two as One",
+    "Deadly Companion",
+    "Voice of the Forest",
+    "Dance Of Death",
+    "Open the Gates of Death",
+    "Tactician",
+    "Strike as One",
+    "Ashen Vengeance",
+    "I Have Never Known Defeat",
+    "The Hunt Is On",
+    "Move as a Unit",
+    "Rally Guards",
+    "Inevitable Death",
+    "Money Is Time",
+    "We Are One",
+    "Seize Your Moment",
+    "Fallen Hounds",
+    "Grow Saplings"
+  ]
+};
