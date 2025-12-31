@@ -1,4 +1,5 @@
 import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING_LAST_SOURCE } from "./module.js";
+import { POWERFUL_FEATURES } from "./rules.js";
 import { LiveManager } from "./live-manager.js"; 
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -165,6 +166,38 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             };
         });
 
+        // --- Synergy Checks (Summoner, Spotlighter, Momentum, Relentless) ---
+        const synergy = {
+            summoner: false,
+            spotlighter: false,
+            momentum: false,
+            relentless: false
+        };
+
+        this.encounterList.forEach(unit => {
+            const features = unit.allFeatureNames || [];
+            
+            // Check Summoner
+            if (POWERFUL_FEATURES.summoner.some(feat => features.includes(feat))) {
+                synergy.summoner = true;
+            }
+
+            // Check Spotlighter
+            if (POWERFUL_FEATURES.spotlighter.some(feat => features.includes(feat))) {
+                synergy.spotlighter = true;
+            }
+
+            // Check Momentum
+            if (features.includes("Momentum")) {
+                synergy.momentum = true;
+            }
+
+            // Check Relentless (starts with Relentless)
+            if (features.some(f => f.startsWith("Relentless"))) {
+                synergy.relentless = true;
+            }
+        });
+
         // --- Budget Calculation ---
         const bpData = this._calculateBP();
 
@@ -201,7 +234,10 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             manualModifiers: this.manualModifiers,
             
             // UI State
-            hasCreatedActors: this.lastCreatedActors.length > 0
+            hasCreatedActors: this.lastCreatedActors.length > 0,
+            
+            // Synergy Flags
+            synergy: synergy
         };
     }
 
@@ -305,7 +341,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         if (this.fearBudget === "2-4") shift = 1;
         else if (this.fearBudget === "4-8" || this.fearBudget === "6-12") shift = 2;
 
-        // --- NEW: Apply Synergy Shift (Momentum + Relentless) ---
+        // --- Apply Synergy Shift (Momentum + Relentless) ---
         const hasSynergy = this.encounterList.some(u => {
             const feats = u.specialFeatures || [];
             const hasRelentless = feats.some(f => f.startsWith("Relentless"));
@@ -369,6 +405,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     _formatActorData(actor) {
+        // NOTE: This initial formatting is for the list view. 
+        // We will fetch full item details when adding to encounter list.
         const specialFeatures = [];
         if (actor.items) {
             if (actor.items.some(i => i.name === "Momentum")) {
@@ -697,13 +735,31 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const actorData = this._cachedAdversaries.find(a => a.uuid === uuid);
         
         if (actorData) {
-            // Retrieve Features (Momentum, Relentless)
+            // Retrieve Full Actor to get all feature names for synergy checks
             const actor = await fromUuid(uuid);
             const specialFeatures = [];
+            const allFeatureNames = [];
+
             if (actor && actor.items) {
-                if (actor.items.some(i => i.name === "Momentum")) {
+                // Collect ALL item names for synergy checking
+                actor.items.forEach(i => allFeatureNames.push(i.name));
+
+                // Check for Summoner Features
+                if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) {
+                    specialFeatures.push("Summoner");
+                }
+
+                // Check for Spotlighter Features
+                if (allFeatureNames.some(name => POWERFUL_FEATURES.spotlighter.includes(name))) {
+                    specialFeatures.push("Spotlighter");
+                }
+
+                // Check for Momentum
+                if (allFeatureNames.includes("Momentum")) {
                     specialFeatures.push("Momentum");
                 }
+
+                // Check for Relentless
                 const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
                 if (relentless) {
                     specialFeatures.push(relentless.name);
@@ -714,7 +770,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
                 entryId: foundry.utils.randomID(),
                 ...actorData,
                 hasDamageBoost: false,
-                specialFeatures: specialFeatures 
+                specialFeatures: specialFeatures,
+                allFeatureNames: allFeatureNames // Store all names for logic checks
             });
             this.render();
         }

@@ -141,23 +141,42 @@
                 </div>
             </div>
 
-            <!-- BP Calculation Header (High Contrast) -->
-            <div class="eb-bp-header">
-                <div class="bp-stat">
-                    <span class="bp-label">Budget Limit</span>
-                    <span class="bp-value">{{bpData.total}}</span>
-                    <div class="bp-sub-badge">Base: {{bpData.base}}</div>
-                </div>
-                
-                <!-- Dynamic Skull Image -->
-                <div class="bp-skull-container">
-                    <img src="{{bpData.skullImage}}" class="bp-skull-img" alt="Difficulty Skull">
+            <!-- BP Header + Synergy Grid Wrapper -->
+            <div class="eb-header-row">
+                <!-- BP Calculation Header (High Contrast) -->
+                <div class="eb-bp-header">
+                    <div class="bp-stat">
+                        <span class="bp-label">Budget Limit</span>
+                        <span class="bp-value">{{bpData.total}}</span>
+                        <div class="bp-sub-badge">Base: {{bpData.base}}</div>
+                    </div>
+                    
+                    <!-- Dynamic Skull Image -->
+                    <div class="bp-skull-container">
+                        <img src="{{bpData.skullImage}}" class="bp-skull-img" alt="Difficulty Skull">
+                    </div>
+
+                    <div class="bp-stat">
+                        <span class="bp-label">Current Cost</span>
+                        <span class="bp-value cost-{{bpData.statusColor}}">{{bpData.cost}}</span>
+                        <div class="bp-difficulty {{bpData.difficultyClass}}">{{bpData.difficultyLabel}}</div>
+                    </div>
                 </div>
 
-                <div class="bp-stat">
-                    <span class="bp-label">Current Cost</span>
-                    <span class="bp-value cost-{{bpData.statusColor}}">{{bpData.cost}}</span>
-                    <div class="bp-difficulty {{bpData.difficultyClass}}">{{bpData.difficultyLabel}}</div>
+                <!-- Synergy/Feature Icons Grid (20% Width) -->
+                <div class="eb-synergy-grid">
+                    <div class="synergy-item {{#if synergy.summoner}}active{{/if}}" data-tooltip="There are adversaries capable of summoning other adversaries.">
+                        <img src="icons/environment/people/charge.webp" class="synergy-icon">
+                    </div>
+                    <div class="synergy-item {{#if synergy.spotlighter}}active{{/if}}" data-tooltip="There are adversaries capable of spotlighting other adversaries.">
+                        <img src="icons/skills/movement/arrows-up-trio-red.webp" class="synergy-icon">
+                    </div>
+                    <div class="synergy-item {{#if synergy.momentum}}active{{/if}}" data-tooltip="There are adversaries capable of gaining Fear when they succeed on an attack.">
+                        <img src="icons/skills/melee/strike-weapons-orange.webp" class="synergy-icon">
+                    </div>
+                    <div class="synergy-item {{#if synergy.relentless}}active{{/if}}" data-tooltip="There are adversaries that can be spotlighted multiple times per GM turn.">
+                        <img src="icons/magic/unholy/silhouette-evil-horned-giant.webp" class="synergy-icon">
+                    </div>
                 </div>
             </div>
 
