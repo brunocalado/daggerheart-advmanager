@@ -56,7 +56,7 @@
                 <i class="fas fa-chart-pie"></i>
             </button>
 
-            <!-- NEW Dice Probability Button -->
+            <!-- Dice Probability Button -->
             <button type="button" data-action="openDiceProb" class="settings-btn" title="Dice Probability">
                 <i class="fas fa-dice-d20"></i>
             </button>
@@ -127,22 +127,24 @@
                 <div class="stat-block">{{currentStats.damage}}</div>
             </div>
             
-            {{#if currentStats.halvedDamage}}
-            <div class="stat-group">
-                <span class="stat-label">Halved Damage (Horde)</span>
-                <div class="stat-block">{{currentStats.halvedDamage}}</div>
-            </div>
+            {{#if isHorde}}
+                {{#if currentStats.halvedDamage}}
+                <div class="stat-group">
+                    <span class="stat-label">Halved Damage (Horde)</span>
+                    <div class="stat-block">{{currentStats.halvedDamage}}</div>
+                </div>
+                {{/if}}
             {{/if}}
             
-            <!-- NEW: Actor Name Header -->
+            <!-- NEW: Actor Name Header with Type -->
             <div class="actor-preview-name">
-                {{actorName}}
+                {{actorName}} ({{actorTypeLabel}})
             </div>
 
             <!-- PORTRAIT DISPLAY SECTION -->
             {{#if portraitImg}}
             <div class="portrait-display-wrapper">
-                <div class="portrait-display">
+                <div class="portrait-display" data-action="openSheet">
                     <img src="{{portraitImg}}" alt="{{actorName}}" class="actor-portrait">
                 </div>
             </div>
@@ -211,7 +213,6 @@
                 <div class="stat-group">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="stat-label">Attack Damage</span>
-                        <!-- REPLACED: Select with Input Group -->
                         <div class="feature-input-group" style="width: 100%; max-width: 150px;">
                             <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{damageTooltip}}}"></i>
                             <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
@@ -224,7 +225,6 @@
                 <div class="stat-group">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="stat-label">Halved Damage (Horde)</span>
-                        <!-- REPLACED: Select with Input Group -->
                         <div class="feature-input-group" style="width: 100%; max-width: 150px;">
                             <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{halvedDamageTooltip}}}"></i>
                             <input type="text" class="override-input" data-field="halvedDamageFormula" value="{{previewStats.mainHalvedDamageFormula}}" style="text-align: right; width: 100%;">
@@ -268,7 +268,7 @@
                                     </div>
                                 </div>
                             {{#if this.options}}
-                                <!-- No-Op to balance template logic structure if needed, but HBS handles each block -->
+                                <!-- No-Op -->
                             {{/if}}
                             {{/each}}
                         </div>
@@ -277,7 +277,7 @@
                     {{/if}}
                 </div>
 
-                <!-- NEW FEATURES SECTION (CHECKBOXES) -->
+                <!-- NEW FEATURES SECTION (CHECKBOXES WITH ICONS & LINKS) -->
                 {{#if allSuggestedFeatures.length}}
                 <div class="features-preview-section">
                     <h4 class="features-header" style="color: #98fb98;">New Suggested Features</h4>
@@ -286,7 +286,11 @@
                             <div class="feature-change-row new-feature-row">
                                 <label class="feature-label" style="cursor: pointer; display: flex; align-items: center; width: 100%;">
                                     <input type="checkbox" class="feature-checkbox" data-feature="{{this.name}}" {{#if this.checked}}checked{{/if}} style="margin-right: 8px;">
-                                    <strong style="color: #eee;">{{this.name}}</strong>
+                                    
+                                    <a class="feature-link" data-action="openFeature" data-uuid="{{this.uuid}}">
+                                        <img src="{{this.img}}" class="feature-icon-small" alt="{{this.name}}">
+                                        <strong style="color: #eee;">{{this.name}}</strong>
+                                    </a>
                                 </label>
                             </div>
                         {{/each}}

@@ -2,9 +2,9 @@ export const ADVERSARY_BENCHMARKS = {
     "bruiser": {
       "tiers": {
         "tier_1": { "difficulty": "12/14", "threshold_min": "7/14", "threshold_max": "9/18", "hp": "5/7", "stress": "3/4", "attack_modifier": "+0/+2", "damage_rolls": ["1d8+6", "1d10+4", "1d12+2"], "avg_damage": "8/11", "suggested_features": ["Momentum", "Ramp Up"] },
-        "tier_2": { "difficulty": "14/16", "threshold_min": "10/24", "threshold_max": "15/28", "hp": "5/7", "stress": "4/6", "attack_modifier": "+2/+4", "damage_rolls": ["2d8+6", "2d10+2", "2d10+4", "2d12+2", "2d12+3"], "avg_damage": "12/16", "suggested_features": ["Momentum", "Ramp Up", "Sudden Lunge"] },
-        "tier_3": { "difficulty": "16/18", "threshold_min": "18/35", "threshold_max": "25/40", "hp": "6/8", "stress": "4/6", "attack_modifier": "+3/+5", "damage_rolls": ["3d8+8", "3d8+6", "3d10+4", "3d12+2", "3d12+1"], "avg_damage": "18/22", "suggested_features": ["Momentum", "Ramp Up", "Sudden Lunge"] },
-        "tier_4": { "difficulty": "18/20", "threshold_min": "30/60", "threshold_max": "40/70", "hp": "7/9", "stress": "4/6", "attack_modifier": "+5/+8", "damage_rolls": ["4d8+12", "4d10+10", "4d12+15"], "avg_damage": "30/45", "suggested_features": ["Momentum", "Ramp Up", "Sudden Lunge"] }
+        "tier_2": { "difficulty": "14/16", "threshold_min": "10/24", "threshold_max": "15/28", "hp": "5/7", "stress": "4/6", "attack_modifier": "+2/+4", "damage_rolls": ["2d8+6", "2d10+2", "2d10+4", "2d12+2", "2d12+3"], "avg_damage": "12/16", "suggested_features": ["Momentum", "Ramp Up"] },
+        "tier_3": { "difficulty": "16/18", "threshold_min": "18/35", "threshold_max": "25/40", "hp": "6/8", "stress": "4/6", "attack_modifier": "+3/+5", "damage_rolls": ["3d8+8", "3d8+6", "3d10+4", "3d12+2", "3d12+1"], "avg_damage": "18/22", "suggested_features": ["Momentum", "Ramp Up"] },
+        "tier_4": { "difficulty": "18/20", "threshold_min": "30/60", "threshold_max": "40/70", "hp": "7/9", "stress": "4/6", "attack_modifier": "+5/+8", "damage_rolls": ["4d8+12", "4d10+10", "4d12+15"], "avg_damage": "30/45", "suggested_features": ["Momentum", "Ramp Up"] }
       }
     },
     "horde": {
@@ -42,17 +42,17 @@ export const ADVERSARY_BENCHMARKS = {
     "skulk": {
       "tiers": {
         "tier_1": { "difficulty": "10/12", "threshold_min": "5/8", "threshold_max": "7/12", "hp": "3/4", "stress": "2/3", "attack_modifier": "+1/+2", "damage_rolls": ["1d4+4", "1d6+2", "1d8+1"], "suggested_features": ["Advanced Pack Tactics", "Momentum", "Terrifying"] },
-        "tier_2": { "difficulty": "12/14", "threshold_min": "7/16", "threshold_max": "9/20", "hp": "3/5", "stress": "3/4", "attack_modifier": "+2/+5", "damage_rolls": ["2d4+5", "2d6+3", "2d8+1"], "suggested_features": ["Advanced Pack Tactics", "Momentum", "Terrifying", "Sudden Lunge"] },
-        "tier_3": { "difficulty": "14/16", "threshold_min": "15/27", "threshold_max": "20/32", "hp": "4/6", "stress": "4/5", "attack_modifier": "+3/+7", "damage_rolls": ["3d4+8", "3d6+6", "3d8+3"], "suggested_features": ["Advanced Pack Tactics", "Momentum", "Terrifying", "Sudden Lunge"] },
-        "tier_4": { "difficulty": "16/18", "threshold_min": "20/35", "threshold_max": "30/45", "hp": "4/6", "stress": "4/6", "attack_modifier": "+4/+8", "damage_rolls": ["5d6+10", "4d8+8", "4d10+6"], "suggested_features": ["Advanced Pack Tactics", "Momentum", "Terrifying", "Sudden Lunge"] }
+        "tier_2": { "difficulty": "12/14", "threshold_min": "7/16", "threshold_max": "9/20", "hp": "3/5", "stress": "3/4", "attack_modifier": "+2/+5", "damage_rolls": ["2d4+5", "2d6+3", "2d8+1"], "suggested_features": ["Advanced Pack Tactics", "Momentum", "Terrifying"] },
+        "tier_3": { "difficulty": "14/16", "threshold_min": "15/27", "threshold_max": "20/32", "hp": "4/6", "stress": "4/5", "attack_modifier": "+3/+7", "damage_rolls": ["3d4+8", "3d6+6", "3d8+3"], "suggested_features": ["Advanced Pack Tactics", "Momentum", "Terrifying"] },
+        "tier_4": { "difficulty": "16/18", "threshold_min": "20/35", "threshold_max": "30/45", "hp": "4/6", "stress": "4/6", "attack_modifier": "+4/+8", "damage_rolls": ["5d6+10", "4d8+8", "4d10+6"], "suggested_features": ["Advanced Pack Tactics", "Momentum", "Terrifying"] }
       }
     },
     "solo": {
       "tiers": {
-        "tier_1": { "difficulty": "12/14", "threshold_min": "8/13", "threshold_max": "12/16", "hp": "8/10", "stress": "3/4", "attack_modifier": "+2/+3", "damage_rolls": ["1d10+4", "1d12+3", "1d20"], "suggested_features": ["Relentless (2)", "Momentum"] },
-        "tier_2": { "difficulty": "14/16", "threshold_min": "12/24", "threshold_max": "15/28", "hp": "8/10", "stress": "4/5", "attack_modifier": "+3/+4", "damage_rolls": ["2d8+6", "2d10+4", "2d20"], "suggested_features": ["Relentless (2)", "Momentum", "Sudden Lunge"] },
-        "tier_3": { "difficulty": "17/19", "threshold_min": "18/30", "threshold_max": "25/40", "hp": "10/12", "stress": "5/6", "attack_modifier": "+4/+7", "damage_rolls": ["3d10+8", "3d12+6", "3d20"], "suggested_features": ["Relentless (3)", "Momentum", "Sudden Lunge"] },
-        "tier_4": { "difficulty": "19/21", "threshold_min": "30/60", "threshold_max": "40/70", "hp": "10/12", "stress": "6/8", "attack_modifier": "+7/+10", "damage_rolls": ["4d8+12", "4d10+10", "4d12+12"], "suggested_features": ["Relentless (4)", "Relentless (X)", "Momentum", "Sudden Lunge"] }
+        "tier_1": { "difficulty": "12/14", "threshold_min": "8/13", "threshold_max": "12/16", "hp": "8/10", "stress": "3/4", "attack_modifier": "+2/+3", "damage_rolls": ["1d10+4", "1d12+3", "1d20"], "suggested_features": ["Relentless (X)", "Momentum"] },
+        "tier_2": { "difficulty": "14/16", "threshold_min": "12/24", "threshold_max": "15/28", "hp": "8/10", "stress": "4/5", "attack_modifier": "+3/+4", "damage_rolls": ["2d8+6", "2d10+4", "2d20"], "suggested_features": ["Relentless (X)", "Momentum"] },
+        "tier_3": { "difficulty": "17/19", "threshold_min": "18/30", "threshold_max": "25/40", "hp": "10/12", "stress": "5/6", "attack_modifier": "+4/+7", "damage_rolls": ["3d10+8", "3d12+6", "3d20"], "suggested_features": ["Relentless (X)", "Momentum"] },
+        "tier_4": { "difficulty": "19/21", "threshold_min": "30/60", "threshold_max": "40/70", "hp": "10/12", "stress": "6/8", "attack_modifier": "+7/+10", "damage_rolls": ["4d8+12", "4d10+10", "4d12+12"], "suggested_features": ["Relentless (X)", "Momentum"] }
       }
     },
     "social": {

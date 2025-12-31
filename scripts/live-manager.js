@@ -3,7 +3,7 @@ import { ADVERSARY_BENCHMARKS } from "./rules.js";
 import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
-import { DiceProbability } from "./dice-probability.js"; // <--- IMPORTADO
+import { DiceProbability } from "./dice-probability.js"; 
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -45,6 +45,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             this.source = game.settings.get(MODULE_ID, SETTING_LAST_SOURCE) || "world"; 
             this.filterType = "all"; 
         }
+
+        // Cache for feature lookup
+        this._featureCache = new Map();
     }
 
     static DEFAULT_OPTIONS = {
@@ -63,7 +66,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             applyChanges: LiveManager.prototype._onApplyChanges,
             openSettings: LiveManager.prototype._onOpenSettings,
             openStats: LiveManager.prototype._onOpenStats,
-            openDiceProb: LiveManager.prototype._onOpenDiceProb // <--- NOVA AÇÃO
+            openDiceProb: LiveManager.prototype._onOpenDiceProb,
+            openFeature: LiveManager.prototype._onOpenFeature,
+            openSheet: LiveManager.prototype._onOpenSheet // <--- NOVA AÇÃO
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -103,6 +108,37 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         return null;
+    }
+
+    /**
+     * Finds a feature item by name to retrieve its image and UUID.
+     * Searches in: 
+     * 1. daggerheart-advmanager.features
+     * 2. daggerheart.adversary-features
+     */
+    async _findFeatureItem(name) {
+        if (this._featureCache.has(name)) return this._featureCache.get(name);
+
+        const packIds = ["daggerheart-advmanager.features", "daggerheart.adversary-features"];
+        
+        for (const packId of packIds) {
+            const pack = game.packs.get(packId);
+            if (!pack) continue;
+            
+            // Optimization: Load index only if not loaded or just check efficiently
+            const index = await pack.getIndex();
+            const entry = index.find(i => i.name === name);
+            if (entry) {
+                const data = { img: entry.img, uuid: entry.uuid };
+                this._featureCache.set(name, data);
+                return data;
+            }
+        }
+
+        // Return default if not found
+        const defaultData = { img: "icons/svg/item-bag.svg", uuid: null };
+        this._featureCache.set(name, defaultData);
+        return defaultData;
     }
 
     /**
@@ -236,13 +272,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let previewStats = null;
         let actor = null;
         let featurePreviewData = []; 
-        let allSuggestedFeatures = []; // Changed from newFeaturesPreview to include all potential with checked state
+        let allSuggestedFeatures = []; 
         let linkData = null;
         let damageOptions = []; 
         let halvedDamageOptions = [];
-        let damageTooltip = ""; // NEW: Tooltip for damage options
-        let halvedDamageTooltip = ""; // NEW: Tooltip for halved damage options
+        let damageTooltip = ""; 
+        let halvedDamageTooltip = ""; 
         let isMinion = false;
+        let isHorde = false; // NEW
+        let actorTypeLabel = ""; // NEW
         let portraitImg = null;
 
         if (this.selectedActorId) {
@@ -253,6 +291,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const isLinked = actor.isToken ? actor.token?.actorLink : actor.prototypeToken?.actorLink;
                 const typeKey = (actor.system.type || "standard").toLowerCase();
                 isMinion = typeKey === "minion";
+                isHorde = typeKey === "horde"; // Detect Horde
+                actorTypeLabel = typeKey.charAt(0).toUpperCase() + typeKey.slice(1); // Capitalize
                 
                 // --- Portrait Logic ---
                 const rawImg = actor.img;
@@ -343,8 +383,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     previewStats.hpDisplay = "(Fixed)"; 
                 }
                 
-                // Get Suggested Features List for UI Checkboxes
-                allSuggestedFeatures = simResult.suggestedFeatures;
+                // --- PROCESS SUGGESTED FEATURES FOR UI ---
+                const rawSuggested = simResult.suggestedFeatures;
+                
+                // Enrich with Image and UUID
+                allSuggestedFeatures = [];
+                for (const feat of rawSuggested) {
+                    const itemData = await this._findFeatureItem(feat.name);
+                    allSuggestedFeatures.push({
+                        name: feat.name,
+                        checked: feat.checked,
+                        img: itemData.img,
+                        uuid: itemData.uuid
+                    });
+                }
 
                 // Prepare Structured Feature Data
                 featurePreviewData = simResult.structuredFeatures.map(f => {
@@ -375,7 +427,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                              selected: d.value === currentVal
                          }));
                          
-                         // Generate Tooltip text for options
                          if (featureOptions.length > 0) {
                              optionsTooltip = "Suggested:<br>" + featureOptions.map(o => `• ${o.label}`).join("<br>");
                          }
@@ -435,18 +486,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             currentStats,
             previewStats,
             featurePreviewData, 
-            allSuggestedFeatures, // Passed to template for checkboxes
+            allSuggestedFeatures, 
             tiers,
             linkData,
             sourceOptions,
             filterOptions,
             typeOptions,
-            damageOptions, // Still used? Potentially not for select anymore
+            damageOptions, 
             halvedDamageOptions,
-            damageTooltip, // NEW
-            halvedDamageTooltip, // NEW
+            damageTooltip,
+            halvedDamageTooltip,
             actorName: actor?.name || "None",
-            portraitImg: portraitImg
+            portraitImg: portraitImg,
+            isHorde: isHorde, // NEW
+            actorTypeLabel: actorTypeLabel // NEW
         };
     }
 
@@ -470,7 +523,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('change', (e) => this._onOverrideChange(e, input));
         });
 
-        // Updated selector to include the new feature-damage-input
         html.querySelectorAll('.feature-override-input, .feature-override-select').forEach(input => {
             input.addEventListener('change', (e) => this._onFeatureOverrideChange(e, input));
         });
@@ -480,12 +532,35 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('click', (e) => e.stopPropagation());
         });
 
-        // No longer using damage-preset-select listeners as they are replaced by override-input listeners above
-
-        // NEW: Bind Feature Checkboxes
         html.querySelectorAll('.feature-checkbox').forEach(input => {
             input.addEventListener('change', (e) => this._onFeatureCheckboxChange(e, input));
         });
+    }
+
+    // --- Action Handlers ---
+
+    async _onOpenFeature(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        const uuid = target.dataset.uuid;
+        if (!uuid) return;
+        const item = await fromUuid(uuid);
+        if (item && item.sheet) {
+            item.sheet.render(true);
+        } else {
+            ui.notifications.warn("Item not found or has no sheet.");
+        }
+    }
+
+    async _onOpenSheet(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (this.selectedActorId) {
+            const actor = await this._getActor(this.selectedActorId);
+            if (actor && actor.sheet) {
+                actor.sheet.render(true);
+            }
+        }
     }
 
     _onOverrideChange(event, target) {
@@ -510,14 +585,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         } else {
             this.overrides.suggestedFeatures = this.overrides.suggestedFeatures.filter(f => f !== featureName);
         }
-        // No need to re-render for checkboxes normally, but to keep state consistency
-        // we can leave it. Daggerheart features don't affect stats immediately.
     }
 
     _onFeatureOverrideChange(event, target) {
         const itemId = target.dataset.itemid;
         const value = target.value;
-        // Updated check: It is damage if it is a select OR the specific damage input class
         const isDamage = target.classList.contains('feature-override-select') || target.classList.contains('feature-damage-input');
         
         if (!this.overrides.features) this.overrides.features = { names: {}, damage: {} };
@@ -567,11 +639,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             });
         }
         
-        // --- Calculate Hit Chance for Current Stats ---
         const attackMod = Number(sys.attack?.roll?.bonus) || 0;
         const hitChance = Manager.calculateHitChance(attackMod, tier);
-        
-        // --- Calculate Hit Chance Against Current Stats ---
         const difficulty = Number(sys.difficulty) || 0;
         const hitChanceAgainst = Manager.calculateHitChanceAgainst(difficulty, tier);
 
@@ -584,8 +653,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             attackMod: sys.attack?.roll?.bonus,
             damage: damageParts.join(", ") || "None",
             halvedDamage: halvedParts.join(", ") || null,
-            hitChance: hitChance, // Pass the calculated hit chance object
-            hitChanceAgainst: hitChanceAgainst // Pass the calculated hit chance AGAINST object
+            hitChance: hitChance,
+            hitChanceAgainst: hitChanceAgainst
         };
     }
 
@@ -621,7 +690,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         sim.tier = targetTier;
 
         // --- Calculate Hit Chances for PREVIEW Stats ---
-        // Use override if present, otherwise simulated value
         const previewAttackMod = this.overrides.attackMod !== undefined ? Number(this.overrides.attackMod) : sim.attackModRaw;
         sim.hitChance = Manager.calculateHitChance(previewAttackMod, targetTier);
 
@@ -630,8 +698,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const damageParts = [];
         const halvedParts = []; 
-        let mainDamageRaw = ""; // New Raw Value
-        let mainHalvedDamageRaw = ""; // New Raw Value
+        let mainDamageRaw = ""; 
+        let mainHalvedDamageRaw = ""; 
 
         if (actorData.system.attack?.damage?.parts) {
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
@@ -663,7 +731,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
                 }
                 
-                // Capture first part as main raw
                 if (index === 0) mainDamageRaw = rawVal;
 
                 // --- HALVED DAMAGE (HORDE) ---
@@ -736,23 +803,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
         
         // --- SUGGESTED FEATURES LOGIC ---
-        // 1. Get ALL possible features for this Tier (resolved for Relentless X)
         const possibleFeatures = Manager.getAvailableFeaturesForTier(typeKey, targetTier);
-        
-        // 2. Filter out already owned features to avoid duplicates
         const validCandidates = possibleFeatures.filter(name => !allItems.some(i => i.name === name));
 
-        // 3. Initialize default selection if null (random pick)
         if (this.overrides.suggestedFeatures === null) {
             this.overrides.suggestedFeatures = [];
             if (validCandidates.length > 0) {
-                 // Pick one random one to start
                  const picked = validCandidates[Math.floor(Math.random() * validCandidates.length)];
                  this.overrides.suggestedFeatures.push(picked);
             }
         }
 
-        // 4. Map to UI Objects with checked state
         const suggestedFeatures = validCandidates.map(name => ({
             name: name,
             checked: this.overrides.suggestedFeatures.includes(name)
@@ -762,7 +823,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             stats: sim, 
             features: featureLog, 
             structuredFeatures: structuredFeatures,
-            suggestedFeatures: suggestedFeatures // Return the UI list
+            suggestedFeatures: suggestedFeatures 
         };
     }
 
@@ -776,7 +837,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         new CompendiumStats().render(true);
     }
     
-    // --- NOVO MÉTODO PARA ABRIR DICE PROBABILITY ---
     async _onOpenDiceProb(event, target) {
         new DiceProbability().render(true);
     }
@@ -851,7 +911,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
-            // Perform Update (Pass the selected features list)
             const result = await Manager.updateSingleActor(actor, this.targetTier, this.overrides);
             
             if (!result) {

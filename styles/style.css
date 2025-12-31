@@ -412,6 +412,30 @@
     align-items: center;
 }
 
+/* New Feature Link Style */
+.feature-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #eee;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.feature-link:hover {
+    color: #ea80fc;
+    text-shadow: 0 0 5px rgba(234, 128, 252, 0.5);
+}
+
+.feature-icon-small {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    border: 1px solid #555;
+    background: #000;
+    border-radius: 3px;
+}
+
 .feature-control {
     flex: 0 0 45%;
     display: flex;
@@ -512,8 +536,8 @@
 }
 
 .portrait-display-wrapper {
-    margin-top: 5px;
-    padding-top: 15px;
+    margin-top: 0 !important; /* Force removal of top margin */
+    padding-top: 0 !important; /* Force removal of top padding */
     display: flex;
     justify-content: center;
 }
@@ -528,6 +552,12 @@
     overflow: hidden;
     position: relative;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    cursor: pointer; /* Add pointer cursor */
+    transition: border-color 0.2s;
+}
+
+.portrait-display:hover {
+    border-color: #ea80fc; /* Visual feedback on hover */
 }
 
 .actor-portrait {
