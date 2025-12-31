@@ -22,12 +22,12 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // Encounter Settings
         this.pcCount = 4;
         this.pcTier = 1;
-        this.fearBudget = "0-1"; // Default Fear Budget
+        this.fearBudget = "0-1"; 
         
         // Manual Modifier States
         this.manualModifiers = {
-            easier: false, // Subtract 1 (Less Difficult/Shorter)
-            harder: false  // Add 2 (More Dangerous/Longer)
+            easier: false, 
+            harder: false  
         };
 
         // List of added units
@@ -38,6 +38,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         
         // Cache
         this._cachedAdversaries = null;
+
+        // Focus State Tracking
+        this._searchFocus = false;
     }
 
     static DEFAULT_OPTIONS = {
@@ -133,7 +136,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         }));
         typeOptions.unshift({ value: "all", label: "All Types", selected: this.filterType === "all" });
 
-        // --- Fear Options (Clarified Labels) ---
+        // --- Fear Options ---
         const fearOptions = [
             { value: "0-1", label: "Low (0–1 Fear)", selected: this.fearBudget === "0-1" },
             { value: "1-3", label: "Moderate (1–3 Fear)", selected: this.fearBudget === "1-3" },
@@ -142,7 +145,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             { value: "6-12", label: "Insane (6–12 Fear)", selected: this.fearBudget === "6-12" }
         ];
 
-        // --- PC Count Options (1 to 10) ---
+        // --- PC Count Options ---
         const pcCountOptions = [];
         for (let i = 1; i <= 10; i++) {
             pcCountOptions.push({ value: i, label: i, selected: i === this.pcCount });
@@ -165,7 +168,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // --- Budget Calculation ---
         const bpData = this._calculateBP();
 
-        // --- Determine Skull Image based on Difficulty ---
+        // --- Determine Skull Image ---
         let skullImg = "";
         switch (bpData.difficultyLabel) {
             case "Very Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-very-easy.webp"; break;
@@ -186,7 +189,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             typeOptions,
             sourceOptions,
             fearOptions,
-            pcCountOptions, // Added PC Count Options
+            pcCountOptions,
             searchQuery: this.searchQuery,
             resultCount: filtered.length,
             
@@ -287,11 +290,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             modifiers.push({ label: "Harder/Longer", val: "+2", active: false, manual: true, key: 'harder' });
         }
 
-        // --- Difficulty Calculation ---
         const diff = currentCost - limit;
         
-        // Determine Base Level (0 to 4 scale for easier math)
-        // 0: Very Easy, 1: Easy, 2: Balanced, 3: Challenging, 4: Deadly
         let level = 2; // Default Balanced
 
         if (diff <= -2) level = 0; // Very Easy
@@ -300,14 +300,12 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         else if (diff === 1) level = 3; // Challenging
         else if (diff >= 2) level = 4; // Deadly
 
-        // --- Apply Fear Shift ---
         let shift = 0;
         if (this.fearBudget === "2-4") shift = 1;
         else if (this.fearBudget === "4-8" || this.fearBudget === "6-12") shift = 2;
 
-        level = Math.min(4, level + shift); // Cap at 4 (Deadly)
+        level = Math.min(4, level + shift);
 
-        // Convert Level back to Label/Class
         let difficultyLabel = "Balanced";
         let difficultyClass = "diff-balanced";
 
@@ -405,7 +403,6 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             rootFolder = await Folder.create({ name: rootName, type: "Actor", color: "#430047" });
         }
 
-        // --- Folder Naming Logic Updated ---
         const now = new Date();
         const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
         const dateString = now.toLocaleDateString().replace(/\//g, '-');
@@ -550,7 +547,17 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const html = this.element;
 
         const searchInput = html.querySelector('.eb-search-input');
-        if (searchInput) searchInput.addEventListener('input', (e) => this._onSearch(e));
+        if (searchInput) {
+            // Restore Focus logic
+            if (this._searchFocus) {
+                searchInput.focus();
+                // Move cursor to end
+                const len = searchInput.value.length;
+                searchInput.setSelectionRange(len, len);
+                this._searchFocus = false;
+            }
+            searchInput.addEventListener('input', (e) => this._onSearch(e));
+        }
 
         const typeSelect = html.querySelector('.eb-type-select');
         if (typeSelect) typeSelect.addEventListener('change', (e) => this._onFilterType(e));
@@ -558,7 +565,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const sourceSelect = html.querySelector('.eb-source-select');
         if (sourceSelect) sourceSelect.addEventListener('change', (e) => this._onFilterSource(e));
         
-        const pcCountInput = html.querySelector('.pc-count-select'); // Updated selector
+        const pcCountInput = html.querySelector('.pc-count-select');
         if (pcCountInput) pcCountInput.addEventListener('change', (e) => this._onUpdatePCSettings(e));
         
         const pcTierSelect = html.querySelector('.pc-tier-select');
@@ -588,6 +595,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
     _onSearch(event) {
         event.preventDefault();
         this.searchQuery = event.target.value;
+        this._searchFocus = true; // Flag to restore focus
         this.render();
     }
 
@@ -597,10 +605,10 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         this.render();
     }
 
-    async _onFilterSource(event) { // Make async to save setting
+    async _onFilterSource(event) {
         event.preventDefault();
         this.filterSource = event.target.value;
-        await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.filterSource); // Persist source
+        await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.filterSource);
         this.render();
     }
 
@@ -619,11 +627,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         event.preventDefault();
         const html = this.element;
         
-        const count = parseInt(html.querySelector('.pc-count-select').value) || 4; // Updated selector
+        const count = parseInt(html.querySelector('.pc-count-select').value) || 4;
         const tier = parseInt(html.querySelector('.pc-tier-select').value) || 1;
         const fear = html.querySelector('.pc-fear-select').value || "0-1";
 
-        this.pcCount = Math.max(1, Math.min(10, count)); // Ensure 1-10 range
+        this.pcCount = Math.max(1, Math.min(10, count));
         this.pcTier = tier;
         this.fearBudget = fear;
         this.render();
