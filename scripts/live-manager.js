@@ -68,7 +68,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             openStats: LiveManager.prototype._onOpenStats,
             openDiceProb: LiveManager.prototype._onOpenDiceProb,
             openFeature: LiveManager.prototype._onOpenFeature,
-            openSheet: LiveManager.prototype._onOpenSheet // <--- NOVA AÇÃO
+            openSheet: LiveManager.prototype._onOpenSheet
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -115,19 +115,34 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
      * Searches in: 
      * 1. daggerheart-advmanager.features
      * 2. daggerheart.adversary-features
+     * * Now supports finding base item for names like "Relentless (2)" -> "Relentless"
      */
     async _findFeatureItem(name) {
         if (this._featureCache.has(name)) return this._featureCache.get(name);
 
         const packIds = ["daggerheart-advmanager.features", "daggerheart.adversary-features"];
         
+        // Prepare clean name (e.g., "Relentless (2)" or "Relentless (X)" becomes "Relentless")
+        // Regex: Matches start of string, captures name, allows optional space, matches parenthesis with ANYTHING inside that is not a closing parenthesis
+        let cleanName = name;
+        const match = name.match(/^(.*?)\s*\([^)]+\)$/);
+        if (match) cleanName = match[1];
+
         for (const packId of packIds) {
             const pack = game.packs.get(packId);
             if (!pack) continue;
             
             // Optimization: Load index only if not loaded or just check efficiently
             const index = await pack.getIndex();
-            const entry = index.find(i => i.name === name);
+            
+            // Try exact match first
+            let entry = index.find(i => i.name === name);
+            
+            // If not found and name was cleaned, try cleaned name (e.g. Relentless)
+            if (!entry && cleanName !== name) {
+                entry = index.find(i => i.name === cleanName);
+            }
+
             if (entry) {
                 const data = { img: entry.img, uuid: entry.uuid };
                 this._featureCache.set(name, data);
@@ -170,6 +185,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // --- Determine Source List ---
         const sourceOptions = [
+            { value: "all", label: "All Sources", selected: this.source === "all" }, // Optional fallback
             { value: "world", label: "World", selected: this.source === "world" },
             { value: "daggerheart.adversaries", label: "System Compendium", selected: this.source === "daggerheart.adversaries" }
         ];
@@ -279,8 +295,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let damageTooltip = ""; 
         let halvedDamageTooltip = ""; 
         let isMinion = false;
-        let isHorde = false; // NEW
-        let actorTypeLabel = ""; // NEW
+        let isHorde = false;
+        let actorTypeLabel = "";
         let portraitImg = null;
 
         if (this.selectedActorId) {
@@ -291,8 +307,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const isLinked = actor.isToken ? actor.token?.actorLink : actor.prototypeToken?.actorLink;
                 const typeKey = (actor.system.type || "standard").toLowerCase();
                 isMinion = typeKey === "minion";
-                isHorde = typeKey === "horde"; // Detect Horde
-                actorTypeLabel = typeKey.charAt(0).toUpperCase() + typeKey.slice(1); // Capitalize
+                isHorde = typeKey === "horde"; 
+                actorTypeLabel = typeKey.charAt(0).toUpperCase() + typeKey.slice(1); 
                 
                 // --- Portrait Logic ---
                 const rawImg = actor.img;
@@ -498,8 +514,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             halvedDamageTooltip,
             actorName: actor?.name || "None",
             portraitImg: portraitImg,
-            isHorde: isHorde, // NEW
-            actorTypeLabel: actorTypeLabel // NEW
+            isHorde: isHorde, 
+            actorTypeLabel: actorTypeLabel 
         };
     }
 
@@ -803,17 +819,30 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
         
         // --- SUGGESTED FEATURES LOGIC ---
-        const possibleFeatures = Manager.getAvailableFeaturesForTier(typeKey, targetTier);
+        // 1. Get ALL possible features for this Tier exactly from rules.js
+        let possibleFeatures = [];
+        if (benchmark.suggested_features) {
+            if (Array.isArray(benchmark.suggested_features)) {
+                possibleFeatures = [...benchmark.suggested_features];
+            } else if (typeof benchmark.suggested_features === "string" && benchmark.suggested_features !== "") {
+                possibleFeatures = [benchmark.suggested_features];
+            }
+        }
+        
+        // 2. Filter out already owned features to avoid duplicates
         const validCandidates = possibleFeatures.filter(name => !allItems.some(i => i.name === name));
 
+        // 3. Initialize default selection if null (random pick)
         if (this.overrides.suggestedFeatures === null) {
             this.overrides.suggestedFeatures = [];
             if (validCandidates.length > 0) {
+                 // Pick one random one to start
                  const picked = validCandidates[Math.floor(Math.random() * validCandidates.length)];
                  this.overrides.suggestedFeatures.push(picked);
             }
         }
 
+        // 4. Map to UI Objects with checked state
         const suggestedFeatures = validCandidates.map(name => ({
             name: name,
             checked: this.overrides.suggestedFeatures.includes(name)
@@ -823,7 +852,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             stats: sim, 
             features: featureLog, 
             structuredFeatures: structuredFeatures,
-            suggestedFeatures: suggestedFeatures 
+            suggestedFeatures: suggestedFeatures // Return the UI list
         };
     }
 
