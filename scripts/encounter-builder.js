@@ -167,6 +167,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         });
 
         // --- Synergy Checks (Summoner, Spotlighter, Momentum, Relentless) ---
+        // Used for UI icons activation
         const synergy = {
             summoner: false,
             spotlighter: false,
@@ -175,27 +176,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         };
 
         this.encounterList.forEach(unit => {
-            const features = unit.allFeatureNames || [];
-            
-            // Check Summoner
-            if (POWERFUL_FEATURES.summoner.some(feat => features.includes(feat))) {
-                synergy.summoner = true;
-            }
-
-            // Check Spotlighter
-            if (POWERFUL_FEATURES.spotlighter.some(feat => features.includes(feat))) {
-                synergy.spotlighter = true;
-            }
-
-            // Check Momentum
-            if (features.includes("Momentum")) {
-                synergy.momentum = true;
-            }
-
-            // Check Relentless (starts with Relentless)
-            if (features.some(f => f.startsWith("Relentless"))) {
-                synergy.relentless = true;
-            }
+            const features = unit.specialFeatures || [];
+            if (features.includes("Summoner")) synergy.summoner = true;
+            if (features.includes("Spotlighter")) synergy.spotlighter = true;
+            if (features.includes("Momentum")) synergy.momentum = true;
+            if (features.some(f => f.startsWith("Relentless"))) synergy.relentless = true;
         });
 
         // --- Budget Calculation ---
@@ -203,6 +188,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         // --- Determine Skull Image ---
         let skullImg = "";
+        // Mapping labels to images (handling Hard/Deadly)
         switch (bpData.difficultyLabel) {
             case "Very Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-very-easy.webp"; break;
             case "Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-easy.webp"; break;
@@ -210,6 +196,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             case "Challenging": skullImg = "modules/daggerheart-advmanager/assets/images/skull-challenging.webp"; break;
             case "Hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break;
             case "Deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
+            case "Out of Tier": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break; // Fallback to scary skull
             default: skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp";
         }
 
@@ -251,10 +238,30 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         let hasDamageBoost = false;
         let hasLowerTier = false;
         let hasSpecialType = false;
+        let outOfTier = false;
+
+        // Synergy Detection vars
+        let hasSummoner = false;
+        let hasSpotlighter = false;
+        let hasMomentum = false;
+        let hasRelentless = false;
 
         this.encounterList.forEach(unit => {
             const type = unit.type;
 
+            // Check Tier Mismatch
+            if (unit.tier > this.pcTier) {
+                outOfTier = true;
+            }
+
+            // Synergy Check
+            const feats = unit.specialFeatures || [];
+            if (feats.includes("Summoner")) hasSummoner = true;
+            if (feats.includes("Spotlighter")) hasSpotlighter = true;
+            if (feats.includes("Momentum")) hasMomentum = true;
+            if (feats.some(f => f.startsWith("Relentless"))) hasRelentless = true;
+
+            // Cost Calculation
             if (type === "minion") {
                 minionCount++;
             } else if (["social", "support"].includes(type)) {
@@ -330,30 +337,30 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         
         let level = 2; // Default Balanced
 
-        if (diff <= -2) level = 0; // Very Easy
-        else if (diff === -1) level = 1; // Easy
-        else if (diff === 0) level = 2; // Balanced
-        else if (diff === 1) level = 3; // Challenging
-        else if (diff >= 2) level = 4; // Deadly
+        // --- New Difficulty Thresholds ---
+        if (diff <= -5) level = 0;      // Very Easy
+        else if (diff <= -2) level = 1; // Easy (Assuming -4, -3, -2)
+        else if (diff >= -1 && diff <= 1) level = 2; // Balanced (-1, 0, +1)
+        else if (diff >= 2 && diff < 4) level = 3;   // Challenging (+2, +3)
+        else if (diff >= 4 && diff < 6) level = 4;   // Hard (+4, +5)
+        else if (diff >= 6) level = 5;               // Deadly (+6 or more)
 
         // --- Apply Fear Shift ---
         let shift = 0;
         if (this.fearBudget === "2-4") shift = 1;
         else if (this.fearBudget === "4-8" || this.fearBudget === "6-12") shift = 2;
 
-        // --- Apply Synergy Shift (Momentum + Relentless) ---
-        const hasSynergy = this.encounterList.some(u => {
-            const feats = u.specialFeatures || [];
-            const hasRelentless = feats.some(f => f.startsWith("Relentless"));
-            const hasMomentum = feats.includes("Momentum");
-            return hasRelentless && hasMomentum;
-        });
-
-        if (hasSynergy) {
+        // --- Apply Synergy Shift (Summoner + Spotlighter) ---
+        if (hasSummoner && hasSpotlighter) {
             shift += 1;
         }
 
-        level = Math.min(4, level + shift);
+        // --- Apply Synergy Shift (Relentless + Momentum) ---
+        if (hasRelentless && hasMomentum) {
+            shift += 1;
+        }
+
+        level = Math.min(5, level + shift);
 
         let difficultyLabel = "Balanced";
         let difficultyClass = "diff-balanced";
@@ -363,7 +370,14 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             case 1: difficultyLabel = "Easy"; difficultyClass = "diff-easy"; break;
             case 2: difficultyLabel = "Balanced"; difficultyClass = "diff-balanced"; break;
             case 3: difficultyLabel = "Challenging"; difficultyClass = "diff-challenging"; break;
-            case 4: difficultyLabel = "Deadly"; difficultyClass = "diff-deadly"; break;
+            case 4: difficultyLabel = "Hard"; difficultyClass = "diff-deadly"; break; // Reusing Deadly class (Red) for Hard
+            case 5: difficultyLabel = "Deadly"; difficultyClass = "diff-deadly"; break;
+        }
+
+        // --- Out of Tier Override ---
+        if (outOfTier) {
+            difficultyLabel = "Out of Tier";
+            difficultyClass = "diff-deadly"; // Red warning color
         }
 
         const statusColor = (currentCost > limit) ? "red" : (currentCost === limit ? "green" : "gold");
@@ -405,17 +419,13 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     _formatActorData(actor) {
-        // NOTE: This initial formatting is for the list view. 
-        // We will fetch full item details when adding to encounter list.
         const specialFeatures = [];
+        // Only doing basic check here for list view badges if needed, 
+        // full detection happens in _onAddUnit
         if (actor.items) {
-            if (actor.items.some(i => i.name === "Momentum")) {
-                specialFeatures.push("Momentum");
-            }
+            if (actor.items.some(i => i.name === "Momentum")) specialFeatures.push("Momentum");
             const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
-            if (relentless) {
-                specialFeatures.push(relentless.name);
-            }
+            if (relentless) specialFeatures.push(relentless.name);
         }
 
         return {
@@ -735,34 +745,30 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const actorData = this._cachedAdversaries.find(a => a.uuid === uuid);
         
         if (actorData) {
-            // Retrieve Full Actor to get all feature names for synergy checks
+            // Retrieve Features (Momentum, Relentless, Summoner, Spotlighter)
             const actor = await fromUuid(uuid);
             const specialFeatures = [];
-            const allFeatureNames = [];
+            const allFeatureNames = []; // Used to check synergy keywords
 
             if (actor && actor.items) {
-                // Collect ALL item names for synergy checking
                 actor.items.forEach(i => allFeatureNames.push(i.name));
 
-                // Check for Summoner Features
+                if (allFeatureNames.includes("Momentum")) {
+                    specialFeatures.push("Momentum");
+                }
+                const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
+                if (relentless) {
+                    specialFeatures.push(relentless.name);
+                }
+                
+                // Check Summoner
                 if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) {
                     specialFeatures.push("Summoner");
                 }
 
-                // Check for Spotlighter Features
+                // Check Spotlighter
                 if (allFeatureNames.some(name => POWERFUL_FEATURES.spotlighter.includes(name))) {
                     specialFeatures.push("Spotlighter");
-                }
-
-                // Check for Momentum
-                if (allFeatureNames.includes("Momentum")) {
-                    specialFeatures.push("Momentum");
-                }
-
-                // Check for Relentless
-                const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
-                if (relentless) {
-                    specialFeatures.push(relentless.name);
                 }
             }
 
@@ -770,8 +776,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
                 entryId: foundry.utils.randomID(),
                 ...actorData,
                 hasDamageBoost: false,
-                specialFeatures: specialFeatures,
-                allFeatureNames: allFeatureNames // Store all names for logic checks
+                specialFeatures: specialFeatures 
             });
             this.render();
         }
