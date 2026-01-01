@@ -201,6 +201,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    box-sizing: border-box; /* Ensure padding doesn't affect height */
 }
 
 .dh-adv-manager-content select option {
@@ -242,9 +243,17 @@
     color: #888;
     border: 1px solid #444;
     flex: 1;
-    padding: 8px;
+    height: 40px; /* Enforce height */
+    padding: 0; /* Remove padding to avoid height issues */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
+    box-sizing: border-box; /* Include border in height */
+    font-size: 1em;
+    line-height: 1;
+    border-radius: 4px;
 }
 
 .tier-tab-btn:hover {
@@ -1141,7 +1150,7 @@
     width: 32px;
     height: 32px;
     object-fit: contain;
-    /* Dimmed/Disabled Look by Default */
+    /* Dimmed/Disabled Look */
     filter: grayscale(100%) brightness(50%);
     opacity: 0.4;
     transition: all 0.3s;

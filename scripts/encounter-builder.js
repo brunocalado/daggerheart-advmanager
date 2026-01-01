@@ -423,9 +423,21 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // Only doing basic check here for list view badges if needed, 
         // full detection happens in _onAddUnit
         if (actor.items) {
-            if (actor.items.some(i => i.name === "Momentum")) specialFeatures.push("Momentum");
+            const allFeatureNames = actor.items.map(i => i.name);
+
+            if (allFeatureNames.includes("Momentum")) specialFeatures.push("Momentum");
             const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
             if (relentless) specialFeatures.push(relentless.name);
+
+            // Check Summoner
+            if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) {
+                specialFeatures.push("Summoner");
+            }
+
+            // Check Spotlighter
+            if (allFeatureNames.some(name => POWERFUL_FEATURES.spotlighter.includes(name))) {
+                specialFeatures.push("Spotlighter");
+            }
         }
 
         return {

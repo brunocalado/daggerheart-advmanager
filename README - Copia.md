@@ -31,7 +31,7 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
     * Scales Attack modifiers and Damage formulas.
 * **✨ Experience/Feature Automation:**
     * Auto-updates Experience values based on Tier difference.
-    * Suggests new **Features** (e.g., *Relentless*, *Momentum*) appropriate for the target Tier with **clickable icons** to view details.
+    * Suggests and adds new **Features** (e.g., *Relentless*, *Momentum*) appropriate for the target Tier.
 * **🔧 Manual Overrides:** Full control to manually tweak any specific stat (HP, Damage, Name) directly in the preview window.
 * **📦 Batch & Compendium Support:**
     * Update multiple selected tokens on the canvas simultaneously.
@@ -41,10 +41,8 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 * **🔎 Search & Library:** Robust search across World actors and System Compendiums with filters for Tier and Type.
 * **🧮 Smart Budgeting:** Automatic **Budget Point (BP)** calculation based on Party Size and Tier. Tracks current cost vs budget limit.
-* **🧠 Synergy & Role Detection:** Automatically detects and highlights tactical roles like **Summoner**, **Spotlighter**, **Momentum**, and **Relentless**, adjusting the difficulty estimate based on enemy combinations.
-* **💀 Difficulty Estimator:** Real-time difficulty assessment (Balanced, Challenging, Deadly, Out of Tier, etc.) with visual indicators and skull icons.
-* **🔥 Custom Modifiers:** Apply **Damage Boosts** to specific units or toggle manual difficulty modifiers (Easier/Harder) to fine-tune the challenge.
-* **⚡ Quick Deployment:** Build your encounter list and **place tokens directly on the scene** (hidden by default) or organize them into folders.
+* **💀 Difficulty Estimator:** Real-time difficulty assessment (Balanced, Challenging, Deadly, etc.) with visual indicators.
+* **⚡ Quick Deployment:** Build your encounter list, apply modifiers (e.g. Damage Boost), and **place tokens directly on the scene** (hidden by default) or organize them into folders.
 
 ### 📊 Compendium Statistics
 
