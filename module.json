@@ -3,7 +3,7 @@
   "title": "Daggerheart: Adversary Manager",
   "version": "0.1.4",
   
-  "description": "This module allows you to dynamically change an opponent's tier. For example: if you have a Tier 1 Bear, you can use the module to update its sheet to Tier 3 stats.",
+  "description": "The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries instantly, build balanced encounters.",
 
 	"media": [{
 		"type": "setup",

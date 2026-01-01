@@ -3,7 +3,7 @@
 
 <p align="center"><img width="500" src="assets/images/logo.webp"></p>
 
-An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversaries across Tiers, manage their stats, and preview changes with a powerful live dashboard.
+The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries instantly, build balanced encounters.
 
 <video src="https://github.com/user-attachments/assets/a875027b-eb4a-4637-a4f5-7c61064da22d" 
        controls 
@@ -14,54 +14,54 @@ An essential GM tool for **Daggerheart** in Foundry VTT. Instantly scale adversa
 
 ## 🌟 Overview & Features
 
-<p align="center"><img width="1400" src="docs/view-livemanager.webp"></p>
-
-<p align="center"><img width="1400" src="docs/view-encounterbuilder.webp"></p>
-
-<p align="center"><img width="1400" src="docs/view-compendiumstats.webp"></p>
-
-<p align="center"><img width="400" src="docs/view-diceprob.webp"></p>
-
 ### 🛠️ Adversary Scaling & Management
 
-* **📈 Instant Tier Scaling:** Effortlessly scale any Adversary (Standard, Minion, Horde, Solo, etc.) from Tier 1 to 4 using official benchmarks.
+<p align="center"><img width="1400" src="docs/view-livemanager.webp"></p>
+
+* **📈 Instant Tier Scaling:** Effortlessly scale any Adversary from Tier 1 to 4 using official benchmarks.
 * **👀 Live Preview Dashboard:** Compare "Current" stats vs. "Target Tier" stats side-by-side before applying any changes.
 * **🎲 Smart Math & Probabilities:**
     * Automatically recalculates HP, Stress, Difficulty, and Damage Thresholds.
     * Scales Attack modifiers and Damage formulas.
-* **✨ Experience/Feature Automation:**
+* **✨ Feature Automation:**
     * Auto-updates Experience values based on Tier difference.
-    * Suggests new **Features** (e.g., *Relentless*, *Momentum*) appropriate for the target Tier with **clickable icons** to view details.
-* **🔧 Manual Overrides:** Full control to manually tweak any specific stat (HP, Damage, Name) directly in the preview window.
+    * Suggests appropriate **Features** (e.g., *Relentless*, *Momentum*) for the target Tier.
+* **🔧 Manual Overrides:** Full control to manually tweak any specific stat (HP, Damage, etc) directly in the preview window.
 * **📦 Batch & Compendium Support:**
     * Update multiple selected tokens on the canvas simultaneously.
     * Import and auto-scale adversaries directly from Compendiums into your world.
 
 ### ⚔️ Encounter Builder
 
+<p align="center"><img width="1400" src="docs/view-encounterbuilder.webp"></p>
+
 * **🔎 Search & Library:** Robust search across World actors and System Compendiums with filters for Tier and Type.
-* **🧮 Smart Budgeting:** Automatic **Budget Point (BP)** calculation based on Party Size and Tier. Tracks current cost vs budget limit.
-* **🧠 Synergy & Role Detection:** Automatically detects and highlights tactical roles like **Summoner**, **Spotlighter**, **Momentum**, and **Relentless**, adjusting the difficulty estimate based on enemy combinations.
-* **💀 Difficulty Estimator:** Real-time difficulty assessment (Balanced, Challenging, Deadly, Out of Tier, etc.) with visual indicators and skull icons.
+* **🧮 Smart Budgeting:** Automatic **Battle Point (BP)** calculation based on Party Size and Tier. Tracks current cost vs budget limit.
+* **🧠 Synergy & Role Detection:** Automatically detects tactical roles like **Summoner**, **Spotlighter**, **Momentum**, and **Relentless**, adjusting the difficulty estimate based on enemy combinations.
+* **💀 Difficulty Estimator:** Real-time difficulty assessment (Balanced, Challenging, Deadly, Out of Tier) with visual indicators.
 * **🔥 Custom Modifiers:** Apply **Damage Boosts** to specific units or toggle manual difficulty modifiers (Easier/Harder) to fine-tune the challenge.
 * **⚡ Quick Deployment:** Build your encounter list and **place tokens directly on the scene** (hidden by default) or organize them into folders.
 
 ### 📊 Compendium Statistics
 
-* **🔍 Stats Explorer:** Browse comprehensive statistics for every adversary type (Bruiser, Horde, etc.) across all 4 Tiers based on the system compendium.
+<p align="center"><img width="1400" src="docs/view-compendiumstats.webp"></p>
+
+* **🔍 Stats Explorer:** Browse comprehensive statistics for every adversary type across all 4 Tiers.
 * **📋 Data Tables:** View calculated ranges for Difficulty, HP, Stress, Thresholds, Attack Modifiers, and Damage Rolls.
 * **🧩 Feature Browser:** See a list of all features found in the compendium for each Tier.
-* **🖐️ Drag & Drop:** Click to view feature details or **drag them directly onto an actor sheet** to add them!
+* **🖐️ Drag & Drop:** Click to view feature details or **drag them directly onto an actor sheet**.
 
 ### 🎲 Dice Probability Calculator
 
-* **Live Analysis:** Instantly calculate success, failure, and critical hit chances for Daggerheart rolls.
+<p align="center"><img width="400" src="docs/view-diceprob.webp"></p>
+
+* **Live Analysis:** Instantly calculate success, failure, and critical hit chances for Duality Dice rolls.
 * **Flexible Options:** Supports Advantage, Disadvantage, and flat numerical modifiers.
-* **Chat Integration:** Send detailed probability result cards to the chat log with a single click.
+* **Chat Integration:** Send detailed probability result cards to the chat log.
 
-## ⚙️ Instructions & Usage
+## ⚙️ Usage
 
-Access all functions (Adversary Manager, Encounter Builder, Compendium Stats, and Dice Probability) by clicking the buttons in the Daggerheart System Menu or Actor Directory, as shown below.
+Access all functions (Adversary Manager, Encounter Builder, Compendium Stats, and Dice Probability) by clicking the buttons in the Daggerheart System Menu or Actor Directory.
 
 <p align="center"><img width="600" src="docs/system-button.webp"></p>
 
@@ -87,11 +87,18 @@ AM.CompendiumStats();
 AM.DiceProbability();
 ```
 
+## ⚙️ Instructions
+Learn more at [WIKI](https://github.com/brunocalado/daggerheart-advmanager/wiki).
+
 ## 🚀 Installation
 
 Install via the Foundry VTT Module browser or use this manifest link:
 
 * `https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json`
+
+## 📜 Changelog
+
+You can read the full history of changes in the [CHANGELOG](CHANGELOG.md).
 
 ## ⚖️ Credits and License
 

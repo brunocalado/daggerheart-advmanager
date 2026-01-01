@@ -67,16 +67,18 @@
     
     <!-- Tier Selection Tabs -->
     <div class="tier-tabs">
-        <label>Target Tier:</label>
-        <div class="tier-buttons">
-            {{#each tiers}}
-            <button type="button" 
-                    class="tier-tab-btn {{this.cssClass}}" 
-                    data-action="selectTier" 
-                    data-tier="{{this.value}}">
-                {{this.label}}
-            </button>
-            {{/each}}
+        <div class="tier-control-row">
+            <label style="white-space: nowrap; margin-right: 5px; font-weight: bold; color: #aaa;">Target Tier:</label>
+            <div class="tier-buttons" style="margin-top: 0; flex: 1;">
+                {{#each tiers}}
+                <button type="button" 
+                        class="tier-tab-btn {{this.cssClass}}" 
+                        data-action="selectTier" 
+                        data-tier="{{this.value}}">
+                    {{this.label}}
+                </button>
+                {{/each}}
+            </div>
         </div>
     </div>
 
