@@ -94,7 +94,9 @@ Learn more at [WIKI](https://github.com/brunocalado/daggerheart-advmanager/wiki)
 
 Install via the Foundry VTT Module browser or use this manifest link:
 
-* `https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json`
+```js
+https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json
+```
 
 ## 📜 Changelog
 
