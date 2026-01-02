@@ -284,7 +284,7 @@
 
 .preview-body {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 40% 60%; /* CHANGED: 40% Current, 60% Preview */
     gap: 15px;
     flex: 1;
     overflow-y: auto;

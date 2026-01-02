@@ -876,6 +876,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         } else {
             this.overrides.features.names[itemId] = value;
         }
+        
+        this.render(); // Ensure stats update
     }
 
     _onMinionOverrideChange(event, target) {
