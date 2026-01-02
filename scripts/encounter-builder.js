@@ -23,7 +23,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // Encounter Settings
         this.pcCount = 4;
         this.pcTier = 1;
-        this.fearBudget = "0-1"; 
+        this.fearBudget = "1-3"; // Default changed to Moderate per request
         
         // Manual Modifier States
         this.manualModifiers = {
@@ -166,7 +166,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             };
         });
 
-        // --- Synergy Checks (Summoner, Spotlighter, Momentum, Relentless) ---
+        // --- Synergy Checks (Summoner, Spotlighter, Momentum/Terrifying, Relentless) ---
         // Used for UI icons activation
         const synergy = {
             summoner: false,
@@ -179,7 +179,12 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             const features = unit.specialFeatures || [];
             if (features.includes("Summoner")) synergy.summoner = true;
             if (features.includes("Spotlighter")) synergy.spotlighter = true;
-            if (features.includes("Momentum")) synergy.momentum = true;
+            
+            // Check Momentum OR Terrifying for the visual icon
+            if (features.includes("Momentum") || features.includes("Terrifying")) {
+                synergy.momentum = true;
+            }
+            
             if (features.some(f => f.startsWith("Relentless"))) synergy.relentless = true;
         });
 
@@ -245,6 +250,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         let hasSpotlighter = false;
         let hasMomentum = false;
         let hasRelentless = false;
+        let hasTerrifying = false;
 
         this.encounterList.forEach(unit => {
             const type = unit.type;
@@ -259,6 +265,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             if (feats.includes("Summoner")) hasSummoner = true;
             if (feats.includes("Spotlighter")) hasSpotlighter = true;
             if (feats.includes("Momentum")) hasMomentum = true;
+            if (feats.includes("Terrifying")) hasTerrifying = true;
             if (feats.some(f => f.startsWith("Relentless"))) hasRelentless = true;
 
             // Cost Calculation
@@ -347,7 +354,10 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         // --- Apply Fear Shift ---
         let shift = 0;
-        if (this.fearBudget === "2-4") shift = 1;
+        
+        // NEW: Low Fear Budget decreases difficulty by one step
+        if (this.fearBudget === "0-1") shift = -1;
+        else if (this.fearBudget === "2-4") shift = 1;
         else if (this.fearBudget === "4-8" || this.fearBudget === "6-12") shift = 2;
 
         // --- Apply Synergy Shift (Summoner + Spotlighter) ---
@@ -355,12 +365,13 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             shift += 1;
         }
 
-        // --- Apply Synergy Shift (Relentless + Momentum) ---
-        if (hasRelentless && hasMomentum) {
+        // --- Apply Synergy Shift (Relentless + (Momentum OR Terrifying)) ---
+        if (hasRelentless && (hasMomentum || hasTerrifying)) {
             shift += 1;
         }
 
-        level = Math.min(5, level + shift);
+        // Calculate final level constrained between 0 and 5
+        level = Math.max(0, Math.min(5, level + shift));
 
         let difficultyLabel = "Balanced";
         let difficultyClass = "diff-balanced";
@@ -426,6 +437,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             const allFeatureNames = actor.items.map(i => i.name);
 
             if (allFeatureNames.includes("Momentum")) specialFeatures.push("Momentum");
+            if (allFeatureNames.includes("Terrifying")) specialFeatures.push("Terrifying"); // ADDED
             const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
             if (relentless) specialFeatures.push(relentless.name);
 
@@ -473,7 +485,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             return [];
         }
 
-        const featurePackId = "daggerheart-advmanager.features";
+        const featurePackId = "daggerheart-advmanager.custom-features";
         const featurePack = game.packs.get(featurePackId);
         let featureIndex = null;
         if (featurePack) {
@@ -767,6 +779,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
                 if (allFeatureNames.includes("Momentum")) {
                     specialFeatures.push("Momentum");
+                }
+                if (allFeatureNames.includes("Terrifying")) { // ADDED
+                    specialFeatures.push("Terrifying");
                 }
                 const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
                 if (relentless) {

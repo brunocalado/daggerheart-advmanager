@@ -8,6 +8,8 @@
 - you can pick a new set of suggested features from another type
 - horde feature working well
 - fixed add multiple features in the live manager
+- experiences suggestions
+- terrifying can increase difficult
 
 # 0.1.5
 - small css fix

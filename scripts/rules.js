@@ -322,9 +322,11 @@ export const ADVERSARY_BENCHMARKS = {
         "suggested_features": [
           "Momentum",
           "Move as a Unit",
-          "Rally",
           "Reinforcements",
-          "Tactician"
+          "Tactician",
+          "Arcane Steel",
+          "Rally Guards",
+          "Swashbuckler"
         ],
         "experiences": {
           "amount": "1/2",
@@ -346,9 +348,13 @@ export const ADVERSARY_BENCHMARKS = {
         "suggested_features": [
           "Momentum",
           "Move as a Unit",
-          "Rally",
           "Reinforcements",
-          "Tactician"
+          "Tactician",
+          "Arcane Steel",
+          "Rally Guards",
+          "Swashbuckler",
+          "Deathlock",
+          "For the Realm!"
         ],
         "experiences": {
           "amount": "1/3",
@@ -371,9 +377,20 @@ export const ADVERSARY_BENCHMARKS = {
         "suggested_features": [
           "Momentum",
           "Move as a Unit",
-          "Rally",
           "Reinforcements",
-          "Tactician"
+          "Tactician",
+          "Arcane Steel",
+          "Rally Guards",
+          "Swashbuckler",
+          "For the Realm!",
+          "Double or Nothing",
+          "Feed on Followers",
+          "Lifesuck",
+          "Look into My Eyes",
+          "Terrifying",
+          "Unparalleled Skill",
+          "You Pale in Comparison",
+          "Relentless (2)"
         ],
         "experiences": {
           "amount": "2/3",
@@ -395,9 +412,21 @@ export const ADVERSARY_BENCHMARKS = {
         "suggested_features": [
           "Momentum",
           "Move as a Unit",
-          "Rally",
           "Reinforcements",
-          "Tactician"
+          "Tactician",
+          "Arcane Steel",
+          "Rally Guards",
+          "Swashbuckler",
+          "Feed on Followers",
+          "Lifesuck",
+          "Look into My Eyes",
+          "Terrifying",
+          "Unparalleled Skill",
+          "You Pale in Comparison",
+          "Dance Of Death",
+          "Divine Flight",
+          "Relentless (3)",
+          "We Are One"
         ],
         "experiences": {
           "amount": "2/4",
