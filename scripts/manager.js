@@ -691,7 +691,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     /**
      * UPDATE SINGLE ACTOR - NOW ACCEPTS MANUAL OVERRIDES
-     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula, suggestedFeatures: [], features: { names: {}, damage: {} } }
+     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula, experiences: {}, suggestedFeatures: [], features: { names: {}, damage: {} } }
      */
     static async updateSingleActor(actor, newTier, overrides = {}) {
         const actorData = actor.toObject();
@@ -863,22 +863,128 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // --- 4. Update Experiences (Standard) ---
-        if (game.settings.get(MODULE_ID, SETTING_UPDATE_EXP)) {
-            if (actorData.system.experiences) {
-                const tierDiff = newTier - currentTier;
-                for (const [key, exp] of Object.entries(actorData.system.experiences)) {
-                    const currentVal = Number(exp.value) || 0;
-                    let newVal = currentVal + tierDiff;
-                    if (newVal < 2) newVal = 2;
-                    if (newVal > 5) newVal = 5;
-                    if (newVal !== currentVal) updateData[`system.experiences.${key}.value`] = newVal;
+        // --- 4. Update Experiences (NEW LOGIC V2: Detailed Overrides + Reduction Logic) ---
+        if (game.settings.get(MODULE_ID, SETTING_UPDATE_EXP) && benchmark.experiences) {
+            const expData = benchmark.experiences;
+            const currentExperiences = actorData.system.experiences || {};
+            const expOverrides = overrides.experiences || {};
+            
+            // Determine Target Mod (used for new or existing without override)
+            const targetMod = Manager.getRollFromSignedRange(expData.modifier);
+            
+            // --- AUTOMATIC LOGIC (if no granular overrides provided) ---
+            // BUT here we assume if we are in LiveManager, overrides.experiences might exist.
+            // Even in Batch mode, we need basic logic.
+            
+            // 1. Identify which keys are deleted
+            const keysToDelete = [];
+            const keysToKeep = [];
+            
+            // Map existing experiences
+            for (const [key, exp] of Object.entries(currentExperiences)) {
+                // Check granular override for deletion
+                if (expOverrides[key] && expOverrides[key].deleted) {
+                    keysToDelete.push(key);
+                } else {
+                    keysToKeep.push(key);
                 }
             }
-            if (currentTier <= 2 && newTier >= 3) {
-                const newExpValue = newTier === 3 ? 3 : 4;
-                const newExpId = foundry.utils.randomID();
-                updateData[`system.experiences.${newExpId}`] = { name: "New Experience", value: newExpValue, description: "Added by Adversary Manager" };
+
+            // Logic: If scaling down (newTier < currentTier), DO NOT remove experiences automatically.
+            // If scaling up or same, match amount logic (unless manually managed via UI).
+            // In LiveManager, the user sees the list. If they didn't click delete, we keep it.
+            
+            // If running via Manager (Batch), expOverrides is likely empty.
+            // We implement the reduction logic here:
+            if (Object.keys(expOverrides).length === 0) {
+                 // Batch Mode / No Manual Overrides
+                 const targetAmount = Manager.getRollFromRange(expData.amount);
+                 const currentKeys = Object.keys(currentExperiences);
+                 
+                 // If reducing tier, keep ALL current (don't reduce amount)
+                 if (newTier < currentTier) {
+                     // Keep all, just update mod
+                     currentKeys.forEach(key => keysToKeep.push(key));
+                 } else {
+                     // Standard logic: Keep up to targetAmount
+                     // (Note: keysToKeep was populated above, let's reset for batch logic clarity)
+                     const kept = currentKeys.slice(0, targetAmount);
+                     const removed = currentKeys.slice(targetAmount);
+                     
+                     kept.forEach(k => {
+                         updateData[`system.experiences.${k}.value`] = targetMod;
+                     });
+                     removed.forEach(k => {
+                         updateData[`system.experiences.-=${k}`] = null;
+                     });
+
+                     // Add new if needed
+                     if (targetAmount > currentKeys.length) {
+                         const needed = targetAmount - currentKeys.length;
+                         for (let i = 0; i < needed; i++) {
+                             const newId = foundry.utils.randomID();
+                             updateData[`system.experiences.${newId}`] = {
+                                 name: "New Experience",
+                                 value: targetMod,
+                                 description: "Added by Adversary Manager"
+                             };
+                         }
+                     }
+                     statsLog.push(`<strong>Experiences:</strong> Adjusted to Qty ${targetAmount}, Mod ${targetMod >=0 ? '+'+targetMod : targetMod}`);
+                 }
+                 
+                 if (newTier < currentTier) {
+                      // Just update mods of kept
+                      currentKeys.forEach(k => {
+                          updateData[`system.experiences.${k}.value`] = targetMod;
+                      });
+                      statsLog.push(`<strong>Experiences:</strong> Tier Reduced (Kept All), Mod ${targetMod >=0 ? '+'+targetMod : targetMod}`);
+                 }
+
+            } else {
+                // --- MANUAL OVERRIDES (Live Manager) ---
+                // Process Updates/Deletes on Existing
+                keysToKeep.forEach(key => {
+                    const override = expOverrides[key];
+                    const currentVal = Number(currentExperiences[key].value) || 0;
+                    
+                    let finalMod = targetMod;
+                    let finalName = currentExperiences[key].name;
+
+                    if (override) {
+                        if (override.value !== undefined) finalMod = override.value;
+                        if (override.name !== undefined) finalName = override.name;
+                    } else {
+                        // No specific override, applying scaling? 
+                        // If user didn't touch it in UI, it comes in as just standard. 
+                        // But wait, the UI sends the whole list. 
+                        // If it's in expOverrides, we use that.
+                        // If it's NOT in expOverrides but exists (shouldn't happen with full list sync), use targetMod.
+                    }
+
+                    // Apply update
+                    updateData[`system.experiences.${key}.value`] = finalMod;
+                    updateData[`system.experiences.${key}.name`] = finalName;
+                });
+
+                // Process Deletions
+                keysToDelete.forEach(key => {
+                    updateData[`system.experiences.-=${key}`] = null;
+                });
+
+                // Process Additions (New items with temp IDs in overrides)
+                for (const [tempId, data] of Object.entries(expOverrides)) {
+                     // Check if it's a new item (not in currentExperiences)
+                     if (!currentExperiences[tempId] && !data.deleted) {
+                         const newId = foundry.utils.randomID();
+                         updateData[`system.experiences.${newId}`] = {
+                             name: data.name || "New Experience",
+                             value: data.value !== undefined ? data.value : targetMod,
+                             description: "Added by Live Manager"
+                         };
+                     }
+                }
+                statsLog.push(`<strong>Experiences:</strong> Manual Updates Applied`);
             }
         }
 

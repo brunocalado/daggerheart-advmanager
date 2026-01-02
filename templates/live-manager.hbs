@@ -124,18 +124,34 @@
                     {{/if}}
                 </span>
             </div>
+
             <div class="stat-group">
                 <span class="stat-label">Attack Damage</span>
-                <div class="stat-block">{{currentStats.damage}}</div>
+                <!-- Removed display:block from span to keep stats on same line -->
+                <div class="stat-block">{{currentStats.damage}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{currentStats.damageStats}}</span></div>
             </div>
             
             {{#if isHorde}}
                 {{#if currentStats.halvedDamage}}
                 <div class="stat-group">
                     <span class="stat-label">Halved Damage (Horde)</span>
-                    <div class="stat-block">{{currentStats.halvedDamage}}</div>
+                    <!-- Removed display:block from span to keep stats on same line -->
+                    <div class="stat-block">{{currentStats.halvedDamage}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{currentStats.halvedDamageStats}}</span></div>
                 </div>
                 {{/if}}
+            {{/if}}
+
+            <!-- CURRENT EXPERIENCES -->
+            {{#if currentStats.experiences.length}}
+                <div class="stat-group">
+                    <span class="stat-label">Experiences</span>
+                    <!-- Added height:auto and white-space:normal to allow wrapping without excessive spacing -->
+                    <div class="stat-block" style="height: auto; white-space: normal;">
+                        {{#each currentStats.experiences}}
+                            {{this.name}} {{this.value}}{{#unless @last}}, {{/unless}}
+                        {{/each}}
+                    </div>
+                </div>
             {{/if}}
             
             <!-- NEW: Actor Name Header with Type -->
@@ -212,6 +228,7 @@
                         <input type="number" class="override-input" data-field="attackMod" value="{{previewStats.attackMod}}" title="Manual Override">
                     </div>
                 </div>
+
                 <div class="stat-group">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="stat-label">Attack Damage</span>
@@ -220,7 +237,8 @@
                             <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
-                    <div class="stat-block">{{{previewStats.damage}}}</div>
+                    <!-- Removed display:block from span to keep stats on same line -->
+                    <div class="stat-block">{{{previewStats.damage}}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{previewStats.damageStats}}</span></div>
                 </div>
 
                 {{#if previewStats.halvedDamage}}
@@ -232,9 +250,34 @@
                             <input type="text" class="override-input" data-field="halvedDamageFormula" value="{{previewStats.mainHalvedDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
-                    <div class="stat-block">{{{previewStats.halvedDamage}}}</div>
+                    <!-- Removed display:block from span to keep stats on same line -->
+                    <div class="stat-block">{{{previewStats.halvedDamage}}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{previewStats.halvedDamageStats}}</span></div>
                 </div>
                 {{/if}}
+
+                <!-- PREVIEW EXPERIENCES -->
+                <div class="stat-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="stat-label">
+                            Experiences
+                            <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{previewStats.expTooltip}}}"></i>
+                        </span>
+                        <button type="button" data-action="addExperience" class="add-btn-small" title="Add Experience"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="stat-block-list experiences-list">
+                        {{#each previewStats.experiences}}
+                            <div class="exp-item-preview {{#if this.isNew}}exp-new{{/if}}" style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
+                                <input type="text" class="exp-name-input" data-id="{{this.id}}" value="{{this.name}}" placeholder="Exp Name" style="flex: 1; min-width: 0;">
+                                <select class="exp-mod-select" data-id="{{this.id}}" style="flex: 0 0 60px;">
+                                    {{#each this.options}}
+                                        <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                                    {{/each}}
+                                </select>
+                                <button type="button" data-action="deleteExperience" data-id="{{this.id}}" class="delete-btn-small" title="Remove" style="flex: 0 0 24px; color: #ff6b6b; background: none; border: none; cursor: pointer;"><i class="fas fa-trash"></i></button>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
 
                 <!-- FEATURES SECTION -->
                 <div class="features-preview-section">
@@ -242,17 +285,37 @@
                     {{#if featurePreviewData.length}}
                         <div class="feature-changes-list">
                             {{#each featurePreviewData}}
-                                <div class="feature-change-row">
-                                    <div class="feature-label">
-                                        {{{this.originalName}}} <i class="fas fa-arrow-right" style="font-size: 0.8em; opacity: 0.5; margin: 0 5px;"></i>
+                                <div class="feature-change-row" style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">
+                                    
+                                    <!-- LEFT: Label + Icon -->
+                                    <div class="feature-label" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 5px;">
+                                        {{#if this.img}}
+                                            <a class="feature-icon-link" data-action="openFeature" data-uuid="{{this.uuid}}" title="Open Item" style="flex-shrink: 0;">
+                                                <img src="{{this.img}}" style="width: 24px; height: 24px; border: none; vertical-align: middle;">
+                                            </a>
+                                        {{/if}}
+                                        <div style="overflow: hidden; text-overflow: ellipsis;">
+                                            {{{this.originalName}}} <i class="fas fa-arrow-right" style="font-size: 0.8em; opacity: 0.5; margin: 0 5px;"></i>
+                                        </div>
                                     </div>
                                     
-                                    <div class="feature-control">
+                                    <!-- CENTER: Stats -->
+                                    {{#if this.stats}}
+                                        <div class="feature-stats" style="font-size: 0.8em; color: #aaa; text-align: center; white-space: nowrap; margin: 0 5px;">
+                                            {{this.stats}}
+                                        </div>
+                                    {{/if}}
+
+                                    <!-- RIGHT: Controls -->
+                                    <div class="feature-control" style="flex: 0 0 auto; display: flex; align-items: center; gap: 5px;">
                                         {{#if this.options}}
                                             <!-- Combobox for damage features -->
-                                            <div class="feature-input-group">
+                                            <div class="feature-input-group" style="display: flex; align-items: center; gap: 2px;">
                                                 <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{this.optionsTooltip}}}"></i>
-                                                <input type="text" class="feature-override-input feature-damage-input" data-itemid="{{this.itemId}}" value="{{this.newName}}">
+                                                <input type="text" class="feature-override-input feature-damage-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" style="width: 80px;">
+                                                <button type="button" data-action="resetDamageBonus" class="reset-btn-small" title="Remove Bonus" style="width: 24px; height: 24px; padding: 0; border: 1px solid #555; background: #333; color: #ccc; cursor: pointer;">
+                                                    <i class="fas fa-undo" style="font-size: 0.8em;"></i>
+                                                </button>
                                             </div>
                                         {{else if this.isMinionFeature}}
                                             <!-- SPECIAL: Minion Numeric Input -->

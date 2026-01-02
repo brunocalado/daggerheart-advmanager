@@ -169,6 +169,24 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
                 // Attack Modifier
                 if (sys.attack?.roll?.bonus !== undefined) data[tier].attackMod.push(Number(sys.attack.roll.bonus));
 
+                // Experiences (Handling Object structure)
+                let expCount = 0;
+                if (sys.experiences) {
+                    // Convert Object { id: {name, value}, id2: {name, value} } to Array
+                    const expList = Object.values(sys.experiences);
+                    expCount = expList.length;
+
+                    // Collect values
+                    expList.forEach(e => {
+                        const val = Number(e.value);
+                        if (!isNaN(val)) {
+                            data[tier].expValues.push(val);
+                        }
+                    });
+                }
+                // Always push count, even if 0, so ranges work correctly (e.g. 0-2)
+                data[tier].expCounts.push(expCount);
+
                 // Damage Rolls & Halved Damage (Horde)
                 if (sys.attack?.damage?.parts) {
                     sys.attack.damage.parts.forEach(part => {
@@ -255,6 +273,15 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             });
         }
 
+        // Experiences Row (Updated)
+        rows.push({
+            label: "Experiences",
+            t1: this._formatExpData(data[1]),
+            t2: this._formatExpData(data[2]),
+            t3: this._formatExpData(data[3]),
+            t4: this._formatExpData(data[4])
+        });
+
         // Features Row
         rows.push({
             label: "Features",
@@ -279,7 +306,9 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             attackMod: [],
             damageRolls: new Set(),
             halvedDamageRolls: new Set(),
-            features: new Map() // Key: Name, Value: {img, uuid, typeLabel}
+            features: new Map(), // Key: Name, Value: {img, uuid, typeLabel}
+            expCounts: [],
+            expValues: []
         };
     }
 
@@ -298,6 +327,39 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         const fmt = (n) => n >= 0 ? `+${n}` : `${n}`;
         if (min === max) return fmt(min);
         return `${fmt(min)}/${fmt(max)}`;
+    }
+
+    // Updated Experience Formatter
+    _formatExpData(tierData) {
+        if (!tierData.expCounts.length) return "-";
+
+        // Calculate Quantity Range: (Min-Max)
+        const minQty = Math.min(...tierData.expCounts);
+        const maxQty = Math.max(...tierData.expCounts);
+        const countStr = minQty === maxQty ? `(${minQty})` : `(${minQty}-${maxQty})`;
+
+        // Calculate Value Range: +Min/+Max
+        let valStr = "";
+        if (tierData.expValues.length > 0) {
+            const minVal = Math.min(...tierData.expValues);
+            const maxVal = Math.max(...tierData.expValues);
+            const fmt = (n) => n >= 0 ? `+${n}` : `${n}`;
+            
+            if (minVal === maxVal) {
+                valStr = fmt(minVal);
+            } else {
+                valStr = `${fmt(minVal)}/${fmt(maxVal)}`;
+            }
+        } else {
+            // No values found (or only 0 experiences which have no value)
+            valStr = "";
+        }
+
+        // Tooltip Text
+        const tooltip = "Quantity (Min-Max) +Value Range";
+        
+        // Final Output with Tooltip
+        return `<span data-tooltip="${tooltip}" style="cursor: help;">${countStr} ${valStr}</span>`;
     }
 
     _getList(set) {

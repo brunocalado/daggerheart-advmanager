@@ -30,7 +30,18 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 names: {},
                 damage: {}
             },
-            suggestedFeatures: null // Null indicates not initialized yet
+            suggestedFeatures: null, 
+            experiences: {}, // Map of ID -> { name: string, value: number, deleted: boolean }
+            damageFormula: undefined,
+            halvedDamageFormula: undefined,
+            difficulty: undefined,
+            hp: undefined,
+            stress: undefined,
+            major: undefined,
+            severe: undefined,
+            attackMod: undefined,
+            expAmount: undefined,
+            expMod: undefined
         };
 
         // Initialize Settings
@@ -68,7 +79,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             openStats: LiveManager.prototype._onOpenStats,
             openDiceProb: LiveManager.prototype._onOpenDiceProb,
             openFeature: LiveManager.prototype._onOpenFeature,
-            openSheet: LiveManager.prototype._onOpenSheet
+            openSheet: LiveManager.prototype._onOpenSheet,
+            addExperience: LiveManager.prototype._onAddExperience,
+            deleteExperience: LiveManager.prototype._onDeleteExperience,
+            resetDamageBonus: LiveManager.prototype._onResetDamageBonus
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -113,14 +127,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     /**
      * Finds a feature item by name to retrieve its image and UUID.
      * Searches in: 
-     * 1. daggerheart-advmanager.features
-     * 2. daggerheart.adversary-features
+     * 1. daggerheart-advmanager.all-features (Priority)
+     * 2. daggerheart-advmanager.features
+     * 3. daggerheart.adversary-features
      * * Now supports finding base item for names like "Relentless (2)" -> "Relentless"
      */
     async _findFeatureItem(name) {
         if (this._featureCache.has(name)) return this._featureCache.get(name);
 
-        const packIds = ["daggerheart-advmanager.features", "daggerheart.adversary-features"];
+        const packIds = ["daggerheart-advmanager.all-features", "daggerheart-advmanager.features", "daggerheart.adversary-features"];
         
         // Prepare clean name (e.g., "Relentless (2)" or "Relentless (X)" becomes "Relentless")
         let cleanName = name;
@@ -167,7 +182,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.targetTier = Number(actor.system.tier) || 1;
         
         // Reset overrides to avoid confusion
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} }; 
         
         // Sync filter settings to match this new actor so they don't look weird
         this.filterTier = String(this.targetTier); 
@@ -382,9 +397,18 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     thresholdsDisplay: simResult.stats.thresholds,
                     attackModDisplay: simResult.stats.attackMod,
                     
+                    // Experience Preview List
+                    experiences: simResult.stats.previewExperiences || [],
+                    expTooltip: `Suggested:<br>Amount: ${simResult.stats.expAmountRange || "?"}<br>Modifier: ${simResult.stats.expModRange || "?"}`,
+                    
                     damage: simResult.stats.damage,
+                    damageStats: simResult.stats.damageStats, // NEW: Stats string
+
                     mainDamageFormula: simResult.stats.mainDamageRaw, // Raw value for input
+                    
                     halvedDamage: simResult.stats.halvedDamage, 
+                    halvedDamageStats: simResult.stats.halvedDamageStats, // NEW: Stats string
+                    
                     mainHalvedDamageFormula: simResult.stats.mainHalvedDamageRaw, // Raw value for input
                     
                     tier: this.targetTier,
@@ -414,7 +438,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
 
                 // Prepare Structured Feature Data
-                featurePreviewData = simResult.structuredFeatures.map(f => {
+                featurePreviewData = await Promise.all(simResult.structuredFeatures.map(async f => {
                     let overrideVal = undefined;
                     if (f.type === 'damage' || f.type === 'name_horde') {
                          overrideVal = this.overrides.features.damage[f.itemId];
@@ -432,7 +456,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
 
                     let featureOptions = null;
-                    let optionsTooltip = ""; // NEW: Tooltip string
+                    let optionsTooltip = ""; 
+                    let damageStats = "";
 
                     if (f.type === 'damage' || f.type === 'name_horde') {
                          const currentVal = overrideVal !== undefined ? overrideVal : f.to;
@@ -445,6 +470,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                          if (featureOptions.length > 0) {
                              optionsTooltip = "Suggested:<br>" + featureOptions.map(o => `• ${o.label}`).join("<br>");
                          }
+
+                         // Calculate Stats for the current value in preview
+                         damageStats = this._calculateDamageStats(currentVal);
                     }
 
                     const isMinionFeature = f.type === 'name_minion';
@@ -455,17 +483,23 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         if (match) minionValue = match[1];
                     }
 
+                    // Find Item Icon/UUID
+                    const itemData = await this._findFeatureItem(f.itemName);
+
                     return {
                         itemId: f.itemId,
                         originalName: displayFrom,
                         newName: overrideVal !== undefined ? overrideVal : f.to,
                         isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion', 
-                        options: featureOptions, // Still pass options if we check for existence
-                        optionsTooltip: optionsTooltip, // New Tooltip Data
+                        options: featureOptions, 
+                        optionsTooltip: optionsTooltip,
                         isMinionFeature: isMinionFeature,
-                        minionValue: minionValue
+                        minionValue: minionValue,
+                        img: itemData.img,
+                        uuid: itemData.uuid,
+                        stats: damageStats // Stats string
                     };
-                });
+                }));
             }
         }
 
@@ -550,9 +584,68 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         html.querySelectorAll('.feature-checkbox').forEach(input => {
             input.addEventListener('change', (e) => this._onFeatureCheckboxChange(e, input));
         });
+        
+        // Experience Handlers
+        html.querySelectorAll('.exp-name-input').forEach(input => {
+            input.addEventListener('change', (e) => this._onExpNameChange(e, input));
+        });
+        html.querySelectorAll('.exp-mod-select').forEach(input => {
+            input.addEventListener('change', (e) => this._onExpModChange(e, input));
+        });
     }
 
     // --- Action Handlers ---
+
+    _onExpNameChange(event, target) {
+        const id = target.dataset.id;
+        if (!this.overrides.experiences[id]) this.overrides.experiences[id] = {};
+        this.overrides.experiences[id].name = target.value;
+        this.render();
+    }
+
+    _onExpModChange(event, target) {
+        const id = target.dataset.id;
+        if (!this.overrides.experiences[id]) this.overrides.experiences[id] = {};
+        this.overrides.experiences[id].value = parseInt(target.value);
+        this.render();
+    }
+
+    _onDeleteExperience(event, target) {
+        const id = target.dataset.id;
+        if (!this.overrides.experiences[id]) this.overrides.experiences[id] = {};
+        this.overrides.experiences[id].deleted = true;
+        this.render();
+    }
+
+    _onAddExperience(event, target) {
+        const newId = "new_" + foundry.utils.randomID();
+        if (!this.overrides.experiences[newId]) this.overrides.experiences[newId] = {};
+        this.overrides.experiences[newId].name = "New Experience";
+        this.overrides.experiences[newId].value = 2; // Default starting value
+        this.render();
+    }
+
+    _onResetDamageBonus(event, target) {
+        const input = target.previousElementSibling; 
+        if (!input || !input.classList.contains('feature-damage-input')) return;
+        
+        let value = input.value;
+        // Strip trailing bonus (e.g., +5, -2) from the end
+        // Regex looks for optional space, + or -, optional space, digits, end of string
+        value = value.replace(/\s*[+-]\s*\d+$/, "");
+        
+        // Update input visually
+        input.value = value;
+        
+        // Trigger update
+        const itemId = input.dataset.itemid;
+        if (itemId) {
+             if (!this.overrides.features) this.overrides.features = { names: {}, damage: {} };
+             if (!this.overrides.features.damage) this.overrides.features.damage = {};
+             this.overrides.features.damage[itemId] = value;
+             this.render();
+        }
+    }
 
     async _onOpenFeature(event, target) {
         event.preventDefault();
@@ -634,22 +727,55 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.render();
     }
 
+    _calculateDamageStats(formula) {
+        if (!formula) return "";
+        const parsed = Manager.parseDamageString(formula);
+        if (!parsed) return "";
+
+        let min, max, mean;
+
+        if (parsed.die === null) {
+            // Fixed damage (e.g., "5")
+            // parseDamageString returns { count: 5, die: null, bonus: 0 } if regex matches number
+            let val = parsed.count;
+            min = val;
+            max = val;
+            mean = val;
+        } else {
+            // Dice damage (e.g., "1d8+2")
+            const faces = parseInt(parsed.die.replace('d', ''));
+            const count = parsed.count;
+            const bonus = parsed.bonus;
+
+            min = (count * 1) + bonus;
+            max = (count * faces) + bonus;
+            const avg = (count * ((faces + 1) / 2)) + bonus;
+            mean = Math.ceil(avg);
+        }
+
+        return `(Min: ${min}, Mean: ${mean}, Max: ${max})`;
+    }
+
     _extractStats(actorData, tier) {
         const sys = actorData.system;
         const damageParts = [];
         const halvedParts = []; 
+        let firstDamageFormula = null;
+        let firstHalvedFormula = null;
         
         if (sys.attack?.damage?.parts) {
-            sys.attack.damage.parts.forEach(p => {
+            sys.attack.damage.parts.forEach((p, idx) => {
                 if(p.value) {
                     let formula = p.value.custom?.enabled ? p.value.custom.formula : 
                         (p.value.dice ? `${p.value.flatMultiplier || 1}${p.value.dice}${p.value.bonus ? (p.value.bonus > 0 ? '+'+p.value.bonus : p.value.bonus) : ''}` : p.value.flatMultiplier);
                     damageParts.push(formula);
+                    if (idx === 0) firstDamageFormula = formula;
                 }
                 if (p.valueAlt) {
                     let formula = p.valueAlt.custom?.enabled ? p.valueAlt.custom.formula : 
                         (p.valueAlt.dice ? `${p.valueAlt.flatMultiplier || 1}${p.valueAlt.dice}${p.valueAlt.bonus ? (p.valueAlt.bonus > 0 ? '+'+p.valueAlt.bonus : p.valueAlt.bonus) : ''}` : p.valueAlt.flatMultiplier);
                     halvedParts.push(formula);
+                    if (idx === 0) firstHalvedFormula = formula;
                 }
             });
         }
@@ -659,6 +785,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const difficulty = Number(sys.difficulty) || 0;
         const hitChanceAgainst = Manager.calculateHitChanceAgainst(difficulty, tier);
 
+        const experiences = sys.experiences || {};
+        const expList = [];
+        for (const k in experiences) {
+             const val = Number(experiences[k].value) || 0;
+             const sign = val >= 0 ? "+" : "";
+             expList.push({
+                 name: experiences[k].name,
+                 value: `${sign}${val}`
+             });
+        }
+
         return {
             tier,
             difficulty: sys.difficulty,
@@ -667,9 +804,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             thresholds: `${sys.damageThresholds?.major} / ${sys.damageThresholds?.severe}`,
             attackMod: sys.attack?.roll?.bonus,
             damage: damageParts.join(", ") || "None",
+            damageStats: this._calculateDamageStats(firstDamageFormula), // Stats for current
             halvedDamage: halvedParts.join(", ") || null,
+            halvedDamageStats: this._calculateDamageStats(firstHalvedFormula), // Stats for current
             hitChance: hitChance,
-            hitChanceAgainst: hitChanceAgainst
+            hitChanceAgainst: hitChanceAgainst,
+            experiences: expList
         };
     }
 
@@ -693,6 +833,60 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (minPair && maxPair) {
                 sim.majorRaw = Math.floor(Math.random() * (maxPair.major - minPair.major + 1)) + minPair.major;
                 sim.severeRaw = Math.floor(Math.random() * (maxPair.severe - minPair.severe + 1)) + minPair.severe;
+            }
+        }
+
+        // --- Experience Simulation ---
+        sim.previewExperiences = [];
+        if (benchmark.experiences) {
+            // Base Target Mod for this Tier
+            const autoMod = Manager.getRollFromSignedRange(benchmark.experiences.modifier);
+            
+            // Capture suggested ranges for tooltip
+            sim.expAmountRange = benchmark.experiences.amount;
+            sim.expModRange = benchmark.experiences.modifier;
+
+            // Current Experiences
+            const currentExpMap = actorData.system.experiences || {};
+            
+            // Build the preview list
+            // 1. Existing experiences (respect deletions and updates)
+            for (const [key, exp] of Object.entries(currentExpMap)) {
+                const override = this.overrides.experiences[key];
+                
+                // Skip if deleted
+                if (override && override.deleted) continue;
+                
+                let finalVal = autoMod; // Default to scaling to new tier logic
+                let finalName = exp.name;
+                
+                // If override exists, take precedence
+                if (override) {
+                    if (override.value !== undefined) finalVal = override.value;
+                    if (override.name !== undefined) finalName = override.name;
+                }
+
+                sim.previewExperiences.push({
+                    id: key,
+                    name: finalName,
+                    value: finalVal,
+                    options: [2, 3, 4, 5].map(v => ({ value: v, label: `+${v}`, selected: v === finalVal }))
+                });
+            }
+
+            // 2. New Additions from Overrides
+            for (const [key, data] of Object.entries(this.overrides.experiences)) {
+                // If key is not in currentMap, it is new
+                if (!currentExpMap[key] && !data.deleted) {
+                     const val = data.value !== undefined ? data.value : autoMod;
+                     sim.previewExperiences.push({
+                        id: key,
+                        name: data.name || "New Experience",
+                        value: val,
+                        isNew: true,
+                        options: [2, 3, 4, 5].map(v => ({ value: v, label: `+${v}`, selected: v === val }))
+                     });
+                }
             }
         }
 
@@ -773,9 +967,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             });
         }
         sim.damage = damageParts.join(", ") || "None";
+        sim.damageStats = this._calculateDamageStats(mainDamageRaw); // Stats for Preview
+
         sim.mainDamageRaw = mainDamageRaw;
         
         sim.halvedDamage = halvedParts.join(", ") || null;
+        sim.halvedDamageStats = this._calculateDamageStats(mainHalvedDamageRaw); // Stats for Preview
+
         sim.mainHalvedDamageRaw = mainHalvedDamageRaw;
 
         const featureLog = [];
@@ -880,7 +1078,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.stopPropagation();
         this.source = target.value;
         this.selectedActorId = null;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} }; 
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
         this.render();
     }
@@ -904,7 +1102,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.preventDefault();
         event.stopPropagation();
         this.selectedActorId = target.value;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} }; 
         const actor = await this._getActor(this.selectedActorId);
         if (actor) {
             this.targetTier = Number(actor.system.tier) || 1;
@@ -916,7 +1114,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const tier = Number(target.dataset.tier);
         if (tier) {
             this.targetTier = tier;
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null }; 
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} }; 
             this.render();
         }
     }
@@ -957,7 +1155,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const typeKey = (actor.system.type || "standard").toLowerCase();
             this.filterType = typeKey; 
 
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null };
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} };
 
             this.render();
 
