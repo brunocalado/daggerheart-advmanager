@@ -1388,3 +1388,11 @@
     opacity: 1;
     filter: drop-shadow(0 0 5px rgba(234, 128, 252, 0.5));
 }
+
+/* New Rule for Header Row Layout */
+.eb-header-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+}

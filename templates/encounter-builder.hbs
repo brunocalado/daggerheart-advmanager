@@ -79,7 +79,7 @@
                                 {{/if}}
                                 <span class="badge-tier small" style="margin-left:5px;">T{{this.tier}}</span>
                                 
-                                <!-- NEW: Special Features Display (Left) -->
+                                <!-- Special Features Display (Left) -->
                                 {{#each this.specialFeatures}}
                                     <span class="feature-tag">{{this}}</span>
                                 {{/each}}
@@ -142,8 +142,10 @@
             </div>
 
             <!-- BP Header + Synergy Grid Wrapper -->
-            <div class="eb-header-row">
-                <!-- BP Calculation Header (High Contrast) -->
+            <!-- The flex container ensures items are side-by-side -->
+            <div class="eb-header-row" style="display: flex; gap: 10px;">
+                
+                <!-- 1. BP Calculation Header -->
                 <div class="eb-bp-header">
                     <div class="bp-stat">
                         <span class="bp-label">Budget Limit</span>
@@ -163,7 +165,7 @@
                     </div>
                 </div>
 
-                <!-- Synergy/Feature Icons Grid (20% Width) -->
+                <!-- 2. Synergy/Feature Icons Grid (20% Width) -->
                 <div class="eb-synergy-grid">
                     <div class="synergy-item {{#if synergy.summoner}}active{{/if}}" data-tooltip="There are adversaries capable of summoning other adversaries.">
                         <img src="icons/environment/people/charge.webp" class="synergy-icon">
@@ -178,7 +180,8 @@
                         <img src="icons/magic/unholy/silhouette-evil-horned-giant.webp" class="synergy-icon">
                     </div>
                 </div>
-            </div>
+
+            </div> <!-- End of eb-header-row -->
 
             <!-- Modifiers List (Grid 2 Cols) -->
             <div class="eb-modifiers-list">
