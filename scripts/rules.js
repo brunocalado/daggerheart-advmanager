@@ -668,9 +668,9 @@ export const ADVERSARY_BENCHMARKS = {
           "1d8+1"
         ],
         "suggested_features": [
-          "Advanced Pack Tactics",
-          "Momentum",
-          "Terrifying"
+          "Acidic Form",
+          "Cloaked",
+          "Momentum"
         ],
         "experiences": {
           "amount": "0/1",
@@ -690,12 +690,13 @@ export const ADVERSARY_BENCHMARKS = {
           "2d8+1"
         ],
         "suggested_features": [
-          "Slippery",
-          "Fear Is Fuel",
-          "Advanced Pack Tactics",
+          "Acidic Form",
+          "Cloaked",
           "Momentum",
-          "Terrifying",
-          "Sudden Lunge"
+          "Sudden Lunge",
+          "Fumigation",
+          "Grindletooth Venom",
+          "Shadow's Embrace"
         ],
         "experiences": {
           "amount": "0/2",
@@ -715,12 +716,18 @@ export const ADVERSARY_BENCHMARKS = {
           "3d8+3"
         ],
         "suggested_features": [
-          "Slippery",
-          "Fear Is Fuel",
-          "Advanced Pack Tactics",
+          "Acidic Form",
+          "Cloaked",
           "Momentum",
+          "Sudden Lunge",
+          "Fumigation",
+          "Grindletooth Venom",
+          "Shadow's Embrace",
           "Terrifying",
-          "Sudden Lunge"
+          "Depths of Despair",
+          "Flying",
+          "Your Friends Will Fail You",
+          "Your Struggle is Pointless"
         ],
         "experiences": {
           "amount": "0/2",
@@ -740,12 +747,18 @@ export const ADVERSARY_BENCHMARKS = {
           "4d10+6"
         ],
         "suggested_features": [
-          "Slippery",
-          "Fear Is Fuel",
-          "Advanced Pack Tactics",
+          "Acidic Form",
+          "Cloaked",
           "Momentum",
+          "Sudden Lunge",
+          "Fumigation",
+          "Grindletooth Venom",
+          "Shadow's Embrace",
           "Terrifying",
-          "Sudden Lunge"
+          "Depths of Despair",
+          "Flying",
+          "Your Friends Will Fail You",
+          "Your Struggle is Pointless"
         ],
         "experiences": {
           "amount": "0/2",
@@ -792,8 +805,15 @@ export const ADVERSARY_BENCHMARKS = {
           "1d20"
         ],
         "suggested_features": [
+          "Momentum",
+          "All Must fall",
+          "Arcane Form",
+          "Bone Breaker",
+          "Magical Reflection",
+          "Ramp Up",
           "Relentless (2)",
-          "Momentum"
+          "Relentless (3)",
+          "Sickening Flux"
         ],
         "experiences": {
           "amount": "0/2",
@@ -813,11 +833,20 @@ export const ADVERSARY_BENCHMARKS = {
           "2d20"
         ],
         "suggested_features": [
-          "Fear Is Fuel",
-          "Adrenaline Burst",
-          "Relentless (2)",
           "Momentum",
-          "Sudden Lunge"
+          "All Must fall",
+          "Arcane Form",
+          "Bone Breaker",
+          "Magical Reflection",
+          "Ramp Up",
+          "Relentless (2)",
+          "Relentless (3)",
+          "Sickening Flux",
+          "Mind Dance",
+          "Peerless Accuracy",
+          "Shocking Gas",
+          "Stunning Clap",
+          "Sunsear Arrows"
         ],
         "experiences": {
           "amount": "1/2",
@@ -837,11 +866,26 @@ export const ADVERSARY_BENCHMARKS = {
           "3d20"
         ],
         "suggested_features": [
-          "Fear Is Fuel",
-          "Adrenaline Burst",
-          "Relentless (3)",
           "Momentum",
-          "Sudden Lunge"
+          "All Must fall",
+          "Arcane Form",
+          "Bone Breaker",
+          "Magical Reflection",
+          "Ramp Up",
+          "Relentless (3)",
+          "Relentless (4)",
+          "Sickening Flux",
+          "Mind Dance",
+          "Peerless Accuracy",
+          "Shocking Gas",
+          "Stunning Clap",
+          "Sunsear Arrows",
+          "Deadly Flight",
+          "Never Misses",
+          "No Hope",
+          "Rend and Crush",
+          "Terrifying Chorus",
+          "Uncanny Reflexes"
         ],
         "experiences": {
           "amount": "1/3",
@@ -861,11 +905,37 @@ export const ADVERSARY_BENCHMARKS = {
           "4d12+12"
         ],
         "suggested_features": [
-          "Fear Is Fuel",
-          "Adrenaline Burst",
-          "Relentless (4)",
           "Momentum",
-          "Sudden Lunge"
+          "All Must fall",
+          "Arcane Form",
+          "Bone Breaker",
+          "Magical Reflection",
+          "Ramp Up",
+          "Relentless (3)",
+          "Relentless (4)",
+          "Sickening Flux",
+          "Mind Dance",
+          "Peerless Accuracy",
+          "Shocking Gas",
+          "Stunning Clap",
+          "Sunsear Arrows",
+          "Deadly Flight",
+          "Never Misses",
+          "No Hope",
+          "Rend and Crush",
+          "Terrifying Chorus",
+          "Uncanny Reflexes",
+          "Ashes to Ashes",
+          "Cornered",
+          "Cracked Scales",
+          "Doombringer",
+          "Faltering Armor",
+          "Firespite Plate Armor",
+          "Flying",
+          "Obsidian Scales",
+          "Ominous Knowledge",
+          "Terrifying",
+          "Walls Closing In"
         ],
         "experiences": {
           "amount": "1/3",
@@ -905,10 +975,12 @@ export const ADVERSARY_BENCHMARKS = {
           "1d6+1"
         ],
         "suggested_features": [
-          "Move as a Unit",
-          "Rally",
-          "Reinforcements",
-          "Tactician"
+          "Exile",
+          "Mockery",
+          "My Land, My Rules",
+          "Preferential Treatment",
+          "Scapegoat",
+          "The Runaround"
         ],
         "experiences": {
           "amount": "1/2",
@@ -928,10 +1000,20 @@ export const ADVERSARY_BENCHMARKS = {
           "2d6+3"
         ],
         "suggested_features": [
-          "Move as a Unit",
-          "Rally",
-          "Reinforcements",
-          "Tactician"
+          "Exile",
+          "Mockery",
+          "My Land, My Rules",
+          "Preferential Treatment",
+          "Scapegoat",
+          "The Runaround",
+          "Bend Ears",
+          "Devastating Retort",
+          "Everyone Has a Price",
+          "Fly on the Wall",
+          "Gathering Secrets",
+          "Scapegoat",
+          "Searing Glance",
+          "The Best Muscle Money Can Buy"
         ],
         "experiences": {
           "amount": "1/3",
@@ -951,10 +1033,22 @@ export const ADVERSARY_BENCHMARKS = {
           "3d6+3"
         ],
         "suggested_features": [
-          "Move as a Unit",
-          "Rally",
-          "Reinforcements",
-          "Tactician"
+          "Exile",
+          "Mockery",
+          "My Land, My Rules",
+          "Preferential Treatment",
+          "Scapegoat",
+          "The Runaround",
+          "Bend Ears",
+          "Devastating Retort",
+          "Everyone Has a Price",
+          "Fly on the Wall",
+          "Gathering Secrets",
+          "Scapegoat",
+          "Searing Glance",
+          "The Best Muscle Money Can Buy",
+          "Crownsguard",
+          "Execute Them"
         ],
         "experiences": {
           "amount": "1/3",
@@ -974,10 +1068,22 @@ export const ADVERSARY_BENCHMARKS = {
           "4d6+4"
         ],
         "suggested_features": [
-          "Move as a Unit",
-          "Rally",
-          "Reinforcements",
-          "Tactician"
+          "Exile",
+          "Mockery",
+          "My Land, My Rules",
+          "Preferential Treatment",
+          "Scapegoat",
+          "The Runaround",
+          "Bend Ears",
+          "Devastating Retort",
+          "Everyone Has a Price",
+          "Fly on the Wall",
+          "Gathering Secrets",
+          "Scapegoat",
+          "Searing Glance",
+          "The Best Muscle Money Can Buy",
+          "Crownsguard",
+          "Execute Them"
         ],
         "experiences": {
           "amount": "2/4",
@@ -1014,9 +1120,15 @@ export const ADVERSARY_BENCHMARKS = {
           "1d8+1"
         ],
         "suggested_features": [
-          "Too Many to Handle",
+          "Armor-Shredding Shards",
+          "Blend In",
+          "Climber",
+          "Detain",
+          "Horrifying",
+          "Maintain Distance",
           "Only Bones",
-          "Maintain Distance"
+          "Too Many to Handle",
+          "Won't Stay Dead"
         ],
         "experiences": {
           "amount": "0/1",
@@ -1036,9 +1148,18 @@ export const ADVERSARY_BENCHMARKS = {
           "2d8+2"
         ],
         "suggested_features": [
-          "Too Many to Handle",
+          "Armor-Shredding Shards",
+          "Blend In",
+          "Climber",
+          "Detain",
+          "Horrifying",
+          "Maintain Distance",
           "Only Bones",
-          "Maintain Distance"
+          "Too Many to Handle",
+          "Won't Stay Dead",
+          "Lurching Lunge",
+          "Overwhelm",
+          "Warped Fortitude"
         ],
         "experiences": {
           "amount": "1/2",
@@ -1059,9 +1180,19 @@ export const ADVERSARY_BENCHMARKS = {
           "3d12+2"
         ],
         "suggested_features": [
-          "Too Many to Handle",
+          "Armor-Shredding Shards",
+          "Blend In",
+          "Climber",
+          "Detain",
+          "Horrifying",
+          "Maintain Distance",
           "Only Bones",
-          "Maintain Distance"
+          "Too Many to Handle",
+          "Won't Stay Dead",
+          "Lurching Lunge",
+          "Overwhelm",
+          "Warped Fortitude",
+          "Mistform"
         ],
         "experiences": {
           "amount": "1/2",
@@ -1082,9 +1213,19 @@ export const ADVERSARY_BENCHMARKS = {
           "4d10+2"
         ],
         "suggested_features": [
-          "Too Many to Handle",
+          "Armor-Shredding Shards",
+          "Blend In",
+          "Climber",
+          "Detain",
+          "Horrifying",
+          "Maintain Distance",
           "Only Bones",
-          "Maintain Distance"
+          "Too Many to Handle",
+          "Won't Stay Dead",
+          "Lurching Lunge",
+          "Overwhelm",
+          "Warped Fortitude",
+          "Mistform"
         ],
         "experiences": {
           "amount": "1/2",
@@ -1125,7 +1266,9 @@ export const ADVERSARY_BENCHMARKS = {
           "1d6+2",
           "1d8"
         ],
-        "suggested_features": "",
+        "suggested_features": [
+          "Curse"
+        ],
         "experiences": {
           "amount": "1/2",
           "modifier": "+2/+3"
@@ -1145,7 +1288,9 @@ export const ADVERSARY_BENCHMARKS = {
         ],
         "suggested_features": [
           "Fear Is Fuel",
-          "Enervating Blast"
+          "Enervating Blast",
+          "Curse",
+          "Shroud of the Fallen"
         ],
         "experiences": {
           "amount": "2/3",
@@ -1167,7 +1312,10 @@ export const ADVERSARY_BENCHMARKS = {
         "suggested_features": [
           "Fear Is Fuel",
           "Enervating Blast",
-          "High Tide"
+          "Curse",
+          "Shroud of the Fallen",
+          "High Tide",
+          "Lock Up"
         ],
         "experiences": {
           "amount": "2/3",
@@ -1189,8 +1337,14 @@ export const ADVERSARY_BENCHMARKS = {
         "suggested_features": [
           "Fear Is Fuel",
           "Enervating Blast",
+          "Curse",
+          "Shroud of the Fallen",
           "High Tide",
-          "Slippery"
+          "Lock Up",
+          "Disgorge Realiy Flotsam",
+          "Nightmare Tableau",
+          "Slippery",
+          "Will-Shattering Touch"
         ],
         "experiences": {
           "amount": "2/3",

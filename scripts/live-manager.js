@@ -465,6 +465,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
                 
                 // --- PROCESS SUGGESTED FEATURES FOR UI ---
+                // MODIFIED: Use the merged and sorted list from simulateStats
                 const rawSuggested = simResult.suggestedFeatures;
                 
                 // Enrich with Image and UUID
@@ -474,7 +475,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     const typeLabel = this._getFeatureTypeLabel(itemData.type);
                     allSuggestedFeatures.push({
                         name: feat.name,
-                        checked: feat.checked,
+                        checked: feat.checked, // This is now correctly set by simulateStats logic
                         img: itemData.img,
                         uuid: itemData.uuid,
                         typeLabel: typeLabel
@@ -792,7 +793,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     _onChangeSuggestedType(event, target) {
         event.preventDefault();
         this.overrides.suggestedFeaturesType = target.value;
-        this.overrides.suggestedFeatures = null; 
+        // REMOVED: this.overrides.suggestedFeatures = null; // Keeps selection
         this.render();
     }
 
@@ -1307,29 +1308,51 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         // 2. Filter out already owned features to avoid duplicates
-        const validCandidates = possibleFeatures.filter(name => !allItems.some(i => i.name === name));
+        // Helper to check ownership
+        const isOwned = (name) => allItems.some(i => i.name === name);
 
         // 3. Initialize default selection if null (random pick)
         if (this.overrides.suggestedFeatures === null) {
             this.overrides.suggestedFeatures = [];
-            if (validCandidates.length > 0) {
-                 // Pick one random one to start
-                 const picked = validCandidates[Math.floor(Math.random() * validCandidates.length)];
+            // Pick one random from POSSIBLE list
+            const candidates = possibleFeatures.filter(name => !isOwned(name));
+            if (candidates.length > 0) {
+                 const picked = candidates[Math.floor(Math.random() * candidates.length)];
                  this.overrides.suggestedFeatures.push(picked);
             }
         }
 
-        // 4. Map to UI Objects with checked state
-        const suggestedFeatures = validCandidates.map(name => ({
-            name: name,
-            checked: this.overrides.suggestedFeatures.includes(name)
-        }));
+        // 4. Construct Final UI List: Selected (Top) + Current Type Options (Bottom)
+        const uiList = [];
+        const addedSet = new Set();
+
+        // A. Add Selected Features (Checked) - Persist from overrides
+        for (const name of this.overrides.suggestedFeatures) {
+            if (!isOwned(name)) {
+                uiList.push({
+                    name: name,
+                    checked: true
+                });
+                addedSet.add(name);
+            }
+        }
+
+        // B. Add Remaining Options from Current Type (Unchecked)
+        for (const name of possibleFeatures) {
+            if (!isOwned(name) && !addedSet.has(name)) {
+                uiList.push({
+                    name: name,
+                    checked: false
+                });
+                addedSet.add(name);
+            }
+        }
 
         return { 
             stats: sim, 
             features: featureLog, 
             structuredFeatures: structuredFeatures,
-            suggestedFeatures: suggestedFeatures // Return the UI list
+            suggestedFeatures: uiList // Use the merged list
         };
     }
 }
