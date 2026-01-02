@@ -2,10 +2,9 @@
     
     <!-- Top Control: Actor Selection & Filter -->
     <div class="preview-controls form-group">
-        
+        <!-- ... (existing top controls) ... -->
         <div class="actor-selection-row">
             
-            <!-- Source Selector -->
             <div class="select-wrapper source-wrapper">
                 <select name="source" class="source-select">
                     {{#each sourceOptions}}
@@ -15,12 +14,10 @@
                 <i class="fas fa-database select-arrow"></i>
             </div>
 
-            <!-- Settings Button -->
             <button type="button" data-action="openSettings" class="settings-btn" title="Manage Compendiums">
                 <i class="fas fa-cog"></i>
             </button>
 
-            <!-- Filter by Tier -->
             <div class="select-wrapper filter-wrapper small-filter">
                 <select name="filterTier" class="filter-tier-select">
                     {{#each filterOptions}}
@@ -30,7 +27,6 @@
                 <i class="fas fa-filter select-arrow"></i>
             </div>
 
-            <!-- Filter by Type -->
             <div class="select-wrapper filter-wrapper small-filter">
                 <select name="filterType" class="filter-type-select">
                     {{#each typeOptions}}
@@ -40,7 +36,6 @@
                 <i class="fas fa-paw select-arrow"></i>
             </div>
 
-            <!-- Main Actor Selector -->
             <div class="select-wrapper actor-wrapper">
                 <select name="actorSelect" class="main-actor-select">
                     <option value="" disabled {{#unless selectedActorId}}selected{{/unless}}>-- Choose an Adversary --</option>
@@ -51,12 +46,10 @@
                 <i class="fas fa-chevron-down select-arrow"></i>
             </div>
 
-            <!-- Stats Button -->
             <button type="button" data-action="openStats" class="settings-btn" title="Compendium Stats">
                 <i class="fas fa-chart-pie"></i>
             </button>
 
-            <!-- Dice Probability Button -->
             <button type="button" data-action="openDiceProb" class="settings-btn" title="Dice Probability">
                 <i class="fas fa-dice-d20"></i>
             </button>
@@ -94,6 +87,7 @@
                 {{/if}}
             </h3>
             
+            <!-- Current Stats (Difficulty, HP, etc) -->
             <div class="stat-row">
                 <span class="stat-label">Difficulty</span>
                 <span class="stat-value">
@@ -127,7 +121,6 @@
 
             <div class="stat-group">
                 <span class="stat-label">Attack Damage</span>
-                <!-- Removed display:block from span to keep stats on same line -->
                 <div class="stat-block">{{currentStats.damage}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{currentStats.damageStats}}</span></div>
             </div>
             
@@ -135,17 +128,14 @@
                 {{#if currentStats.halvedDamage}}
                 <div class="stat-group">
                     <span class="stat-label">Halved Damage (Horde)</span>
-                    <!-- Removed display:block from span to keep stats on same line -->
                     <div class="stat-block">{{currentStats.halvedDamage}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{currentStats.halvedDamageStats}}</span></div>
                 </div>
                 {{/if}}
             {{/if}}
 
-            <!-- CURRENT EXPERIENCES -->
             {{#if currentStats.experiences.length}}
                 <div class="stat-group">
                     <span class="stat-label">Experiences</span>
-                    <!-- Added height:auto and white-space:normal to allow wrapping without excessive spacing -->
                     <div class="stat-block" style="height: auto; white-space: normal;">
                         {{#each currentStats.experiences}}
                             {{this.name}} {{this.value}}{{#unless @last}}, {{/unless}}
@@ -154,20 +144,16 @@
                 </div>
             {{/if}}
             
-            <!-- NEW: Actor Name Header with Type -->
-            <!-- Applied inline style to override margin-top: auto from CSS -->
             <div class="actor-preview-name" style="margin-top: 15px;">
                 {{actorName}} ({{actorTypeLabel}})
             </div>
 
-            <!-- PORTRAIT DISPLAY SECTION -->
             {{#if portraitImg}}
             <div class="portrait-display-wrapper">
                 <div class="portrait-display" data-action="openSheet">
                     <img src="{{portraitImg}}" alt="{{actorName}}" class="actor-portrait">
                 </div>
             </div>
-            <!-- New Text -->
             <div class="preview-note" style="margin-top: 5px;">
                 <i class="fas fa-external-link-alt"></i> Click image to open sheet
             </div>
@@ -182,6 +168,7 @@
             {{#if previewStats.error}}
                 <div class="error-msg">{{previewStats.error}}</div>
             {{else}}
+                <!-- Preview Inputs (Difficulty, HP, etc) -->
                 <div class="stat-row">
                     <span class="stat-label">Difficulty</span>
                     <div class="stat-input-group">
@@ -213,7 +200,6 @@
                     <div class="stat-input-group dual-input">
                         <span class="stat-value-hint">{{{previewStats.thresholdsDisplay}}}</span>
                         {{#if previewStats.isMinion}}
-                            <!-- Hidden or disabled -->
                         {{else}}
                             <input type="number" class="override-input small" data-field="major" value="{{previewStats.major}}" placeholder="Maj" title="Major">
                             /
@@ -242,7 +228,6 @@
                             <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
-                    <!-- Removed display:block from span to keep stats on same line -->
                     <div class="stat-block">{{{previewStats.damage}}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{previewStats.damageStats}}</span></div>
                 </div>
 
@@ -255,7 +240,6 @@
                             <input type="text" class="override-input" data-field="halvedDamageFormula" value="{{previewStats.mainHalvedDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
-                    <!-- Removed display:block from span to keep stats on same line -->
                     <div class="stat-block">{{{previewStats.halvedDamage}}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{previewStats.halvedDamageStats}}</span></div>
                 </div>
                 {{/if}}
@@ -273,6 +257,12 @@
                         {{#each previewStats.experiences}}
                             <div class="exp-item-preview {{#if this.isNew}}exp-new{{/if}}" style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
                                 <input type="text" class="exp-name-input" data-id="{{this.id}}" value="{{this.name}}" placeholder="Exp Name" style="flex: 1; min-width: 0;">
+                                
+                                <!-- NEW DICE BUTTON FOR EXPERIENCES -->
+                                <button type="button" data-action="rollExperienceName" data-id="{{this.id}}" class="roll-btn-small" title="Roll Random Name" style="flex: 0 0 28px; height: 28px; border: 1px solid #555; background: #333; color: #ea80fc; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px;">
+                                    <i class="fas fa-dice"></i>
+                                </button>
+
                                 <select class="exp-mod-select" data-id="{{this.id}}" style="flex: 0 0 60px;">
                                     {{#each this.options}}
                                         <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
@@ -291,8 +281,6 @@
                         <div class="feature-changes-list">
                             {{#each featurePreviewData}}
                                 <div class="feature-change-row" style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">
-                                    
-                                    <!-- LEFT: Label + Icon -->
                                     <div class="feature-label" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 5px;">
                                         {{#if this.img}}
                                             <a class="feature-icon-link" data-action="openFeature" data-uuid="{{this.uuid}}" title="Open Item" style="flex-shrink: 0;">
@@ -300,42 +288,33 @@
                                             </a>
                                         {{/if}}
                                         <div style="overflow: hidden; text-overflow: ellipsis;">
-                                            {{this.typeLabel}} <!-- Added Type Label -->
+                                            {{this.typeLabel}} 
                                             {{{this.originalName}}} <i class="fas fa-arrow-right" style="font-size: 0.8em; opacity: 0.5; margin: 0 5px;"></i>
                                         </div>
                                     </div>
-                                    
-                                    <!-- CENTER: Stats -->
                                     {{#if this.stats}}
                                         <div class="feature-stats" style="font-size: 0.8em; color: #aaa; text-align: center; white-space: nowrap; margin: 0 5px;">
                                             {{this.stats}}
                                         </div>
                                     {{/if}}
-
-                                    <!-- RIGHT: Controls -->
                                     <div class="feature-control" style="flex: 0 0 auto; display: flex; align-items: center; gap: 5px;">
                                         {{#if this.isHordeFeature}}
-                                            <!-- Horde Specific: Read-only display without name prefix -->
                                             <div class="feature-input-group" style="justify-content: flex-end;">
                                                 <input type="text" class="feature-override-input" value="{{this.newName}}" disabled style="width: 80px; text-align: center; opacity: 0.7;">
                                             </div>
                                         {{else if this.options}}
-                                            <!-- Combobox for damage features -->
                                             <div class="feature-input-group" style="display: flex; align-items: center; gap: 2px;">
                                                 <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{this.optionsTooltip}}}"></i>
                                                 <input type="text" class="feature-override-input feature-damage-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" style="width: 80px;">
-                                                <!-- UPDATED RESET BUTTON: Fixed width/height to be perfectly square -->
                                                 <button type="button" data-action="resetDamageBonus" class="reset-btn-small" title="Remove Bonus" style="width: 28px; height: 28px; padding: 0; border: 1px solid #555; background: #333; color: #ccc; cursor: pointer; display: flex; align-items: center; justify-content: center; aspect-ratio: 1/1;">
                                                     <i class="fas fa-undo" style="font-size: 0.8em;"></i>
                                                 </button>
                                             </div>
                                         {{else if this.isMinionFeature}}
-                                            <!-- SPECIAL: Minion Numeric Input -->
                                             <div class="minion-group" style="display:flex; align-items:center; gap:2px; font-weight:bold; color:#ea80fc;">
                                                 Minion ( <input type="number" class="minion-val-input" data-itemid="{{this.itemId}}" value="{{this.minionValue}}"> )
                                             </div>
                                         {{else}}
-                                            <!-- Fallback to text input if renamed or static text -->
                                             {{#if this.isRenamed}}
                                                 <input type="text" class="feature-override-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" title="Rename Feature">
                                             {{else}}
@@ -351,16 +330,12 @@
                     {{/if}}
                 </div>
 
-                <!-- NEW FEATURES SECTION (CHECKBOXES WITH ICONS & LINKS) -->
+                <!-- NEW FEATURES SECTION -->
                 {{#if allSuggestedFeatures.length}}
                 <div class="features-preview-section">
-                    
-                    <!-- Updated Header with Controls -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <h4 class="features-header" style="color: #98fb98; margin: 0;">New Suggested Features</h4>
-                        
                         <div class="feature-header-controls" style="width: 180px;">
-                            <!-- REMOVED data-action to prevent immediate close on click -->
                             <select class="suggestion-type-select" style="font-size: 0.85em; height: 26px; width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid #555; color: #ea80fc; border-radius: 3px;">
                                 {{#each suggestedFeaturesTypeOptions}}
                                     <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
@@ -368,16 +343,14 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="feature-changes-list">
                         {{#each allSuggestedFeatures}}
                             <div class="feature-change-row new-feature-row">
                                 <label class="feature-label" style="cursor: pointer; display: flex; align-items: center; width: 100%;">
                                     <input type="checkbox" class="feature-checkbox" data-feature="{{this.name}}" {{#if this.checked}}checked{{/if}} style="margin-right: 8px;">
-                                    
                                     <a class="feature-link" data-action="openFeature" data-uuid="{{this.uuid}}">
                                         <img src="{{this.img}}" class="feature-icon-small" alt="{{this.name}}">
-                                        <strong style="color: #eee;">{{this.typeLabel}} {{this.name}}</strong> <!-- Added Type Label -->
+                                        <strong style="color: #eee;">{{this.typeLabel}} {{this.name}}</strong>
                                     </a>
                                 </label>
                             </div>
@@ -394,7 +367,6 @@
 
     </div>
 
-    <!-- Footer Action -->
     <footer class="sheet-footer">
         <button type="button" data-action="applyChanges" class="apply-btn">
             {{#if (eq linkData null)}}

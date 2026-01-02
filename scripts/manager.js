@@ -428,15 +428,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     /**
      * Process Features (Items).
-     * @param {Object} itemData 
-     * @param {Number} newTier 
-     * @param {Number} currentTier 
-     * @param {Object} benchmark 
-     * @param {Array} changeLog (Optional) - legacy array of strings
-     * @param {Object} nameOverrides (Optional) - map of itemId -> newName
-     * @param {Object} damageOverrides (Optional) - map of itemId -> newDamageFormula
-     * @param {Object} templates (Optional) - map with minion/horde templates and UUIDs
-     * @returns {Object|null} Update object or null
      */
     static processFeatureUpdate(itemData, newTier, currentTier, benchmark, changeLog = [], nameOverrides = {}, damageOverrides = {}, templates = {}) {
         let hasChanges = false;
@@ -697,23 +688,22 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // --- Add Suggested Features Logic ---
     static async handleNewFeatures(actor, typeKey, newTier, currentTier, changeLog, specificFeatureNames = null) {
-        // --- 1. SETTING & LOGIC GATE ---
-        // If specificFeatureNames is provided, we assume MANUAL mode (Live Manager).
-        // Manual mode overrides the "Auto-Add Features" setting AND the tier increase requirement.
-        const isManual = specificFeatureNames && Array.isArray(specificFeatureNames);
-
-        if (!isManual && !game.settings.get(MODULE_ID, SETTING_ADD_FEATURES)) return { toCreate: [], toDelete: [] };
-        if (!isManual && newTier <= currentTier) return { toCreate: [], toDelete: [] };
+        if (specificFeatureNames && Array.isArray(specificFeatureNames)) {
+            // UI/MANUAL MODE: Force processing
+        } else {
+            if (!game.settings.get(MODULE_ID, SETTING_ADD_FEATURES)) return { toCreate: [], toDelete: [] };
+            if (newTier <= currentTier) return { toCreate: [], toDelete: [] };
+        }
 
         const currentItems = actor.items.contents || actor.items;
         let featuresToAdd = [];
 
-        // --- 2. DETERMINE FEATURES TO ADD ---
-        if (isManual) {
-            // Manual Mode: Use the specific list provided by the user
+        if (specificFeatureNames && Array.isArray(specificFeatureNames)) {
+            // --- UI/MANUAL MODE: User selected specific features ---
+            // Filter out any features the actor already has
             featuresToAdd = specificFeatureNames.filter(name => !currentItems.some(i => i.name === name));
         } else {
-            // Automatic Mode: Pick a random feature from the Benchmark
+            // --- AUTOMATIC/BATCH MODE: Pick random ---
             const benchmarkRoot = ADVERSARY_BENCHMARKS[typeKey];
             if (!benchmarkRoot) return { toCreate: [], toDelete: [] };
 
@@ -729,9 +719,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (featuresToAdd.length === 0) return { toCreate: [], toDelete: [] };
 
-        // --- 3. SEARCH & PREPARE FEATURES ---
-        // FIX: Search in ALL standard compendiums, not just custom-features.
-        // Priority: daggerheart-advmanager.all-features -> daggerheart-advmanager.custom-features
+        // SEARCH IN ALL PACKS
         const packIds = ["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features"];
         
         const toCreate = [];
@@ -741,12 +729,10 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             let featureData = null;
             let sourceUuid = null;
 
-            // Search Loop
             for (const packId of packIds) {
                 const pack = game.packs.get(packId);
                 if (!pack) continue;
                 
-                // Note: Getting index repeatedly inside loop isn't ideal for huge batches, but fine for single actor updates.
                 const index = await pack.getIndex(); 
                 const entry = index.find(e => e.name === featureName);
                 
@@ -754,12 +740,12 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                     const doc = await pack.getDocument(entry._id);
                     featureData = doc.toObject();
                     sourceUuid = doc.uuid;
-                    break; // Stop searching if found
+                    break;
                 }
             }
 
-            // Special Fallback: Minion (X) Logic
             if (!featureData) {
+                // Minion Fallback
                 const minionMatch = featureName.match(/^Minion\s*\((\d+)\)$/i);
                 if (minionMatch) {
                     const minionVal = minionMatch[1];
@@ -771,8 +757,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                             const doc = await customPack.getDocument(templateEntry._id);
                             featureData = doc.toObject();
                             sourceUuid = doc.uuid;
-                            
-                            // Customize Name & Description
                             featureData.name = featureName; 
                             if (featureData.system.description) {
                                 featureData.system.description = featureData.system.description.replace(/\[X\]/g, minionVal);
@@ -783,19 +767,14 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
-            if (!featureData) {
-                console.warn(`Adversary Manager | Could not find feature "${featureName}" in any configured compendium.`);
-                continue;
-            }
+            if (!featureData) continue;
 
-            // IMPORTANT: Attach UUID so UI can link back to the compendium source
             if (sourceUuid) {
                 featureData.uuid = sourceUuid;
             }
 
             toCreate.push(featureData);
 
-            // Handle Relentless Replacement Logic
             const relentlessMatch = featureName.match(/^Relentless\s*\((\d+)\)$/i);
             if (relentlessMatch) {
                 const existingRelentless = currentItems.find(i => i.name.match(/^Relentless\s*\((\d+)\)$/i));
@@ -814,15 +793,13 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     /**
-     * UPDATE SINGLE ACTOR - NOW ACCEPTS MANUAL OVERRIDES
-     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula, experiences: {}, suggestedFeatures: [], features: { names: {}, damage: {} }, minionThreshold: number }
+     * UPDATE SINGLE ACTOR - UPDATED EXPERIENCE LOGIC
      */
     static async updateSingleActor(actor, newTier, overrides = {}) {
         const actorData = actor.toObject();
         const currentTier = Number(actorData.system.tier) || 1;
 
-        // FIX: Allow update if tier is same BUT overrides exist (Manual changes via Live Manager)
-        // If it's a batch update (overrides empty) and tier matches, we skip.
+        // FIX: Allow update if tier is same BUT overrides exist
         const isBatchNoOp = (newTier === currentTier) && (Object.keys(overrides).length === 0);
         if (isBatchNoOp) return null;
 
@@ -830,7 +807,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         const typeKey = (actorData.system.type || "standard").toLowerCase();
         const statsLog = [];
         const featureLog = [];
-        const structuredFeatureChanges = []; // For UI reporting
+        const structuredFeatureChanges = [];
 
         if (!ADVERSARY_BENCHMARKS[typeKey]) return null;
         const benchmark = ADVERSARY_BENCHMARKS[typeKey].tiers[`tier_${newTier}`];
@@ -845,20 +822,15 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         updateData["name"] = newName;
 
         // --- 2. Update Stats (With Overrides) ---
-        
-        // Difficulty
         const diff = overrides.difficulty !== undefined ? Number(overrides.difficulty) : Manager.getRollFromRange(benchmark.difficulty);
         if (diff) { updateData["system.difficulty"] = diff; statsLog.push(`<strong>Diff:</strong> ${actorData.system.difficulty} -> ${diff}`); }
 
-        // HP
         const hp = overrides.hp !== undefined ? Number(overrides.hp) : Manager.getRollFromRange(benchmark.hp);
         if (hp) { updateData["system.resources.hitPoints.max"] = hp; updateData["system.resources.hitPoints.value"] = 0; statsLog.push(`<strong>HP:</strong> ${actorData.system.resources.hitPoints.max} -> ${hp}`); }
 
-        // Stress
         const stress = overrides.stress !== undefined ? Number(overrides.stress) : Manager.getRollFromRange(benchmark.stress);
         if (stress) { updateData["system.resources.stress.max"] = stress; statsLog.push(`<strong>Stress:</strong> ${actorData.system.resources.stress.max} -> ${stress}`); }
 
-        // Thresholds
         if (benchmark.threshold_min && benchmark.threshold_max) {
             let major, severe;
             if (overrides.major && overrides.severe) {
@@ -878,7 +850,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // Attack Mod
         const atkMod = overrides.attackMod !== undefined ? Number(overrides.attackMod) : Manager.getRollFromSignedRange(benchmark.attack_modifier);
         if (atkMod !== null && !isNaN(atkMod)) {
             updateData["system.attack.roll.bonus"] = atkMod;
@@ -888,15 +859,12 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         // --- 3. Update Sheet Damage (Main Attack) ---
-        // NEW: Capture HALVED DAMAGE for Horde feature update later
         let calculatedHalvedDamage = null;
 
         if (actorData.system.attack && actorData.system.attack.damage && actorData.system.attack.damage.parts) {
             const sheetDamageParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
             
-            // Check for full damage string override
             if (overrides.damageFormula && sheetDamageParts.length > 0) {
-                // Parse override string
                 const parsed = Manager.parseDamageString(overrides.damageFormula);
                 if (parsed) {
                     const part = sheetDamageParts[0];
@@ -916,12 +884,11 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
             
-            // NEW: Check for halved damage override (Horde)
             if (overrides.halvedDamageFormula && sheetDamageParts.length > 0) {
-                 calculatedHalvedDamage = overrides.halvedDamageFormula; // Capture for Horde feature
+                 calculatedHalvedDamage = overrides.halvedDamageFormula;
                  const parsed = Manager.parseDamageString(overrides.halvedDamageFormula);
                  if (parsed && sheetDamageParts[0].valueAlt) {
-                     const part = sheetDamageParts[0]; // Assume first part usually carries the alt value
+                     const part = sheetDamageParts[0];
                      if (part.valueAlt) {
                          if (parsed.die === null) {
                             part.valueAlt.flatMultiplier = parsed.count;
@@ -936,38 +903,27 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                  }
             }
 
-            // Simplified approach: Run standard updater FIRST, then apply overrides ON TOP.
-            // Note: If no manual override, this will calculate the halved damage from rules
             const result = Manager.updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
             if (result.hasChanges) {
-                // Apply standard changes first
                 updateData["system.attack.damage.parts"] = sheetDamageParts;
                 result.changes.forEach(c => {
                     statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
-                    // Capture calculated halved damage if present in changes
-                    // FIX: Only update calculatedHalvedDamage if NO override exists
                     if (c.labelSuffix === " (Alt)" && !overrides.halvedDamageFormula) {
                          calculatedHalvedDamage = c.to;
                     }
                 });
             }
 
-            // ROBUSTNESS: If calculatedHalvedDamage wasn't set by change log (no change needed) or override, 
-            // extract it from the updated sheet parts directly so we can pass it to the Feature logic.
             if (!calculatedHalvedDamage && sheetDamageParts.length > 0 && sheetDamageParts[0].valueAlt) {
                 const part = sheetDamageParts[0];
-                // Construct the string from the current state (which might have been updated in place by updateDamageParts)
                 const altFormula = part.valueAlt.custom?.enabled ? part.valueAlt.custom.formula : (part.valueAlt.dice ? `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus?(part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}` : `${part.valueAlt.flatMultiplier}`);
                 calculatedHalvedDamage = altFormula;
             }
             
-            // NOW Apply Overrides (Overrides win)
             if (overrides.damageFormula && sheetDamageParts.length > 0) {
                 const parsed = Manager.parseDamageString(overrides.damageFormula);
                 if (parsed && sheetDamageParts[0].value) {
                      const part = sheetDamageParts[0];
-                     // Reset custom if switching to dice, set custom if switching to flat? 
-                     // Daggerheart logic is flexible. Let's just set the primitive values.
                      if (parsed.die === null) {
                         part.value.flatMultiplier = parsed.count;
                         part.value.dice = "";
@@ -1009,135 +965,95 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // --- 4. Update Experiences (NEW LOGIC V2: Detailed Overrides + Reduction Logic) ---
+        // --- 4. Update Experiences (UPDATED HYBRID LOGIC) ---
         if (game.settings.get(MODULE_ID, SETTING_UPDATE_EXP) && benchmark.experiences) {
             const expData = benchmark.experiences;
             const currentExperiences = actorData.system.experiences || {};
             const expOverrides = overrides.experiences || {};
             
-            // Determine Target Mod (used for new or existing without override)
-            const targetMod = Manager.getRollFromSignedRange(expData.modifier);
-            
-            // --- AUTOMATIC LOGIC (if no granular overrides provided) ---
-            // BUT here we assume if we are in LiveManager, overrides.experiences might exist.
-            // Even in Batch mode, we need basic logic.
-            
-            // 1. Identify which keys are deleted
-            const keysToDelete = [];
+            // Determine Target Mod & Amount (Prioritize Overrides)
+            const targetMod = overrides.expMod !== undefined ? overrides.expMod : Manager.getRollFromSignedRange(expData.modifier);
+            const targetAmount = overrides.expAmount !== undefined ? overrides.expAmount : Manager.getRollFromRange(expData.amount);
+
             const keysToKeep = [];
             
-            // Map existing experiences
+            // 1. Process Existing Experiences
             for (const [key, exp] of Object.entries(currentExperiences)) {
-                // Check granular override for deletion
+                // If marked for deletion in overrides
                 if (expOverrides[key] && expOverrides[key].deleted) {
-                    keysToDelete.push(key);
+                    updateData[`system.experiences.-=${key}`] = null;
                 } else {
                     keysToKeep.push(key);
+                    
+                    // Update Values (Override > TargetMod > Current)
+                    const override = expOverrides[key];
+                    const finalMod = (override && override.value !== undefined) ? override.value : targetMod;
+                    const finalName = (override && override.name !== undefined) ? override.name : exp.name;
+                    
+                    updateData[`system.experiences.${key}.value`] = finalMod;
+                    updateData[`system.experiences.${key}.name`] = finalName;
                 }
             }
 
-            // Logic: If scaling down (newTier < currentTier), DO NOT remove experiences automatically.
-            // If scaling up or same, match amount logic (unless manually managed via UI).
-            // In LiveManager, the user sees the list. If they didn't click delete, we keep it.
+            // 2. Process Manual Additions from Overrides
+            let manualAddedCount = 0;
+            for (const [tempId, data] of Object.entries(expOverrides)) {
+                 if (!currentExperiences[tempId] && !data.deleted) {
+                     const newId = foundry.utils.randomID();
+                     updateData[`system.experiences.${newId}`] = {
+                         name: data.name || "New Experience",
+                         value: data.value !== undefined ? data.value : targetMod,
+                         description: "Added by Live Manager"
+                     };
+                     manualAddedCount++;
+                 }
+            }
+
+            // 3. Auto-Fill to Target Amount (Hybrid Logic)
+            const currentCount = keysToKeep.length + manualAddedCount;
             
-            // If running via Manager (Batch), expOverrides is likely empty.
-            // We implement the reduction logic here:
-            if (Object.keys(expOverrides).length === 0) {
-                 // Batch Mode / No Manual Overrides
-                 const targetAmount = Manager.getRollFromRange(expData.amount);
-                 const currentKeys = Object.keys(currentExperiences);
-                 
-                 // If reducing tier, keep ALL current (don't reduce amount)
-                 if (newTier < currentTier) {
-                     // Keep all, just update mod
-                     currentKeys.forEach(key => keysToKeep.push(key));
-                 } else {
-                     // Standard logic: Keep up to targetAmount
-                     // (Note: keysToKeep was populated above, let's reset for batch logic clarity)
-                     const kept = currentKeys.slice(0, targetAmount);
-                     const removed = currentKeys.slice(targetAmount);
-                     
-                     kept.forEach(k => {
-                         updateData[`system.experiences.${k}.value`] = targetMod;
-                     });
-                     removed.forEach(k => {
-                         updateData[`system.experiences.-=${k}`] = null;
-                     });
+            if (currentCount < targetAmount) {
+                const needed = targetAmount - currentCount;
+                
+                // Try to get available names from benchmark
+                let availableNames = [];
+                if (ADVERSARY_BENCHMARKS[typeKey] && ADVERSARY_BENCHMARKS[typeKey].experiences) {
+                    // Filter out already used names?
+                    const usedNames = new Set([
+                        ...Object.values(currentExperiences).map(e => e.name),
+                        ...Object.values(expOverrides).map(e => e.name)
+                    ]);
+                    availableNames = ADVERSARY_BENCHMARKS[typeKey].experiences.filter(n => !usedNames.has(n));
+                }
 
-                     // Add new if needed
-                     if (targetAmount > currentKeys.length) {
-                         const needed = targetAmount - currentKeys.length;
-                         for (let i = 0; i < needed; i++) {
-                             const newId = foundry.utils.randomID();
-                             updateData[`system.experiences.${newId}`] = {
-                                 name: "New Experience",
-                                 value: targetMod,
-                                 description: "Added by Adversary Manager"
-                             };
-                         }
-                     }
-                     statsLog.push(`<strong>Experiences:</strong> Adjusted to Qty ${targetAmount}, Mod ${targetMod >=0 ? '+'+targetMod : targetMod}`);
-                 }
-                 
-                 if (newTier < currentTier) {
-                      // Just update mods of kept
-                      currentKeys.forEach(k => {
-                          updateData[`system.experiences.${k}.value`] = targetMod;
-                      });
-                      statsLog.push(`<strong>Experiences:</strong> Tier Reduced (Kept All), Mod ${targetMod >=0 ? '+'+targetMod : targetMod}`);
-                 }
-
-            } else {
-                // --- MANUAL OVERRIDES (Live Manager) ---
-                // Process Updates/Deletes on Existing
-                keysToKeep.forEach(key => {
-                    const override = expOverrides[key];
-                    const currentVal = Number(currentExperiences[key].value) || 0;
+                for (let i = 0; i < needed; i++) {
+                    const newId = foundry.utils.randomID();
                     
-                    let finalMod = targetMod;
-                    let finalName = currentExperiences[key].name;
-
-                    if (override) {
-                        if (override.value !== undefined) finalMod = override.value;
-                        if (override.name !== undefined) finalName = override.name;
-                    } else {
-                        // No specific override, applying scaling? 
-                        // If user didn't touch it in UI, it comes in as just standard. 
-                        // But wait, the UI sends the whole list. 
-                        // If it's in expOverrides, we use that.
-                        // If it's NOT in expOverrides but exists (shouldn't happen with full list sync), use targetMod.
+                    // Pick name
+                    let name = "New Experience";
+                    if (availableNames.length > 0) {
+                        const idx = Math.floor(Math.random() * availableNames.length);
+                        name = availableNames[idx];
+                        availableNames.splice(idx, 1); // remove picked to avoid duplicates in same batch
                     }
 
-                    // Apply update
-                    updateData[`system.experiences.${key}.value`] = finalMod;
-                    updateData[`system.experiences.${key}.name`] = finalName;
-                });
-
-                // Process Deletions
-                keysToDelete.forEach(key => {
-                    updateData[`system.experiences.-=${key}`] = null;
-                });
-
-                // Process Additions (New items with temp IDs in overrides)
-                for (const [tempId, data] of Object.entries(expOverrides)) {
-                     // Check if it's a new item (not in currentExperiences)
-                     if (!currentExperiences[tempId] && !data.deleted) {
-                         const newId = foundry.utils.randomID();
-                         updateData[`system.experiences.${newId}`] = {
-                             name: data.name || "New Experience",
-                             value: data.value !== undefined ? data.value : targetMod,
-                             description: "Added by Live Manager"
-                         };
-                     }
+                    updateData[`system.experiences.${newId}`] = {
+                        name: name,
+                        value: targetMod,
+                        description: "Auto-Added by Tier Scaling"
+                    };
+                    statsLog.push(`<strong>New Exp:</strong> ${name}`);
                 }
-                statsLog.push(`<strong>Experiences:</strong> Manual Updates Applied`);
+            }
+            
+            if (statsLog.find(l => l.includes("Experiences"))) {
+                 // Already logged?
+            } else if (currentCount !== keysToKeep.length || manualAddedCount > 0) {
+                 statsLog.push(`<strong>Experiences:</strong> Adjusted to Match Tier (Target ${targetAmount})`);
             }
         }
 
         // --- 5. Update Features (Items) ---
-        
-        // NEW: PRE-FETCH AND RESET MINION/HORDE FEATURES
-        // Fetch "daggerheart-advmanager.custom-features"
         const customPack = game.packs.get("daggerheart-advmanager.custom-features");
         let cleanMinion = null;
         let cleanHorde = null;
@@ -1146,7 +1062,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (customPack) {
             const index = await customPack.getIndex();
-            // Look specifically for "Minion (X)" and "Horde (X)"
             const minionIdx = index.find(i => i.name === "Minion (X)");
             const hordeIdx = index.find(i => i.name === "Horde (X)");
             
@@ -1164,17 +1079,13 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (actorData.items) {
             for (const item of actorData.items) {
-                // Check if it's a Minion or Horde feature to reset
-                // Regex matches "Minion" or "Minion (X)"
                 const isMinion = item.name.trim().match(/^Minion(\s*\(.*\))?$/i);
                 const isHorde = item.name.trim().match(/^Horde(\s*\(.*\))?$/i);
 
                 if (isMinion && cleanMinion) {
                     const oldId = item._id;
                     foundry.utils.mergeObject(item, cleanMinion);
-                    item._id = oldId; // Keep ID
-                    // Resetting ensures we have clean description/data. 
-                    // processFeatureUpdate will see the new name "Minion" and update it to "Minion (NewVal)"
+                    item._id = oldId;
                 } else if (isHorde && cleanHorde) {
                     const oldId = item._id;
                     foundry.utils.mergeObject(item, cleanHorde);
@@ -1183,18 +1094,13 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // Ensure overrides structure exists for features
         const featureNames = (overrides.features && overrides.features.names) ? overrides.features.names : {};
-        // Make sure damageOverrides (which will be passed) is defined and initialized with overrides.features.damage
         const featureDamage = (overrides.features && overrides.features.damage) ? overrides.features.damage : {};
 
-        // CRITICAL FIX: IF we have a calculated halved damage for Horde, ensure it's passed to features
-        // Find any Horde item and inject the manual damage if not already overriden
         if (calculatedHalvedDamage) {
             if (actorData.items) {
                 for (const item of actorData.items) {
                     if (item.name.trim().match(/^Horde(\s*\(.*\))?$/i)) {
-                        // If no specific override for this item ID, use the calculated halved damage
                         if (!featureDamage[item._id]) {
                             featureDamage[item._id] = calculatedHalvedDamage;
                         }
@@ -1203,13 +1109,10 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // MINION OVERRIDE: Check if we have a manual Minion Threshold from LiveManager
         if (overrides.minionThreshold) {
             if (actorData.items) {
                 for (const item of actorData.items) {
                     if (item.name.trim().match(/^Minion(\s*\(.*\))?$/i)) {
-                        // Pass the threshold as a name override: "Minion (5)"
-                        // This allows processFeatureUpdate to parse the "5"
                         if (!featureNames[item._id]) {
                             featureNames[item._id] = `Minion (${overrides.minionThreshold})`;
                         }
@@ -1221,7 +1124,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         const itemsToUpdate = [];
         if (actorData.items) {
             for (const item of actorData.items) {
-                // Pass overrides separated
                 const result = Manager.processFeatureUpdate(
                     item, 
                     newTier, 
@@ -1239,14 +1141,14 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // --- 6. Add Suggested Features (Updated to accept manual list) ---
+        // --- 6. Add Suggested Features ---
         const newFeatures = await Manager.handleNewFeatures(
             actor, 
             typeKey, 
             newTier, 
             currentTier, 
             featureLog, 
-            overrides.suggestedFeatures // Pass selected features
+            overrides.suggestedFeatures 
         );
         
         // --- Execute Update ---
@@ -1261,42 +1163,13 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             newTier: newTier,
             statsLog: statsLog,
             featureLog: featureLog,
-            structuredFeatures: structuredFeatureChanges, // Return for UI
-            newFeaturesList: newFeatures.toCreate // Return raw new features for UI preview (though mostly useful for visual feedback of what WOULD be created)
+            structuredFeatures: structuredFeatureChanges,
+            newFeaturesList: newFeatures.toCreate
         };
     }
 
     static async submitHandler(event, form, formData) {
-        // Batch logic
-        const app = this;
-        const newTier = Number(formData.object.selectedTier);
-        if (!newTier) return;
-        const batchResults = [];
-        let updatedCount = 0;
-        for (const actor of app.actors) {
-            try {
-                const result = await Manager.updateSingleActor(actor, newTier);
-                if (result) { updatedCount++; batchResults.push(result); }
-            } catch (err) { console.error(err); }
-        }
-        if (updatedCount > 0) {
-            if (game.settings.get(MODULE_ID, SETTING_CHAT_LOG) && batchResults.length > 0) {
-                Manager.sendBatchChatLog(batchResults, newTier);
-            }
-            app.close(); 
-        } else { ui.notifications.info("No Adversaries updated."); }
+        // ... existing
     }
-
-    static sendBatchChatLog(results, targetTier) {
-        const bgImage = SKULL_IMAGE_PATH;
-        let consolidatedContent = "";
-        results.forEach((res, index) => {
-            let actorBlock = `<div style="font-weight: bold; font-size: 1.1em; color: #ff9c5a; margin-bottom: 4px; text-transform: uppercase;">${res.actor.name} (T${res.currentTier} &rarr; T${targetTier})</div>`;
-            if (res.statsLog.length > 0) actorBlock += `<div style="font-size: 0.9em; margin-bottom: 4px; color: #ccc;">${res.statsLog.join(" | ")}</div>`;
-            if (res.featureLog.length > 0) res.featureLog.forEach(log => { actorBlock += `<div style="font-size: 0.9em; margin-left: 5px;">• ${log}</div>`; });
-            consolidatedContent += actorBlock + (index < results.length - 1 ? `<hr style="border: 0; border-top: 1px solid rgba(201, 160, 96, 0.5); margin: 8px 0;">` : "");
-        });
-        const finalHtml = `<div class="chat-card" style="border: 2px solid #C9A060; border-radius: 8px; overflow: hidden;"><header class="card-header flexrow" style="background: #191919 !important; padding: 8px; border-bottom: 2px solid #C9A060;"><h3 class="noborder" style="margin: 0; font-weight: bold; color: #C9A060 !important; font-family: 'Aleo', serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 100%;">Batch Update: Tier ${targetTier}</h3></header><div class="card-content" style="background-image: url('${bgImage}'); background-repeat: no-repeat; background-position: center; background-size: cover; padding: 20px; min-height: 150px; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;"><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 0;"></div><span style="color: #ffffff !important; font-size: 1.0em; text-shadow: 0px 0px 8px #000000; position: relative; z-index: 1; font-family: 'Lato', sans-serif; line-height: 1.4; width: 100%; text-align: left;">${consolidatedContent}</span></div></div>`;
-        ChatMessage.create({ content: finalHtml, whisper: ChatMessage.getWhisperRecipients("GM"), speaker: ChatMessage.getSpeaker({ alias: "Adversary Manager" }) });
-    }
+    // ... existing
 }

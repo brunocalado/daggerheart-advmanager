@@ -24,6 +24,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.targetTier = options.targetTier || (this.initialActor ? (Number(this.initialActor.system.tier) || 1) : 1);
         this.previewData = null;
         
+        // Cache for auto-suggested names to prevent flickering on re-renders
+        this._suggestionCache = {};
+
         // Store overrides separated by type
         this.overrides = { 
             features: {
@@ -83,6 +86,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             openSheet: LiveManager.prototype._onOpenSheet,
             addExperience: LiveManager.prototype._onAddExperience,
             deleteExperience: LiveManager.prototype._onDeleteExperience,
+            rollExperienceName: LiveManager.prototype._onRollExperienceName, // NEW ACTION
             resetDamageBonus: LiveManager.prototype._onResetDamageBonus
         },
         form: {
@@ -198,12 +202,34 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         
         // Reset overrides to avoid confusion
         this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
-        
+        this._suggestionCache = {}; // Clear cache on actor change
+
         // Sync filter settings to match this new actor so they don't look weird
         this.filterTier = String(this.targetTier); 
         this.filterType = (actor.system.type || "standard").toLowerCase();
 
         this.render();
+    }
+
+    /**
+     * Helper to pick a random experience name from rules
+     */
+    _getRandomExperienceName(typeKey, excludeList = []) {
+        if (!typeKey || typeKey === "all") typeKey = "standard";
+        
+        if (ADVERSARY_BENCHMARKS[typeKey] && ADVERSARY_BENCHMARKS[typeKey].experiences) {
+            const list = ADVERSARY_BENCHMARKS[typeKey].experiences;
+            // Filter out used names
+            const candidates = list.filter(n => !excludeList.includes(n));
+            
+            if (candidates.length > 0) {
+                return candidates[Math.floor(Math.random() * candidates.length)];
+            } else if (list.length > 0) {
+                // If all used, allow duplicates from full list
+                return list[Math.floor(Math.random() * list.length)];
+            }
+        }
+        return "New Experience"; // Fallback
     }
 
     /**
@@ -670,6 +696,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.source = target.value;
         this.selectedActorId = null;
         this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
+        this._suggestionCache = {}; 
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
         this.render();
     }
@@ -694,6 +721,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.stopPropagation();
         this.selectedActorId = target.value;
         this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
+        this._suggestionCache = {}; 
         
         const actor = await this._getActor(this.selectedActorId);
         if (actor) {
@@ -707,6 +735,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (tier) {
             this.targetTier = tier;
             this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
+            this._suggestionCache = {}; 
             this.render();
         }
     }
@@ -748,6 +777,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             this.filterType = typeKey; 
 
             this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" };
+            this._suggestionCache = {}; 
 
             this.render();
 
@@ -790,13 +820,41 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     _onAddExperience(event, target) {
         const newId = "new_" + foundry.utils.randomID();
         if (!this.overrides.experiences[newId]) this.overrides.experiences[newId] = {};
-        this.overrides.experiences[newId].name = "New Experience";
+        
+        // Pick a random name for the manually added experience too!
+        let typeKey = this.filterType;
+        if (!typeKey || typeKey === "all") typeKey = "standard";
+        
+        // Exclude currently used names to avoid duplicates if possible
+        const usedNames = Object.values(this.overrides.experiences).map(e => e.name);
+        const pickedName = this._getRandomExperienceName(typeKey, usedNames);
+
+        this.overrides.experiences[newId].name = pickedName;
         this.overrides.experiences[newId].value = 2; // Default starting value
         this.render();
     }
 
+    // NEW METHOD FOR ROLLING EXPERIENCE NAME
+    _onRollExperienceName(event, target) {
+        const id = target.dataset.id;
+        
+        // Try to get type from actor or filter
+        let typeKey = this.filterType;
+        if (!typeKey || typeKey === "all") typeKey = "standard";
+
+        // Exclude currently used names to avoid duplicates
+        const usedNames = Object.values(this.overrides.experiences).map(e => e.name);
+        const pickedName = this._getRandomExperienceName(typeKey, usedNames);
+        
+        if (pickedName) {
+            if (!this.overrides.experiences[id]) this.overrides.experiences[id] = {};
+            this.overrides.experiences[id].name = pickedName;
+            this.render();
+        }
+    }
+
     _onResetDamageBonus(event, target) {
-        const input = target.previousElementSibling; 
+        const input = target.previousElementSibling.previousElementSibling; 
         if (!input || !input.classList.contains('feature-damage-input')) return;
         
         let value = input.value;
@@ -1014,32 +1072,38 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         // --- Experience Simulation ---
         sim.previewExperiences = [];
         if (benchmark.experiences) {
-            // Base Target Mod for this Tier
-            const autoMod = Manager.getRollFromSignedRange(benchmark.experiences.modifier);
+            const targetMod = this.overrides.expMod !== undefined ? this.overrides.expMod : Manager.getRollFromSignedRange(benchmark.experiences.modifier);
             
-            // Capture suggested ranges for tooltip
+            let targetAmount = 0;
+            if (this.overrides.expAmount !== undefined) {
+                targetAmount = this.overrides.expAmount;
+            } else {
+                targetAmount = Manager.getRollFromRange(benchmark.experiences.amount);
+                this.overrides.expAmount = targetAmount; 
+            }
+            
             sim.expAmountRange = benchmark.experiences.amount;
             sim.expModRange = benchmark.experiences.modifier;
 
-            // Current Experiences
             const currentExpMap = actorData.system.experiences || {};
+            let activeCount = 0;
+            const usedNames = [];
             
-            // Build the preview list
             // 1. Existing experiences (respect deletions and updates)
             for (const [key, exp] of Object.entries(currentExpMap)) {
                 const override = this.overrides.experiences[key];
-                
-                // Skip if deleted
                 if (override && override.deleted) continue;
                 
-                let finalVal = autoMod; // Default to scaling to new tier logic
+                activeCount++;
+                let finalVal = targetMod;
                 let finalName = exp.name;
                 
-                // If override exists, take precedence
                 if (override) {
                     if (override.value !== undefined) finalVal = override.value;
                     if (override.name !== undefined) finalName = override.name;
                 }
+                
+                usedNames.push(finalName);
 
                 sim.previewExperiences.push({
                     id: key,
@@ -1051,16 +1115,51 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
             // 2. New Additions from Overrides
             for (const [key, data] of Object.entries(this.overrides.experiences)) {
-                // If key is not in currentMap, it is new
                 if (!currentExpMap[key] && !data.deleted) {
-                     const val = data.value !== undefined ? data.value : autoMod;
+                     activeCount++;
+                     const val = data.value !== undefined ? data.value : targetMod;
+                     const name = data.name || "New Experience";
+                     usedNames.push(name);
+                     
                      sim.previewExperiences.push({
                         id: key,
-                        name: data.name || "New Experience",
+                        name: name,
                         value: val,
                         isNew: true,
                         options: [2, 3, 4, 5].map(v => ({ value: v, label: `+${v}`, selected: v === val }))
                      });
+                }
+            }
+
+            // 3. Auto-Fill Visual Slots (Suggestions)
+            if (activeCount < targetAmount) {
+                const needed = targetAmount - activeCount;
+                for (let i = 0; i < needed; i++) {
+                    const tempId = `new_auto_${i}`;
+                    
+                    if (!this.overrides.experiences[tempId]) {
+                        
+                        // Check cache first to avoid flashing
+                        let suggestedName = "New Experience";
+                        if (this._suggestionCache[tempId]) {
+                            suggestedName = this._suggestionCache[tempId];
+                        } else {
+                            // Pick a random one and cache it
+                            suggestedName = this._getRandomExperienceName(typeKey, usedNames);
+                            this._suggestionCache[tempId] = suggestedName;
+                        }
+                        // Add to used names so next iteration tries to pick different
+                        usedNames.push(suggestedName);
+
+                        sim.previewExperiences.push({
+                            id: tempId, 
+                            name: suggestedName,
+                            value: targetMod,
+                            isNew: true,
+                            isSuggestion: true,
+                            options: [2, 3, 4, 5].map(v => ({ value: v, label: `+${v}`, selected: v === targetMod }))
+                        });
+                    }
                 }
             }
         }
