@@ -1,3 +1,4 @@
+// ... existing imports
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { ADVERSARY_BENCHMARKS, PC_BENCHMARKS } from "./rules.js";
 import { MODULE_ID, SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SETTING_ADD_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
@@ -530,8 +531,10 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                                 newDmgStr = `${newDmg.count}${newDmg.die}${bonusStr}`;
                             }
                         }
-                    } else if (benchmark.damage_rolls) {
-                         newDmgStr = benchmark.damage_rolls[0]; 
+                    } else if (benchmark.halved_damage_x) {
+                         // Fallback for "Horde (X)" to Benchmark HALVED Damage
+                         // NOTE: Previously this might have defaulted to MAIN damage. Fixed to use halved.
+                         newDmgStr = benchmark.halved_damage_x[0]; 
                     }
                 }
 
@@ -548,10 +551,28 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                             to: newName
                         });
                     }
+                    
                     // CRITICAL: Force Replace [X] in description with new damage string
-                    if (system.description && system.description.includes("[X]")) {
-                        system.description = system.description.replace(/\[X\]/g, newDmgStr);
-                        hasChanges = true;
+                    // Updated to handle both [X] placeholder and direct replacement of old value
+                    if (system.description) {
+                         // 1. Try Standard Placeholder [X] or X
+                         if (system.description.includes("[X]")) {
+                             system.description = system.description.replace(/\[X\]/g, newDmgStr);
+                             hasChanges = true;
+                         } else if (system.description.includes("(X)")) {
+                             system.description = system.description.replace(/\(X\)/g, `(${newDmgStr})`);
+                             hasChanges = true;
+                         }
+                         // 2. Fallback: If [X] is missing (maybe reset failed), try replacing the old value from the name
+                         else {
+                             const oldVal = hordeMatch[2];
+                             if (oldVal && oldVal !== "X" && system.description.includes(oldVal)) {
+                                 const escaped = oldVal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                 const re = new RegExp(escaped, 'g');
+                                 system.description = system.description.replace(re, newDmgStr);
+                                 hasChanges = true;
+                             }
+                         }
                     }
                 }
             }
@@ -802,7 +823,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (overrides.halvedDamageFormula && sheetDamageParts.length > 0) {
                  calculatedHalvedDamage = overrides.halvedDamageFormula; // Capture for Horde feature
                  const parsed = Manager.parseDamageString(overrides.halvedDamageFormula);
-                 if (parsed) {
+                 if (parsed && sheetDamageParts[0].valueAlt) {
                      const part = sheetDamageParts[0]; // Assume first part usually carries the alt value
                      if (part.valueAlt) {
                          if (parsed.die === null) {
@@ -827,10 +848,20 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                 result.changes.forEach(c => {
                     statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
                     // Capture calculated halved damage if present in changes
-                    if (c.labelSuffix === " (Alt)") {
+                    // FIX: Only update calculatedHalvedDamage if NO override exists
+                    if (c.labelSuffix === " (Alt)" && !overrides.halvedDamageFormula) {
                          calculatedHalvedDamage = c.to;
                     }
                 });
+            }
+
+            // ROBUSTNESS: If calculatedHalvedDamage wasn't set by change log (no change needed) or override, 
+            // extract it from the updated sheet parts directly so we can pass it to the Feature logic.
+            if (!calculatedHalvedDamage && sheetDamageParts.length > 0 && sheetDamageParts[0].valueAlt) {
+                const part = sheetDamageParts[0];
+                // Construct the string from the current state (which might have been updated in place by updateDamageParts)
+                const altFormula = part.valueAlt.custom?.enabled ? part.valueAlt.custom.formula : (part.valueAlt.dice ? `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus?(part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}` : `${part.valueAlt.flatMultiplier}`);
+                calculatedHalvedDamage = altFormula;
             }
             
             // NOW Apply Overrides (Overrides win)
