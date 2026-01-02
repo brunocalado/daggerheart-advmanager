@@ -491,7 +491,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             const mMatch = newName.match(/^Minion\s*\((\d+)\)$/i);
             if (mMatch) {
                 minionVal = parseInt(mMatch[1]);
-                updateDesc = true;
+                // Removed updateDesc = true here because we handle it below via [X] replacement
             }
         } else {
             // Automatic Calculation
@@ -588,7 +588,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                     if (itemData.name !== newName) {
                         changeLog.push(`<strong>Name Update:</strong> ${itemData.name} -> ${newName}`);
                         hasChanges = true;
-                        updateDesc = true;
                         structuredChanges.push({
                             itemId: itemData._id,
                             itemName: itemData.name,
@@ -606,16 +605,21 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             itemData.name = newName; 
         }
 
-        // Apply Description Updates (Minion)
-        if (updateDesc && minionVal !== null) {
-            const newDesc = `<p>This adversary is defeated when they take any damage. For every <strong>${minionVal}</strong> damage a PC deals to this adversary, defeat an additional Minion within range the attack would succeed against.</p>`;
-            if (system.description !== newDesc) {
-                system.description = newDesc;
-                hasChanges = true;
+        // Apply Description Updates (Minion - Updated to use [X] replacement like Horde)
+        if (minionVal !== null) {
+            if (system.description) {
+                // 1. Try Standard Placeholder [X] or X
+                if (system.description.includes("[X]")) {
+                    system.description = system.description.replace(/\[X\]/g, minionVal);
+                    hasChanges = true;
+                } else if (system.description.includes("(X)")) {
+                    system.description = system.description.replace(/\(X\)/g, `(${minionVal})`);
+                    hasChanges = true;
+                }
             }
         }
 
-        // 4. Apply Text Replacements (for descriptions using old numbers, excluding new Horde logic)
+        // 4. Apply Text Replacements (for descriptions using old numbers, excluding new Horde/Minion logic)
         if (hasChanges && replacements.length > 0) {
             const performReplacement = (text) => {
                 if (!text) return text;
@@ -721,7 +725,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     /**
      * UPDATE SINGLE ACTOR - NOW ACCEPTS MANUAL OVERRIDES
-     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula, experiences: {}, suggestedFeatures: [], features: { names: {}, damage: {} } }
+     * overrides: { difficulty, hp, stress, major, severe, attackMod, damageFormula, halvedDamageFormula, experiences: {}, suggestedFeatures: [], features: { names: {}, damage: {} }, minionThreshold: number }
      */
     static async updateSingleActor(actor, newTier, overrides = {}) {
         const actorData = actor.toObject();
@@ -1090,6 +1094,21 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                         // If no specific override for this item ID, use the calculated halved damage
                         if (!featureDamage[item._id]) {
                             featureDamage[item._id] = calculatedHalvedDamage;
+                        }
+                    }
+                }
+            }
+        }
+
+        // MINION OVERRIDE: Check if we have a manual Minion Threshold from LiveManager
+        if (overrides.minionThreshold) {
+            if (actorData.items) {
+                for (const item of actorData.items) {
+                    if (item.name.trim().match(/^Minion(\s*\(.*\))?$/i)) {
+                        // Pass the threshold as a name override: "Minion (5)"
+                        // This allows processFeatureUpdate to parse the "5"
+                        if (!featureNames[item._id]) {
+                            featureNames[item._id] = `Minion (${overrides.minionThreshold})`;
                         }
                     }
                 }
