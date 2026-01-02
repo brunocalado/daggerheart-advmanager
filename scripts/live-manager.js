@@ -31,6 +31,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 damage: {}
             },
             suggestedFeatures: null, 
+            suggestedFeaturesType: "default", 
             experiences: {}, // Map of ID -> { name: string, value: number, deleted: boolean }
             damageFormula: undefined,
             halvedDamageFormula: undefined,
@@ -69,9 +70,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             icon: "fas fa-eye",
             resizable: true,
             width: 1000,
-            height: 750
+            height: 800 
         },
-        position: { width: 1000, height: 750 },
+        position: { width: 1000, height: 800 },
         actions: {
             selectTier: LiveManager.prototype._onSelectTier,
             applyChanges: LiveManager.prototype._onApplyChanges,
@@ -83,6 +84,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             addExperience: LiveManager.prototype._onAddExperience,
             deleteExperience: LiveManager.prototype._onDeleteExperience,
             resetDamageBonus: LiveManager.prototype._onResetDamageBonus
+            // Removed changeSuggestedType from here to handle manually via 'change' event
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -125,12 +127,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     /**
-     * Finds a feature item by name to retrieve its image and UUID.
+     * Finds a feature item by name to retrieve its image, UUID, and Type (Action/Reaction/Passive).
      * Searches in: 
      * 1. daggerheart-advmanager.all-features (Priority)
      * 2. daggerheart-advmanager.features
      * 3. daggerheart.adversary-features
-     * * Now supports finding base item for names like "Relentless (2)" -> "Relentless"
      */
     async _findFeatureItem(name) {
         if (this._featureCache.has(name)) return this._featureCache.get(name);
@@ -147,7 +148,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (!pack) continue;
             
             // Optimization: Load index only if not loaded or just check efficiently
-            const index = await pack.getIndex();
+            const index = await pack.getIndex({ fields: ["system.featureForm"] }); // Request featureForm field
             
             // Try exact match first
             let entry = index.find(i => i.name === name);
@@ -158,16 +159,29 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
 
             if (entry) {
-                const data = { img: entry.img, uuid: entry.uuid };
+                const type = entry.system?.featureForm || "";
+                const data = { img: entry.img, uuid: entry.uuid, type: type };
                 this._featureCache.set(name, data);
                 return data;
             }
         }
 
         // Return default if not found
-        const defaultData = { img: "icons/svg/item-bag.svg", uuid: null };
+        const defaultData = { img: "icons/svg/item-bag.svg", uuid: null, type: "" };
         this._featureCache.set(name, defaultData);
         return defaultData;
+    }
+
+    /**
+     * Helper to convert featureForm value to label (A), (R), or (P).
+     */
+    _getFeatureTypeLabel(type) {
+        if (!type) return "";
+        const t = type.toLowerCase();
+        if (t === "action") return "(A)";
+        if (t === "reaction") return "(R)";
+        if (t === "passive") return "(P)";
+        return "";
     }
 
     /**
@@ -182,7 +196,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.targetTier = Number(actor.system.tier) || 1;
         
         // Reset overrides to avoid confusion
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
         
         // Sync filter settings to match this new actor so they don't look weird
         this.filterTier = String(this.targetTier); 
@@ -312,6 +326,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let isHorde = false;
         let actorTypeLabel = "";
         let portraitImg = null;
+        let suggestedFeaturesTypeOptions = []; 
 
         if (this.selectedActorId) {
             actor = await this._getActor(this.selectedActorId);
@@ -402,12 +417,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     expTooltip: `Suggested:<br>Amount: ${simResult.stats.expAmountRange || "?"}<br>Modifier: ${simResult.stats.expModRange || "?"}`,
                     
                     damage: simResult.stats.damage,
-                    damageStats: simResult.stats.damageStats, // NEW: Stats string
+                    damageStats: simResult.stats.damageStats, 
 
                     mainDamageFormula: simResult.stats.mainDamageRaw, // Raw value for input
                     
                     halvedDamage: simResult.stats.halvedDamage, 
-                    halvedDamageStats: simResult.stats.halvedDamageStats, // NEW: Stats string
+                    halvedDamageStats: simResult.stats.halvedDamageStats, 
                     
                     mainHalvedDamageFormula: simResult.stats.mainHalvedDamageRaw, // Raw value for input
                     
@@ -429,11 +444,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 allSuggestedFeatures = [];
                 for (const feat of rawSuggested) {
                     const itemData = await this._findFeatureItem(feat.name);
+                    const typeLabel = this._getFeatureTypeLabel(itemData.type);
                     allSuggestedFeatures.push({
                         name: feat.name,
                         checked: feat.checked,
                         img: itemData.img,
-                        uuid: itemData.uuid
+                        uuid: itemData.uuid,
+                        typeLabel: typeLabel
                     });
                 }
 
@@ -483,8 +500,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         if (match) minionValue = match[1];
                     }
 
-                    // Find Item Icon/UUID
+                    // Find Item Icon/UUID/Type
                     const itemData = await this._findFeatureItem(f.itemName);
+                    const typeLabel = this._getFeatureTypeLabel(itemData.type);
 
                     return {
                         itemId: f.itemId,
@@ -497,9 +515,25 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         minionValue: minionValue,
                         img: itemData.img,
                         uuid: itemData.uuid,
-                        stats: damageStats // Stats string
+                        stats: damageStats, // Stats string
+                        typeLabel: typeLabel // NEW: (A), (R), (P)
                     };
                 }));
+
+                // --- BUILD SUGGESTED FEATURES TYPE OPTIONS ---
+                suggestedFeaturesTypeOptions = [
+                    { value: "default", label: "Default (Current Type)", selected: this.overrides.suggestedFeaturesType === "default" }
+                ];
+                
+                // Add all keys from BENCHMARKS
+                const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
+                typeKeys.forEach(k => {
+                    suggestedFeaturesTypeOptions.push({
+                        value: k,
+                        label: k.charAt(0).toUpperCase() + k.slice(1),
+                        selected: this.overrides.suggestedFeaturesType === k
+                    });
+                });
             }
         }
 
@@ -548,7 +582,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             actorName: actor?.name || "None",
             portraitImg: portraitImg,
             isHorde: isHorde, 
-            actorTypeLabel: actorTypeLabel 
+            actorTypeLabel: actorTypeLabel,
+            suggestedFeaturesTypeOptions // Pass to template
         };
     }
 
@@ -556,6 +591,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         super._onRender(context, options);
         const html = this.element;
 
+        // --- Manual Listeners for Top Controls ---
         const sourceSelect = html.querySelector('.source-select');
         if (sourceSelect) sourceSelect.addEventListener('change', (e) => this._onSelectSource(e, sourceSelect));
 
@@ -568,6 +604,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorSelect = html.querySelector('.main-actor-select');
         if (actorSelect) actorSelect.addEventListener('change', (e) => this._onSelectActor(e, actorSelect));
 
+        // --- Overrides ---
         html.querySelectorAll('.override-input').forEach(input => {
             input.addEventListener('change', (e) => this._onOverrideChange(e, input));
         });
@@ -585,16 +622,30 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('change', (e) => this._onFeatureCheckboxChange(e, input));
         });
         
-        // Experience Handlers
+        // --- Experience Handlers ---
         html.querySelectorAll('.exp-name-input').forEach(input => {
             input.addEventListener('change', (e) => this._onExpNameChange(e, input));
         });
         html.querySelectorAll('.exp-mod-select').forEach(input => {
             input.addEventListener('change', (e) => this._onExpModChange(e, input));
         });
+
+        // --- Suggestion Type Handler (Manual Listener instead of Action to avoid re-render race condition) ---
+        const suggestionTypeSelect = html.querySelector('.suggestion-type-select');
+        if (suggestionTypeSelect) {
+            suggestionTypeSelect.addEventListener('change', (e) => this._onChangeSuggestedType(e, suggestionTypeSelect));
+        }
     }
 
     // --- Action Handlers ---
+
+    _onChangeSuggestedType(event, target) {
+        event.preventDefault();
+        this.overrides.suggestedFeaturesType = target.value;
+        // Reset previously selected features because they might belong to another type
+        this.overrides.suggestedFeatures = null; 
+        this.render();
+    }
 
     _onExpNameChange(event, target) {
         const id = target.dataset.id;
@@ -817,8 +868,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorData = actor.toObject();
         const typeKey = (actorData.system.type || "standard").toLowerCase();
         
+        // Decide which type to use for FEATURE SUGGESTIONS based on overrides
+        let suggestionTypeKey = typeKey;
+        if (this.overrides.suggestedFeaturesType && this.overrides.suggestedFeaturesType !== "default") {
+            suggestionTypeKey = this.overrides.suggestedFeaturesType;
+        }
+
         if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: "Unknown Type" }, features: [], structuredFeatures: [] };
+        
+        // Benchmark for Stats (always based on actual actor type)
         const benchmark = ADVERSARY_BENCHMARKS[typeKey].tiers[`tier_${targetTier}`];
+        // Benchmark for Suggestions (can be overriden)
+        const suggestionBenchmarkRoot = ADVERSARY_BENCHMARKS[suggestionTypeKey];
+        const suggestionBenchmark = suggestionBenchmarkRoot ? suggestionBenchmarkRoot.tiers[`tier_${targetTier}`] : benchmark;
+
         if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [], structuredFeatures: [] };
 
         const sim = {};
@@ -1016,13 +1079,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
         
         // --- SUGGESTED FEATURES LOGIC ---
-        // 1. Get ALL possible features for this Tier exactly from rules.js
+        // 1. Get ALL possible features for this Tier (from Suggestion Benchmark)
         let possibleFeatures = [];
-        if (benchmark.suggested_features) {
-            if (Array.isArray(benchmark.suggested_features)) {
-                possibleFeatures = [...benchmark.suggested_features];
-            } else if (typeof benchmark.suggested_features === "string" && benchmark.suggested_features !== "") {
-                possibleFeatures = [benchmark.suggested_features];
+        if (suggestionBenchmark && suggestionBenchmark.suggested_features) {
+            if (Array.isArray(suggestionBenchmark.suggested_features)) {
+                possibleFeatures = [...suggestionBenchmark.suggested_features];
+            } else if (typeof suggestionBenchmark.suggested_features === "string" && suggestionBenchmark.suggested_features !== "") {
+                possibleFeatures = [suggestionBenchmark.suggested_features];
             }
         }
         

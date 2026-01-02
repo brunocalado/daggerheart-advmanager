@@ -16,7 +16,12 @@ export const ADVERSARY_BENCHMARKS = {
             "avg_damage":"8/11",
             "suggested_features":[
                "Momentum",
-               "Ramp Up"
+               "Ramp Up",
+               "Double Strike",
+               "Goading Strike",
+               "Hold Them Down",
+               "Rip and Tear",
+               "Terrifying"
             ],
             "experiences": {
               "amount": "0/2",
@@ -42,7 +47,13 @@ export const ADVERSARY_BENCHMARKS = {
                "Adrenaline Burst",
                "Momentum",
                "Ramp Up",
-               "Sudden Lunge"
+               "Sudden Lunge",
+               "Double Strike",
+               "Goading Strike",
+               "Hold Them Down",
+               "Rip and Tear",
+               "Terrifying",
+               "Blood in the Water"
             ],
             "experiences": {
               "amount": "0/2",
@@ -68,7 +79,14 @@ export const ADVERSARY_BENCHMARKS = {
                "Adrenaline Burst",
                "Momentum",
                "Ramp Up",
-               "Sudden Lunge"
+               "Sudden Lunge",
+               "Double Strike",
+               "Goading Strike",
+               "Hold Them Down",
+               "Rip and Tear",
+               "Terrifying",
+               "Blood in the Water",
+               "Anger Unrelenting"
             ],
             "experiences": {
               "amount": "0/3",
@@ -92,7 +110,18 @@ export const ADVERSARY_BENCHMARKS = {
                "Adrenaline Burst",
                "Momentum",
                "Ramp Up",
-               "Sudden Lunge"
+               "Sudden Lunge",
+               "Double Strike",
+               "Goading Strike",
+               "Hold Them Down",
+               "Rip and Tear",
+               "Terrifying",
+               "Blood in the Water",
+               "Anger Unrelenting",
+               "Disorienting Presence",
+               "Fearsome Presence",
+               "Skilled Opportunist",
+               "Unreal Form"
             ],
             "experiences": {
               "amount": "0/3",
@@ -119,7 +148,10 @@ export const ADVERSARY_BENCHMARKS = {
                "1d4+1",
                "1d4+2"
             ],
-            "suggested_features":"",
+            "suggested_features": [
+              "Flying",
+              "Swashbuckler"
+            ],
             "experiences": {
               "amount": "0/1",
               "modifier": "+2/+3"
@@ -144,8 +176,10 @@ export const ADVERSARY_BENCHMARKS = {
                "1d6+3"
             ],
             "suggested_features": [
-               "In Your Face",
-               "Overwhelm"
+              "In Your Face",
+              "Overwhelm",
+              "Flying",
+              "Swashbuckler"               
             ],
             "experiences": {
               "amount": "0/1",
@@ -169,8 +203,10 @@ export const ADVERSARY_BENCHMARKS = {
                "2d6+2"
             ],
             "suggested_features": [
-               "In Your Face",
-               "Overwhelm"
+              "In Your Face",
+              "Overwhelm",
+              "Flying",
+              "Swashbuckler"  
             ],
             "experiences": {
               "amount": "0/2",
@@ -194,9 +230,11 @@ export const ADVERSARY_BENCHMARKS = {
                "2d6+5"
             ],
             "suggested_features": [
-               "In Your Face",
-               "Unyielding",
-               "Overwhelm"
+              "In Your Face",
+              "Unyielding",
+              "Overwhelm",
+              "Flying",
+              "Swashbuckler"  
             ],
             "experiences": {
               "amount": "0/2",
@@ -316,7 +354,9 @@ export const ADVERSARY_BENCHMARKS = {
             "attack_modifier":"-2/+0",
             "minion_feature_x":"3/5",
             "basic_attack_y":"1/3",
-            "suggested_features":"",
+            "suggested_features": [
+              "Volatile Demise"
+            ],
             "experiences": {
               "amount": "0/1",
               "modifier": "+2/+3"
@@ -331,7 +371,8 @@ export const ADVERSARY_BENCHMARKS = {
             "minion_feature_x":"5/7",
             "basic_attack_y":"2/4",
             "suggested_features": [
-               "Sudden Lunge"
+               "Sudden Lunge",
+               "Volatile Demise"
             ],
             "experiences": {
               "amount": "0/1",
@@ -348,7 +389,8 @@ export const ADVERSARY_BENCHMARKS = {
             "basic_attack_y":"5/8",
             "suggested_features": [
                "Sudden Lunge",
-               "Aura of Doom"
+               "Aura of Doom",
+               "Volatile Demise"
             ],
             "experiences": {
               "amount": "0/2",
@@ -365,7 +407,8 @@ export const ADVERSARY_BENCHMARKS = {
             "basic_attack_y":"10/12",
             "suggested_features": [
                "Sudden Lunge",
-               "Aura of Doom"
+               "Aura of Doom",
+               "Volatile Demise"
             ],
             "experiences": {
               "amount": "0/2",
@@ -773,7 +816,11 @@ export const ADVERSARY_BENCHMARKS = {
                "1d6+2",
                "1d8+1"
             ],
-            "suggested_features":"",
+            "suggested_features": [
+              "Too Many to Handle",
+              "Only Bones",
+              "Maintain Distance"
+            ],
             "experiences": {
               "amount": "0/1",
               "modifier": "+2/+3"
@@ -791,7 +838,11 @@ export const ADVERSARY_BENCHMARKS = {
                "2d6+3",
                "2d8+2"
             ],
-            "suggested_features":"",
+            "suggested_features": [
+              "Too Many to Handle",
+              "Only Bones",
+              "Maintain Distance"
+            ],
             "experiences": {
               "amount": "1/2",
               "modifier": "+2/+3"
@@ -810,7 +861,11 @@ export const ADVERSARY_BENCHMARKS = {
                "3d10+1",
                "3d12+2"
             ],
-            "suggested_features":"",
+            "suggested_features": [
+              "Too Many to Handle",
+              "Only Bones",
+              "Maintain Distance"
+            ],
             "experiences": {
               "amount": "1/2",
               "modifier": "+2/+4"
@@ -829,7 +884,11 @@ export const ADVERSARY_BENCHMARKS = {
                "4d8+6",
                "4d10+2"
             ],
-            "suggested_features":"",
+            "suggested_features": [
+              "Too Many to Handle",
+              "Only Bones",
+              "Maintain Distance"
+            ],
             "experiences": {
               "amount": "1/2",
               "modifier": "+3/+4"
@@ -869,7 +928,11 @@ export const ADVERSARY_BENCHMARKS = {
                "2d6+2",
                "2d8+1"
             ],
-            "suggested_features":"",
+            "suggested_features": [
+              "Fear Is Fuel",
+              "Enervating Blast"
+              
+            ],
             "experiences": {
               "amount": "2/3",
               "modifier": "+2/+3"
@@ -887,7 +950,11 @@ export const ADVERSARY_BENCHMARKS = {
                "3d8+2",
                "3d10"
             ],
-            "suggested_features":"",
+            "suggested_features": [
+              "Fear Is Fuel",
+              "Enervating Blast",
+              "High Tide"              
+            ],
             "experiences": {
               "amount": "2/3",
               "modifier": "+2/+3"
@@ -905,7 +972,12 @@ export const ADVERSARY_BENCHMARKS = {
                "4d8+6",
                "3d10+4"
             ],
-            "suggested_features":"",
+            "suggested_features": [
+              "Fear Is Fuel",
+              "Enervating Blast",
+              "High Tide" ,
+              "Slippery"              
+            ],
             "experiences": {
               "amount": "2/3",
               "modifier": "+3/+4"

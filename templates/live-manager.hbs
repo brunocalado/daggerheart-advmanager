@@ -86,7 +86,7 @@
     <div class="preview-body">
         
         <!-- Left Column: Current State -->
-        <div class="preview-column current-column">
+        <div class="preview-column current-column" style="justify-content: flex-start;">
             <h3 class="col-header">
                 Current (T{{currentStats.tier}})
                 {{#if linkData}}
@@ -155,7 +155,8 @@
             {{/if}}
             
             <!-- NEW: Actor Name Header with Type -->
-            <div class="actor-preview-name">
+            <!-- Applied inline style to override margin-top: auto from CSS -->
+            <div class="actor-preview-name" style="margin-top: 15px;">
                 {{actorName}} ({{actorTypeLabel}})
             </div>
 
@@ -295,6 +296,7 @@
                                             </a>
                                         {{/if}}
                                         <div style="overflow: hidden; text-overflow: ellipsis;">
+                                            {{this.typeLabel}} <!-- Added Type Label -->
                                             {{{this.originalName}}} <i class="fas fa-arrow-right" style="font-size: 0.8em; opacity: 0.5; margin: 0 5px;"></i>
                                         </div>
                                     </div>
@@ -313,7 +315,8 @@
                                             <div class="feature-input-group" style="display: flex; align-items: center; gap: 2px;">
                                                 <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{this.optionsTooltip}}}"></i>
                                                 <input type="text" class="feature-override-input feature-damage-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" style="width: 80px;">
-                                                <button type="button" data-action="resetDamageBonus" class="reset-btn-small" title="Remove Bonus" style="width: 24px; height: 24px; padding: 0; border: 1px solid #555; background: #333; color: #ccc; cursor: pointer;">
+                                                <!-- UPDATED RESET BUTTON: Fixed width/height to be perfectly square -->
+                                                <button type="button" data-action="resetDamageBonus" class="reset-btn-small" title="Remove Bonus" style="width: 28px; height: 28px; padding: 0; border: 1px solid #555; background: #333; color: #ccc; cursor: pointer; display: flex; align-items: center; justify-content: center; aspect-ratio: 1/1;">
                                                     <i class="fas fa-undo" style="font-size: 0.8em;"></i>
                                                 </button>
                                             </div>
@@ -345,7 +348,21 @@
                 <!-- NEW FEATURES SECTION (CHECKBOXES WITH ICONS & LINKS) -->
                 {{#if allSuggestedFeatures.length}}
                 <div class="features-preview-section">
-                    <h4 class="features-header" style="color: #98fb98;">New Suggested Features</h4>
+                    
+                    <!-- Updated Header with Controls -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 class="features-header" style="color: #98fb98; margin: 0;">New Suggested Features</h4>
+                        
+                        <div class="feature-header-controls" style="width: 180px;">
+                            <!-- REMOVED data-action to prevent immediate close on click -->
+                            <select class="suggestion-type-select" style="font-size: 0.85em; height: 26px; width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid #555; color: #ea80fc; border-radius: 3px;">
+                                {{#each suggestedFeaturesTypeOptions}}
+                                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="feature-changes-list">
                         {{#each allSuggestedFeatures}}
                             <div class="feature-change-row new-feature-row">
@@ -354,7 +371,7 @@
                                     
                                     <a class="feature-link" data-action="openFeature" data-uuid="{{this.uuid}}">
                                         <img src="{{this.img}}" class="feature-icon-small" alt="{{this.name}}">
-                                        <strong style="color: #eee;">{{this.name}}</strong>
+                                        <strong style="color: #eee;">{{this.typeLabel}} {{this.name}}</strong> <!-- Added Type Label -->
                                     </a>
                                 </label>
                             </div>
