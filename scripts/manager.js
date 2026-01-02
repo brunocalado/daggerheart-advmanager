@@ -435,9 +435,10 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
      * @param {Array} changeLog (Optional) - legacy array of strings
      * @param {Object} nameOverrides (Optional) - map of itemId -> newName
      * @param {Object} damageOverrides (Optional) - map of itemId -> newDamageFormula
+     * @param {Object} templates (Optional) - map with minion/horde templates and UUIDs
      * @returns {Object|null} Update object or null
      */
-    static processFeatureUpdate(itemData, newTier, currentTier, benchmark, changeLog = [], nameOverrides = {}, damageOverrides = {}) {
+    static processFeatureUpdate(itemData, newTier, currentTier, benchmark, changeLog = [], nameOverrides = {}, damageOverrides = {}, templates = {}) {
         let hasChanges = false;
         const system = foundry.utils.deepClone(itemData.system);
         const replacements = [];
@@ -486,6 +487,34 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (newName !== itemData.name) {
                 changeLog.push(`<strong>Name Override:</strong> ${itemData.name} -> ${newName}`);
                 hasChanges = true;
+
+                // FIX: Add structured change for manual override too, so UI shows it with correct icon/link
+                const isMinion = newName.match(/^Minion\s*\((\d+)\)$/i);
+                const isHorde = newName.match(/^Horde\s*\((.+)\)$/i);
+                
+                let uiImg = itemData.img;
+                let uiUuid = itemData.flags?.core?.sourceId || ""; // Best guess if no template
+                let type = "name_override";
+
+                if (isMinion) {
+                    type = "name_minion";
+                    uiImg = templates.minion?.img || uiImg;
+                    uiUuid = templates.minionUuid || uiUuid;
+                } else if (isHorde) {
+                    type = "name_horde";
+                    uiImg = templates.horde?.img || uiImg;
+                    uiUuid = templates.hordeUuid || uiUuid;
+                }
+
+                structuredChanges.push({
+                    itemId: itemData._id,
+                    itemName: itemData.name,
+                    type: type,
+                    from: itemData.name,
+                    to: newName,
+                    img: uiImg,
+                    uuid: uiUuid
+                });
             }
             // For minions/horde, we assume the user typed the Full string "Minion (5)"
             const mMatch = newName.match(/^Minion\s*\((\d+)\)$/i);
@@ -548,7 +577,9 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                             itemName: itemData.name,
                             type: "name_horde",
                             from: itemData.name,
-                            to: newName
+                            to: newName,
+                            img: templates.horde?.img || itemData.img,
+                            uuid: templates.hordeUuid || itemData.uuid || itemData.flags?.core?.sourceId || ""
                         });
                     }
                     
@@ -593,7 +624,10 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                             itemName: itemData.name,
                             type: "name_minion",
                             from: itemData.name,
-                            to: newName
+                            to: newName,
+                            // Ensure UUID and Img are passed for UI link (fixes missing icon/link)
+                            img: templates.minion?.img || itemData.img,
+                            uuid: templates.minionUuid || itemData.uuid || itemData.flags?.core?.sourceId || ""
                         });
                     }
                 }
@@ -690,8 +724,9 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (featuresToAdd.length === 0) return { toCreate: [], toDelete: [] };
 
-        // Fetch Items
-        const pack = game.packs.get("daggerheart-advmanager.features");
+        // REPLACED: Use only custom-features pack now
+        const pack = game.packs.get("daggerheart-advmanager.custom-features");
+        
         if (!pack) return { toCreate: [], toDelete: [] }; 
 
         const index = await pack.getIndex();
@@ -699,10 +734,44 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         const toDelete = [];
 
         for (const featureName of featuresToAdd) {
+            // 1. Try Standard Lookup
             const entry = index.find(e => e.name === featureName);
-            if (!entry) continue;
+            let featureData = null;
+            let sourceUuid = null;
 
-            const featureData = (await pack.getDocument(entry._id)).toObject();
+            if (entry) {
+                const doc = await pack.getDocument(entry._id);
+                featureData = doc.toObject();
+                sourceUuid = doc.uuid;
+            } else {
+                // 2. Try Minion (X) Fallback
+                const minionMatch = featureName.match(/^Minion\s*\((\d+)\)$/i);
+                if (minionMatch) {
+                    const minionVal = minionMatch[1];
+                    const templateEntry = index.find(e => e.name === "Minion (X)");
+                    
+                    if (templateEntry) {
+                        const doc = await pack.getDocument(templateEntry._id);
+                        featureData = doc.toObject();
+                        sourceUuid = doc.uuid;
+                        
+                        // Customize Name & Description
+                        featureData.name = featureName; // "Minion (7)"
+                        if (featureData.system.description) {
+                            featureData.system.description = featureData.system.description.replace(/\[X\]/g, minionVal);
+                            featureData.system.description = featureData.system.description.replace(/\(X\)/g, `(${minionVal})`);
+                        }
+                    }
+                }
+            }
+
+            if (!featureData) continue;
+
+            // IMPORTANT: Attach UUID so UI can link back to the compendium source
+            if (sourceUuid) {
+                featureData.uuid = sourceUuid;
+            }
+
             toCreate.push(featureData);
 
             // Handle Relentless Replacement Logic
@@ -1048,6 +1117,8 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         const customPack = game.packs.get("daggerheart-advmanager.custom-features");
         let cleanMinion = null;
         let cleanHorde = null;
+        let minionUuid = null;
+        let hordeUuid = null;
 
         if (customPack) {
             const index = await customPack.getIndex();
@@ -1055,8 +1126,16 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             const minionIdx = index.find(i => i.name === "Minion (X)");
             const hordeIdx = index.find(i => i.name === "Horde (X)");
             
-            if (minionIdx) cleanMinion = (await customPack.getDocument(minionIdx._id)).toObject();
-            if (hordeIdx) cleanHorde = (await customPack.getDocument(hordeIdx._id)).toObject();
+            if (minionIdx) {
+                const doc = await customPack.getDocument(minionIdx._id);
+                cleanMinion = doc.toObject();
+                minionUuid = doc.uuid;
+            }
+            if (hordeIdx) {
+                const doc = await customPack.getDocument(hordeIdx._id);
+                cleanHorde = doc.toObject();
+                hordeUuid = doc.uuid;
+            }
         }
 
         if (actorData.items) {
@@ -1119,7 +1198,16 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (actorData.items) {
             for (const item of actorData.items) {
                 // Pass overrides separated
-                const result = Manager.processFeatureUpdate(item, newTier, currentTier, benchmark, featureLog, featureNames, featureDamage);
+                const result = Manager.processFeatureUpdate(
+                    item, 
+                    newTier, 
+                    currentTier, 
+                    benchmark, 
+                    featureLog, 
+                    featureNames, 
+                    featureDamage,
+                    { minion: cleanMinion, horde: cleanHorde, minionUuid, hordeUuid }
+                );
                 if (result) {
                     itemsToUpdate.push(result.update);
                     if (result.structured) structuredFeatureChanges.push(...result.structured);
