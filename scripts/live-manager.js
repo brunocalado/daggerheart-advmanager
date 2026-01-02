@@ -86,8 +86,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             openSheet: LiveManager.prototype._onOpenSheet,
             addExperience: LiveManager.prototype._onAddExperience,
             deleteExperience: LiveManager.prototype._onDeleteExperience,
-            rollExperienceName: LiveManager.prototype._onRollExperienceName, // NEW ACTION
-            resetDamageBonus: LiveManager.prototype._onResetDamageBonus
+            rollExperienceName: LiveManager.prototype._onRollExperienceName // NEW ACTION
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -515,8 +514,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         valueToShow = simResult.stats.mainHalvedDamageRaw || "0"; 
                     }
 
-                    if ((f.type === 'damage' || f.type === 'name_horde') && !isHordeFeature) {
-                         const currentVal = valueToShow; 
+                    if ((f.type === 'damage') && !isHordeFeature) {
+                         // MULTI-PART DAMAGE FIX: Use composite key lookup
+                         const currentVal = this.overrides.features.damage[f.itemId]?.[f.from] || f.to;
+                         valueToShow = currentVal;
+
                          featureOptions = damageOptions.map(d => ({
                              value: d.value,
                              label: d.label,
@@ -546,6 +548,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     return {
                         itemId: f.itemId,
                         originalName: displayFrom,
+                        originalFormula: f.from, // PASSED for unique identification
                         newName: valueToShow, 
                         isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion', 
                         options: featureOptions, 
@@ -854,24 +857,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
     }
 
-    _onResetDamageBonus(event, target) {
-        const input = target.previousElementSibling.previousElementSibling; 
-        if (!input || !input.classList.contains('feature-damage-input')) return;
-        
-        let value = input.value;
-        value = value.replace(/\s*[+-]\s*\d+$/, "");
-        
-        input.value = value;
-        
-        const itemId = input.dataset.itemid;
-        if (itemId) {
-             if (!this.overrides.features) this.overrides.features = { names: {}, damage: {} };
-             if (!this.overrides.features.damage) this.overrides.features.damage = {};
-             this.overrides.features.damage[itemId] = value;
-             this.render();
-        }
-    }
-
     async _onOpenFeature(event, target) {
         event.preventDefault();
         event.stopPropagation();
@@ -930,7 +915,18 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!this.overrides.features.damage) this.overrides.features.damage = {};
 
         if (isDamage) {
-            this.overrides.features.damage[itemId] = value;
+            // MULTI-PART FIX: Use nested structure [itemId][originalFormula]
+            const originalFormula = target.dataset.original;
+            if (originalFormula) {
+                if (!this.overrides.features.damage[itemId] || typeof this.overrides.features.damage[itemId] !== 'object') {
+                    this.overrides.features.damage[itemId] = {};
+                }
+                this.overrides.features.damage[itemId][originalFormula] = value;
+            } else {
+                // Fallback for single-part or unspecified
+                this.overrides.features.damage[itemId] = value;
+            }
+            // Removing from names is safer but optional if structures are distinct
             delete this.overrides.features.names[itemId];
         } else {
             this.overrides.features.names[itemId] = value;
@@ -1301,6 +1297,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
         
+        // Sort options alphabetically
+        possibleFeatures.sort((a, b) => a.localeCompare(b));
+
         // --- FEATURE FLAG CHECK ---
         const enableSuggestions = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
         if (!enableSuggestions) {
@@ -1308,7 +1307,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         // 2. Filter out already owned features to avoid duplicates
-        // Helper to check ownership
         const isOwned = (name) => allItems.some(i => i.name === name);
 
         // 3. Initialize default selection if null (random pick)
@@ -1326,8 +1324,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const uiList = [];
         const addedSet = new Set();
 
+        // Sort selected features for display consistency
+        const selectedNames = [...this.overrides.suggestedFeatures].sort((a, b) => a.localeCompare(b));
+
         // A. Add Selected Features (Checked) - Persist from overrides
-        for (const name of this.overrides.suggestedFeatures) {
+        for (const name of selectedNames) {
             if (!isOwned(name)) {
                 uiList.push({
                     name: name,
