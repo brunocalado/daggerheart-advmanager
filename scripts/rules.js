@@ -547,7 +547,8 @@ export const ADVERSARY_BENCHMARKS = {
           "1d12+1"
         ],
         "suggested_features": [
-          "Momentum"
+          "Momentum",
+          "Opportunist"
         ],
         "experiences": {
           "amount": "0/1",
@@ -567,9 +568,11 @@ export const ADVERSARY_BENCHMARKS = {
           "2d12+2"
         ],
         "suggested_features": [
-          "Slippery",
-          "Fear Is Fuel",
-          "Momentum"
+          "Momentum",
+          "Opportunist",
+          "Battle Teleport",
+          "Levitation",
+          "Wards"
         ],
         "experiences": {
           "amount": "0/2",
@@ -589,9 +592,15 @@ export const ADVERSARY_BENCHMARKS = {
           "3d12"
         ],
         "suggested_features": [
-          "Slippery",
-          "Fear Is Fuel",
-          "Momentum"
+          "Momentum",
+          "Opportunist",
+          "Battle Teleport",
+          "Levitation",
+          "Wards",
+          "Concentrate Fire",
+          "Mark Target",
+          "My Turn",
+          "Unprotected Mind"
         ],
         "experiences": {
           "amount": "0/3",
@@ -611,9 +620,15 @@ export const ADVERSARY_BENCHMARKS = {
           "4d12+6"
         ],
         "suggested_features": [
-          "Slippery",
-          "Fear Is Fuel",
-          "Momentum"
+          "Momentum",
+          "Opportunist",
+          "Battle Teleport",
+          "Levitation",
+          "Wards",
+          "Concentrate Fire",
+          "Mark Target",
+          "My Turn",
+          "Unprotected Mind"
         ],
         "experiences": {
           "amount": "0/3",

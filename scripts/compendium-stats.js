@@ -75,9 +75,18 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // Bind Feature Links (Click & Drag)
         html.querySelectorAll('.feature-link').forEach(link => {
-            // Click to Open
+            // Click to Open (Updated to prioritize UUID)
             link.addEventListener('click', async (e) => {
                 e.stopPropagation();
+                const uuid = link.dataset.uuid;
+                
+                // Try to open by UUID first (Correct specific item)
+                if (uuid) {
+                    const doc = await fromUuid(uuid);
+                    if (doc) return doc.sheet.render(true);
+                }
+
+                // Fallback to name search
                 const featureName = link.dataset.featureName;
                 await this._openFeatureSheet(featureName);
             });
@@ -98,7 +107,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     async _openFeatureSheet(featureName) {
-        // This is a fallback if UUID isn't on the element, though now we prioritize UUID
+        // This is a fallback if UUID isn't on the element
         const packName = "daggerheart-advmanager.all-features";
         const pack = game.packs.get(packName);
         
@@ -107,6 +116,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             return;
         }
 
+        // Note: This fallback search is imperfect for duplicates, relies on the first one found
         const index = await pack.getIndex();
         const entry = index.find(i => i.name === featureName);
 
@@ -130,7 +140,14 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         // Load Features Index for UUID lookup
         const featurePack = game.packs.get("daggerheart-advmanager.all-features");
         if (featurePack) {
-            this.featureIndex = await featurePack.getIndex();
+            // Request flags fields to be available in the index for filtering logic
+            this.featureIndex = await featurePack.getIndex({ 
+                fields: [
+                    "flags.importedFrom.adversary", 
+                    "flags.importedFrom.tier", 
+                    "flags.importedFrom.type"
+                ] 
+            });
         } else {
             console.warn("Daggerheart Manager | Features compendium not found. Drag/Drop may not work for all items.");
             this.featureIndex = new foundry.utils.Collection();
@@ -151,99 +168,109 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // Collect Values
         for (const actor of filteredActors) {
-            const tier = Number(actor.system.tier) || 1;
-            if (data[tier]) {
+            const actorTier = Number(actor.system.tier) || 1;
+            if (data[actorTier]) {
                 const sys = actor.system;
                 
                 // Difficulty
-                if (sys.difficulty) data[tier].difficulty.push(Number(sys.difficulty));
+                if (sys.difficulty) data[actorTier].difficulty.push(Number(sys.difficulty));
 
                 // Thresholds
-                if (sys.damageThresholds?.major) data[tier].major.push(Number(sys.damageThresholds.major));
-                if (sys.damageThresholds?.severe) data[tier].severe.push(Number(sys.damageThresholds.severe));
+                if (sys.damageThresholds?.major) data[actorTier].major.push(Number(sys.damageThresholds.major));
+                if (sys.damageThresholds?.severe) data[actorTier].severe.push(Number(sys.damageThresholds.severe));
 
                 // HP & Stress
-                if (sys.resources?.hitPoints?.max) data[tier].hp.push(Number(sys.resources.hitPoints.max));
-                if (sys.resources?.stress?.max) data[tier].stress.push(Number(sys.resources.stress.max));
+                if (sys.resources?.hitPoints?.max) data[actorTier].hp.push(Number(sys.resources.hitPoints.max));
+                if (sys.resources?.stress?.max) data[actorTier].stress.push(Number(sys.resources.stress.max));
 
                 // Attack Modifier
-                if (sys.attack?.roll?.bonus !== undefined) data[tier].attackMod.push(Number(sys.attack.roll.bonus));
+                if (sys.attack?.roll?.bonus !== undefined) data[actorTier].attackMod.push(Number(sys.attack.roll.bonus));
 
-                // Experiences (Handling Object structure)
+                // Experiences
                 let expCount = 0;
                 if (sys.experiences) {
-                    // Convert Object { id: {name, value}, id2: {name, value} } to Array
                     const expList = Object.values(sys.experiences);
                     expCount = expList.length;
-
-                    // Collect values
                     expList.forEach(e => {
                         const val = Number(e.value);
-                        if (!isNaN(val)) {
-                            data[tier].expValues.push(val);
-                        }
+                        if (!isNaN(val)) data[actorTier].expValues.push(val);
                     });
                 }
-                // Always push count, even if 0, so ranges work correctly (e.g. 0-2)
-                data[tier].expCounts.push(expCount);
+                data[actorTier].expCounts.push(expCount);
 
-                // Damage Rolls & Halved Damage (Horde)
+                // Damage Rolls & Halved Damage
                 if (sys.attack?.damage?.parts) {
                     sys.attack.damage.parts.forEach(part => {
-                        // --- Regular Damage ---
+                        // Regular
                         let formula = "";
-                        if (part.value?.custom?.enabled) {
-                            formula = part.value.custom.formula;
-                        } else if (part.value) {
+                        if (part.value?.custom?.enabled) formula = part.value.custom.formula;
+                        else if (part.value) {
                             const count = part.value.flatMultiplier || 1;
                             const dice = part.value.dice || "";
                             const bonus = part.value.bonus ? (Number(part.value.bonus) > 0 ? `+${part.value.bonus}` : part.value.bonus) : "";
-                            
-                            if (!dice) formula = `${part.value.flatMultiplier}`; // Flat damage
+                            if (!dice) formula = `${part.value.flatMultiplier}`;
                             else formula = `${count}${dice}${bonus}`;
                         }
-                        if (formula) data[tier].damageRolls.add(formula);
+                        if (formula) data[actorTier].damageRolls.add(formula);
 
-                        // --- Halved Damage (valueAlt) ---
+                        // Halved
                         let halvedFormula = "";
-                        if (part.valueAlt?.custom?.enabled) {
-                            halvedFormula = part.valueAlt.custom.formula;
-                        } else if (part.valueAlt) {
+                        if (part.valueAlt?.custom?.enabled) halvedFormula = part.valueAlt.custom.formula;
+                        else if (part.valueAlt) {
                             const count = part.valueAlt.flatMultiplier || 1;
                             const dice = part.valueAlt.dice || "";
                             const bonus = part.valueAlt.bonus ? (Number(part.valueAlt.bonus) > 0 ? `+${part.valueAlt.bonus}` : part.valueAlt.bonus) : "";
-
-                            if (!dice) halvedFormula = `${part.valueAlt.flatMultiplier}`; // Flat damage
+                            if (!dice) halvedFormula = `${part.valueAlt.flatMultiplier}`;
                             else halvedFormula = `${count}${dice}${bonus}`;
                         }
-                        if (halvedFormula) data[tier].halvedDamageRolls.add(halvedFormula);
+                        if (halvedFormula) data[actorTier].halvedDamageRolls.add(halvedFormula);
                     });
                 }
 
                 // --- Features (Items) ---
                 if (actor.items) {
                     actor.items.forEach(item => {
-                        // We store items by name to avoid duplicates
-                        if (!data[tier].features.has(item.name)) {
-                            // Find UUID from the loaded index
-                            let uuid = "";
-                            const entry = this.featureIndex.find(i => i.name === item.name);
-                            if (entry) {
-                                uuid = entry.uuid; 
-                            }
+                        // Determine correct tier for display
+                        let itemTier = actorTier;
+                        if (item.flags?.importedFrom?.tier) {
+                            itemTier = Number(item.flags.importedFrom.tier);
+                        }
 
-                            // Determine Feature Type Label
-                            let typeLabel = "";
-                            const form = item.system?.featureForm?.toLowerCase();
-                            if (form === "action") typeLabel = "(A)";
-                            else if (form === "passive") typeLabel = "(P)";
-                            else if (form === "reaction") typeLabel = "(R)";
-                            
-                            data[tier].features.set(item.name, { 
-                                img: item.img || "icons/svg/item-bag.svg",
-                                uuid: uuid,
-                                typeLabel: typeLabel
-                            });
+                        if (data[itemTier]) {
+                            // Only add if not already in the map for this tier
+                            if (!data[itemTier].features.has(item.name)) {
+                                
+                                // --- UUID LOOKUP LOGIC ---
+                                let uuid = "";
+                                
+                                // Priority 1: Match by Name AND Source Adversary (Precise match for duplicates)
+                                let entry = this.featureIndex.find(i => 
+                                    i.name === item.name && 
+                                    i.flags?.importedFrom?.adversary === actor.name
+                                );
+
+                                // Priority 2: Match by Name only (Fallback)
+                                if (!entry) {
+                                    entry = this.featureIndex.find(i => i.name === item.name);
+                                }
+
+                                if (entry) {
+                                    uuid = entry.uuid; 
+                                }
+                                // -------------------------
+
+                                let typeLabel = "";
+                                const form = item.system?.featureForm?.toLowerCase();
+                                if (form === "action") typeLabel = "(A)";
+                                else if (form === "passive") typeLabel = "(P)";
+                                else if (form === "reaction") typeLabel = "(R)";
+                                
+                                data[itemTier].features.set(item.name, { 
+                                    img: item.img || "icons/svg/item-bag.svg",
+                                    uuid: uuid,
+                                    typeLabel: typeLabel
+                                });
+                            }
                         }
                     });
                 }
@@ -261,7 +288,6 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             { label: "Damage Rolls", t1: this._getList(data[1].damageRolls), t2: this._getList(data[2].damageRolls), t3: this._getList(data[3].damageRolls), t4: this._getList(data[4].damageRolls), isList: true }
         ];
 
-        // Conditional Row: Only show Halved Damage if Type is Horde
         if (type === "horde") {
             rows.push({ 
                 label: "Halved Damage (Horde)", 
@@ -273,7 +299,6 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             });
         }
 
-        // Experiences Row (Updated)
         rows.push({
             label: "Experiences",
             t1: this._formatExpData(data[1]),
@@ -282,7 +307,6 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             t4: this._formatExpData(data[4])
         });
 
-        // Features Row
         rows.push({
             label: "Features",
             t1: this._getFeatureList(data[1].features),
@@ -306,7 +330,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             attackMod: [],
             damageRolls: new Set(),
             halvedDamageRolls: new Set(),
-            features: new Map(), // Key: Name, Value: {img, uuid, typeLabel}
+            features: new Map(),
             expCounts: [],
             expValues: []
         };
@@ -329,36 +353,21 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         return `${fmt(min)}/${fmt(max)}`;
     }
 
-    // Updated Experience Formatter
     _formatExpData(tierData) {
         if (!tierData.expCounts.length) return "-";
-
-        // Calculate Quantity Range: (Min-Max)
         const minQty = Math.min(...tierData.expCounts);
         const maxQty = Math.max(...tierData.expCounts);
         const countStr = minQty === maxQty ? `(${minQty})` : `(${minQty}-${maxQty})`;
 
-        // Calculate Value Range: +Min/+Max
         let valStr = "";
         if (tierData.expValues.length > 0) {
             const minVal = Math.min(...tierData.expValues);
             const maxVal = Math.max(...tierData.expValues);
             const fmt = (n) => n >= 0 ? `+${n}` : `${n}`;
-            
-            if (minVal === maxVal) {
-                valStr = fmt(minVal);
-            } else {
-                valStr = `${fmt(minVal)}/${fmt(maxVal)}`;
-            }
-        } else {
-            // No values found (or only 0 experiences which have no value)
-            valStr = "";
+            if (minVal === maxVal) valStr = fmt(minVal);
+            else valStr = `${fmt(minVal)}/${fmt(maxVal)}`;
         }
-
-        // Tooltip Text
         const tooltip = "Quantity (Min-Max) +Value Range";
-        
-        // Final Output with Tooltip
         return `<span data-tooltip="${tooltip}" style="cursor: help;">${countStr} ${valStr}</span>`;
     }
 
@@ -372,9 +381,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         const sorted = Array.from(map.entries()).sort((a,b) => a[0].localeCompare(b[0]));
         
         return sorted.map(([name, data]) => {
-            // Only make it draggable if we found a UUID
             const draggableAttr = data.uuid ? `draggable="true" data-uuid="${data.uuid}"` : "";
-            // Append Type Label if exists
             const displayLabel = data.typeLabel ? `<span style="opacity: 0.7; margin-left: 4px;">${data.typeLabel}</span>` : "";
             
             return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="Click to view, Drag to Sheet">
