@@ -697,18 +697,23 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // --- Add Suggested Features Logic ---
     static async handleNewFeatures(actor, typeKey, newTier, currentTier, changeLog, specificFeatureNames = null) {
-        if (!game.settings.get(MODULE_ID, SETTING_ADD_FEATURES)) return { toCreate: [], toDelete: [] };
-        if (newTier <= currentTier) return { toCreate: [], toDelete: [] };
+        // --- 1. SETTING & LOGIC GATE ---
+        // If specificFeatureNames is provided, we assume MANUAL mode (Live Manager).
+        // Manual mode overrides the "Auto-Add Features" setting AND the tier increase requirement.
+        const isManual = specificFeatureNames && Array.isArray(specificFeatureNames);
+
+        if (!isManual && !game.settings.get(MODULE_ID, SETTING_ADD_FEATURES)) return { toCreate: [], toDelete: [] };
+        if (!isManual && newTier <= currentTier) return { toCreate: [], toDelete: [] };
 
         const currentItems = actor.items.contents || actor.items;
         let featuresToAdd = [];
 
-        if (specificFeatureNames && Array.isArray(specificFeatureNames)) {
-            // --- UI/MANUAL MODE: User selected specific features ---
-            // Filter out any features the actor already has
+        // --- 2. DETERMINE FEATURES TO ADD ---
+        if (isManual) {
+            // Manual Mode: Use the specific list provided by the user
             featuresToAdd = specificFeatureNames.filter(name => !currentItems.some(i => i.name === name));
         } else {
-            // --- AUTOMATIC/BATCH MODE: Pick random ---
+            // Automatic Mode: Pick a random feature from the Benchmark
             const benchmarkRoot = ADVERSARY_BENCHMARKS[typeKey];
             if (!benchmarkRoot) return { toCreate: [], toDelete: [] };
 
@@ -724,48 +729,64 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (featuresToAdd.length === 0) return { toCreate: [], toDelete: [] };
 
-        // REPLACED: Use only custom-features pack now
-        const pack = game.packs.get("daggerheart-advmanager.custom-features");
+        // --- 3. SEARCH & PREPARE FEATURES ---
+        // FIX: Search in ALL standard compendiums, not just custom-features.
+        // Priority: daggerheart-advmanager.all-features -> daggerheart-advmanager.custom-features
+        const packIds = ["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features"];
         
-        if (!pack) return { toCreate: [], toDelete: [] }; 
-
-        const index = await pack.getIndex();
         const toCreate = [];
         const toDelete = [];
 
         for (const featureName of featuresToAdd) {
-            // 1. Try Standard Lookup
-            const entry = index.find(e => e.name === featureName);
             let featureData = null;
             let sourceUuid = null;
 
-            if (entry) {
-                const doc = await pack.getDocument(entry._id);
-                featureData = doc.toObject();
-                sourceUuid = doc.uuid;
-            } else {
-                // 2. Try Minion (X) Fallback
+            // Search Loop
+            for (const packId of packIds) {
+                const pack = game.packs.get(packId);
+                if (!pack) continue;
+                
+                // Note: Getting index repeatedly inside loop isn't ideal for huge batches, but fine for single actor updates.
+                const index = await pack.getIndex(); 
+                const entry = index.find(e => e.name === featureName);
+                
+                if (entry) {
+                    const doc = await pack.getDocument(entry._id);
+                    featureData = doc.toObject();
+                    sourceUuid = doc.uuid;
+                    break; // Stop searching if found
+                }
+            }
+
+            // Special Fallback: Minion (X) Logic
+            if (!featureData) {
                 const minionMatch = featureName.match(/^Minion\s*\((\d+)\)$/i);
                 if (minionMatch) {
                     const minionVal = minionMatch[1];
-                    const templateEntry = index.find(e => e.name === "Minion (X)");
-                    
-                    if (templateEntry) {
-                        const doc = await pack.getDocument(templateEntry._id);
-                        featureData = doc.toObject();
-                        sourceUuid = doc.uuid;
-                        
-                        // Customize Name & Description
-                        featureData.name = featureName; // "Minion (7)"
-                        if (featureData.system.description) {
-                            featureData.system.description = featureData.system.description.replace(/\[X\]/g, minionVal);
-                            featureData.system.description = featureData.system.description.replace(/\(X\)/g, `(${minionVal})`);
+                    const customPack = game.packs.get("daggerheart-advmanager.custom-features");
+                    if (customPack) {
+                        const index = await customPack.getIndex();
+                        const templateEntry = index.find(e => e.name === "Minion (X)");
+                        if (templateEntry) {
+                            const doc = await customPack.getDocument(templateEntry._id);
+                            featureData = doc.toObject();
+                            sourceUuid = doc.uuid;
+                            
+                            // Customize Name & Description
+                            featureData.name = featureName; 
+                            if (featureData.system.description) {
+                                featureData.system.description = featureData.system.description.replace(/\[X\]/g, minionVal);
+                                featureData.system.description = featureData.system.description.replace(/\(X\)/g, `(${minionVal})`);
+                            }
                         }
                     }
                 }
             }
 
-            if (!featureData) continue;
+            if (!featureData) {
+                console.warn(`Adversary Manager | Could not find feature "${featureName}" in any configured compendium.`);
+                continue;
+            }
 
             // IMPORTANT: Attach UUID so UI can link back to the compendium source
             if (sourceUuid) {
@@ -800,7 +821,10 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorData = actor.toObject();
         const currentTier = Number(actorData.system.tier) || 1;
 
-        if (newTier === currentTier) return null;
+        // FIX: Allow update if tier is same BUT overrides exist (Manual changes via Live Manager)
+        // If it's a batch update (overrides empty) and tier matches, we skip.
+        const isBatchNoOp = (newTier === currentTier) && (Object.keys(overrides).length === 0);
+        if (isBatchNoOp) return null;
 
         const updateData = { "system.tier": newTier };
         const typeKey = (actorData.system.type || "standard").toLowerCase();
