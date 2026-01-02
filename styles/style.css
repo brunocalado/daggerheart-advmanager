@@ -1,4 +1,18 @@
 /* ========================================= */
+/* GLOBAL MODULE WINDOW OVERRIDES            */
+/* ========================================= */
+
+/* Enforce 9px spacing from window borders for all module apps */
+#daggerheart-adv-manager .window-content,
+#daggerheart-live-preview .window-content,
+#daggerheart-encounter-builder .window-content,
+#daggerheart-compendium-stats .window-content,
+#daggerheart-dice-prob .window-content {
+    padding: 9px;
+    overflow-x: hidden; /* Prevent global horizontal scroll */
+}
+
+/* ========================================= */
 /* SHARED & ADVERSARY MANAGER (ORIGINAL)     */
 /* ========================================= */
 
@@ -8,6 +22,9 @@
     flex-direction: column;
     gap: 0.5rem;
     color: var(--color-text-light-primary);
+    height: 100%; /* Ensure full height usage */
+    overflow: hidden; /* Prevent outer scrollbar */
+    box-sizing: border-box;
 }
 
 .status-header {
@@ -144,6 +161,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Ensure container itself doesn't scroll */
 }
 
 .actor-selection-row {
@@ -284,11 +302,14 @@
 
 .preview-body {
     display: grid;
-    grid-template-columns: 40% 60%; /* CHANGED: 40% Current, 60% Preview */
+    /* FIX: Changed from % to fr units to account for the 15px gap without overflow */
+    grid-template-columns: 4fr 6fr; 
     gap: 15px;
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden; /* Force horizontal scrollbar off */
     padding-right: 5px;
+    min-height: 0; /* Fix flex child scroll issue */
 }
 
 .preview-column {
@@ -296,6 +317,8 @@
     border-radius: 5px;
     padding: 10px;
     border: 1px solid #333;
+    /* Prevent internal elements from pushing width */
+    min-width: 0; 
 }
 
 .current-column { display: flex; flex-direction: column; }
