@@ -167,6 +167,10 @@
                     <img src="{{portraitImg}}" alt="{{actorName}}" class="actor-portrait">
                 </div>
             </div>
+            <!-- New Text -->
+            <div class="preview-note" style="margin-top: 5px;">
+                <i class="fas fa-external-link-alt"></i> Click image to open sheet
+            </div>
             {{/if}}
 
         </div>
@@ -310,7 +314,12 @@
 
                                     <!-- RIGHT: Controls -->
                                     <div class="feature-control" style="flex: 0 0 auto; display: flex; align-items: center; gap: 5px;">
-                                        {{#if this.options}}
+                                        {{#if this.isHordeFeature}}
+                                            <!-- Horde Specific: Read-only display without name prefix -->
+                                            <div class="feature-input-group" style="justify-content: flex-end;">
+                                                <input type="text" class="feature-override-input" value="{{this.newName}}" disabled style="width: 80px; text-align: center; opacity: 0.7;">
+                                            </div>
+                                        {{else if this.options}}
                                             <!-- Combobox for damage features -->
                                             <div class="feature-input-group" style="display: flex; align-items: center; gap: 2px;">
                                                 <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{this.optionsTooltip}}}"></i>
@@ -335,9 +344,6 @@
                                         {{/if}}
                                     </div>
                                 </div>
-                            {{#if this.options}}
-                                <!-- No-Op -->
-                            {{/if}}
                             {{/each}}
                         </div>
                     {{else}}

@@ -179,7 +179,9 @@ export const ADVERSARY_BENCHMARKS = {
               "In Your Face",
               "Overwhelm",
               "Flying",
-              "Swashbuckler"               
+              "Swashbuckler",
+              "Dreadhowl",
+              "Paralyzing Shock"   
             ],
             "experiences": {
               "amount": "0/1",
@@ -206,7 +208,9 @@ export const ADVERSARY_BENCHMARKS = {
               "In Your Face",
               "Overwhelm",
               "Flying",
-              "Swashbuckler"  
+              "Swashbuckler",
+              "Dreadhowl",
+              "Paralyzing Shock"  
             ],
             "experiences": {
               "amount": "0/2",
@@ -234,7 +238,9 @@ export const ADVERSARY_BENCHMARKS = {
               "Unyielding",
               "Overwhelm",
               "Flying",
-              "Swashbuckler"  
+              "Swashbuckler",
+              "Dreadhowl",
+              "Paralyzing Shock"  
             ],
             "experiences": {
               "amount": "0/2",

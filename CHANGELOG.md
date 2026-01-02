@@ -6,6 +6,8 @@
 - css improvements
 - more suggested features
 - you can pick a new set of suggested features from another type
+- horde feature working well
+
 
 # 0.1.5
 - small css fix

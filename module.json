@@ -35,10 +35,10 @@
 
   "packs": [
     {
-      "label": "Features",
+      "label": "Custom Features",
       "type": "Item",
-      "name": "features",
-      "path": "packs/features",
+      "name": "custom-features",
+      "path": "packs/custom-features",
       "system": "daggerheart",
       "ownership": {
         "PLAYER": "NONE",
@@ -46,7 +46,7 @@
       },
       "flags": {},
       "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
-    },
+    },    
     {
       "label": "All Features",
       "type": "Item",
@@ -81,7 +81,7 @@
       "sorting": "a",
       "color": "#5c0547",
       "packs": [        
-        "features",        
+        "custom-features",        
         "all-features",
         "macros"
       ],

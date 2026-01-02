@@ -84,7 +84,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             addExperience: LiveManager.prototype._onAddExperience,
             deleteExperience: LiveManager.prototype._onDeleteExperience,
             resetDamageBonus: LiveManager.prototype._onResetDamageBonus
-            // Removed changeSuggestedType from here to handle manually via 'change' event
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -129,14 +128,16 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     /**
      * Finds a feature item by name to retrieve its image, UUID, and Type (Action/Reaction/Passive).
      * Searches in: 
-     * 1. daggerheart-advmanager.all-features (Priority)
-     * 2. daggerheart-advmanager.features
-     * 3. daggerheart.adversary-features
+     * 1. daggerheart-advmanager.all-features (Priority 1)
+     * 2. daggerheart-advmanager.custom-features (Priority 2)
      */
     async _findFeatureItem(name) {
         if (this._featureCache.has(name)) return this._featureCache.get(name);
 
-        const packIds = ["daggerheart-advmanager.all-features", "daggerheart-advmanager.features", "daggerheart.adversary-features"];
+        const packIds = [
+            "daggerheart-advmanager.all-features", 
+            "daggerheart-advmanager.custom-features"
+        ];
         
         // Prepare clean name (e.g., "Relentless (2)" or "Relentless (X)" becomes "Relentless")
         let cleanName = name;
@@ -148,7 +149,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (!pack) continue;
             
             // Optimization: Load index only if not loaded or just check efficiently
-            const index = await pack.getIndex({ fields: ["system.featureForm"] }); // Request featureForm field
+            const index = await pack.getIndex({ fields: ["system.featureForm"] }); 
             
             // Try exact match first
             let entry = index.find(i => i.name === name);
@@ -475,9 +476,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     let featureOptions = null;
                     let optionsTooltip = ""; 
                     let damageStats = "";
+                    let isHordeFeature = false;
 
-                    if (f.type === 'damage' || f.type === 'name_horde') {
-                         const currentVal = overrideVal !== undefined ? overrideVal : f.to;
+                    // DEFAULT VALUE LOGIC
+                    let valueToShow = overrideVal !== undefined ? overrideVal : f.to;
+
+                    if (f.type === 'name_horde') {
+                        isHordeFeature = true;
+                        // For Horde feature, always use the Halved Damage value unless overridden (though we disable override in UI)
+                        // It must match what is in halved damage.
+                        valueToShow = simResult.stats.mainHalvedDamageRaw || "0"; 
+                    }
+
+                    if ((f.type === 'damage' || f.type === 'name_horde') && !isHordeFeature) {
+                         const currentVal = valueToShow; 
                          featureOptions = damageOptions.map(d => ({
                              value: d.value,
                              label: d.label,
@@ -507,16 +519,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     return {
                         itemId: f.itemId,
                         originalName: displayFrom,
-                        newName: overrideVal !== undefined ? overrideVal : f.to,
+                        newName: valueToShow, 
                         isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion', 
                         options: featureOptions, 
                         optionsTooltip: optionsTooltip,
                         isMinionFeature: isMinionFeature,
+                        isHordeFeature: isHordeFeature,
                         minionValue: minionValue,
                         img: itemData.img,
                         uuid: itemData.uuid,
-                        stats: damageStats, // Stats string
-                        typeLabel: typeLabel // NEW: (A), (R), (P)
+                        stats: damageStats, 
+                        typeLabel: typeLabel 
                     };
                 }));
 
@@ -637,12 +650,118 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
     }
 
+    // --- Actions ---
+
+    async _onOpenSettings(event, target) {
+        new CompendiumManager().render(true);
+    }
+
+    async _onOpenStats(event, target) {
+        new CompendiumStats().render(true);
+    }
+    
+    async _onOpenDiceProb(event, target) {
+        new DiceProbability().render(true);
+    }
+
+    async _onSelectSource(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.source = target.value;
+        this.selectedActorId = null;
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
+        await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
+        this.render();
+    }
+
+    async _onFilterTier(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.filterTier = target.value;
+        await game.settings.set(MODULE_ID, SETTING_LAST_FILTER_TIER, this.filterTier);
+        this.render();
+    }
+
+    async _onFilterType(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.filterType = target.value;
+        this.render();
+    }
+
+    async _onSelectActor(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectedActorId = target.value;
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
+        
+        const actor = await this._getActor(this.selectedActorId);
+        if (actor) {
+            this.targetTier = Number(actor.system.tier) || 1;
+        }
+        this.render();
+    }
+
+    async _onSelectTier(event, target) {
+        const tier = Number(target.dataset.tier);
+        if (tier) {
+            this.targetTier = tier;
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
+            this.render();
+        }
+    }
+
+    async _onApplyChanges(event, target) {
+        if (!this.selectedActorId) return;
+        
+        let actor = await this._getActor(this.selectedActorId);
+        if (!actor) return;
+
+        try {
+            if (this.source !== "world") {
+                const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
+                let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
+                if (!folder) {
+                    folder = await Folder.create({ name: folderName, type: "Actor", color: "#430047" });
+                }
+
+                const pack = game.packs.get(this.source);
+                actor = await game.actors.importFromCompendium(pack, this.selectedActorId, { folder: folder.id });
+                
+                if (actor) {
+                    this.source = "world";
+                    this.selectedActorId = actor.id;
+                    await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, "world");
+                }
+            }
+
+            const result = await Manager.updateSingleActor(actor, this.targetTier, this.overrides);
+            
+            if (!result) {
+                ui.notifications.warn("No changes were necessary.");
+            }
+
+            this.filterTier = String(this.targetTier); 
+            await game.settings.set(MODULE_ID, SETTING_LAST_FILTER_TIER, this.filterTier);
+
+            const typeKey = (actor.system.type || "standard").toLowerCase();
+            this.filterType = typeKey; 
+
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" };
+
+            this.render();
+
+        } catch (e) {
+            console.error(e);
+            ui.notifications.error("Error applying changes. Check console.");
+        }
+    }
+
     // --- Action Handlers ---
 
     _onChangeSuggestedType(event, target) {
         event.preventDefault();
         this.overrides.suggestedFeaturesType = target.value;
-        // Reset previously selected features because they might belong to another type
         this.overrides.suggestedFeatures = null; 
         this.render();
     }
@@ -681,14 +800,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!input || !input.classList.contains('feature-damage-input')) return;
         
         let value = input.value;
-        // Strip trailing bonus (e.g., +5, -2) from the end
-        // Regex looks for optional space, + or -, optional space, digits, end of string
         value = value.replace(/\s*[+-]\s*\d+$/, "");
         
-        // Update input visually
         input.value = value;
         
-        // Trigger update
         const itemId = input.dataset.itemid;
         if (itemId) {
              if (!this.overrides.features) this.overrides.features = { names: {}, damage: {} };
@@ -786,14 +901,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let min, max, mean;
 
         if (parsed.die === null) {
-            // Fixed damage (e.g., "5")
-            // parseDamageString returns { count: 5, die: null, bonus: 0 } if regex matches number
             let val = parsed.count;
             min = val;
             max = val;
             mean = val;
         } else {
-            // Dice damage (e.g., "1d8+2")
             const faces = parseInt(parsed.die.replace('d', ''));
             const count = parsed.count;
             const bonus = parsed.bonus;
@@ -876,9 +988,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: "Unknown Type" }, features: [], structuredFeatures: [] };
         
-        // Benchmark for Stats (always based on actual actor type)
         const benchmark = ADVERSARY_BENCHMARKS[typeKey].tiers[`tier_${targetTier}`];
-        // Benchmark for Suggestions (can be overriden)
         const suggestionBenchmarkRoot = ADVERSARY_BENCHMARKS[suggestionTypeKey];
         const suggestionBenchmark = suggestionBenchmarkRoot ? suggestionBenchmarkRoot.tiers[`tier_${targetTier}`] : benchmark;
 
@@ -1079,7 +1189,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
         
         // --- SUGGESTED FEATURES LOGIC ---
-        // 1. Get ALL possible features for this Tier (from Suggestion Benchmark)
+        // 1. Get ALL possible features for this Tier exactly from rules.js
         let possibleFeatures = [];
         if (suggestionBenchmark && suggestionBenchmark.suggested_features) {
             if (Array.isArray(suggestionBenchmark.suggested_features)) {
@@ -1120,111 +1230,5 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             structuredFeatures: structuredFeatures,
             suggestedFeatures: suggestedFeatures // Return the UI list
         };
-    }
-
-    // --- Actions ---
-
-    async _onOpenSettings(event, target) {
-        new CompendiumManager().render(true);
-    }
-
-    async _onOpenStats(event, target) {
-        new CompendiumStats().render(true);
-    }
-    
-    async _onOpenDiceProb(event, target) {
-        new DiceProbability().render(true);
-    }
-
-    async _onSelectSource(event, target) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.source = target.value;
-        this.selectedActorId = null;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} }; 
-        await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
-        this.render();
-    }
-
-    async _onFilterTier(event, target) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.filterTier = target.value;
-        await game.settings.set(MODULE_ID, SETTING_LAST_FILTER_TIER, this.filterTier);
-        this.render();
-    }
-
-    async _onFilterType(event, target) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.filterType = target.value;
-        this.render();
-    }
-
-    async _onSelectActor(event, target) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.selectedActorId = target.value;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} }; 
-        const actor = await this._getActor(this.selectedActorId);
-        if (actor) {
-            this.targetTier = Number(actor.system.tier) || 1;
-        }
-        this.render();
-    }
-
-    async _onSelectTier(event, target) {
-        const tier = Number(target.dataset.tier);
-        if (tier) {
-            this.targetTier = tier;
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} }; 
-            this.render();
-        }
-    }
-
-    async _onApplyChanges(event, target) {
-        if (!this.selectedActorId) return;
-        
-        let actor = await this._getActor(this.selectedActorId);
-        if (!actor) return;
-
-        try {
-            if (this.source !== "world") {
-                const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
-                let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
-                if (!folder) {
-                    folder = await Folder.create({ name: folderName, type: "Actor", color: "#430047" });
-                }
-
-                const pack = game.packs.get(this.source);
-                actor = await game.actors.importFromCompendium(pack, this.selectedActorId, { folder: folder.id });
-                
-                if (actor) {
-                    this.source = "world";
-                    this.selectedActorId = actor.id;
-                    await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, "world");
-                }
-            }
-
-            const result = await Manager.updateSingleActor(actor, this.targetTier, this.overrides);
-            
-            if (!result) {
-                ui.notifications.warn("No changes were necessary.");
-            }
-
-            this.filterTier = String(this.targetTier); 
-            await game.settings.set(MODULE_ID, SETTING_LAST_FILTER_TIER, this.filterTier);
-
-            const typeKey = (actor.system.type || "standard").toLowerCase();
-            this.filterType = typeKey; 
-
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {} };
-
-            this.render();
-
-        } catch (e) {
-            console.error(e);
-            ui.notifications.error("Error applying changes. Check console.");
-        }
     }
 }

@@ -496,42 +496,42 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             // Automatic Calculation
             
             // Horde Logic
-            const hordeMatch = itemData.name.trim().match(/^Horde\s*\((.+)\)$/i);
+            // Regex to match "Horde (X)" or "Horde"
+            const hordeMatch = itemData.name.trim().match(/^Horde(\s*\((.+)\))?$/i);
             if (hordeMatch) {
-                const oldDmgInName = hordeMatch[1];
+                // If manualDamage is provided (passed from halved damage calc), use it strictly
                 let newDmgStr = null;
 
-                // Priority: Manual Damage Override > Calculated Replacement > Standard Calc
                 if (manualDamage) {
                     newDmgStr = manualDamage;
                 } else {
-                    const matchingRep = replacements.find(r => r.from === oldDmgInName && !r.labelSuffix); 
-                    if (matchingRep) {
-                        newDmgStr = matchingRep.to;
-                    } else {
-                        // Fallback calc if action didn't trigger it
+                    const oldDmgInName = hordeMatch[2];
+                    if (oldDmgInName && oldDmgInName !== "X") {
+                        // Standard fallback calc
                         const parsed = Manager.parseDamageString(oldDmgInName);
                         if (parsed) {
-                             let bonusInput = parsed.bonus;
-                             if (parsed.die === null) bonusInput = parsed.count; 
+                            // ... calc logic ...
+                            let bonusInput = parsed.bonus;
+                            if (parsed.die === null) bonusInput = parsed.count; 
 
-                             const newDmg = Manager.calculateNewDamage(
-                                 parsed.die, 
-                                 bonusInput, 
-                                 newTier, 
-                                 currentTier, 
-                                 benchmark.damage_rolls
-                             );
+                            const newDmg = Manager.calculateNewDamage(
+                                parsed.die, 
+                                bonusInput, 
+                                newTier, 
+                                currentTier, 
+                                benchmark.damage_rolls
+                            );
 
-                             if (newDmg.die === null) {
-                                 newDmgStr = `${newDmg.bonus}`;
-                             } else {
-                                 const sign = newDmg.bonus >= 0 ? "+" : "";
-                                 const bonusStr = newDmg.bonus !== 0 ? `${sign}${newDmg.bonus}` : "";
-                                 newDmgStr = `${newDmg.count}${newDmg.die}${bonusStr}`;
-                             }
-                             replacements.push({ from: oldDmgInName, to: newDmgStr });
+                            if (newDmg.die === null) {
+                                newDmgStr = `${newDmg.bonus}`;
+                            } else {
+                                const sign = newDmg.bonus >= 0 ? "+" : "";
+                                const bonusStr = newDmg.bonus !== 0 ? `${sign}${newDmg.bonus}` : "";
+                                newDmgStr = `${newDmg.count}${newDmg.die}${bonusStr}`;
+                            }
                         }
+                    } else if (benchmark.damage_rolls) {
+                         newDmgStr = benchmark.damage_rolls[0]; 
                     }
                 }
 
@@ -548,11 +548,17 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                             to: newName
                         });
                     }
+                    // CRITICAL: Force Replace [X] in description with new damage string
+                    if (system.description && system.description.includes("[X]")) {
+                        system.description = system.description.replace(/\[X\]/g, newDmgStr);
+                        hasChanges = true;
+                    }
                 }
             }
 
             // Minion Logic (Renaming Feature)
-            const minionMatch = itemData.name.trim().match(/^Minion\s*\((\d+)\)$/i);
+            // Regex to match "Minion (X)" or "Minion"
+            const minionMatch = itemData.name.trim().match(/^Minion(\s*\((\d+)\))?$/i);
             if (minionMatch && benchmark.minion_feature_x) {
                 const newVal = Manager.getRollFromRange(benchmark.minion_feature_x);
                 if (newVal !== null) {
@@ -588,7 +594,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // 4. Apply Text Replacements (for descriptions using old numbers)
+        // 4. Apply Text Replacements (for descriptions using old numbers, excluding new Horde logic)
         if (hasChanges && replacements.length > 0) {
             const performReplacement = (text) => {
                 if (!text) return text;
@@ -608,7 +614,10 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                 return newText;
             };
 
-            if (system.description) system.description = performReplacement(system.description);
+            // Only run legacy replacement if not already handled by [X] logic
+            if (system.description && !system.description.includes("[X]")) {
+                 system.description = performReplacement(system.description);
+            }
             if (actionsRaw) {
                 for (const actionId in actionsRaw) {
                     if (actionsRaw[actionId].description) {
@@ -761,6 +770,9 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         // --- 3. Update Sheet Damage (Main Attack) ---
+        // NEW: Capture HALVED DAMAGE for Horde feature update later
+        let calculatedHalvedDamage = null;
+
         if (actorData.system.attack && actorData.system.attack.damage && actorData.system.attack.damage.parts) {
             const sheetDamageParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
             
@@ -788,6 +800,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             
             // NEW: Check for halved damage override (Horde)
             if (overrides.halvedDamageFormula && sheetDamageParts.length > 0) {
+                 calculatedHalvedDamage = overrides.halvedDamageFormula; // Capture for Horde feature
                  const parsed = Manager.parseDamageString(overrides.halvedDamageFormula);
                  if (parsed) {
                      const part = sheetDamageParts[0]; // Assume first part usually carries the alt value
@@ -806,12 +819,17 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
 
             // Simplified approach: Run standard updater FIRST, then apply overrides ON TOP.
+            // Note: If no manual override, this will calculate the halved damage from rules
             const result = Manager.updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
             if (result.hasChanges) {
                 // Apply standard changes first
                 updateData["system.attack.damage.parts"] = sheetDamageParts;
                 result.changes.forEach(c => {
                     statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
+                    // Capture calculated halved damage if present in changes
+                    if (c.labelSuffix === " (Alt)") {
+                         calculatedHalvedDamage = c.to;
+                    }
                 });
             }
             
@@ -989,9 +1007,63 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         // --- 5. Update Features (Items) ---
+        
+        // NEW: PRE-FETCH AND RESET MINION/HORDE FEATURES
+        // Fetch "daggerheart-advmanager.custom-features"
+        const customPack = game.packs.get("daggerheart-advmanager.custom-features");
+        let cleanMinion = null;
+        let cleanHorde = null;
+
+        if (customPack) {
+            const index = await customPack.getIndex();
+            // Look specifically for "Minion (X)" and "Horde (X)"
+            const minionIdx = index.find(i => i.name === "Minion (X)");
+            const hordeIdx = index.find(i => i.name === "Horde (X)");
+            
+            if (minionIdx) cleanMinion = (await customPack.getDocument(minionIdx._id)).toObject();
+            if (hordeIdx) cleanHorde = (await customPack.getDocument(hordeIdx._id)).toObject();
+        }
+
+        if (actorData.items) {
+            for (const item of actorData.items) {
+                // Check if it's a Minion or Horde feature to reset
+                // Regex matches "Minion" or "Minion (X)"
+                const isMinion = item.name.trim().match(/^Minion(\s*\(.*\))?$/i);
+                const isHorde = item.name.trim().match(/^Horde(\s*\(.*\))?$/i);
+
+                if (isMinion && cleanMinion) {
+                    const oldId = item._id;
+                    foundry.utils.mergeObject(item, cleanMinion);
+                    item._id = oldId; // Keep ID
+                    // Resetting ensures we have clean description/data. 
+                    // processFeatureUpdate will see the new name "Minion" and update it to "Minion (NewVal)"
+                } else if (isHorde && cleanHorde) {
+                    const oldId = item._id;
+                    foundry.utils.mergeObject(item, cleanHorde);
+                    item._id = oldId;
+                }
+            }
+        }
+
         // Ensure overrides structure exists for features
         const featureNames = (overrides.features && overrides.features.names) ? overrides.features.names : {};
+        // Make sure damageOverrides (which will be passed) is defined and initialized with overrides.features.damage
         const featureDamage = (overrides.features && overrides.features.damage) ? overrides.features.damage : {};
+
+        // CRITICAL FIX: IF we have a calculated halved damage for Horde, ensure it's passed to features
+        // Find any Horde item and inject the manual damage if not already overriden
+        if (calculatedHalvedDamage) {
+            if (actorData.items) {
+                for (const item of actorData.items) {
+                    if (item.name.trim().match(/^Horde(\s*\(.*\))?$/i)) {
+                        // If no specific override for this item ID, use the calculated halved damage
+                        if (!featureDamage[item._id]) {
+                            featureDamage[item._id] = calculatedHalvedDamage;
+                        }
+                    }
+                }
+            }
+        }
 
         const itemsToUpdate = [];
         if (actorData.items) {
