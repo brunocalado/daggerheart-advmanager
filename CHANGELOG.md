@@ -12,5 +12,6 @@
 - terrifying can increase difficult
 - compendium-stats can find correct features now
 
+
 # 0.1.5
 - small css fix
