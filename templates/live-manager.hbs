@@ -262,27 +262,38 @@
                     </div>
                 </div>
 
+                <!-- NEW: Damage Type and Direct Damage Configuration Row -->
+                <div class="stat-row-dual" style="margin-bottom: 5px;">
+                    <!-- Left: Damage Types -->
+                    <div class="stat-col-half" style="flex: 1.5; justify-content: flex-start;">
+                        <span class="stat-label" style="margin-right: 5px; white-space: nowrap; font-size: 0.9em;">Damage Type:</span>
+                        <div class="damage-type-controls" style="display: flex; gap: 5px;">
+                            <label title="Physical Damage" style="display:flex; align-items:center; font-size: 0.9em; cursor:pointer;"><input type="checkbox" class="damage-type-checkbox" value="physical" {{#if isPhysical}}checked{{/if}} style="margin-right: 2px;"> Phys</label>
+                            <label title="Magical Damage" style="display:flex; align-items:center; font-size: 0.9em; cursor:pointer;"><input type="checkbox" class="damage-type-checkbox" value="magical" {{#if isMagical}}checked{{/if}} style="margin-right: 2px;"> Mag</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Separator -->
+                    <div class="stat-separator"></div>
+
+                    <!-- Right: Direct Damage -->
+                    <div class="stat-col-half" style="flex: 1; justify-content: flex-end;">
+                        <span class="stat-label" style="margin-right: 5px; white-space: nowrap; font-size: 0.9em;">Direct:</span>
+                        <select class="override-input direct-select" style="width: 50px; font-size: 0.9em;">
+                            {{#each directOptions}}
+                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+
                 <div class="stat-group">
                     <div style="display:flex; flex-wrap: wrap; justify-content:space-between; align-items:center;">
                         <span class="stat-label" style="display: flex; align-items: center; gap: 8px;">
                             Attack Damage
-                            <div class="damage-type-controls">
-                                <label title="Physical Damage"><input type="checkbox" class="damage-type-checkbox" value="physical" {{#if isPhysical}}checked{{/if}}> Physical</label>
-                                <label title="Magical Damage"><input type="checkbox" class="damage-type-checkbox" value="magical" {{#if isMagical}}checked{{/if}}> Magical</label>
-                            </div>
-                            
-                            <!-- UPDATED: Direct Damage Combobox (Aligned Right inside Label row) -->
-                            <div style="margin-left: auto; display: flex; align-items: center; gap: 5px;">
-                                <span class="stat-value-hint">Direct:</span>
-                                <select class="override-input direct-select" style="width: 60px;">
-                                    {{#each directOptions}}
-                                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
-                                    {{/each}}
-                                </select>
-                            </div>
                         </span>
                         
-                        <div class="feature-input-group" style="width: 100%; max-width: 150px; margin-top: 5px;">
+                        <div class="feature-input-group" style="width: 100%; max-width: 150px; margin-top: 0;">
                             <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{damageTooltip}}}"></i>
                             <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
