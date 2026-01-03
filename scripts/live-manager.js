@@ -26,6 +26,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         
         // Cache for auto-suggested names to prevent flickering on re-renders
         this._suggestionCache = {};
+        
+        // NEW: Cache for simulated stats to prevent re-rolling on UI updates
+        this._cachedValues = null;
 
         // Store overrides separated by type
         this.overrides = { 
@@ -200,6 +203,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         // Reset overrides to avoid confusion
         this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" }; 
         this._suggestionCache = {}; 
+        this._cachedValues = null; // Clear seed cache on actor change
 
         this.filterTier = String(this.targetTier); 
         this.filterType = (actor.system.type || "standard").toLowerCase();
@@ -497,9 +501,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     };
                 }));
 
-                // === CORREÇÃO DO ERRO REFERENCEERROR ===
-                // Definir as variáveis suggestionTypeKey e suggestionTier ANTES de usá-las nas opções e na busca de compêndio.
-                
                 // 1. Determine Suggestion Keys based on overrides
                 let suggestionTypeKey = typeKey;
                 if (this.overrides.suggestedFeaturesType && this.overrides.suggestedFeaturesType !== "default") {
@@ -792,6 +793,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.selectedActorId = null;
         this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" }; 
         this._suggestionCache = {}; 
+        this._cachedValues = null;
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
         this.render();
     }
@@ -817,6 +819,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.selectedActorId = target.value;
         this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" }; 
         this._suggestionCache = {}; 
+        this._cachedValues = null;
         
         const actor = await this._getActor(this.selectedActorId);
         if (actor) {
@@ -831,6 +834,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             this.targetTier = tier;
             this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" }; 
             this._suggestionCache = {}; 
+            this._cachedValues = null;
             this.render();
         }
     }
@@ -873,6 +877,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
             this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" };
             this._suggestionCache = {}; 
+            this._cachedValues = null;
 
             this.render();
 
@@ -1139,19 +1144,51 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [], structuredFeatures: [] };
 
-        const sim = {};
-        sim.difficultyRaw = Manager.getRollFromRange(benchmark.difficulty);
-        sim.hpRaw = Manager.getRollFromRange(benchmark.hp);
-        sim.stressRaw = Manager.getRollFromRange(benchmark.stress);
-        sim.attackModRaw = Manager.getRollFromSignedRange(benchmark.attack_modifier);
-        
-        if (benchmark.threshold_min && benchmark.threshold_max) {
-            const minPair = Manager.parseThresholdPair(benchmark.threshold_min);
-            const maxPair = Manager.parseThresholdPair(benchmark.threshold_max);
-            if (minPair && maxPair) {
-                sim.majorRaw = Math.floor(Math.random() * (maxPair.major - minPair.major + 1)) + minPair.major;
-                sim.severeRaw = Math.floor(Math.random() * (maxPair.severe - minPair.severe + 1)) + minPair.severe;
+        // === CACHING SYSTEM FOR RANDOM ROLLS ===
+        // If cache doesn't exist (reset by tier change), generate and freeze random values.
+        if (!this._cachedValues) {
+            this._cachedValues = {};
+            this._cachedValues.difficulty = Manager.getRollFromRange(benchmark.difficulty);
+            this._cachedValues.hp = Manager.getRollFromRange(benchmark.hp);
+            this._cachedValues.stress = Manager.getRollFromRange(benchmark.stress);
+            this._cachedValues.attackMod = Manager.getRollFromSignedRange(benchmark.attack_modifier);
+            
+            // Thresholds
+            if (benchmark.threshold_min && benchmark.threshold_max) {
+                 const minPair = Manager.parseThresholdPair(benchmark.threshold_min);
+                 const maxPair = Manager.parseThresholdPair(benchmark.threshold_max);
+                 if (minPair && maxPair) {
+                     this._cachedValues.major = Math.floor(Math.random() * (maxPair.major - minPair.major + 1)) + minPair.major;
+                     this._cachedValues.severe = Math.floor(Math.random() * (maxPair.severe - minPair.severe + 1)) + minPair.severe;
+                 }
             }
+
+            // Minion/Horde specific ranges
+            if (benchmark.basic_attack_y) this._cachedValues.basic_attack_y = Manager.getRollFromRange(benchmark.basic_attack_y);
+            if (benchmark.minion_feature_x) this._cachedValues.minion_feature_x = Manager.getRollFromRange(benchmark.minion_feature_x);
+            // Halved Damage (X)
+            if (benchmark.halved_damage_x && Array.isArray(benchmark.halved_damage_x) && benchmark.halved_damage_x.length > 0 && benchmark.halved_damage_x[0].includes("-")) {
+                 // Only need to roll if it's a range like "1d4-1". If it's "1d4", Manager handles it.
+                 // For now, let Manager handle standard dice unless it's a specific Range String type that Manager.getRollFromRange expects.
+                 // Since halved_damage_x is array of dice strings usually, we might leave it to Manager.processDamageValue unless it's strictly a range.
+            }
+        }
+
+        // CREATE A FROZEN BENCHMARK using cached values to ensure stability
+        // We override the range strings with the fixed integers we rolled.
+        const frozenBenchmark = foundry.utils.deepClone(benchmark);
+        if (this._cachedValues.basic_attack_y !== undefined) frozenBenchmark.basic_attack_y = String(this._cachedValues.basic_attack_y);
+        if (this._cachedValues.minion_feature_x !== undefined) frozenBenchmark.minion_feature_x = String(this._cachedValues.minion_feature_x);
+
+        const sim = {};
+        sim.difficultyRaw = this._cachedValues.difficulty;
+        sim.hpRaw = this._cachedValues.hp;
+        sim.stressRaw = this._cachedValues.stress;
+        sim.attackModRaw = this._cachedValues.attackMod;
+        
+        if (this._cachedValues.major && this._cachedValues.severe) {
+            sim.majorRaw = this._cachedValues.major;
+            sim.severeRaw = this._cachedValues.severe;
         }
 
         // --- Experience Simulation ---
@@ -1270,12 +1307,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     rawVal = this.overrides.damageFormula;
                     damageParts.push(`<span class="stat-changed">${this.overrides.damageFormula}</span>`);
                 } else {
-                    if (benchmark.basic_attack_y && part.value) {
-                         const newVal = Manager.getRollFromRange(benchmark.basic_attack_y);
+                    // Use frozenBenchmark which has resolved integers for random ranges
+                    if (frozenBenchmark.basic_attack_y && part.value) {
+                         const newVal = frozenBenchmark.basic_attack_y; // Already stringified int
                          rawVal = String(newVal);
                          damageParts.push(`<span class="stat-changed">${newVal}</span>`);
                     } else if (part.value) {
-                        const result = Manager.processDamageValue(part.value, targetTier, currentTier, benchmark.damage_rolls);
+                        const result = Manager.processDamageValue(part.value, targetTier, currentTier, frozenBenchmark.damage_rolls);
                         if (result) {
                             rawVal = result.to;
                             damageParts.push(`<span class="stat-changed">${result.to}</span>`);
@@ -1292,13 +1330,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 if (index === 0) mainDamageRaw = rawVal;
 
-                if (part.valueAlt && benchmark.halved_damage_x) {
+                if (part.valueAlt && frozenBenchmark.halved_damage_x) {
                     let rawHalved = "";
                     if (this.overrides.halvedDamageFormula) {
                         rawHalved = this.overrides.halvedDamageFormula;
                         halvedParts.push(`<span class="stat-changed">${this.overrides.halvedDamageFormula}</span>`);
                     } else {
-                        const result = Manager.processDamageValue(part.valueAlt, targetTier, currentTier, benchmark.halved_damage_x);
+                        const result = Manager.processDamageValue(part.valueAlt, targetTier, currentTier, frozenBenchmark.halved_damage_x);
                         if (result) {
                             rawHalved = result.to;
                             halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
@@ -1334,7 +1372,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     item, 
                     targetTier, 
                     currentTier, 
-                    benchmark, 
+                    frozenBenchmark, // Pass frozen benchmark
                     featureLog, 
                     this.overrides.features.names, 
                     this.overrides.features.damage
