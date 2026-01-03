@@ -122,6 +122,10 @@
                     {{currentStats.attackMod}}
                 </span>
             </div>
+            <div class="stat-row">
+                <span class="stat-label">Critical Threshold</span>
+                <span class="stat-value">{{currentStats.critical}}</span>
+            </div>
 
             <div class="stat-group">
                 <span class="stat-label">
@@ -236,6 +240,16 @@
                             {{{previewStats.attackModDisplay}}}
                         </span>
                         <input type="number" class="override-input" data-field="attackMod" value="{{previewStats.attackMod}}" title="Manual Override">
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Critical Threshold</span>
+                    <div class="stat-input-group">
+                        <select class="override-input critical-select" style="width: 60px;">
+                            {{#each criticalOptions}}
+                            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                            {{/each}}
+                        </select>
                     </div>
                 </div>
 

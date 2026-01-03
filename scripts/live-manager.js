@@ -50,7 +50,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             attackMod: undefined,
             expAmount: undefined,
             expMod: undefined,
-            damageTypes: null // NEW: Stores ["physical", "magical"] etc or null
+            damageTypes: null, // NEW: Stores ["physical", "magical"] etc or null
+            criticalThreshold: undefined // NEW: Stores integer 1-20
         };
 
         // Initialize Settings
@@ -235,7 +236,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.targetTier = Number(actor.system.tier) || 1;
         
         // Reset overrides to avoid confusion
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined }; 
         this._suggestionCache = {}; 
         this._cachedValues = null; // Clear seed cache on actor change
 
@@ -418,6 +419,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let portraitImg = null;
         let suggestedFeaturesTypeOptions = []; 
         let suggestedFeaturesTierOptions = [];
+        let criticalOptions = []; // NEW
 
         let isPhysical = false;
         let isMagical = false;
@@ -511,6 +513,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
                 if (halvedDamageOptions.length > 0) {
                     halvedDamageTooltip = "Suggested:<br>" + halvedDamageOptions.map(o => `• ${o.label}`).join("<br>");
+                }
+
+                // PREPARE CRITICAL THRESHOLD OPTIONS
+                // Default to actor's current, allow override
+                const currentCritical = currentStats.critical;
+                const previewCritical = this.overrides.criticalThreshold !== undefined ? Number(this.overrides.criticalThreshold) : currentCritical;
+                
+                criticalOptions = [];
+                for (let i = 1; i <= 20; i++) {
+                    criticalOptions.push({
+                        value: i,
+                        label: i,
+                        selected: i === previewCritical
+                    });
                 }
 
                 previewStats = {
@@ -850,7 +866,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             suggestedFeaturesTypeOptions,
             suggestedFeaturesTierOptions,
             isPhysical, // NEW
-            isMagical // NEW
+            isMagical, // NEW
+            criticalOptions // NEW
         };
     }
 
@@ -872,8 +889,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (actorSelect) actorSelect.addEventListener('change', (e) => this._onSelectActor(e, actorSelect));
 
         html.querySelectorAll('.override-input').forEach(input => {
-            input.addEventListener('change', (e) => this._onOverrideChange(e, input));
+            // EXCLUDE critical select from standard generic listener if we add a specific one, 
+            // or ensure _onOverrideChange handles it. 
+            // Since critical select will have 'critical-select' class, we can attach specific logic.
+            if (!input.classList.contains('critical-select')) {
+                input.addEventListener('change', (e) => this._onOverrideChange(e, input));
+            }
         });
+
+        // NEW: Critical Threshold Listener
+        const critSelect = html.querySelector('.critical-select');
+        if (critSelect) critSelect.addEventListener('change', (e) => this._onCriticalChange(e, critSelect));
 
         html.querySelectorAll('.feature-override-input, .feature-override-select').forEach(input => {
             input.addEventListener('change', (e) => this._onFeatureOverrideChange(e, input));
@@ -931,7 +957,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.stopPropagation();
         this.source = target.value;
         this.selectedActorId = null;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined }; 
         this._suggestionCache = {}; 
         this._cachedValues = null;
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
@@ -957,7 +983,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.preventDefault();
         event.stopPropagation();
         this.selectedActorId = target.value;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined }; 
         this._suggestionCache = {}; 
         this._cachedValues = null;
         
@@ -972,7 +998,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const tier = Number(target.dataset.tier);
         if (tier) {
             this.targetTier = tier;
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null }; 
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined }; 
             this._suggestionCache = {}; 
             this._cachedValues = null;
             this.render();
@@ -1018,6 +1044,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
+            // NEW: Manually update Critical Threshold if overridden
+            if (this.overrides.criticalThreshold !== undefined) {
+                await actor.update({ "system.criticalThreshold": parseInt(this.overrides.criticalThreshold) });
+            }
+
             if (!result) {
                 ui.notifications.warn("No changes were necessary.");
             }
@@ -1028,7 +1059,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const typeKey = (actor.system.type || "standard").toLowerCase();
             this.filterType = typeKey; 
 
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null };
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined };
             this._suggestionCache = {}; 
             this._cachedValues = null;
 
@@ -1124,6 +1155,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         // but let's render to be consistent.
         // this.render(); 
         // Rendering causes focus loss on checkboxes. Let's NOT render.
+    }
+
+    // NEW: Handler for Critical Threshold
+    _onCriticalChange(event, target) {
+        const val = parseInt(target.value);
+        if (!isNaN(val)) {
+            this.overrides.criticalThreshold = val;
+        }
+        // No render needed, simple input change
     }
 
     async _onOpenFeature(event, target) {
@@ -1279,6 +1319,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const hitChance = Manager.calculateHitChance(attackMod, tier);
         const difficulty = Number(sys.difficulty) || 0;
         const hitChanceAgainst = Manager.calculateHitChanceAgainst(difficulty, tier);
+        const critical = Number(sys.criticalThreshold) || 20; // NEW: Extract Critical
 
         const experiences = sys.experiences || {};
         const expList = [];
@@ -1299,13 +1340,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             thresholds: `${sys.damageThresholds?.major} / ${sys.damageThresholds?.severe}`,
             attackMod: sys.attack?.roll?.bonus,
             damage: damageParts.join(", ") || "None",
-            damageTypesLabel: damageTypesLabel, // NEW
-            damageStats: this._calculateDamageStats(firstDamageFormula), // Stats for current
+            damageTypesLabel: damageTypesLabel, 
+            damageStats: this._calculateDamageStats(firstDamageFormula), 
             halvedDamage: halvedParts.join(", ") || null,
-            halvedDamageStats: this._calculateDamageStats(firstHalvedFormula), // Stats for current
+            halvedDamageStats: this._calculateDamageStats(firstHalvedFormula), 
             hitChance: hitChance,
             hitChanceAgainst: hitChanceAgainst,
-            experiences: expList
+            experiences: expList,
+            critical: critical // NEW
         };
     }
 
