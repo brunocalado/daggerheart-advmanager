@@ -93,7 +93,7 @@
                 <span class="stat-value">
                     {{currentStats.difficulty}}
                     {{#if currentStats.hitChanceAgainst}}
-                        <span style="font-size: 0.8em; color: #aaa; margin-left: 5px; cursor: help;" title="{{currentStats.hitChanceAgainst.tooltip}}">{{currentStats.hitChanceAgainst.text}}</span>
+                        <span style="color: #eee; font-size: 1em; margin-left: 5px; cursor: help;" title="{{currentStats.hitChanceAgainst.tooltip}}">{{currentStats.hitChanceAgainst.text}}</span>
                     {{/if}}
                 </span>
             </div>
@@ -114,21 +114,21 @@
                 <span class="stat-value">
                     {{currentStats.attackMod}}
                     {{#if currentStats.hitChance}}
-                        <span style="font-size: 0.8em; color: #aaa; margin-left: 5px; cursor: help;" title="{{currentStats.hitChance.tooltip}}">{{currentStats.hitChance.text}}</span>
+                        <span style="color: #eee; font-size: 1em; margin-left: 5px; cursor: help;" title="{{currentStats.hitChance.tooltip}}">{{currentStats.hitChance.text}}</span>
                     {{/if}}
                 </span>
             </div>
 
             <div class="stat-group">
                 <span class="stat-label">Attack Damage</span>
-                <div class="stat-block">{{currentStats.damage}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{currentStats.damageStats}}</span></div>
+                <div class="stat-block">{{currentStats.damage}} <span style="color: #eee; font-size: 1em; margin-left: 5px;">{{currentStats.damageStats}}</span></div>
             </div>
             
             {{#if isHorde}}
                 {{#if currentStats.halvedDamage}}
                 <div class="stat-group">
                     <span class="stat-label">Halved Damage (Horde)</span>
-                    <div class="stat-block">{{currentStats.halvedDamage}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{currentStats.halvedDamageStats}}</span></div>
+                    <div class="stat-block">{{currentStats.halvedDamage}} <span style="color: #eee; margin-left: 5px;">{{currentStats.halvedDamageStats}}</span></div>
                 </div>
                 {{/if}}
             {{/if}}
@@ -169,18 +169,21 @@
                 <div class="error-msg">{{previewStats.error}}</div>
             {{else}}
                 <!-- Preview Inputs (Difficulty, HP, etc) -->
+                
+                <!-- DIFFICULTY: Hint First, Input Last (Right) -->
                 <div class="stat-row">
                     <span class="stat-label">Difficulty</span>
                     <div class="stat-input-group">
                         <span class="stat-value-hint">
                             {{{previewStats.difficultyDisplay}}}
                             {{#if previewStats.hitChanceAgainst}}
-                                <br><span style="font-size: 0.7em; color: #ea80fc; cursor: help;" title="{{previewStats.hitChanceAgainst.tooltip}}">{{previewStats.hitChanceAgainst.text}}</span>
+                                <span style="color: #ea80fc; cursor: help;" title="{{previewStats.hitChanceAgainst.tooltip}}">{{previewStats.hitChanceAgainst.text}}</span>
                             {{/if}}
                         </span>
                         <input type="number" class="override-input" data-field="difficulty" value="{{previewStats.difficulty}}" title="Manual Override">
                     </div>
                 </div>
+                
                 <div class="stat-row">
                     <span class="stat-label">HP</span>
                     <div class="stat-input-group">
@@ -207,13 +210,15 @@
                         {{/if}}
                     </div>
                 </div>
+                
+                <!-- ATTACK BONUS: Hint First, Input Last (Right) -->
                 <div class="stat-row">
                     <span class="stat-label">Attack Bonus</span>
                     <div class="stat-input-group">
                         <span class="stat-value-hint">
                             {{{previewStats.attackModDisplay}}}
                             {{#if previewStats.hitChance}}
-                                <br><span style="font-size: 0.7em; color: #ea80fc; cursor: help;" title="{{previewStats.hitChance.tooltip}}">{{previewStats.hitChance.text}}</span>
+                                <span style="color: #ea80fc; cursor: help;" title="{{previewStats.hitChance.tooltip}}">{{previewStats.hitChance.text}}</span>
                             {{/if}}
                         </span>
                         <input type="number" class="override-input" data-field="attackMod" value="{{previewStats.attackMod}}" title="Manual Override">
@@ -228,7 +233,7 @@
                             <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
-                    <div class="stat-block">{{{previewStats.damage}}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{previewStats.damageStats}}</span></div>
+                    <div class="stat-block">{{{previewStats.damage}}} <span style="color: #eee; font-size: 1em; margin-left: 5px;">{{previewStats.damageStats}}</span></div>
                 </div>
 
                 {{#if previewStats.halvedDamage}}
@@ -240,9 +245,14 @@
                             <input type="text" class="override-input" data-field="halvedDamageFormula" value="{{previewStats.mainHalvedDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
-                    <div class="stat-block">{{{previewStats.halvedDamage}}} <span style="font-size: 0.8em; color: #aaa; margin-left: 5px;">{{previewStats.halvedDamageStats}}</span></div>
+                    <div class="stat-block">{{{previewStats.halvedDamage}}} <span style="color: #eee; margin-left: 5px;">{{previewStats.halvedDamageStats}}</span></div>
                 </div>
                 {{/if}}
+                
+                <!-- MOVED NOTE HERE -->
+                <div class="preview-note" style="margin: 10px 0;">
+                    <i class="fas fa-info-circle"></i> Edit values to override random rolls.
+                </div>
 
                 <!-- PREVIEW EXPERIENCES -->
                 <div class="stat-group">
@@ -293,7 +303,7 @@
                                         </div>
                                     </div>
                                     {{#if this.stats}}
-                                        <div class="feature-stats" style="font-size: 0.8em; color: #aaa; text-align: center; white-space: nowrap; margin: 0 5px;">
+                                        <div class="feature-stats">
                                             {{this.stats}}
                                         </div>
                                     {{/if}}
@@ -392,9 +402,6 @@
                 </div>
                 {{/if}}
                 
-                <div class="preview-note">
-                    <i class="fas fa-info-circle"></i> Edit values to override random rolls.
-                </div>
             {{/if}}
         </div>
 
