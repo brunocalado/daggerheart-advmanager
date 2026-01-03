@@ -339,7 +339,7 @@
                 {{#if allSuggestedFeatures.length}}
                 <div class="features-preview-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <h4 class="features-header" style="color: #98fb98; margin: 0;">New Suggested Features</h4>
+                        <h4 class="features-header" style="color: #98fb98; margin: 0;">New Features</h4>
                         <div class="feature-header-controls" style="width: 180px;">
                             <select class="suggestion-type-select" style="font-size: 0.85em; height: 26px; width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid #555; color: #ea80fc; border-radius: 3px;">
                                 {{#each suggestedFeaturesTypeOptions}}
@@ -353,18 +353,13 @@
                             <div class="feature-change-row new-feature-row">
                                 <label class="feature-label" style="cursor: pointer; display: flex; align-items: center; width: 100%;">
                                     <input type="checkbox" class="feature-checkbox" data-feature="{{this.name}}" {{#if this.checked}}checked{{/if}} style="margin-right: 8px; flex-shrink: 0;">
-                                    <a class="feature-link" data-action="openFeature" data-uuid="{{this.uuid}}">
+                                    <a class="feature-link" data-action="openFeature" data-uuid="{{this.uuid}}" style="flex: 1; display: flex; align-items: center;">
                                         {{#if this.img}}
                                             <img src="{{this.img}}" class="feature-icon-small" alt="{{this.name}}" style="flex-shrink: 0;">
                                         {{/if}}
                                         
                                         <!-- NAME FIRST -->
                                         <strong style="color: #eee;">{{this.name}}</strong>
-
-                                        <!-- RULE SUGGESTION STAR -->
-                                        {{#if this.isRuleSuggestion}}
-                                            <i class="fas fa-star" title="Suggested by Rules" style="color: #ffd700; margin-left: 5px; font-size: 0.8em;"></i>
-                                        {{/if}}
 
                                         <!-- TAGS AFTER -->
                                         {{#if this.tags.action.label}}
@@ -375,6 +370,11 @@
                                         {{/if}}
                                         {{#if this.tags.type}}
                                             <span class="dh-tag tag-type">{{this.tags.type}}</span>
+                                        {{/if}}
+
+                                        <!-- RULE SUGGESTION STAR - EXTREME RIGHT -->
+                                        {{#if this.isRuleSuggestion}}
+                                            <i class="fas fa-star" title="Suggested by Rules" style="color: #ffd700; margin-left: auto; font-size: 0.8em;"></i>
                                         {{/if}}
                                     </a>
                                 </label>

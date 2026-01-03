@@ -592,17 +592,21 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }));
 
                 // --- BUILD SUGGESTED FEATURES TYPE OPTIONS ---
-                suggestedFeaturesTypeOptions = [
-                    { value: "default", label: "Default (Current Type)", selected: this.overrides.suggestedFeaturesType === "default" }
-                ];
+                suggestedFeaturesTypeOptions = []; // RESET ARRAY
                 
-                // Add all keys from BENCHMARKS
+                // Add all keys from BENCHMARKS without a generic "Default" option
                 const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
                 typeKeys.forEach(k => {
+                    // Logic to determine if this option is selected
+                    // 1. If override is "default" (initial state), check if k matches actor's type (typeKey)
+                    // 2. If override is set to specific key, check if k matches override
+                    const isSelected = (this.overrides.suggestedFeaturesType === "default" && k === typeKey) ||
+                                       (this.overrides.suggestedFeaturesType === k);
+
                     suggestedFeaturesTypeOptions.push({
                         value: k,
                         label: k.charAt(0).toUpperCase() + k.slice(1),
-                        selected: this.overrides.suggestedFeaturesType === k
+                        selected: isSelected
                     });
                 });
             }
