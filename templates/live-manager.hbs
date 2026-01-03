@@ -138,7 +138,8 @@
                             <span class="current-hint-text">{{currentStats.damageTypesLabel}}</span>
                         {{/if}}
                     </span>
-                    <span style="color: #aaa; font-size: 0.9em; white-space: nowrap;">
+                    <!-- UPDATED: Using explicit style to match Attack Damage label as requested (White/Bold) -->
+                    <span style="color: #eeeeee; font-weight: bold; font-size: 1.0em; white-space: nowrap;">
                         {{currentStats.directLabel}}
                     </span>
                 </div>
@@ -269,8 +270,19 @@
                                 <label title="Physical Damage"><input type="checkbox" class="damage-type-checkbox" value="physical" {{#if isPhysical}}checked{{/if}}> Physical</label>
                                 <label title="Magical Damage"><input type="checkbox" class="damage-type-checkbox" value="magical" {{#if isMagical}}checked{{/if}}> Magical</label>
                             </div>
+                            
+                            <!-- UPDATED: Direct Damage Combobox (Aligned Right inside Label row) -->
+                            <div style="margin-left: auto; display: flex; align-items: center; gap: 5px;">
+                                <span class="stat-value-hint">Direct:</span>
+                                <select class="override-input direct-select" style="width: 60px;">
+                                    {{#each directOptions}}
+                                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
                         </span>
-                        <div class="feature-input-group" style="width: 100%; max-width: 150px;">
+                        
+                        <div class="feature-input-group" style="width: 100%; max-width: 150px; margin-top: 5px;">
                             <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{damageTooltip}}}"></i>
                             <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>

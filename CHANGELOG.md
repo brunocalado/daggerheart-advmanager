@@ -10,6 +10,7 @@
 - easier to ready things on live manager
 - live manager You can preview damage type and change it
 - live manager You can change the critical now + crit chance
+- you can change direct damage
 
 # 0.1.6
 - compendium-stats shows experience

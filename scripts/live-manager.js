@@ -50,8 +50,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             attackMod: undefined,
             expAmount: undefined,
             expMod: undefined,
-            damageTypes: null, // NEW: Stores ["physical", "magical"] etc or null
-            criticalThreshold: undefined // NEW: Stores integer 1-20
+            damageTypes: null, // Stores ["physical", "magical"] etc or null
+            criticalThreshold: undefined, // Stores integer 1-20
+            directDamage: undefined // NEW: Stores "true" or "false" string for override
         };
 
         // Initialize Settings
@@ -92,7 +93,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             openSheet: LiveManager.prototype._onOpenSheet,
             addExperience: LiveManager.prototype._onAddExperience,
             deleteExperience: LiveManager.prototype._onDeleteExperience,
-            rollExperienceName: LiveManager.prototype._onRollExperienceName // NEW ACTION
+            rollExperienceName: LiveManager.prototype._onRollExperienceName
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -236,7 +237,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.targetTier = Number(actor.system.tier) || 1;
         
         // Reset overrides to avoid confusion
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined }; 
         this._suggestionCache = {}; 
         this._cachedValues = null; // Clear seed cache on actor change
 
@@ -427,6 +428,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let suggestedFeaturesTypeOptions = []; 
         let suggestedFeaturesTierOptions = [];
         let criticalOptions = []; 
+        let directOptions = []; // NEW
 
         let isPhysical = false;
         let isMagical = false;
@@ -538,6 +540,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         selected: i === previewCritical
                     });
                 }
+
+                // NEW: Direct Damage Options
+                const currentDirect = actor.system.attack?.damage?.direct ?? false;
+                const previewDirect = this.overrides.directDamage !== undefined ? (this.overrides.directDamage === "true") : currentDirect;
+                
+                directOptions = [
+                    { value: "true", label: "Yes", selected: previewDirect === true },
+                    { value: "false", label: "No", selected: previewDirect === false }
+                ];
 
                 previewStats = {
                     difficulty: this.overrides.difficulty !== undefined ? this.overrides.difficulty : simResult.stats.difficultyRaw,
@@ -878,7 +889,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             suggestedFeaturesTierOptions,
             isPhysical, // NEW
             isMagical, // NEW
-            criticalOptions // NEW
+            criticalOptions, // NEW
+            directOptions // NEW
         };
     }
 
@@ -900,10 +912,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (actorSelect) actorSelect.addEventListener('change', (e) => this._onSelectActor(e, actorSelect));
 
         html.querySelectorAll('.override-input').forEach(input => {
-            // EXCLUDE critical select from standard generic listener if we add a specific one, 
-            // or ensure _onOverrideChange handles it. 
-            // Since critical select will have 'critical-select' class, we can attach specific logic.
-            if (!input.classList.contains('critical-select')) {
+            // EXCLUDE critical select and direct select from standard generic listener if we add a specific one, 
+            if (!input.classList.contains('critical-select') && !input.classList.contains('direct-select')) {
                 input.addEventListener('change', (e) => this._onOverrideChange(e, input));
             }
         });
@@ -911,6 +921,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         // NEW: Critical Threshold Listener
         const critSelect = html.querySelector('.critical-select');
         if (critSelect) critSelect.addEventListener('change', (e) => this._onCriticalChange(e, critSelect));
+
+        // NEW: Direct Damage Listener
+        const directSelect = html.querySelector('.direct-select');
+        if (directSelect) directSelect.addEventListener('change', (e) => this._onDirectChange(e, directSelect));
 
         html.querySelectorAll('.feature-override-input, .feature-override-select').forEach(input => {
             input.addEventListener('change', (e) => this._onFeatureOverrideChange(e, input));
@@ -968,7 +982,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.stopPropagation();
         this.source = target.value;
         this.selectedActorId = null;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined }; 
         this._suggestionCache = {}; 
         this._cachedValues = null;
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
@@ -994,7 +1008,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.preventDefault();
         event.stopPropagation();
         this.selectedActorId = target.value;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined }; 
         this._suggestionCache = {}; 
         this._cachedValues = null;
         
@@ -1009,7 +1023,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const tier = Number(target.dataset.tier);
         if (tier) {
             this.targetTier = tier;
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined }; 
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined }; 
             this._suggestionCache = {}; 
             this._cachedValues = null;
             this.render();
@@ -1075,6 +1089,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 hasManualUpdates = true;
             }
 
+            // NEW: Apply Direct Damage Override
+            if (this.overrides.directDamage !== undefined) {
+                manualUpdates["system.attack.damage.direct"] = (this.overrides.directDamage === "true");
+                hasManualUpdates = true;
+            }
+
             if (hasManualUpdates) {
                 // Wait for the update to complete and get the resulting document
                 const updatedActor = await freshActor.update(manualUpdates);
@@ -1094,7 +1114,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const typeKey = (freshActor.system.type || "standard").toLowerCase();
             this.filterType = typeKey; 
 
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined };
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined };
             this._suggestionCache = {}; 
             this._cachedValues = null;
 
@@ -1207,6 +1227,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             this.overrides.criticalThreshold = val;
         }
         this.render(); // Need render to update the chance percentage text
+    }
+
+    // NEW: Handler for Direct Damage
+    _onDirectChange(event, target) {
+        const val = target.value;
+        this.overrides.directDamage = val;
+        this.render();
     }
 
     async _onOpenFeature(event, target) {
@@ -1624,7 +1651,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         } else {
                              let existing = "";
                              if (part.valueAlt.custom?.enabled) existing = part.valueAlt.custom.formula;
-                             else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
+                             else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
                              else existing = part.valueAlt.flatMultiplier;
                              rawHalved = existing;
                              halvedParts.push(existing);
