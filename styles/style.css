@@ -1643,3 +1643,81 @@
     border-color: #4db6ac;
     text-shadow: 0 1px 1px rgba(0,0,0,0.8);
 }
+
+/* New styles for Damage Type Controls */
+.damage-type-current {
+    font-weight: normal;
+    color: #ccc;
+    font-size: 0.9em;
+    margin-left: 5px;
+}
+
+.damage-type-controls {
+    display: inline-flex;
+    gap: 10px;
+    margin-left: 10px;
+    background: rgba(0,0,0,0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #555;
+}
+
+.damage-type-controls label {
+    font-size: 0.85em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    color: #ddd;
+    font-weight: normal;
+}
+
+.damage-type-checkbox {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Ensure consistent sizing */
+.range-hint, .stat-value-hint, .feature-stats {
+    font-size: 1em !important;
+}
+
+/* New styles for Dual Row (HP & Stress) */
+.stat-row-dual {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    gap: 15px; /* Spacing between columns */
+}
+
+.stat-col-half {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0; /* Fix flex overflow */
+}
+
+/* Compact input group for half columns */
+.stat-input-group.dual-compact {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
+    flex: 1; /* Take remaining space in half col */
+}
+
+.stat-input-group.dual-compact .stat-value-hint {
+    font-size: 0.9em !important; /* Slightly smaller hint for compact space */
+}
+
+.stat-input-group.dual-compact .override-input {
+    width: 50px; /* Slightly smaller input */
+}
+
+/* Ensure consistent sizing */
+.range-hint, .stat-value-hint, .feature-stats {
+    font-size: 1em !important;
+}

@@ -445,24 +445,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     portraitImg = rawImg;
                 }
 
-                // Updated Link Data logic: hide if actor is in compendium (has pack)
-                linkData = {
-                    isLinked: isLinked,
-                    icon: isLinked ? "fa-link" : "fa-unlink",
-                    cssClass: isLinked ? "status-linked" : "status-unlinked",
-                    label: isLinked ? "Linked" : "Unlinked"
-                };
-                if (actor.compendium || actor.pack) linkData = null;
-
                 // Determine Damage Types state for Checkboxes
                 let previewDamageTypes = this.overrides.damageTypes;
                 
                 // Explicit check for null (initial state) to allow empty array (user cleared all)
                 if (previewDamageTypes === null) {
-                    // Use toObject() to ensure we extract the raw data array correctly, avoiding DataModel proxy issues
-                    const actorData = actor.toObject();
-                    const mainPart = actorData.system.attack?.damage?.parts?.[0];
-                    
+                    const mainPart = actor.system.attack?.damage?.parts?.[0];
                     if (mainPart) {
                         if (Array.isArray(mainPart.type)) {
                             previewDamageTypes = mainPart.type;
@@ -481,6 +469,16 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 isPhysical = activeTypes.includes("physical");
                 isMagical = activeTypes.includes("magical");
+
+
+                // Updated Link Data logic: hide if actor is in compendium (has pack)
+                linkData = {
+                    isLinked: isLinked,
+                    icon: isLinked ? "fa-link" : "fa-unlink",
+                    cssClass: isLinked ? "status-linked" : "status-unlinked",
+                    label: isLinked ? "Linked" : "Unlinked"
+                };
+                if (actor.compendium || actor.pack) linkData = null;
 
                 currentStats = this._extractStats(actor.toObject(), currentTier);
                 const simResult = await this._simulateStats(actor, this.targetTier, currentTier);

@@ -2,7 +2,6 @@
     
     <!-- Top Control: Actor Selection & Filter -->
     <div class="preview-controls form-group">
-        <!-- ... (existing top controls) ... -->
         <div class="actor-selection-row">
             
             <div class="select-wrapper source-wrapper">
@@ -87,24 +86,28 @@
                 {{/if}}
             </h3>
             
-            <!-- Current Stats (Difficulty, HP, etc) -->
             <div class="stat-row">
                 <span class="stat-label">Difficulty</span>
                 <span class="stat-value">
-                    {{currentStats.difficulty}}
                     {{#if currentStats.hitChanceAgainst}}
-                        <span style="color: #eee; font-size: 1em; margin-left: 5px; cursor: help;" title="{{currentStats.hitChanceAgainst.tooltip}}">{{currentStats.hitChanceAgainst.text}}</span>
+                        <span style="color: #aaa; font-size: 1em; margin-right: 5px; cursor: help;" title="{{currentStats.hitChanceAgainst.tooltip}}">{{currentStats.hitChanceAgainst.text}}</span>
                     {{/if}}
+                    {{currentStats.difficulty}}
                 </span>
             </div>
-            <div class="stat-row">
-                <span class="stat-label">HP</span>
-                <span class="stat-value">{{currentStats.hp}}</span>
+
+            <!-- HP & STRESS ROW (CURRENT) -->
+            <div class="stat-row-dual">
+                <div class="stat-col-half">
+                    <span class="stat-label">HP</span>
+                    <span class="stat-value">{{currentStats.hp}}</span>
+                </div>
+                <div class="stat-col-half">
+                    <span class="stat-label">Stress</span>
+                    <span class="stat-value">{{currentStats.stress}}</span>
+                </div>
             </div>
-            <div class="stat-row">
-                <span class="stat-label">Stress</span>
-                <span class="stat-value">{{currentStats.stress}}</span>
-            </div>
+
             <div class="stat-row">
                 <span class="stat-label">Thresholds</span>
                 <span class="stat-value">{{currentStats.thresholds}}</span>
@@ -112,15 +115,20 @@
             <div class="stat-row">
                 <span class="stat-label">Attack Bonus</span>
                 <span class="stat-value">
-                    {{currentStats.attackMod}}
                     {{#if currentStats.hitChance}}
-                        <span style="color: #eee; font-size: 1em; margin-left: 5px; cursor: help;" title="{{currentStats.hitChance.tooltip}}">{{currentStats.hitChance.text}}</span>
+                        <span style="color: #aaa; font-size: 1em; margin-right: 5px; cursor: help;" title="{{currentStats.hitChance.tooltip}}">{{currentStats.hitChance.text}}</span>
                     {{/if}}
+                    {{currentStats.attackMod}}
                 </span>
             </div>
 
             <div class="stat-group">
-                <span class="stat-label">Attack Damage</span>
+                <span class="stat-label">
+                    Attack Damage 
+                    {{#if currentStats.damageTypesLabel}}
+                        <span class="damage-type-current">{{currentStats.damageTypesLabel}}</span>
+                    {{/if}}
+                </span>
                 <div class="stat-block">{{currentStats.damage}} <span style="color: #eee; font-size: 1em; margin-left: 5px;">{{currentStats.damageStats}}</span></div>
             </div>
             
@@ -168,36 +176,38 @@
             {{#if previewStats.error}}
                 <div class="error-msg">{{previewStats.error}}</div>
             {{else}}
-                <!-- Preview Inputs (Difficulty, HP, etc) -->
                 
-                <!-- DIFFICULTY: Hint First, Input Last (Right) -->
                 <div class="stat-row">
                     <span class="stat-label">Difficulty</span>
                     <div class="stat-input-group">
                         <span class="stat-value-hint">
-                            {{{previewStats.difficultyDisplay}}}
                             {{#if previewStats.hitChanceAgainst}}
-                                <span style="color: #ea80fc; cursor: help;" title="{{previewStats.hitChanceAgainst.tooltip}}">{{previewStats.hitChanceAgainst.text}}</span>
+                                <span style="color: #ea80fc; margin-right: 5px; cursor: help;" title="{{previewStats.hitChanceAgainst.tooltip}}">{{previewStats.hitChanceAgainst.text}}</span>
                             {{/if}}
+                            {{{previewStats.difficultyDisplay}}}
                         </span>
                         <input type="number" class="override-input" data-field="difficulty" value="{{previewStats.difficulty}}" title="Manual Override">
                     </div>
                 </div>
                 
-                <div class="stat-row">
-                    <span class="stat-label">HP</span>
-                    <div class="stat-input-group">
-                        <span class="stat-value-hint">{{{previewStats.hpDisplay}}}</span>
-                        <input type="number" class="override-input" data-field="hp" value="{{previewStats.hp}}" title="Manual Override" {{#if previewStats.isMinion}}disabled{{/if}}>
+                <!-- HP & STRESS ROW (PREVIEW) -->
+                <div class="stat-row-dual">
+                    <div class="stat-col-half">
+                        <span class="stat-label">HP</span>
+                        <div class="stat-input-group dual-compact">
+                            <span class="stat-value-hint">{{{previewStats.hpDisplay}}}</span>
+                            <input type="number" class="override-input" data-field="hp" value="{{previewStats.hp}}" title="Manual Override" {{#if previewStats.isMinion}}disabled{{/if}}>
+                        </div>
+                    </div>
+                    <div class="stat-col-half">
+                        <span class="stat-label">Stress</span>
+                        <div class="stat-input-group dual-compact">
+                            <span class="stat-value-hint">{{{previewStats.stressDisplay}}}</span>
+                            <input type="number" class="override-input" data-field="stress" value="{{previewStats.stress}}" title="Manual Override">
+                        </div>
                     </div>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">Stress</span>
-                    <div class="stat-input-group">
-                        <span class="stat-value-hint">{{{previewStats.stressDisplay}}}</span>
-                        <input type="number" class="override-input" data-field="stress" value="{{previewStats.stress}}" title="Manual Override">
-                    </div>
-                </div>
+
                 <div class="stat-row">
                     <span class="stat-label">Thresholds</span>
                     <div class="stat-input-group dual-input">
@@ -211,23 +221,28 @@
                     </div>
                 </div>
                 
-                <!-- ATTACK BONUS: Hint First, Input Last (Right) -->
                 <div class="stat-row">
                     <span class="stat-label">Attack Bonus</span>
                     <div class="stat-input-group">
                         <span class="stat-value-hint">
-                            {{{previewStats.attackModDisplay}}}
                             {{#if previewStats.hitChance}}
-                                <span style="color: #ea80fc; cursor: help;" title="{{previewStats.hitChance.tooltip}}">{{previewStats.hitChance.text}}</span>
+                                <span style="color: #ea80fc; margin-right: 5px; cursor: help;" title="{{previewStats.hitChance.tooltip}}">{{previewStats.hitChance.text}}</span>
                             {{/if}}
+                            {{{previewStats.attackModDisplay}}}
                         </span>
                         <input type="number" class="override-input" data-field="attackMod" value="{{previewStats.attackMod}}" title="Manual Override">
                     </div>
                 </div>
 
                 <div class="stat-group">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span class="stat-label">Attack Damage</span>
+                    <div style="display:flex; flex-wrap: wrap; justify-content:space-between; align-items:center;">
+                        <span class="stat-label" style="display: flex; align-items: center; gap: 8px;">
+                            Attack Damage
+                            <div class="damage-type-controls">
+                                <label title="Physical Damage"><input type="checkbox" class="damage-type-checkbox" value="physical" {{#if isPhysical}}checked{{/if}}> Physical</label>
+                                <label title="Magical Damage"><input type="checkbox" class="damage-type-checkbox" value="magical" {{#if isMagical}}checked{{/if}}> Magical</label>
+                            </div>
+                        </span>
                         <div class="feature-input-group" style="width: 100%; max-width: 150px;">
                             <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{damageTooltip}}}"></i>
                             <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
@@ -249,8 +264,7 @@
                 </div>
                 {{/if}}
                 
-                <!-- MOVED NOTE HERE -->
-                <div class="preview-note" style="margin: 10px 0;">
+                <div class="preview-note" style="margin: 15px 0 10px 0;">
                     <i class="fas fa-info-circle"></i> Edit values to override random rolls.
                 </div>
 
@@ -268,7 +282,6 @@
                             <div class="exp-item-preview {{#if this.isNew}}exp-new{{/if}}" style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
                                 <input type="text" class="exp-name-input" data-id="{{this.id}}" value="{{this.name}}" placeholder="Exp Name" style="flex: 1; min-width: 0;">
                                 
-                                <!-- NEW DICE BUTTON FOR EXPERIENCES -->
                                 <button type="button" data-action="rollExperienceName" data-id="{{this.id}}" class="roll-btn-small" title="Roll Random Name" style="flex: 0 0 28px; height: 28px; border: 1px solid #555; background: #333; color: #ea80fc; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px;">
                                     <i class="fas fa-dice"></i>
                                 </button>
@@ -316,14 +329,11 @@
                                             <div class="feature-input-group" style="display: flex; align-items: center; gap: 2px;">
                                                 <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{this.optionsTooltip}}}"></i>
                                                 
-                                                <!-- MULTIPART FIX: data-original added to track specific part -->
                                                 <input type="text" class="feature-override-input feature-damage-input" 
                                                        data-itemid="{{this.itemId}}" 
                                                        data-original="{{this.originalFormula}}" 
                                                        value="{{this.newName}}" 
                                                        style="width: 80px;">
-                                                
-                                                <!-- REMOVE BONUS BUTTON REMOVED HERE -->
                                             </div>
                                         {{else if this.isMinionFeature}}
                                             <div class="minion-group" style="display:flex; align-items:center; gap:2px; font-weight:bold; color:#ea80fc;">
@@ -373,10 +383,8 @@
                                             <img src="{{this.img}}" class="feature-icon-small" alt="{{this.name}}" style="flex-shrink: 0;">
                                         {{/if}}
                                         
-                                        <!-- NAME FIRST -->
                                         <strong style="color: #eee;">{{this.name}}</strong>
 
-                                        <!-- TAGS AFTER -->
                                         {{#if this.tags.action.label}}
                                             <span class="dh-tag {{this.tags.action.css}}">{{this.tags.action.label}}</span>
                                         {{/if}}
@@ -390,7 +398,6 @@
                                             <span class="dh-tag tag-homebrew">{{this.tags.homebrew}}</span>
                                         {{/if}}
 
-                                        <!-- RULE SUGGESTION STAR - EXTREME RIGHT -->
                                         {{#if this.isRuleSuggestion}}
                                             <i class="fas fa-star" title="Recommended" style="color: #ffd700; margin-left: auto; font-size: 0.8em;"></i>
                                         {{/if}}
