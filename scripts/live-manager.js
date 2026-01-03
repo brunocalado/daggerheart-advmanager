@@ -1384,6 +1384,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
              });
         }
 
+        // NEW: Check Direct Damage Flag
+        const isDirect = sys.attack?.damage?.direct ?? false;
+        const directLabel = isDirect ? "Direct: Yes" : "Direct: No";
+
         return {
             tier,
             difficulty: sys.difficulty,
@@ -1400,7 +1404,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             hitChanceAgainst: hitChanceAgainst,
             experiences: expList,
             critical: critical, // NEW
-            critChance: critChance // NEW
+            critChance: critChance, // NEW
+            directLabel: directLabel // NEW
         };
     }
 

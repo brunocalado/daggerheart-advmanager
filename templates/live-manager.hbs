@@ -131,13 +131,17 @@
             </div>
 
             <div class="stat-group">
-                <span class="stat-label">
-                    Attack Damage 
-                    {{#if currentStats.damageTypesLabel}}
-                        <!-- Using current-hint-text class as requested -->
-                        <span class="current-hint-text">{{currentStats.damageTypesLabel}}</span>
-                    {{/if}}
-                </span>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="stat-label" style="flex: 1;">
+                        Attack Damage 
+                        {{#if currentStats.damageTypesLabel}}
+                            <span class="current-hint-text">{{currentStats.damageTypesLabel}}</span>
+                        {{/if}}
+                    </span>
+                    <span style="color: #aaa; font-size: 0.9em; white-space: nowrap;">
+                        {{currentStats.directLabel}}
+                    </span>
+                </div>
                 <!-- Stats moved to use current-hint-text -->
                 <div class="stat-block">{{currentStats.damage}} <span class="current-hint-text">{{currentStats.damageStats}}</span></div>
             </div>
