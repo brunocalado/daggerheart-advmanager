@@ -35,8 +35,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             },
             suggestedFeatures: null, 
             suggestedFeaturesType: "default", 
-            suggestedFeaturesTier: "default", // NEW: Tier override for suggestions
-            experiences: {}, 
+            suggestedFeaturesTier: "default", 
+            experiences: {}, // Map of ID -> { name: string, value: number, deleted: boolean }
             damageFormula: undefined,
             halvedDamageFormula: undefined,
             difficulty: undefined,
@@ -87,7 +87,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             openSheet: LiveManager.prototype._onOpenSheet,
             addExperience: LiveManager.prototype._onAddExperience,
             deleteExperience: LiveManager.prototype._onDeleteExperience,
-            rollExperienceName: LiveManager.prototype._onRollExperienceName 
+            rollExperienceName: LiveManager.prototype._onRollExperienceName // NEW ACTION
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -425,42 +425,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     previewStats.hpDisplay = "(Fixed)"; 
                 }
                 
-                // --- PROCESS SUGGESTED FEATURES FOR UI ---
-                // MODIFIED: Use the merged and sorted list from simulateStats
-                const rawSuggested = simResult.suggestedFeatures;
-                
-                // Enrich with Image and UUID and TAGS
-                allSuggestedFeatures = [];
-                for (const feat of rawSuggested) {
-                    const itemData = await this._findFeatureItem(feat.name);
-                    
-                    let actionTag = "";
-                    let actionClass = "";
-                    if (itemData.type) {
-                        const t = itemData.type.toLowerCase();
-                        if (t === "action") { actionTag = "Action"; actionClass = "tag-action"; }
-                        else if (t === "reaction") { actionTag = "Reaction"; actionClass = "tag-reaction"; }
-                        else if (t === "passive") { actionTag = "Passive"; actionClass = "tag-passive"; }
-                    }
-
-                    const imported = itemData.flags?.importedFrom || {};
-                    const tierTag = imported.tier ? `Tier ${imported.tier}` : null;
-                    const typeTag = imported.type || null;
-
-                    allSuggestedFeatures.push({
-                        name: feat.name,
-                        checked: feat.checked, 
-                        isRuleSuggestion: feat.isRuleSuggestion,
-                        img: itemData.img,
-                        uuid: itemData.uuid,
-                        tags: {
-                            action: { label: actionTag, css: actionClass },
-                            tier: tierTag,
-                            type: typeTag
-                        }
-                    });
-                }
-
                 // Prepare Structured Feature Data
                 featurePreviewData = await Promise.all(simResult.structuredFeatures.map(async f => {
                     let overrideVal = undefined;
@@ -533,6 +497,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     };
                 }));
 
+                // === CORREÇÃO DO ERRO REFERENCEERROR ===
+                // Definir as variáveis suggestionTypeKey e suggestionTier ANTES de usá-las nas opções e na busca de compêndio.
+                
+                // 1. Determine Suggestion Keys based on overrides
+                let suggestionTypeKey = typeKey;
+                if (this.overrides.suggestedFeaturesType && this.overrides.suggestedFeaturesType !== "default") {
+                    suggestionTypeKey = this.overrides.suggestedFeaturesType;
+                }
+
+                let suggestionTier = this.targetTier; // Use this.targetTier as default
+                if (this.overrides.suggestedFeaturesTier && this.overrides.suggestedFeaturesTier !== "default") {
+                    suggestionTier = parseInt(this.overrides.suggestedFeaturesTier);
+                }
+
                 // --- BUILD SUGGESTED FEATURES TYPE & TIER OPTIONS ---
                 suggestedFeaturesTypeOptions = []; 
                 const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
@@ -547,12 +525,145 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 });
 
                 // Tier options
-                const currentSuggestionTier = this.overrides.suggestedFeaturesTier === "default" ? this.targetTier : parseInt(this.overrides.suggestedFeaturesTier);
                 suggestedFeaturesTierOptions = [1, 2, 3, 4].map(t => ({
                     value: t,
                     label: `Tier ${t}`,
-                    selected: t === currentSuggestionTier
+                    selected: t === suggestionTier
                 }));
+
+                // --- SUGGESTED FEATURES LOGIC (UPDATED WITH FLAGS CHECK) ---
+                
+                // Helper to generate tags
+                const getTags = (type, flags) => {
+                    let actionTag = "";
+                    let actionClass = "";
+                    if (type) {
+                        const t = type.toLowerCase();
+                        if (t === "action") { actionTag = "Action"; actionClass = "tag-action"; }
+                        else if (t === "reaction") { actionTag = "Reaction"; actionClass = "tag-reaction"; }
+                        else if (t === "passive") { actionTag = "Passive"; actionClass = "tag-passive"; }
+                    }
+
+                    const imported = flags?.importedFrom || {};
+                    const tierTag = imported.tier ? `Tier ${imported.tier}` : null;
+                    const typeTag = imported.type || null;
+                    
+                    return {
+                        action: { label: actionTag, css: actionClass },
+                        tier: tierTag,
+                        type: typeTag
+                    };
+                };
+
+                let possibleMatches = [];
+                let ruleSuggestions = [];
+
+                // 1. Determine "Rule Suggestions" for Star marking
+                const suggestionBenchmark = ADVERSARY_BENCHMARKS[suggestionTypeKey]?.tiers[`tier_${suggestionTier}`];
+                if (suggestionBenchmark && suggestionBenchmark.suggested_features) {
+                    if (Array.isArray(suggestionBenchmark.suggested_features)) {
+                        ruleSuggestions = [...suggestionBenchmark.suggested_features];
+                    } else if (typeof suggestionBenchmark.suggested_features === "string" && suggestionBenchmark.suggested_features !== "") {
+                        ruleSuggestions = [suggestionBenchmark.suggested_features];
+                    }
+                }
+
+                // 2. Query Compendiums with Filter
+                const packsToQuery = ["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features"];
+                const enableSuggestions = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
+
+                if (enableSuggestions) {
+                    for (const packId of packsToQuery) {
+                        const pack = game.packs.get(packId);
+                        if (!pack) continue;
+                        
+                        // Load index with necessary fields for display
+                        const index = await pack.getIndex({ fields: ["img", "system.featureForm", "flags.importedFrom"] });
+                        
+                        // Filter
+                        const matches = index.filter(i => {
+                            const imported = i.flags?.importedFrom || {};
+                            const matchesTier = imported.tier === suggestionTier;
+                            const matchesType = imported.type?.toLowerCase() === suggestionTypeKey.toLowerCase();
+                            return matchesTier && matchesType;
+                        });
+
+                        matches.forEach(m => {
+                            if (!possibleMatches.find(pm => pm._id === m._id)) {
+                                possibleMatches.push(m);
+                            }
+                        });
+                    }
+                }
+                
+                possibleMatches.sort((a, b) => a.name.localeCompare(b.name));
+
+                // 3. Build UI List
+                allSuggestedFeatures = [];
+                
+                // Existing Actor Items check
+                const allItems = actor.items instanceof Array ? actor.items : actor.items.contents || [];
+                const isOwned = (name) => allItems.some(i => i.name === name);
+
+                if (this.overrides.suggestedFeatures === null) {
+                    this.overrides.suggestedFeatures = [];
+                }
+
+                const addedSet = new Set();
+                const isRuleSuggested = (name) => ruleSuggestions.includes(name);
+
+                // A. Selected Features (Loop over stored names)
+                const selectedNames = [...this.overrides.suggestedFeatures].sort((a, b) => a.localeCompare(b));
+                
+                for (const name of selectedNames) {
+                    if (!isOwned(name)) {
+                        // Check if this selected item name exists in our current filtered possibilities (Smart Lookup)
+                        // If found, use that specific item to show correct stats for the current filter view
+                        let itemData = possibleMatches.find(pm => pm.name === name);
+                        
+                        // Fallback: If not in current filter, find generically (might show wrong tier/type but name matches)
+                        if (!itemData) {
+                            const found = await this._findFeatureItem(name);
+                            itemData = {
+                                name: name,
+                                img: found.img,
+                                uuid: found.uuid,
+                                system: { featureForm: found.type },
+                                flags: found.flags
+                            };
+                        }
+
+                        allSuggestedFeatures.push({
+                            name: itemData.name,
+                            checked: true,
+                            isRuleSuggestion: isRuleSuggested(itemData.name),
+                            img: itemData.img,
+                            uuid: itemData.uuid || itemData._id, // Handle index _id fallback if uuid missing
+                            tags: getTags(itemData.system?.featureForm, itemData.flags)
+                        });
+                        addedSet.add(name);
+                    }
+                }
+
+                // B. Filtered Options (Loop over actual items found in compendium)
+                for (const item of possibleMatches) {
+                    const name = item.name;
+                    
+                    // Skip if already added (selected)
+                    if (addedSet.has(name)) continue;
+                    
+                    if (!isOwned(name)) {
+                        allSuggestedFeatures.push({
+                            name: item.name,
+                            checked: false,
+                            isRuleSuggestion: isRuleSuggested(item.name),
+                            img: item.img,
+                            uuid: item.uuid || item._id, // Index entries usually have _id, check uuid support
+                            tags: getTags(item.system?.featureForm, item.flags)
+                        });
+                        addedSet.add(name);
+                    }
+                }
             }
         }
 
@@ -1253,91 +1364,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
         
-        // --- SUGGESTED FEATURES LOGIC (REPLACED) ---
-        // New logic: Query Compendium based on Tier/Type
-        let possibleFeatures = [];
-        let ruleSuggestions = [];
-
-        // 1. Determine "Rule Suggestions" for Star marking
-        const suggestionBenchmark = ADVERSARY_BENCHMARKS[suggestionTypeKey]?.tiers[`tier_${suggestionTier}`];
-        if (suggestionBenchmark && suggestionBenchmark.suggested_features) {
-            if (Array.isArray(suggestionBenchmark.suggested_features)) {
-                ruleSuggestions = [...suggestionBenchmark.suggested_features];
-            } else if (typeof suggestionBenchmark.suggested_features === "string" && suggestionBenchmark.suggested_features !== "") {
-                ruleSuggestions = [suggestionBenchmark.suggested_features];
-            }
-        }
-
-        // 2. Query Compendiums
-        const packsToQuery = ["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features"];
-        for (const packId of packsToQuery) {
-            const pack = game.packs.get(packId);
-            if (!pack) continue;
-            // Ensure index is loaded with flags
-            const index = await pack.getIndex({ fields: ["flags.importedFrom"] });
-            
-            // Filter
-            const matches = index.filter(i => {
-                const imported = i.flags?.importedFrom || {};
-                const matchesTier = imported.tier === suggestionTier;
-                const matchesType = imported.type?.toLowerCase() === suggestionTypeKey.toLowerCase();
-                return matchesTier && matchesType;
-            });
-
-            matches.forEach(m => {
-                if (!possibleFeatures.includes(m.name)) possibleFeatures.push(m.name);
-            });
-        }
-        
-        possibleFeatures.sort((a, b) => a.localeCompare(b));
-
-        // --- FEATURE FLAG CHECK ---
-        const enableSuggestions = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
-        if (!enableSuggestions) {
-            possibleFeatures = []; 
-        }
-
-        const isOwned = (name) => allItems.some(i => i.name === name);
-
-        if (this.overrides.suggestedFeatures === null) {
-            this.overrides.suggestedFeatures = [];
-        }
-
-        const uiList = [];
-        const addedSet = new Set();
-        const isRuleSuggested = (name) => ruleSuggestions.includes(name);
-
-        const selectedNames = [...this.overrides.suggestedFeatures].sort((a, b) => a.localeCompare(b));
-
-        // A. Selected Features
-        for (const name of selectedNames) {
-            if (!isOwned(name)) {
-                uiList.push({
-                    name: name,
-                    checked: true,
-                    isRuleSuggestion: isRuleSuggested(name)
-                });
-                addedSet.add(name);
-            }
-        }
-
-        // B. Filtered Options
-        for (const name of possibleFeatures) {
-            if (!isOwned(name) && !addedSet.has(name)) {
-                uiList.push({
-                    name: name,
-                    checked: false,
-                    isRuleSuggestion: isRuleSuggested(name)
-                });
-                addedSet.add(name);
-            }
-        }
-
         return { 
             stats: sim, 
             features: featureLog, 
             structuredFeatures: structuredFeatures,
-            suggestedFeatures: uiList 
+            suggestedFeatures: [] // Placeholder, filled in _prepareContext loop
         };
     }
 }
