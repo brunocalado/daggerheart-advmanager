@@ -1,3 +1,8 @@
-2026/01/03-15:18:32.675 fec Recovering log #249
-2026/01/03-15:18:32.678 fec Delete type=0 #249
-2026/01/03-15:18:32.678 fec Delete type=3 #247
+2026/01/03-15:38:28.571 5a68 Recovering log #255
+2026/01/03-15:38:28.575 5a68 Delete type=0 #255
+2026/01/03-15:38:28.575 5a68 Delete type=3 #253
+2026/01/03-15:42:52.017 5a7c Level-0 table #260: started
+2026/01/03-15:42:52.017 5a7c Level-0 table #260: 0 bytes OK
+2026/01/03-15:42:52.019 5a7c Delete type=0 #258
+2026/01/03-15:42:52.022 5a7c Manual compaction at level-0 from '!macros!WbRm9MnIxX51Svky' @ 72057594037927935 : 1 .. '!macros!tx5BOb4uDCCj7fEO' @ 0 : 0; will stop at (end)
+2026/01/03-15:42:52.022 5a7c Manual compaction at level-1 from '!macros!WbRm9MnIxX51Svky' @ 72057594037927935 : 1 .. '!macros!tx5BOb4uDCCj7fEO' @ 0 : 0; will stop at (end)

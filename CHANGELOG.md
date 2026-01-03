@@ -6,6 +6,7 @@
 - new features have tags
 - you can choose any official feature to any actor
 - you can add your homebrew features
+-  live manager All Sources fixed
 
 # 0.1.6
 - compendium-stats shows experience

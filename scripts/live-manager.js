@@ -119,6 +119,36 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             return game.actors.get(actorId);
         }
 
+        // FIXED: Handling for "all" source - Try to find actor everywhere
+        if (this.source === "all") {
+             // 1. World
+             const worldActor = game.actors.get(actorId);
+             if (worldActor) return worldActor;
+
+             // 2. System Pack
+             const sysPack = game.packs.get("daggerheart.adversaries");
+             if (sysPack) {
+                 try {
+                     const doc = await sysPack.getDocument(actorId);
+                     if (doc) return doc;
+                 } catch (e) { /* Ignore not found */ }
+             }
+
+             // 3. Extra Packs
+             const extraCompendiums = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
+             for (const packId of extraCompendiums) {
+                 const pack = game.packs.get(packId);
+                 if (pack) {
+                      try {
+                         const doc = await pack.getDocument(actorId);
+                         if (doc) return doc;
+                      } catch (e) { /* Ignore */ }
+                 }
+             }
+             return null;
+        }
+
+        // Specific Compendiums
         if (this.source === "daggerheart.adversaries") {
             const pack = game.packs.get("daggerheart.adversaries");
             if (pack) return await pack.getDocument(actorId);
@@ -241,7 +271,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         ];
 
         const extraCompendiums = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
-        let currentSourceIsValid = (this.source === "world" || this.source === "daggerheart.adversaries");
+        // FIXED: Added check for 'all' to be valid
+        let currentSourceIsValid = (this.source === "world" || this.source === "daggerheart.adversaries" || this.source === "all");
 
         extraCompendiums.forEach(packId => {
             const pack = game.packs.get(packId);
@@ -285,6 +316,55 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     rawAdversaries.push(tokenData);
                 }
             }
+        } else if (this.source === "all") {
+            // FIXED: Logic for aggregating ALL sources
+            
+            // 1. World
+            const worldAdvs = game.actors
+                .filter(a => a.type === "adversary")
+                .map(a => ({ 
+                    id: a.id, 
+                    name: a.name, 
+                    tier: Number(a.system.tier) || 1,
+                    advType: (a.system.type || "standard").toLowerCase(),
+                    sourceLabel: "World"
+                }));
+            rawAdversaries.push(...worldAdvs);
+
+            // 2. System Compendium
+            const sysPack = game.packs.get("daggerheart.adversaries");
+            if (sysPack) {
+                const index = await sysPack.getIndex({ fields: ["system.tier", "system.type", "type"] });
+                const sysAdvs = index
+                    .filter(i => i.type === "adversary")
+                    .map(i => ({
+                        id: i._id,
+                        name: i.name,
+                        tier: Number(i.system?.tier) || 1,
+                        advType: (i.system?.type || "standard").toLowerCase(),
+                        sourceLabel: "System"
+                    }));
+                rawAdversaries.push(...sysAdvs);
+            }
+
+            // 3. Extra Compendiums
+            for (const packId of extraCompendiums) {
+                const pack = game.packs.get(packId);
+                if (pack) {
+                    const index = await pack.getIndex({ fields: ["system.tier", "system.type", "type"] });
+                    const packAdvs = index
+                        .filter(i => i.type === "adversary")
+                        .map(i => ({
+                            id: i._id,
+                            name: i.name,
+                            tier: Number(i.system?.tier) || 1,
+                            advType: (i.system?.type || "standard").toLowerCase(),
+                            sourceLabel: pack.metadata.label
+                        }));
+                    rawAdversaries.push(...packAdvs);
+                }
+            }
+
         } else {
             const pack = game.packs.get(this.source);
             if (pack) {
@@ -361,13 +441,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     portraitImg = rawImg;
                 }
 
+                // Updated Link Data logic: hide if actor is in compendium (has pack)
                 linkData = {
                     isLinked: isLinked,
                     icon: isLinked ? "fa-link" : "fa-unlink",
                     cssClass: isLinked ? "status-linked" : "status-unlinked",
                     label: isLinked ? "Linked" : "Unlinked"
                 };
-                if (this.source !== "world") linkData = null;
+                if (actor.compendium || actor.pack) linkData = null;
 
                 currentStats = this._extractStats(actor.toObject(), currentTier);
                 const simResult = await this._simulateStats(actor, this.targetTier, currentTier);
@@ -866,15 +947,19 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!actor) return;
 
         try {
-            if (this.source !== "world") {
+            // FIXED: Use actor's intrinsic info to check for compendium status
+            // instead of relying on 'this.source', which fails for 'all' mode.
+            if (actor.compendium || actor.pack) {
                 const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
                 let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
                 if (!folder) {
                     folder = await Folder.create({ name: folderName, type: "Actor", color: "#430047" });
                 }
 
-                const pack = game.packs.get(this.source);
-                actor = await game.actors.importFromCompendium(pack, this.selectedActorId, { folder: folder.id });
+                const pack = actor.compendium || game.packs.get(actor.pack);
+                if (pack) {
+                     actor = await game.actors.importFromCompendium(pack, this.selectedActorId, { folder: folder.id });
+                }
                 
                 if (actor) {
                     this.source = "world";
