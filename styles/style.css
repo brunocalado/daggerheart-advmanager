@@ -444,6 +444,15 @@
     border: 1px solid #444;
 }
 
+/* NEW: Inverted Colors for Preview Damage Blocks */
+.stat-block.inverted-colors {
+    color: #ea80fc !important; /* Main text is now Purple */
+}
+
+.stat-block.inverted-colors .preview-hint-text {
+    color: #ffffff !important; /* Hint text is now White */
+}
+
 .features-preview-section {
     margin-top: 20px;
     border-top: 1px solid rgba(234, 128, 252, 0.4);
@@ -1737,4 +1746,13 @@
     font-style: italic;
     font-weight: normal;
     margin-left: 5px;
+}
+
+/* NEW: Inverted Colors for Preview Damage Blocks */
+.stat-block.inverted-colors {
+    color: #ea80fc !important; /* Main text is now Purple */
+}
+
+.stat-block.inverted-colors .preview-hint-text {
+    color: #ffffff !important; /* Hint text is now White */
 }

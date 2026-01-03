@@ -8,6 +8,7 @@
 - you can add your homebrew features
 - live manager All Sources fixed
 - easier to ready things on live manager
+- You can preview damage type and change it
 
 # 0.1.6
 - compendium-stats shows experience
