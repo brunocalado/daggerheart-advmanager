@@ -42,6 +42,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         // Focus State Tracking
         this._searchFocus = false;
+
+        // Folder Naming Mode (True = Auto Date/Time, False = Manual Prompt)
+        this.useAutoFolder = true;
     }
 
     static DEFAULT_OPTIONS = {
@@ -67,7 +70,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             createEncounter: EncounterBuilder.prototype._onCreateEncounter,
             placeEncounter: EncounterBuilder.prototype._onPlaceEncounter,
             editAdversary: EncounterBuilder.prototype._onEditAdversary,
-            clearEncounter: EncounterBuilder.prototype._onClearEncounter // NEW ACTION
+            clearEncounter: EncounterBuilder.prototype._onClearEncounter,
+            toggleAutoFolder: EncounterBuilder.prototype._onToggleAutoFolder // NEW ACTION
         },
         form: {
             handler: EncounterBuilder.prototype.submitHandler,
@@ -276,7 +280,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             hasCreatedActors: this.lastCreatedActors.length > 0,
             
             // Synergy Flags
-            synergy: synergy
+            synergy: synergy,
+
+            // Folder Mode State (NEW)
+            useAutoFolder: this.useAutoFolder,
+            autoFolderTooltip: this.useAutoFolder ? "Mode: Auto-Generate Folder Name" : "Mode: Manual Folder Name"
         };
     }
 
@@ -520,7 +528,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         };
     }
 
-    async _executeCreateEncounter() {
+    /**
+     * Executes the creation logic.
+     * @param {string|null} customName - Optional custom folder name override.
+     */
+    async _executeCreateEncounter(customName = null) {
         if (this.encounterList.length === 0) {
             ui.notifications.warn("No adversaries in the encounter to create.");
             return [];
@@ -542,25 +554,43 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             rootFolder = await Folder.create({ name: rootName, type: "Actor", color: "#430047" });
         }
 
-        const now = new Date();
-        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
-        const dateString = now.toLocaleDateString().replace(/\//g, '-');
-        
-        let totalTier = 0;
-        const bpData = this._calculateBP(); 
-        const currentBP = bpData.cost;
-        
-        this.encounterList.forEach(u => totalTier += (u.tier || 1));
-        const avgTier = this.encounterList.length > 0 ? Math.round(totalTier / this.encounterList.length) : 1;
+        let subFolderName;
 
-        const subFolderName = `${dateString} ${timeString} BP${currentBP}/T${avgTier}`; 
+        if (customName) {
+            // Manual Mode: Use the custom name
+            subFolderName = customName;
+        } else {
+            // Auto Mode: Date + Time + BP/Tier
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+            const dateString = now.toLocaleDateString().replace(/\//g, '-');
+            
+            let totalTier = 0;
+            const bpData = this._calculateBP(); 
+            const currentBP = bpData.cost;
+            
+            this.encounterList.forEach(u => totalTier += (u.tier || 1));
+            const avgTier = this.encounterList.length > 0 ? Math.round(totalTier / this.encounterList.length) : 1;
+
+            subFolderName = `${dateString} ${timeString} BP${currentBP}/T${avgTier}`; 
+        }
         
-        const subFolder = await Folder.create({ 
-            name: subFolderName, 
-            type: "Actor", 
-            folder: rootFolder.id, 
-            color: "#9c27b0" 
-        });
+        // Find or create the subfolder
+        let subFolder = rootFolder.children.find(c => c.folder.name === subFolderName)?.folder; // Foundry V11+ folder structure check might differ, safe generic search below
+        
+        // Standard global folder search restricted to parent
+        if (!subFolder) {
+            subFolder = game.folders.find(f => f.name === subFolderName && f.folder?.id === rootFolder.id && f.type === "Actor");
+        }
+
+        if (!subFolder) {
+            subFolder = await Folder.create({ 
+                name: subFolderName, 
+                type: "Actor", 
+                folder: rootFolder.id, 
+                color: "#9c27b0" 
+            });
+        }
 
         const createdActors = [];
 
@@ -608,15 +638,62 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
     async _onCreateEncounter(event, target) {
         event.preventDefault();
-        try {
-            const result = await this._executeCreateEncounter();
-            if (result && result.actors && result.actors.length > 0) {
-                this.lastCreatedActors = result.actors;
-                ui.notifications.info(`Encounter created in: "${result.folderName}". Check the Actor directory.`);
+        
+        // Check mode
+        if (this.useAutoFolder) {
+            // Default behavior
+            try {
+                const result = await this._executeCreateEncounter();
+                if (result && result.actors && result.actors.length > 0) {
+                    this.lastCreatedActors = result.actors;
+                    ui.notifications.info(`Encounter created in: "${result.folderName}". Check the Actor directory.`);
+                }
+            } catch (err) {
+                console.error(err);
+                ui.notifications.error("Failed to create encounter. Check console.");
             }
-        } catch (err) {
-            console.error(err);
-            ui.notifications.error("Failed to create encounter. Check console.");
+        } else {
+            // Manual Mode: Prompt for Name
+            new Dialog({
+                title: "Encounter Name",
+                content: `
+                    <form class="dh-dialog-form">
+                        <div class="form-group">
+                            <label>Folder Name:</label>
+                            <input type="text" name="folderName" placeholder="e.g., Boss Fight Room 3" autofocus required/>
+                        </div>
+                    </form>
+                `,
+                buttons: {
+                    create: {
+                        icon: '<i class="fas fa-check"></i>',
+                        label: "Create",
+                        callback: async (html) => {
+                            const name = html.find('[name="folderName"]').val();
+                            if (!name) {
+                                ui.notifications.warn("Please enter a folder name.");
+                                return;
+                            }
+
+                            try {
+                                const result = await this._executeCreateEncounter(name);
+                                if (result && result.actors && result.actors.length > 0) {
+                                    this.lastCreatedActors = result.actors;
+                                    ui.notifications.info(`Encounter created in: "${result.folderName}".`);
+                                }
+                            } catch (err) {
+                                console.error(err);
+                                ui.notifications.error("Failed to create encounter.");
+                            }
+                        }
+                    },
+                    cancel: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: "Cancel"
+                    }
+                },
+                default: "create"
+            }).render(true);
         }
     }
 
@@ -624,6 +701,10 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         event.preventDefault();
 
         try {
+            // Place always uses auto-folder for now, or could re-use logic. 
+            // For now, let's assume it re-uses standard logic without prompt to keep it fast, 
+            // unless we want to enforce the name here too. 
+            // The request focused on "onCreateEncounter". Let's stick to default execution behavior for placement to keep it snappy.
             const result = await this._executeCreateEncounter();
             if (!result || !result.actors || result.actors.length === 0) return; 
             
@@ -684,6 +765,13 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
     _onClearEncounter(event, target) {
         event.preventDefault();
         this.encounterList = [];
+        this.render();
+    }
+
+    // NEW ACTION HANDLER: Toggle Auto Folder
+    _onToggleAutoFolder(event, target) {
+        event.preventDefault();
+        this.useAutoFolder = !this.useAutoFolder;
         this.render();
     }
 

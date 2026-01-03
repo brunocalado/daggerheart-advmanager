@@ -262,12 +262,20 @@
 
             <!-- Create Button Footer -->
             <div class="eb-action-footer">
+                <!-- Place Button Moved Left -->
+                <button type="button" class="eb-place-btn" data-action="placeEncounter" title="Create & Place Invisible">
+                    <i class="fas fa-street-view"></i>
+                </button>
+
+                <!-- Create Button (Center/Main) -->
                 <button type="button" class="eb-create-btn" data-action="createEncounter">
                     <i class="fas fa-folder-plus"></i> Create Encounter
                 </button>
                 
-                <button type="button" class="eb-place-btn" data-action="placeEncounter" title="Create & Place Invisible">
-                    <i class="fas fa-street-view"></i>
+                <!-- NEW Auto-Folder Toggle Button (Right) -->
+                <button type="button" class="eb-folder-btn {{#if useAutoFolder}}active{{/if}}" 
+                        data-action="toggleAutoFolder" title="{{autoFolderTooltip}}">
+                    <i class="fas {{#if useAutoFolder}}fa-folder-tree{{else}}fa-folder{{/if}}"></i>
                 </button>
             </div>
 

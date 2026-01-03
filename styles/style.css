@@ -28,6 +28,12 @@
     font-size: 1.05em; /* HIGH CONTRAST: Slight base size bump */
 }
 
+/* ... (Existing styles omitted for brevity, keeping only the updated footer section below) ... */
+/* ... INCLUDE ALL PREVIOUS CSS HERE IF MERGING MANUALLY, BUT FOR THIS OUTPUT I SHOW THE NEW/UPDATED CLASSES ... */
+
+/* [EXISTING CONTENT FROM style.css SHOULD REMAIN HERE] */
+/* I will output the FULL style.css to ensure no context is lost, incorporating the new button styles */
+
 .status-header {
     text-align: center;
     border-bottom: 1px solid var(--color-border-light-2);
@@ -443,8 +449,6 @@
     color: #ffffff;
     border: 1px solid #444;
 }
-
-/* features-preview-section was here, moving to end or keeping structure */
 
 .features-preview-section {
     margin-top: 20px;
@@ -1435,6 +1439,37 @@
     background: #4a148c;
     color: #fff;
     border-color: #ea80fc;
+}
+
+/* NEW: Folder Toggle Button Style (Matches Place Button) */
+.eb-folder-btn {
+    flex: 0 0 60px;
+    padding: 0 10px;
+    height: 40px;
+    background: #333;
+    border: 1px solid #666;
+    color: #ccc;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.eb-folder-btn:hover {
+    background: #4a148c;
+    color: #fff;
+    border-color: #ea80fc;
+}
+
+.eb-folder-btn.active {
+    background: #7b1fa2;
+    color: #ffffff;
+    border-color: #ea80fc;
+    box-shadow: 0 0 5px rgba(234, 128, 252, 0.6);
 }
 
 /* Synergy & Feature Icons (Updated) */
