@@ -35,7 +35,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             },
             suggestedFeatures: null, 
             suggestedFeaturesType: "default", 
-            experiences: {}, // Map of ID -> { name: string, value: number, deleted: boolean }
+            suggestedFeaturesTier: "default", // NEW: Tier override for suggestions
+            experiences: {}, 
             damageFormula: undefined,
             halvedDamageFormula: undefined,
             difficulty: undefined,
@@ -86,7 +87,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             openSheet: LiveManager.prototype._onOpenSheet,
             addExperience: LiveManager.prototype._onAddExperience,
             deleteExperience: LiveManager.prototype._onDeleteExperience,
-            rollExperienceName: LiveManager.prototype._onRollExperienceName // NEW ACTION
+            rollExperienceName: LiveManager.prototype._onRollExperienceName 
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -131,9 +132,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     /**
      * Finds a feature item by name to retrieve its image, UUID, and Type (Action/Reaction/Passive).
      * Now also retrieves 'flags.importedFrom' for tagging.
-     * Searches in: 
-     * 1. daggerheart-advmanager.all-features (Priority 1)
-     * 2. daggerheart-advmanager.custom-features (Priority 2)
      */
     async _findFeatureItem(name) {
         if (this._featureCache.has(name)) return this._featureCache.get(name);
@@ -183,10 +181,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         return defaultData;
     }
 
-    /**
-     * Helper to convert featureForm value to label (A), (R), or (P).
-     * DEPRECATED for New Features list (uses Tags), but kept for legacy/other views.
-     */
     _getFeatureTypeLabel(type) {
         if (!type) return "";
         const t = type.toLowerCase();
@@ -196,58 +190,45 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         return "";
     }
 
-    /**
-     * Update the Live Manager to show a specific actor.
-     * Designed to be called by external hooks (like controlToken).
-     */
     async updateSelectedActor(actor) {
         if (!actor) return;
         this.source = "world";
-        this.initialActor = actor; // Update initial reference
+        this.initialActor = actor; 
         this.selectedActorId = actor.id;
         this.targetTier = Number(actor.system.tier) || 1;
         
         // Reset overrides to avoid confusion
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
-        this._suggestionCache = {}; // Clear cache on actor change
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" }; 
+        this._suggestionCache = {}; 
 
-        // Sync filter settings to match this new actor so they don't look weird
         this.filterTier = String(this.targetTier); 
         this.filterType = (actor.system.type || "standard").toLowerCase();
 
         this.render();
     }
 
-    /**
-     * Helper to pick a random experience name from rules
-     */
     _getRandomExperienceName(typeKey, excludeList = []) {
         if (!typeKey || typeKey === "all") typeKey = "standard";
         
         if (ADVERSARY_BENCHMARKS[typeKey] && ADVERSARY_BENCHMARKS[typeKey].experiences) {
             const list = ADVERSARY_BENCHMARKS[typeKey].experiences;
-            // Filter out used names
             const candidates = list.filter(n => !excludeList.includes(n));
             
             if (candidates.length > 0) {
                 return candidates[Math.floor(Math.random() * candidates.length)];
             } else if (list.length > 0) {
-                // If all used, allow duplicates from full list
                 return list[Math.floor(Math.random() * list.length)];
             }
         }
-        return "New Experience"; // Fallback
+        return "New Experience"; 
     }
 
-    /**
-     * Prepare data for the Handlebars template
-     */
     async _prepareContext(_options) {
         let rawAdversaries = [];
 
         // --- Determine Source List ---
         const sourceOptions = [
-            { value: "all", label: "All Sources", selected: this.source === "all" }, // Optional fallback
+            { value: "all", label: "All Sources", selected: this.source === "all" }, 
             { value: "world", label: "World", selected: this.source === "world" },
             { value: "daggerheart.adversaries", label: "System Compendium", selected: this.source === "daggerheart.adversaries" }
         ];
@@ -283,17 +264,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     advType: (a.system.type || "standard").toLowerCase() 
                 }));
             
-            // If we have an initial actor selected (from token selection), ensure it's in the list
             if (this.initialActor) {
                 const matchIndex = rawAdversaries.findIndex(a => a.id === this.initialActor.id);
-                
                 const tokenData = {
                     id: this.initialActor.id,
                     name: this.initialActor.name + (this.initialActor.isToken ? " (Token)" : ""),
                     tier: Number(this.initialActor.system.tier) || 1,
                     advType: (this.initialActor.system.type || "standard").toLowerCase()
                 };
-
                 if (matchIndex > -1) {
                     rawAdversaries[matchIndex] = tokenData;
                 } else {
@@ -317,23 +295,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         rawAdversaries.sort((a, b) => a.name.localeCompare(b.name));
 
-        let allAdversaries = rawAdversaries.map(a => ({
-            ...a,
-            selected: a.id === this.selectedActorId
-        }));
-
-        // --- Filters ---
-        let displayedAdversaries = allAdversaries;
-        
+        let displayedAdversaries = rawAdversaries;
         if (this.filterTier !== "all") {
             displayedAdversaries = displayedAdversaries.filter(a => a.tier === Number(this.filterTier));
         }
-
         if (this.filterType !== "all") {
             displayedAdversaries = displayedAdversaries.filter(a => a.advType === this.filterType);
         }
 
-        // --- Auto-Select logic if current selection is invalid ---
         if (!this.selectedActorId && displayedAdversaries.length > 0) {
              this.selectedActorId = displayedAdversaries[0].id;
         } else if (this.selectedActorId && !displayedAdversaries.find(a => a.id === this.selectedActorId)) {
@@ -341,7 +310,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
              else this.selectedActorId = null;
         }
 
-        // Map for Template
         displayedAdversaries = displayedAdversaries.map(a => ({
             ...a, selected: a.id === this.selectedActorId
         }));
@@ -361,6 +329,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let actorTypeLabel = "";
         let portraitImg = null;
         let suggestedFeaturesTypeOptions = []; 
+        let suggestedFeaturesTierOptions = [];
 
         if (this.selectedActorId) {
             actor = await this._getActor(this.selectedActorId);
@@ -373,7 +342,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 isHorde = typeKey === "horde"; 
                 actorTypeLabel = typeKey.charAt(0).toUpperCase() + typeKey.slice(1); 
                 
-                // --- Portrait Logic ---
                 const rawImg = actor.img;
                 const defaultIcons = [
                     "systems/daggerheart/assets/icons/documents/actors/dragon-head.svg",
@@ -385,7 +353,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 } else {
                     portraitImg = rawImg;
                 }
-                // ---------------------
 
                 linkData = {
                     isLinked: isLinked,
@@ -393,16 +360,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     cssClass: isLinked ? "status-linked" : "status-unlinked",
                     label: isLinked ? "Linked" : "Unlinked"
                 };
-
                 if (this.source !== "world") linkData = null;
 
                 currentStats = this._extractStats(actor.toObject(), currentTier);
-                
                 const simResult = await this._simulateStats(actor, this.targetTier, currentTier);
-                
                 const benchmark = ADVERSARY_BENCHMARKS[typeKey]?.tiers[`tier_${this.targetTier}`];
                 
-                // Determine Damage Options
                 if (benchmark) {
                     if (benchmark.damage_rolls && Array.isArray(benchmark.damage_rolls)) {
                         damageOptions = benchmark.damage_rolls.map(d => ({ value: d, label: d }));
@@ -423,11 +386,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
                 }
                 
-                // Build Tooltips
                 if (damageOptions.length > 0) {
                     damageTooltip = "Suggested:<br>" + damageOptions.map(o => `• ${o.label}`).join("<br>");
                 }
-                
                 if (halvedDamageOptions.length > 0) {
                     halvedDamageTooltip = "Suggested:<br>" + halvedDamageOptions.map(o => `• ${o.label}`).join("<br>");
                 }
@@ -445,25 +406,18 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     stressDisplay: simResult.stats.stress,
                     thresholdsDisplay: simResult.stats.thresholds,
                     attackModDisplay: simResult.stats.attackMod,
-                    
-                    // Experience Preview List
                     experiences: simResult.stats.previewExperiences || [],
                     expTooltip: `Suggested:<br>Amount: ${simResult.stats.expAmountRange || "?"}<br>Modifier: ${simResult.stats.expModRange || "?"}`,
-                    
                     damage: simResult.stats.damage,
                     damageStats: simResult.stats.damageStats, 
-
-                    mainDamageFormula: simResult.stats.mainDamageRaw, // Raw value for input
-                    
+                    mainDamageFormula: simResult.stats.mainDamageRaw,
                     halvedDamage: simResult.stats.halvedDamage, 
                     halvedDamageStats: simResult.stats.halvedDamageStats, 
-                    
-                    mainHalvedDamageFormula: simResult.stats.mainHalvedDamageRaw, // Raw value for input
-                    
+                    mainHalvedDamageFormula: simResult.stats.mainHalvedDamageRaw,
                     tier: this.targetTier,
                     isMinion: isMinion,
-                    hitChance: simResult.stats.hitChance, // Adversary hits PC
-                    hitChanceAgainst: simResult.stats.hitChanceAgainst // PC hits Adversary
+                    hitChance: simResult.stats.hitChance,
+                    hitChanceAgainst: simResult.stats.hitChanceAgainst
                 };
 
                 if (isMinion) {
@@ -480,7 +434,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 for (const feat of rawSuggested) {
                     const itemData = await this._findFeatureItem(feat.name);
                     
-                    // Logic for Action Type Tag
                     let actionTag = "";
                     let actionClass = "";
                     if (itemData.type) {
@@ -490,7 +443,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         else if (t === "passive") { actionTag = "Passive"; actionClass = "tag-passive"; }
                     }
 
-                    // Logic for Imported Flag Tags
                     const imported = itemData.flags?.importedFrom || {};
                     const tierTag = imported.tier ? `Tier ${imported.tier}` : null;
                     const typeTag = imported.type || null;
@@ -498,7 +450,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     allSuggestedFeatures.push({
                         name: feat.name,
                         checked: feat.checked, 
-                        isRuleSuggestion: feat.isRuleSuggestion, // PASSING THE FLAG
+                        isRuleSuggestion: feat.isRuleSuggestion,
                         img: itemData.img,
                         uuid: itemData.uuid,
                         tags: {
@@ -531,33 +483,24 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     let optionsTooltip = ""; 
                     let damageStats = "";
                     let isHordeFeature = false;
-
-                    // DEFAULT VALUE LOGIC
                     let valueToShow = overrideVal !== undefined ? overrideVal : f.to;
 
                     if (f.type === 'name_horde') {
                         isHordeFeature = true;
-                        // For Horde feature, always use the Halved Damage value unless overridden (though we disable override in UI)
-                        // It must match what is in halved damage.
                         valueToShow = simResult.stats.mainHalvedDamageRaw || "0"; 
                     }
 
                     if ((f.type === 'damage') && !isHordeFeature) {
-                         // MULTI-PART DAMAGE FIX: Use composite key lookup
                          const currentVal = this.overrides.features.damage[f.itemId]?.[f.from] || f.to;
                          valueToShow = currentVal;
-
                          featureOptions = damageOptions.map(d => ({
                              value: d.value,
                              label: d.label,
                              selected: d.value === currentVal
                          }));
-                         
                          if (featureOptions.length > 0) {
                              optionsTooltip = "Suggested:<br>" + featureOptions.map(o => `• ${o.label}`).join("<br>");
                          }
-
-                         // Calculate Stats for the current value in preview
                          damageStats = this._calculateDamageStats(currentVal);
                     }
 
@@ -569,14 +512,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         if (match) minionValue = match[1];
                     }
 
-                    // Find Item Icon/UUID/Type
                     const itemData = await this._findFeatureItem(f.itemName);
                     const typeLabel = this._getFeatureTypeLabel(itemData.type);
 
                     return {
                         itemId: f.itemId,
                         originalName: displayFrom,
-                        originalFormula: f.from, // PASSED for unique identification
+                        originalFormula: f.from, 
                         newName: valueToShow, 
                         isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion', 
                         options: featureOptions, 
@@ -591,24 +533,26 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     };
                 }));
 
-                // --- BUILD SUGGESTED FEATURES TYPE OPTIONS ---
-                suggestedFeaturesTypeOptions = []; // RESET ARRAY
-                
-                // Add all keys from BENCHMARKS without a generic "Default" option
+                // --- BUILD SUGGESTED FEATURES TYPE & TIER OPTIONS ---
+                suggestedFeaturesTypeOptions = []; 
                 const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
                 typeKeys.forEach(k => {
-                    // Logic to determine if this option is selected
-                    // 1. If override is "default" (initial state), check if k matches actor's type (typeKey)
-                    // 2. If override is set to specific key, check if k matches override
                     const isSelected = (this.overrides.suggestedFeaturesType === "default" && k === typeKey) ||
                                        (this.overrides.suggestedFeaturesType === k);
-
                     suggestedFeaturesTypeOptions.push({
                         value: k,
                         label: k.charAt(0).toUpperCase() + k.slice(1),
                         selected: isSelected
                     });
                 });
+
+                // Tier options
+                const currentSuggestionTier = this.overrides.suggestedFeaturesTier === "default" ? this.targetTier : parseInt(this.overrides.suggestedFeaturesTier);
+                suggestedFeaturesTierOptions = [1, 2, 3, 4].map(t => ({
+                    value: t,
+                    label: `Tier ${t}`,
+                    selected: t === currentSuggestionTier
+                }));
             }
         }
 
@@ -658,7 +602,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             portraitImg: portraitImg,
             isHorde: isHorde, 
             actorTypeLabel: actorTypeLabel,
-            suggestedFeaturesTypeOptions // Pass to template
+            suggestedFeaturesTypeOptions,
+            suggestedFeaturesTierOptions // Pass to template
         };
     }
 
@@ -666,7 +611,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         super._onRender(context, options);
         const html = this.element;
 
-        // --- Manual Listeners for Top Controls ---
+        // ... existing listeners ...
         const sourceSelect = html.querySelector('.source-select');
         if (sourceSelect) sourceSelect.addEventListener('change', (e) => this._onSelectSource(e, sourceSelect));
 
@@ -679,7 +624,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorSelect = html.querySelector('.main-actor-select');
         if (actorSelect) actorSelect.addEventListener('change', (e) => this._onSelectActor(e, actorSelect));
 
-        // --- Overrides ---
         html.querySelectorAll('.override-input').forEach(input => {
             input.addEventListener('change', (e) => this._onOverrideChange(e, input));
         });
@@ -697,7 +641,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('change', (e) => this._onFeatureCheckboxChange(e, input));
         });
         
-        // --- Experience Handlers ---
         html.querySelectorAll('.exp-name-input').forEach(input => {
             input.addEventListener('change', (e) => this._onExpNameChange(e, input));
         });
@@ -705,14 +648,19 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('change', (e) => this._onExpModChange(e, input));
         });
 
-        // --- Suggestion Type Handler (Manual Listener instead of Action to avoid re-render race condition) ---
+        // --- Suggestion Handlers ---
         const suggestionTypeSelect = html.querySelector('.suggestion-type-select');
         if (suggestionTypeSelect) {
             suggestionTypeSelect.addEventListener('change', (e) => this._onChangeSuggestedType(e, suggestionTypeSelect));
         }
+
+        const suggestionTierSelect = html.querySelector('.suggestion-tier-select');
+        if (suggestionTierSelect) {
+            suggestionTierSelect.addEventListener('change', (e) => this._onChangeSuggestedTier(e, suggestionTierSelect));
+        }
     }
 
-    // --- Actions ---
+    // ... existing actions and handlers ...
 
     async _onOpenSettings(event, target) {
         new CompendiumManager().render(true);
@@ -731,7 +679,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.stopPropagation();
         this.source = target.value;
         this.selectedActorId = null;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" }; 
         this._suggestionCache = {}; 
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
         this.render();
@@ -756,7 +704,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.preventDefault();
         event.stopPropagation();
         this.selectedActorId = target.value;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" }; 
         this._suggestionCache = {}; 
         
         const actor = await this._getActor(this.selectedActorId);
@@ -770,7 +718,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const tier = Number(target.dataset.tier);
         if (tier) {
             this.targetTier = tier;
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" }; 
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" }; 
             this._suggestionCache = {}; 
             this.render();
         }
@@ -812,7 +760,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const typeKey = (actor.system.type || "standard").toLowerCase();
             this.filterType = typeKey; 
 
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default" };
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default" };
             this._suggestionCache = {}; 
 
             this.render();
@@ -823,12 +771,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
     }
 
-    // --- Action Handlers ---
-
     _onChangeSuggestedType(event, target) {
         event.preventDefault();
         this.overrides.suggestedFeaturesType = target.value;
-        // REMOVED: this.overrides.suggestedFeatures = null; // Keeps selection
+        this.render();
+    }
+
+    _onChangeSuggestedTier(event, target) {
+        event.preventDefault();
+        this.overrides.suggestedFeaturesTier = target.value;
         this.render();
     }
 
@@ -857,28 +808,22 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const newId = "new_" + foundry.utils.randomID();
         if (!this.overrides.experiences[newId]) this.overrides.experiences[newId] = {};
         
-        // Pick a random name for the manually added experience too!
         let typeKey = this.filterType;
         if (!typeKey || typeKey === "all") typeKey = "standard";
         
-        // Exclude currently used names to avoid duplicates if possible
         const usedNames = Object.values(this.overrides.experiences).map(e => e.name);
         const pickedName = this._getRandomExperienceName(typeKey, usedNames);
 
         this.overrides.experiences[newId].name = pickedName;
-        this.overrides.experiences[newId].value = 2; // Default starting value
+        this.overrides.experiences[newId].value = 2; 
         this.render();
     }
 
-    // NEW METHOD FOR ROLLING EXPERIENCE NAME
     _onRollExperienceName(event, target) {
         const id = target.dataset.id;
-        
-        // Try to get type from actor or filter
         let typeKey = this.filterType;
         if (!typeKey || typeKey === "all") typeKey = "standard";
 
-        // Exclude currently used names to avoid duplicates
         const usedNames = Object.values(this.overrides.experiences).map(e => e.name);
         const pickedName = this._getRandomExperienceName(typeKey, usedNames);
         
@@ -947,7 +892,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!this.overrides.features.damage) this.overrides.features.damage = {};
 
         if (isDamage) {
-            // MULTI-PART FIX: Use nested structure [itemId][originalFormula]
             const originalFormula = target.dataset.original;
             if (originalFormula) {
                 if (!this.overrides.features.damage[itemId] || typeof this.overrides.features.damage[itemId] !== 'object') {
@@ -955,16 +899,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
                 this.overrides.features.damage[itemId][originalFormula] = value;
             } else {
-                // Fallback for single-part or unspecified
                 this.overrides.features.damage[itemId] = value;
             }
-            // Removing from names is safer but optional if structures are distinct
             delete this.overrides.features.names[itemId];
         } else {
             this.overrides.features.names[itemId] = value;
         }
         
-        this.render(); // Ensure stats update
+        this.render(); 
     }
 
     _onMinionOverrideChange(event, target) {
@@ -1069,17 +1011,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorData = actor.toObject();
         const typeKey = (actorData.system.type || "standard").toLowerCase();
         
-        // Decide which type to use for FEATURE SUGGESTIONS based on overrides
+        // --- Determine Suggestions Keys ---
         let suggestionTypeKey = typeKey;
         if (this.overrides.suggestedFeaturesType && this.overrides.suggestedFeaturesType !== "default") {
             suggestionTypeKey = this.overrides.suggestedFeaturesType;
         }
 
+        let suggestionTier = targetTier;
+        if (this.overrides.suggestedFeaturesTier && this.overrides.suggestedFeaturesTier !== "default") {
+            suggestionTier = parseInt(this.overrides.suggestedFeaturesTier);
+        }
+
         if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: "Unknown Type" }, features: [], structuredFeatures: [] };
         
         const benchmark = ADVERSARY_BENCHMARKS[typeKey].tiers[`tier_${targetTier}`];
-        const suggestionBenchmarkRoot = ADVERSARY_BENCHMARKS[suggestionTypeKey];
-        const suggestionBenchmark = suggestionBenchmarkRoot ? suggestionBenchmarkRoot.tiers[`tier_${targetTier}`] : benchmark;
 
         if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [], structuredFeatures: [] };
 
@@ -1118,7 +1063,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             let activeCount = 0;
             const usedNames = [];
             
-            // 1. Existing experiences (respect deletions and updates)
             for (const [key, exp] of Object.entries(currentExpMap)) {
                 const override = this.overrides.experiences[key];
                 if (override && override.deleted) continue;
@@ -1142,7 +1086,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 });
             }
 
-            // 2. New Additions from Overrides
             for (const [key, data] of Object.entries(this.overrides.experiences)) {
                 if (!currentExpMap[key] && !data.deleted) {
                      activeCount++;
@@ -1160,7 +1103,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
-            // 3. Auto-Fill Visual Slots (Suggestions)
             if (activeCount < targetAmount) {
                 const needed = targetAmount - activeCount;
                 for (let i = 0; i < needed; i++) {
@@ -1168,16 +1110,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     
                     if (!this.overrides.experiences[tempId]) {
                         
-                        // Check cache first to avoid flashing
                         let suggestedName = "New Experience";
                         if (this._suggestionCache[tempId]) {
                             suggestedName = this._suggestionCache[tempId];
                         } else {
-                            // Pick a random one and cache it
                             suggestedName = this._getRandomExperienceName(typeKey, usedNames);
                             this._suggestionCache[tempId] = suggestedName;
                         }
-                        // Add to used names so next iteration tries to pick different
                         usedNames.push(suggestedName);
 
                         sim.previewExperiences.push({
@@ -1193,7 +1132,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // Display strings
         sim.difficulty = `<span class="range-hint">(${benchmark.difficulty})</span>`;
         sim.hp = `<span class="range-hint">(${benchmark.hp})</span>`;
         sim.stress = `<span class="range-hint">(${benchmark.stress})</span>`;
@@ -1201,7 +1139,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         sim.attackMod = `<span class="range-hint">(${benchmark.attack_modifier})</span>`;
         sim.tier = targetTier;
 
-        // --- Calculate Hit Chances for PREVIEW Stats ---
         const previewAttackMod = this.overrides.attackMod !== undefined ? Number(this.overrides.attackMod) : sim.attackModRaw;
         sim.hitChance = Manager.calculateHitChance(previewAttackMod, targetTier);
 
@@ -1217,7 +1154,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
             tempParts.forEach((part, index) => {
                 
-                // --- MAIN ATTACK DAMAGE ---
                 let rawVal = "";
                 if (this.overrides.damageFormula) {
                     rawVal = this.overrides.damageFormula;
@@ -1245,7 +1181,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 if (index === 0) mainDamageRaw = rawVal;
 
-                // --- HALVED DAMAGE (HORDE) ---
                 if (part.valueAlt && benchmark.halved_damage_x) {
                     let rawHalved = "";
                     if (this.overrides.halvedDamageFormula) {
@@ -1270,12 +1205,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             });
         }
         sim.damage = damageParts.join(", ") || "None";
-        sim.damageStats = this._calculateDamageStats(mainDamageRaw); // Stats for Preview
+        sim.damageStats = this._calculateDamageStats(mainDamageRaw); 
 
         sim.mainDamageRaw = mainDamageRaw;
         
         sim.halvedDamage = halvedParts.join(", ") || null;
-        sim.halvedDamageStats = this._calculateDamageStats(mainHalvedDamageRaw); // Stats for Preview
+        sim.halvedDamageStats = this._calculateDamageStats(mainHalvedDamageRaw); 
 
         sim.mainHalvedDamageRaw = mainHalvedDamageRaw;
 
@@ -1318,45 +1253,63 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
         
-        // --- SUGGESTED FEATURES LOGIC ---
-        // 1. Get ALL possible features for this Tier exactly from rules.js
+        // --- SUGGESTED FEATURES LOGIC (REPLACED) ---
+        // New logic: Query Compendium based on Tier/Type
         let possibleFeatures = [];
+        let ruleSuggestions = [];
+
+        // 1. Determine "Rule Suggestions" for Star marking
+        const suggestionBenchmark = ADVERSARY_BENCHMARKS[suggestionTypeKey]?.tiers[`tier_${suggestionTier}`];
         if (suggestionBenchmark && suggestionBenchmark.suggested_features) {
             if (Array.isArray(suggestionBenchmark.suggested_features)) {
-                possibleFeatures = [...suggestionBenchmark.suggested_features];
+                ruleSuggestions = [...suggestionBenchmark.suggested_features];
             } else if (typeof suggestionBenchmark.suggested_features === "string" && suggestionBenchmark.suggested_features !== "") {
-                possibleFeatures = [suggestionBenchmark.suggested_features];
+                ruleSuggestions = [suggestionBenchmark.suggested_features];
             }
         }
+
+        // 2. Query Compendiums
+        const packsToQuery = ["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features"];
+        for (const packId of packsToQuery) {
+            const pack = game.packs.get(packId);
+            if (!pack) continue;
+            // Ensure index is loaded with flags
+            const index = await pack.getIndex({ fields: ["flags.importedFrom"] });
+            
+            // Filter
+            const matches = index.filter(i => {
+                const imported = i.flags?.importedFrom || {};
+                const matchesTier = imported.tier === suggestionTier;
+                const matchesType = imported.type?.toLowerCase() === suggestionTypeKey.toLowerCase();
+                return matchesTier && matchesType;
+            });
+
+            matches.forEach(m => {
+                if (!possibleFeatures.includes(m.name)) possibleFeatures.push(m.name);
+            });
+        }
         
-        // Sort options alphabetically
         possibleFeatures.sort((a, b) => a.localeCompare(b));
 
         // --- FEATURE FLAG CHECK ---
         const enableSuggestions = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
         if (!enableSuggestions) {
-            possibleFeatures = []; // FORCE EMPTY LIST TO HIDE SUGGESTIONS
+            possibleFeatures = []; 
         }
 
-        // 2. Filter out already owned features to avoid duplicates
         const isOwned = (name) => allItems.some(i => i.name === name);
 
-        // 3. Initialize default selection (REMOVED RANDOM PICK)
         if (this.overrides.suggestedFeatures === null) {
             this.overrides.suggestedFeatures = [];
         }
 
-        // 4. Construct Final UI List: Selected (Top) + Current Type Options (Bottom)
         const uiList = [];
         const addedSet = new Set();
-        
-        // Helper to check if name is in rules list
-        const isRuleSuggested = (name) => possibleFeatures.includes(name);
+        const isRuleSuggested = (name) => ruleSuggestions.includes(name);
 
-        // Sort selected features for display consistency
         const selectedNames = [...this.overrides.suggestedFeatures].sort((a, b) => a.localeCompare(b));
 
-        // A. Add Selected Features (Checked) - Persist from overrides
+        // A. Selected Features
         for (const name of selectedNames) {
             if (!isOwned(name)) {
                 uiList.push({
@@ -1368,13 +1321,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // B. Add Remaining Options from Current Type (Unchecked)
+        // B. Filtered Options
         for (const name of possibleFeatures) {
             if (!isOwned(name) && !addedSet.has(name)) {
                 uiList.push({
                     name: name,
                     checked: false,
-                    isRuleSuggestion: true // Since it comes from possibleFeatures, it is true
+                    isRuleSuggestion: isRuleSuggested(name)
                 });
                 addedSet.add(name);
             }
@@ -1384,7 +1337,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             stats: sim, 
             features: featureLog, 
             structuredFeatures: structuredFeatures,
-            suggestedFeatures: uiList // Use the merged list
+            suggestedFeatures: uiList 
         };
     }
 }
