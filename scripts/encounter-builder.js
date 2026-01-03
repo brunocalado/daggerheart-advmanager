@@ -23,7 +23,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // Encounter Settings
         this.pcCount = 4;
         this.pcTier = 1;
-        this.fearBudget = "1-3"; // Default changed to Moderate per request
+        this.fearBudget = "1-3"; // Default Moderate
         
         // Manual Modifier States
         this.manualModifiers = {
@@ -66,7 +66,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             updatePCSettings: EncounterBuilder.prototype._onUpdatePCSettings,
             createEncounter: EncounterBuilder.prototype._onCreateEncounter,
             placeEncounter: EncounterBuilder.prototype._onPlaceEncounter,
-            editAdversary: EncounterBuilder.prototype._onEditAdversary
+            editAdversary: EncounterBuilder.prototype._onEditAdversary,
+            clearEncounter: EncounterBuilder.prototype._onClearEncounter // NEW ACTION
         },
         form: {
             handler: EncounterBuilder.prototype.submitHandler,
@@ -80,6 +81,36 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             scrollable: [".eb-results-list", ".eb-encounter-list"]
         }
     };
+
+    /**
+     * Calculates the base cost for a given adversary type.
+     */
+    _getAdversaryCost(type) {
+        if (!type) return 2; // Default Standard
+        const t = type.toLowerCase();
+        
+        if (t === "minion") return "Minion"; // Special handling
+        if (["social", "support"].includes(t)) return 1;
+        if (["horde", "ranged", "skulk", "standard"].includes(t)) return 2;
+        if (t === "leader") return 3;
+        if (t === "bruiser") return 4;
+        if (t === "solo") return 5;
+        
+        return 2; // Default fallback
+    }
+
+    /**
+     * Helper to resolve display image, replacing default system icon with module specific one.
+     */
+    _resolveImage(img) {
+        const DEFAULT_ICON = "systems/daggerheart/assets/icons/documents/actors/dragon-head.svg";
+        const REPLACEMENT_ICON = "modules/daggerheart-advmanager/assets/images/skull-mini.webp";
+        
+        if (img === DEFAULT_ICON) {
+            return REPLACEMENT_ICON;
+        }
+        return img;
+    }
 
     async _prepareContext(_options) {
         const adversaries = await this._getAllAdversaries();
@@ -120,6 +151,24 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             return true;
         });
         filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+        // --- Inject Cost into Filtered List ---
+        filtered = filtered.map(a => {
+            let costVal = this._getAdversaryCost(a.type);
+            
+            // Minion Cost Logic: 1 point per group equal to party size (1 / pcCount)
+            if (costVal === "Minion") {
+                const decimalCost = 1 / Math.max(1, this.pcCount);
+                // Format: "0,3" (1 decimal place, comma separator)
+                costVal = decimalCost.toFixed(1).replace('.', ',');
+            }
+
+            return {
+                ...a,
+                cost: costVal,
+                isMinionCost: a.type.toLowerCase() === "minion"
+            };
+        });
 
         // --- UI Options ---
         const tiers = [1, 2, 3, 4].map(t => ({
@@ -166,8 +215,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             };
         });
 
-        // --- Synergy Checks (Summoner, Spotlighter, Momentum/Terrifying, Relentless) ---
-        // Used for UI icons activation
+        // --- Synergy Checks ---
         const synergy = {
             summoner: false,
             spotlighter: false,
@@ -179,12 +227,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             const features = unit.specialFeatures || [];
             if (features.includes("Summoner")) synergy.summoner = true;
             if (features.includes("Spotlighter")) synergy.spotlighter = true;
-            
-            // Check Momentum OR Terrifying for the visual icon
             if (features.includes("Momentum") || features.includes("Terrifying")) {
                 synergy.momentum = true;
             }
-            
             if (features.some(f => f.startsWith("Relentless"))) synergy.relentless = true;
         });
 
@@ -193,7 +238,6 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         // --- Determine Skull Image ---
         let skullImg = "";
-        // Mapping labels to images (handling Hard/Deadly)
         switch (bpData.difficultyLabel) {
             case "Very Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-very-easy.webp"; break;
             case "Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-easy.webp"; break;
@@ -201,7 +245,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             case "Challenging": skullImg = "modules/daggerheart-advmanager/assets/images/skull-challenging.webp"; break;
             case "Hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break;
             case "Deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
-            case "Out of Tier": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break; // Fallback to scary skull
+            case "Out of Tier": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
             default: skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp";
         }
 
@@ -217,6 +261,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             pcCountOptions,
             searchQuery: this.searchQuery,
             resultCount: filtered.length,
+            
+            // New Encounter Counter
+            encounterCount: this.encounterList.length,
             
             // BP Data
             pcCount: this.pcCount,
@@ -344,33 +391,30 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         
         let level = 2; // Default Balanced
 
-        // --- New Difficulty Thresholds ---
+        // --- Difficulty Thresholds ---
         if (diff <= -5) level = 0;      // Very Easy
-        else if (diff <= -2) level = 1; // Easy (Assuming -4, -3, -2)
-        else if (diff >= -1 && diff <= 1) level = 2; // Balanced (-1, 0, +1)
-        else if (diff >= 2 && diff < 4) level = 3;   // Challenging (+2, +3)
-        else if (diff >= 4 && diff < 6) level = 4;   // Hard (+4, +5)
-        else if (diff >= 6) level = 5;               // Deadly (+6 or more)
+        else if (diff <= -2) level = 1; // Easy
+        else if (diff >= -1 && diff <= 1) level = 2; // Balanced
+        else if (diff >= 2 && diff < 4) level = 3;   // Challenging
+        else if (diff >= 4 && diff < 6) level = 4;   // Hard
+        else if (diff >= 6) level = 5;               // Deadly
 
         // --- Apply Fear Shift ---
         let shift = 0;
         
-        // NEW: Low Fear Budget decreases difficulty by one step
         if (this.fearBudget === "0-1") shift = -1;
         else if (this.fearBudget === "2-4") shift = 1;
         else if (this.fearBudget === "4-8" || this.fearBudget === "6-12") shift = 2;
 
-        // --- Apply Synergy Shift (Summoner + Spotlighter) ---
+        // --- Apply Synergy Shift ---
         if (hasSummoner && hasSpotlighter) {
             shift += 1;
         }
 
-        // --- Apply Synergy Shift (Relentless + (Momentum OR Terrifying)) ---
         if (hasRelentless && (hasMomentum || hasTerrifying)) {
             shift += 1;
         }
 
-        // Calculate final level constrained between 0 and 5
         level = Math.max(0, Math.min(5, level + shift));
 
         let difficultyLabel = "Balanced";
@@ -381,14 +425,13 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             case 1: difficultyLabel = "Easy"; difficultyClass = "diff-easy"; break;
             case 2: difficultyLabel = "Balanced"; difficultyClass = "diff-balanced"; break;
             case 3: difficultyLabel = "Challenging"; difficultyClass = "diff-challenging"; break;
-            case 4: difficultyLabel = "Hard"; difficultyClass = "diff-deadly"; break; // Reusing Deadly class (Red) for Hard
+            case 4: difficultyLabel = "Hard"; difficultyClass = "diff-deadly"; break;
             case 5: difficultyLabel = "Deadly"; difficultyClass = "diff-deadly"; break;
         }
 
-        // --- Out of Tier Override ---
         if (outOfTier) {
             difficultyLabel = "Out of Tier";
-            difficultyClass = "diff-deadly"; // Red warning color
+            difficultyClass = "diff-deadly";
         }
 
         const statusColor = (currentCost > limit) ? "red" : (currentCost === limit ? "green" : "gold");
@@ -405,6 +448,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         };
     }
 
+    // ... (rest of the file remains unchanged)
+    
     async _getAllAdversaries() {
         if (this._cachedAdversaries) return this._cachedAdversaries;
         let all = [];
@@ -431,22 +476,18 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
     _formatActorData(actor) {
         const specialFeatures = [];
-        // Only doing basic check here for list view badges if needed, 
-        // full detection happens in _onAddUnit
         if (actor.items) {
             const allFeatureNames = actor.items.map(i => i.name);
 
             if (allFeatureNames.includes("Momentum")) specialFeatures.push("Momentum");
-            if (allFeatureNames.includes("Terrifying")) specialFeatures.push("Terrifying"); // ADDED
+            if (allFeatureNames.includes("Terrifying")) specialFeatures.push("Terrifying");
             const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
             if (relentless) specialFeatures.push(relentless.name);
 
-            // Check Summoner
             if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) {
                 specialFeatures.push("Summoner");
             }
 
-            // Check Spotlighter
             if (allFeatureNames.some(name => POWERFUL_FEATURES.spotlighter.includes(name))) {
                 specialFeatures.push("Spotlighter");
             }
@@ -458,7 +499,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             name: actor.name,
             tier: Number(actor.system.tier) || 1,
             type: (actor.system.type || "standard").toLowerCase(),
-            img: actor.img,
+            img: this._resolveImage(actor.img),
             isCompendium: false,
             packId: null,
             specialFeatures: specialFeatures 
@@ -472,7 +513,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             name: indexEntry.name,
             tier: Number(indexEntry.system?.tier) || 1,
             type: (indexEntry.system?.type || "standard").toLowerCase(),
-            img: indexEntry.img,
+            img: this._resolveImage(indexEntry.img),
             isCompendium: true,
             packId: packId,
             specialFeatures: [] 
@@ -639,6 +680,13 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         }
     }
 
+    // NEW METHOD: Clear Encounter
+    _onClearEncounter(event, target) {
+        event.preventDefault();
+        this.encounterList = [];
+        this.render();
+    }
+
     /* --- Event Listeners --- */
 
     _onRender(context, options) {
@@ -780,7 +828,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
                 if (allFeatureNames.includes("Momentum")) {
                     specialFeatures.push("Momentum");
                 }
-                if (allFeatureNames.includes("Terrifying")) { // ADDED
+                if (allFeatureNames.includes("Terrifying")) { 
                     specialFeatures.push("Terrifying");
                 }
                 const relentless = actor.items.find(i => i.name.startsWith("Relentless"));

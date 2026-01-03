@@ -85,6 +85,11 @@
                                 {{/each}}
                             </div>
                         </div>
+                        
+                        <!-- Added Cost Display with Background -->
+                        <div class="eb-row-cost" style="margin-left: auto; padding: 2px 6px; font-weight: bold; color: #ea80fc; min-width: 25px; text-align: center; background: rgba(0, 0, 0, 0.6); border: 1px solid #555; border-radius: 4px;">
+                            {{this.cost}}
+                        </div>
                     </div>
                 </div>
                 {{else}}
@@ -173,7 +178,7 @@
                     <div class="synergy-item {{#if synergy.spotlighter}}active{{/if}}" data-tooltip="There are adversaries capable of spotlighting other adversaries.">
                         <img src="icons/skills/movement/arrows-up-trio-red.webp" class="synergy-icon">
                     </div>
-                    <div class="synergy-item {{#if synergy.momentum}}active{{/if}}" data-tooltip="There are adversaries capable of gaining Fear (Momentum/Terrifying).">
+                    <div class="synergy-item {{#if synergy.momentum}}active{{/if}}" data-tooltip="There are adversaries capable of gaining Fear.">
                         <img src="icons/skills/melee/strike-weapons-orange.webp" class="synergy-icon">
                     </div>
                     <div class="synergy-item {{#if synergy.relentless}}active{{/if}}" data-tooltip="There are adversaries that can be spotlighted multiple times per GM turn.">
@@ -203,7 +208,16 @@
 
             <!-- Encounter Units List -->
             <div class="eb-encounter-list-wrapper">
-                <div class="eb-results-header">Adversaries</div>
+                <!-- Header Container with Flexbox for Alignment -->
+                <div class="eb-results-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Adversaries ({{encounterCount}})</span>
+                    {{#if encounterCount}}
+                    <button type="button" data-action="clearEncounter" style="background: none; border: none; color: #ff5252; cursor: pointer; font-size: 0.9em;">
+                        <i class="fas fa-trash-alt"></i> Clear All
+                    </button>
+                    {{/if}}
+                </div>
+                
                 <div class="eb-encounter-list">
                     {{#each encounterList}}
                     <div class="eb-encounter-item" draggable="true" data-uuid="{{this.uuid}}" data-entryid="{{this.entryId}}" data-action="openSheet">

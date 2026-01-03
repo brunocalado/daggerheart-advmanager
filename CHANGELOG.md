@@ -1,3 +1,9 @@
+# 0.1.7
+- encounter builder shows cost for each actor
+- encounter builder shows how many adversaries you added
+- encounter builder clear button
+- nice art for actors without art
+
 # 0.1.6
 - compendium-stats shows experience
 - experiences uses new rule
