@@ -1,6 +1,6 @@
 import { Manager } from "./manager.js";
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
-import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
+import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js"; 
@@ -139,9 +139,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     async _findFeatureItem(name) {
         if (this._featureCache.has(name)) return this._featureCache.get(name);
 
+        // Include user selected feature packs in search if needed
+        const extraFeaturePacks = game.settings.get(MODULE_ID, SETTING_FEATURE_COMPENDIUMS) || [];
         const packIds = [
             "daggerheart-advmanager.all-features", 
-            "daggerheart-advmanager.custom-features"
+            "daggerheart-advmanager.custom-features",
+            ...extraFeaturePacks
         ];
         
         // Prepare clean name (e.g., "Relentless (2)" or "Relentless (X)" becomes "Relentless")
@@ -532,10 +535,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     selected: t === suggestionTier
                 }));
 
-                // --- SUGGESTED FEATURES LOGIC (UPDATED WITH FLAGS CHECK) ---
+                // --- SUGGESTED FEATURES LOGIC (UPDATED WITH FLAGS CHECK & HOMEBREW) ---
                 
                 // Helper to generate tags
-                const getTags = (type, flags) => {
+                const getTags = (type, flags, isHomebrew) => {
                     let actionTag = "";
                     let actionClass = "";
                     if (type) {
@@ -552,7 +555,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     return {
                         action: { label: actionTag, css: actionClass },
                         tier: tierTag,
-                        type: typeTag
+                        type: typeTag,
+                        homebrew: isHomebrew ? "Homebrew" : null
                     };
                 };
 
@@ -569,8 +573,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
                 }
 
-                // 2. Query Compendiums with Filter
-                const packsToQuery = ["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features"];
+                // 2. Query Compendiums with Filter (Including Extra Packs)
+                const extraFeaturePacks = game.settings.get(MODULE_ID, SETTING_FEATURE_COMPENDIUMS) || [];
+                const packsToQuery = [...new Set(["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features", ...extraFeaturePacks])];
                 const enableSuggestions = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
 
                 if (enableSuggestions) {
@@ -583,10 +588,25 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         
                         // Filter
                         const matches = index.filter(i => {
-                            const imported = i.flags?.importedFrom || {};
-                            const matchesTier = imported.tier === suggestionTier;
-                            const matchesType = imported.type?.toLowerCase() === suggestionTypeKey.toLowerCase();
-                            return matchesTier && matchesType;
+                            // Ensure strictly only feature items (ignore classes, subclasses etc if in mixed compendium)
+                            // We rely on type 'feature' as common convention or if user explicitly put in feature compendium.
+                            // To be safe, we can check i.type if available in index (V10+ default).
+                            // Assuming 'feature' is the Item Type for adversary moves.
+                            if (i.type !== "feature") return false;
+
+                            const imported = i.flags?.importedFrom;
+                            
+                            // Case 1: Standard Imported Item -> Strict Filter
+                            if (imported && imported.tier !== undefined && imported.type) {
+                                const matchesTier = imported.tier === suggestionTier;
+                                const matchesType = imported.type?.toLowerCase() === suggestionTypeKey.toLowerCase();
+                                return matchesTier && matchesType;
+                            } 
+                            
+                            // Case 2: Homebrew/Manual Item -> Universal Inclusion
+                            // If it lacks specific import flags, show it for ANY Tier/Type selection
+                            i.isHomebrew = true;
+                            return true;
                         });
 
                         matches.forEach(m => {
@@ -640,7 +660,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                             isRuleSuggestion: isRuleSuggested(itemData.name),
                             img: itemData.img,
                             uuid: itemData.uuid || itemData._id, // Handle index _id fallback if uuid missing
-                            tags: getTags(itemData.system?.featureForm, itemData.flags)
+                            tags: getTags(itemData.system?.featureForm, itemData.flags, itemData.isHomebrew)
                         });
                         addedSet.add(name);
                     }
@@ -660,7 +680,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                             isRuleSuggestion: isRuleSuggested(item.name),
                             img: item.img,
                             uuid: item.uuid || item._id, // Index entries usually have _id, check uuid support
-                            tags: getTags(item.system?.featureForm, item.flags)
+                            tags: getTags(item.system?.featureForm, item.flags, item.isHomebrew)
                         });
                         addedSet.add(name);
                     }

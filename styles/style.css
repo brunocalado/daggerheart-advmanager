@@ -1512,3 +1512,64 @@
     padding: 20px;
     font-style: italic;
 }
+
+/* ========================================= */
+/* TAGS FOR FEATURES (IMPROVED)              */
+/* ========================================= */
+
+.dh-tag {
+    font-size: 0.9em; /* Larger for readability */
+    padding: 2px 8px; /* More padding for button feel */
+    border-radius: 4px;
+    margin-left: 6px;
+    font-weight: 800; /* Extra Bold */
+    text-transform: uppercase;
+    border: none;
+    white-space: nowrap;
+    /* Removed line-height as requested */
+    display: inline-flex; /* Ensures content is centered */
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4); /* Subtly raised */
+}
+
+/* Action Type Tags - High Contrast Solid Colors */
+.tag-action {
+    background: #c62828; /* Deep Red */
+    color: #ffffff;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+}
+
+.tag-reaction {
+    background: #f9a825; /* Dark Yellow/Amber */
+    color: #000000; /* Black text for contrast */
+    font-weight: 900;
+}
+
+.tag-passive {
+    background: #2e7d32; /* Deep Green */
+    color: #ffffff;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+}
+
+/* Flag Info Tags */
+.tag-tier {
+    background: #424242; /* Dark Gray */
+    color: #ffffff;
+}
+
+.tag-type {
+    background: #4527a0; /* Deep Purple */
+    color: #ffffff;
+    text-transform: capitalize;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+}
+
+.tag-homebrew {
+    background: #00695c; /* Teal */
+    color: #e0f2f1;
+    border-color: #4db6ac;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+}

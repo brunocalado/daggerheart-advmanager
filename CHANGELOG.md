@@ -3,6 +3,9 @@
 - encounter builder shows how many adversaries you added
 - encounter builder clear button
 - nice art for actors without art
+- new features have tags
+- you can choose any official feature to any actor
+- you can add your homebrew features
 
 # 0.1.6
 - compendium-stats shows experience
