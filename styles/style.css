@@ -1587,7 +1587,7 @@
 /* ========================================= */
 
 .dh-tag {
-    font-size: 0.95em; /* Larger for readability */
+    font-size: 0.85em; /* UPDATE: Smaller font */
     padding: 3px 8px; /* More padding for button feel */
     border-radius: 4px;
     margin-left: 6px;
@@ -1717,7 +1717,24 @@
     width: 50px; /* Slightly smaller input */
 }
 
-/* Ensure consistent sizing */
-.range-hint, .stat-value-hint, .feature-stats {
-    font-size: 1em !important;
+/* UPDATE: New utility classes for specific text colors requested */
+.stat-separator {
+    width: 1px;
+    background: rgba(255,255,255,0.2);
+    height: 25px;
+    margin: 0 5px;
+}
+
+.current-hint-text {
+    color: #aaa !important;
+    font-size: 1em;
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+.preview-hint-text {
+    color: #ffffff !important;
+    font-style: italic;
+    font-weight: normal;
+    margin-left: 5px;
 }

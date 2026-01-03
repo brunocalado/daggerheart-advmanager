@@ -102,6 +102,7 @@
                     <span class="stat-label">HP</span>
                     <span class="stat-value">{{currentStats.hp}}</span>
                 </div>
+                <div class="stat-separator"></div> <!-- Separator Added -->
                 <div class="stat-col-half">
                     <span class="stat-label">Stress</span>
                     <span class="stat-value">{{currentStats.stress}}</span>
@@ -126,17 +127,20 @@
                 <span class="stat-label">
                     Attack Damage 
                     {{#if currentStats.damageTypesLabel}}
-                        <span class="damage-type-current">{{currentStats.damageTypesLabel}}</span>
+                        <!-- Using current-hint-text class as requested -->
+                        <span class="current-hint-text">{{currentStats.damageTypesLabel}}</span>
                     {{/if}}
                 </span>
-                <div class="stat-block">{{currentStats.damage}} <span style="color: #eee; font-size: 1em; margin-left: 5px;">{{currentStats.damageStats}}</span></div>
+                <!-- Stats moved to use current-hint-text -->
+                <div class="stat-block">{{currentStats.damage}} <span class="current-hint-text">{{currentStats.damageStats}}</span></div>
             </div>
             
             {{#if isHorde}}
                 {{#if currentStats.halvedDamage}}
                 <div class="stat-group">
                     <span class="stat-label">Halved Damage (Horde)</span>
-                    <div class="stat-block">{{currentStats.halvedDamage}} <span style="color: #eee; margin-left: 5px;">{{currentStats.halvedDamageStats}}</span></div>
+                    <!-- Stats moved to use current-hint-text -->
+                    <div class="stat-block">{{currentStats.halvedDamage}} <span class="current-hint-text">{{currentStats.halvedDamageStats}}</span></div>
                 </div>
                 {{/if}}
             {{/if}}
@@ -199,6 +203,7 @@
                             <input type="number" class="override-input" data-field="hp" value="{{previewStats.hp}}" title="Manual Override" {{#if previewStats.isMinion}}disabled{{/if}}>
                         </div>
                     </div>
+                    <div class="stat-separator"></div> <!-- Separator Added -->
                     <div class="stat-col-half">
                         <span class="stat-label">Stress</span>
                         <div class="stat-input-group dual-compact">
@@ -248,7 +253,8 @@
                             <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
-                    <div class="stat-block">{{{previewStats.damage}}} <span style="color: #eee; font-size: 1em; margin-left: 5px;">{{previewStats.damageStats}}</span></div>
+                    <!-- Stats moved to use preview-hint-text -->
+                    <div class="stat-block">{{{previewStats.damage}}} <span class="preview-hint-text">{{previewStats.damageStats}}</span></div>
                 </div>
 
                 {{#if previewStats.halvedDamage}}
@@ -260,7 +266,8 @@
                             <input type="text" class="override-input" data-field="halvedDamageFormula" value="{{previewStats.mainHalvedDamageFormula}}" style="text-align: right; width: 100%;">
                         </div>
                     </div>
-                    <div class="stat-block">{{{previewStats.halvedDamage}}} <span style="color: #eee; margin-left: 5px;">{{previewStats.halvedDamageStats}}</span></div>
+                    <!-- Stats moved to use preview-hint-text -->
+                    <div class="stat-block">{{{previewStats.halvedDamage}}} <span class="preview-hint-text">{{previewStats.halvedDamageStats}}</span></div>
                 </div>
                 {{/if}}
                 
