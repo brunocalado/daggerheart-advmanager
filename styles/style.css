@@ -444,14 +444,7 @@
     border: 1px solid #444;
 }
 
-/* NEW: Inverted Colors for Preview Damage Blocks */
-.stat-block.inverted-colors {
-    color: #ea80fc !important; /* Main text is now Purple */
-}
-
-.stat-block.inverted-colors .preview-hint-text {
-    color: #ffffff !important; /* Hint text is now White */
-}
+/* features-preview-section was here, moving to end or keeping structure */
 
 .features-preview-section {
     margin-top: 20px;
@@ -1748,11 +1741,15 @@
     margin-left: 5px;
 }
 
-/* NEW: Inverted Colors for Preview Damage Blocks */
+/* NEW: Inverted Colors for Preview Damage Blocks (FIXED) */
 .stat-block.inverted-colors {
-    color: #ea80fc !important; /* Main text is now Purple */
+    color: #ffffff !important; /* CHANGED: Main text is now White */
+}
+
+.stat-block.inverted-colors .stat-changed {
+    color: inherit !important; /* Forces altered values to respect the white color of the block */
 }
 
 .stat-block.inverted-colors .preview-hint-text {
-    color: #ffffff !important; /* Hint text is now White */
+    color: #ea80fc !important; /* CHANGED: Hint text is now Purple */
 }
