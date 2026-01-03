@@ -498,6 +498,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     allSuggestedFeatures.push({
                         name: feat.name,
                         checked: feat.checked, 
+                        isRuleSuggestion: feat.isRuleSuggestion, // PASSING THE FLAG
                         img: itemData.img,
                         uuid: itemData.uuid,
                         tags: {
@@ -1336,20 +1337,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         // 2. Filter out already owned features to avoid duplicates
         const isOwned = (name) => allItems.some(i => i.name === name);
 
-        // 3. Initialize default selection if null (random pick)
+        // 3. Initialize default selection (REMOVED RANDOM PICK)
         if (this.overrides.suggestedFeatures === null) {
             this.overrides.suggestedFeatures = [];
-            // Pick one random from POSSIBLE list
-            const candidates = possibleFeatures.filter(name => !isOwned(name));
-            if (candidates.length > 0) {
-                 const picked = candidates[Math.floor(Math.random() * candidates.length)];
-                 this.overrides.suggestedFeatures.push(picked);
-            }
         }
 
         // 4. Construct Final UI List: Selected (Top) + Current Type Options (Bottom)
         const uiList = [];
         const addedSet = new Set();
+        
+        // Helper to check if name is in rules list
+        const isRuleSuggested = (name) => possibleFeatures.includes(name);
 
         // Sort selected features for display consistency
         const selectedNames = [...this.overrides.suggestedFeatures].sort((a, b) => a.localeCompare(b));
@@ -1359,7 +1357,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (!isOwned(name)) {
                 uiList.push({
                     name: name,
-                    checked: true
+                    checked: true,
+                    isRuleSuggestion: isRuleSuggested(name)
                 });
                 addedSet.add(name);
             }
@@ -1370,7 +1369,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (!isOwned(name) && !addedSet.has(name)) {
                 uiList.push({
                     name: name,
-                    checked: false
+                    checked: false,
+                    isRuleSuggestion: true // Since it comes from possibleFeatures, it is true
                 });
                 addedSet.add(name);
             }

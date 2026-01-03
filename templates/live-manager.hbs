@@ -361,6 +361,11 @@
                                         <!-- NAME FIRST -->
                                         <strong style="color: #eee;">{{this.name}}</strong>
 
+                                        <!-- RULE SUGGESTION STAR -->
+                                        {{#if this.isRuleSuggestion}}
+                                            <i class="fas fa-star" title="Suggested by Rules" style="color: #ffd700; margin-left: 5px; font-size: 0.8em;"></i>
+                                        {{/if}}
+
                                         <!-- TAGS AFTER -->
                                         {{#if this.tags.action.label}}
                                             <span class="dh-tag {{this.tags.action.css}}">{{this.tags.action.label}}</span>
