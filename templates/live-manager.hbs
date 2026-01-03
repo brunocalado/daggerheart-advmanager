@@ -124,7 +124,10 @@
             </div>
             <div class="stat-row">
                 <span class="stat-label">Critical Threshold</span>
-                <span class="stat-value">{{currentStats.critical}}</span>
+                <span class="stat-value">
+                    <span style="color: #aaa; font-size: 1em; margin-right: 5px;">{{currentStats.critChance}}</span>
+                    {{currentStats.critical}}
+                </span>
             </div>
 
             <div class="stat-group">
@@ -245,6 +248,7 @@
                 <div class="stat-row">
                     <span class="stat-label">Critical Threshold</span>
                     <div class="stat-input-group">
+                         <span class="stat-value-hint" style="color: #ea80fc; margin-right: 5px;">{{previewStats.critChance}}</span>
                         <select class="override-input critical-select" style="width: 60px;">
                             {{#each criticalOptions}}
                             <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>

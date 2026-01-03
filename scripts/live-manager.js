@@ -262,6 +262,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         return "New Experience"; 
     }
 
+    // NEW: Helper to calculate critical chance percentage
+    _calculateCritChance(threshold) {
+        if (!threshold) return "";
+        const chance = Math.max(0, (21 - threshold) * 5);
+        return `(${chance}%)`;
+    }
+
     async _prepareContext(_options) {
         let rawAdversaries = [];
 
@@ -419,7 +426,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let portraitImg = null;
         let suggestedFeaturesTypeOptions = []; 
         let suggestedFeaturesTierOptions = [];
-        let criticalOptions = []; // NEW
+        let criticalOptions = []; 
 
         let isPhysical = false;
         let isMagical = false;
@@ -520,6 +527,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const currentCritical = currentStats.critical;
                 const previewCritical = this.overrides.criticalThreshold !== undefined ? Number(this.overrides.criticalThreshold) : currentCritical;
                 
+                // NEW: Calculate Preview Crit Chance
+                const previewCritChance = this._calculateCritChance(previewCritical);
+
                 criticalOptions = [];
                 for (let i = 1; i <= 20; i++) {
                     criticalOptions.push({
@@ -553,7 +563,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     tier: this.targetTier,
                     isMinion: isMinion,
                     hitChance: simResult.stats.hitChance,
-                    hitChanceAgainst: simResult.stats.hitChanceAgainst
+                    hitChanceAgainst: simResult.stats.hitChanceAgainst,
+                    critChance: previewCritChance // NEW: Pass to HBS
                 };
 
                 if (isMinion) {
@@ -1163,7 +1174,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!isNaN(val)) {
             this.overrides.criticalThreshold = val;
         }
-        // No render needed, simple input change
+        this.render(); // Need render to update the chance percentage text
     }
 
     async _onOpenFeature(event, target) {
@@ -1321,6 +1332,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const hitChanceAgainst = Manager.calculateHitChanceAgainst(difficulty, tier);
         const critical = Number(sys.criticalThreshold) || 20; // NEW: Extract Critical
 
+        // NEW: Crit Chance calculation
+        const critChance = this._calculateCritChance(critical);
+
         const experiences = sys.experiences || {};
         const expList = [];
         for (const k in experiences) {
@@ -1347,7 +1361,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             hitChance: hitChance,
             hitChanceAgainst: hitChanceAgainst,
             experiences: expList,
-            critical: critical // NEW
+            critical: critical, // NEW
+            critChance: critChance // NEW
         };
     }
 

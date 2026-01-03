@@ -9,7 +9,7 @@
 - live manager All Sources fixed
 - easier to ready things on live manager
 - live manager You can preview damage type and change it
-- live manager You can change the critical now
+- live manager You can change the critical now + crit chance
 
 # 0.1.6
 - compendium-stats shows experience
