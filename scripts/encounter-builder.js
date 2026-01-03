@@ -560,7 +560,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             // Manual Mode: Use the custom name as base
             baseName = customName;
         } else {
-            // Auto Mode: Date + Time + BP/Tier
+            // Auto Mode: Tier/BP - Date Time
             const now = new Date();
             const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
             const dateString = now.toLocaleDateString().replace(/\//g, '-');
@@ -572,7 +572,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             this.encounterList.forEach(u => totalTier += (u.tier || 1));
             const avgTier = this.encounterList.length > 0 ? Math.round(totalTier / this.encounterList.length) : 1;
 
-            baseName = `${dateString} ${timeString} BP${currentBP}/T${avgTier}`; 
+            // UPDATED: New Format T{Tier}/BP{Cost} - {Date} {Time}
+            baseName = `T${avgTier}/BP${currentBP} - ${dateString} ${timeString}`; 
         }
         
         // --- UNIQUE NAME GENERATION LOGIC ---

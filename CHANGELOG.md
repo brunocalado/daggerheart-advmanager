@@ -12,6 +12,7 @@
 - live manager You can change the critical now + crit chance
 - you can change direct damage
 - you can name the folder before create the encounter
+- better name for created subfolders
 
 # 0.1.6
 - compendium-stats shows experience
