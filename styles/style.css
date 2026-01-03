@@ -461,11 +461,10 @@
 .feature-link {
     display: flex;
     align-items: center;
-    gap: 8px; /* Spacing between icon, name and tags */
+    gap: 8px;
     color: #eee;
     text-decoration: none;
     transition: color 0.2s;
-    flex-wrap: wrap; /* Allows tags to wrap if needed */
 }
 
 .feature-link:hover {
@@ -481,62 +480,6 @@
     background: #000;
     border-radius: 3px;
 }
-
-/* ========================================= */
-/* TAGS FOR FEATURES (IMPROVED)              */
-/* ========================================= */
-
-.dh-tag {
-    font-size: 0.9em; /* Larger for readability */
-    padding: 2px 8px; /* More padding for button feel */
-    border-radius: 4px;
-    margin-left: 6px;
-    font-weight: 800; /* Extra Bold */
-    text-transform: uppercase;
-    border: none;
-    white-space: nowrap;
-    /* Removed line-height as requested */
-    display: inline-flex; /* Ensures content is centered */
-    align-items: center;
-    justify-content: center;
-    vertical-align: middle;
-    letter-spacing: 0.5px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.4); /* Subtly raised */
-}
-
-/* Action Type Tags - High Contrast Solid Colors */
-.tag-action {
-    background: #c62828; /* Deep Red */
-    color: #ffffff;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
-}
-
-.tag-reaction {
-    background: #f9a825; /* Dark Yellow/Amber */
-    color: #000000; /* Black text for contrast */
-    font-weight: 900;
-}
-
-.tag-passive {
-    background: #2e7d32; /* Deep Green */
-    color: #ffffff;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
-}
-
-/* Flag Info Tags */
-.tag-tier {
-    background: #424242; /* Dark Gray */
-    color: #ffffff;
-}
-
-.tag-type {
-    background: #4527a0; /* Deep Purple */
-    color: #ffffff;
-    text-transform: capitalize;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
-}
-
-/* ========================================= */
 
 .feature-control {
     flex: 0 0 45%;
@@ -1475,4 +1418,97 @@
     gap: 10px;
     width: 100%;
     margin-bottom: 15px;
+}
+
+/* ========================================= */
+/* COMPENDIUM MANAGER TABS                   */
+/* ========================================= */
+
+.dh-tabs {
+    display: flex;
+    border-bottom: 1px solid #444;
+    margin-bottom: 5px;
+    gap: 5px;
+    flex-shrink: 0; /* Prevent tabs from shrinking */
+}
+
+.dh-tab-link {
+    padding: 8px 15px;
+    cursor: pointer;
+    background: #222;
+    border: 1px solid #444;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    color: #888;
+    font-weight: bold;
+    transition: all 0.2s;
+    flex: 1;
+    text-align: center;
+}
+
+.dh-tab-link:hover {
+    background: #333;
+    color: #ccc;
+}
+
+.dh-tab-link.active {
+    background: #4a148c;
+    color: #fff;
+    border-color: #ea80fc;
+    box-shadow: 0 -2px 5px rgba(156, 39, 176, 0.3);
+}
+
+.dh-tab-content {
+    display: none;
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden; /* Contain children */
+    min-height: 0; /* Firefox flex fix */
+}
+
+.dh-tab-content.active {
+    display: flex;
+}
+
+.compendium-list {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #444;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 5px;
+    margin-bottom: 10px;
+    min-height: 0; /* Important for scroll inside flex */
+}
+
+.compendium-row {
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    border-bottom: 1px solid #333;
+    transition: background 0.2s;
+}
+
+.compendium-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.compendium-label {
+    flex: 1;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    line-height: 1.2;
+}
+
+.pkg-name {
+    font-size: 0.8em;
+    color: #777;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+    font-style: italic;
 }

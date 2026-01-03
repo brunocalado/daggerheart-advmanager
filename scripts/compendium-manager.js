@@ -1,8 +1,8 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS } from "./module.js";
+import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS } from "./module.js";
 
 /**
- * Application to select which Actor Compendiums should be available in the Live Preview.
+ * Application to select which Actor and Item Compendiums should be available.
  */
 export class CompendiumManager extends HandlebarsApplicationMixin(ApplicationV2) {
     
@@ -13,10 +13,10 @@ export class CompendiumManager extends HandlebarsApplicationMixin(ApplicationV2)
             title: "Manage Compendium Sources",
             icon: "fas fa-atlas",
             resizable: false,
-            width: 400,
+            width: 450,
             height: "auto"
         },
-        position: { width: 400, height: "auto" },
+        position: { width: 450, height: "auto" },
         form: {
             handler: CompendiumManager.submitHandler,
             closeOnSubmit: true
@@ -31,39 +31,88 @@ export class CompendiumManager extends HandlebarsApplicationMixin(ApplicationV2)
     };
 
     async _prepareContext(_options) {
-        // 1. Get current saved selection
-        const savedCompendiums = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
+        // 1. Get current saved selections
+        const savedActors = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
+        const savedFeatures = game.settings.get(MODULE_ID, SETTING_FEATURE_COMPENDIUMS) || [];
 
-        // 2. Find all Actor Compendiums available (excluding the system default one if desired, or keep it)
-        // We exclude "daggerheart.adversaries" because it is hardcoded in the main app as "System Compendium"
-        const packs = game.packs.filter(p => p.documentName === "Actor" && p.metadata.id !== "daggerheart.adversaries");
+        // 2. Fetch Compendiums
+        // Actors (excluding the system default one if desired, or keep it)
+        const actorPacks = game.packs.filter(p => p.documentName === "Actor" && p.metadata.id !== "daggerheart.adversaries");
+        
+        // Items (Features)
+        const itemPacks = game.packs.filter(p => p.documentName === "Item");
 
-        const compendiumList = packs.map(p => ({
+        // Helper map function
+        const mapPack = (p, savedList) => ({
             id: p.metadata.id,
             label: p.metadata.label,
             package: p.metadata.packageName,
-            checked: savedCompendiums.includes(p.metadata.id)
-        }));
+            checked: savedList.includes(p.metadata.id)
+        });
 
-        compendiumList.sort((a, b) => a.label.localeCompare(b.label));
+        const actorList = actorPacks.map(p => mapPack(p, savedActors));
+        const featureList = itemPacks.map(p => mapPack(p, savedFeatures));
+
+        // Sort alphabetically
+        actorList.sort((a, b) => a.label.localeCompare(b.label));
+        featureList.sort((a, b) => a.label.localeCompare(b.label));
 
         return {
-            compendiumList,
-            hasCompendiums: compendiumList.length > 0
+            actorList,
+            featureList,
+            hasActors: actorList.length > 0,
+            hasFeatures: featureList.length > 0
         };
     }
 
-    static async submitHandler(event, form, formData) {
-        const selected = [];
+    _onRender(context, options) {
+        super._onRender(context, options);
         
-        // formData.object will contain keys like "compendiumId": true/false
+        // Simple Tab Logic using plain JS listeners
+        const html = this.element;
+        const tabLinks = html.querySelectorAll('.dh-tab-link');
+        const tabs = html.querySelectorAll('.dh-tab-content');
+
+        tabLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.dataset.tab;
+
+                // Update Active Link
+                tabLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // Update Active Content
+                tabs.forEach(t => {
+                    if (t.dataset.tab === target) t.classList.add('active');
+                    else t.classList.remove('active');
+                });
+            });
+        });
+    }
+
+    static async submitHandler(event, form, formData) {
+        const selectedActors = [];
+        const selectedFeatures = [];
+        
+        // formData.object keys are the compendium IDs
         for (const [key, value] of Object.entries(formData.object)) {
             if (value === true) {
-                selected.push(key);
+                // Determine if this key belongs to an Actor pack or Item pack
+                const pack = game.packs.get(key);
+                if (pack) {
+                    if (pack.documentName === "Actor") {
+                        selectedActors.push(key);
+                    } else if (pack.documentName === "Item") {
+                        selectedFeatures.push(key);
+                    }
+                }
             }
         }
 
-        await game.settings.set(MODULE_ID, SETTING_EXTRA_COMPENDIUMS, selected);
-        ui.notifications.info("Compendium sources updated.");
+        await game.settings.set(MODULE_ID, SETTING_EXTRA_COMPENDIUMS, selectedActors);
+        await game.settings.set(MODULE_ID, SETTING_FEATURE_COMPENDIUMS, selectedFeatures);
+        
+        ui.notifications.info("Compendium sources updated successfully.");
     }
 }

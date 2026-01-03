@@ -12,10 +12,11 @@ export const MODULE_ID = "daggerheart-advmanager";
 export const SETTING_CHAT_LOG = "enableChatLog";
 export const SETTING_UPDATE_EXP = "autoUpdateExperiences";
 export const SETTING_ADD_FEATURES = "autoAddFeatures";
-export const SETTING_SUGGEST_FEATURES = "enableFeatureSuggestions"; // <--- NOVA CONSTANTE
+export const SETTING_SUGGEST_FEATURES = "enableFeatureSuggestions"; 
 export const SETTING_IMPORT_FOLDER = "importFolderName";
 export const SETTING_ENCOUNTER_FOLDER = "encounterFolderName";
 export const SETTING_EXTRA_COMPENDIUMS = "extraCompendiums";
+export const SETTING_FEATURE_COMPENDIUMS = "featureCompendiums"; // <--- NOVA CONSTANTE
 export const SKULL_IMAGE_PATH = "modules/daggerheart-advmanager/assets/images/skull.webp";
 
 // Settings for Persistence (Client Side - Per User)
@@ -95,7 +96,6 @@ Hooks.once("init", () => {
         default: true
     });
 
-    // --- NOVA CONFIGURAÇÃO ---
     game.settings.register(MODULE_ID, SETTING_SUGGEST_FEATURES, {
         name: "Enable Suggested Features",
         hint: "If enabled, shows the 'New Suggested Features' section in the Live Manager preview.",
@@ -124,7 +124,16 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_EXTRA_COMPENDIUMS, {
-        name: "Extra Compendiums",
+        name: "Extra Compendiums (Actors)",
+        scope: "world",
+        config: false,
+        type: Array,
+        default: []
+    });
+
+    // --- NOVA CONFIGURAÇÃO REGISTRADA ---
+    game.settings.register(MODULE_ID, SETTING_FEATURE_COMPENDIUMS, {
+        name: "Feature Compendiums",
         scope: "world",
         config: false,
         type: Array,
