@@ -260,11 +260,12 @@
                 </div>
             </div>
 
-            <!-- Create Button Footer -->
+            <!-- Create Button Footer (Reordered: Folder -> Create -> Place) -->
             <div class="eb-action-footer">
-                <!-- Place Button Moved Left -->
-                <button type="button" class="eb-place-btn" data-action="placeEncounter" title="Create & Place Invisible">
-                    <i class="fas fa-street-view"></i>
+                <!-- Folder Toggle Button (Left) -->
+                <button type="button" class="eb-folder-btn {{#if useAutoFolder}}active{{/if}}" 
+                        data-action="toggleAutoFolder" title="{{autoFolderTooltip}}">
+                    <i class="fas {{#if useAutoFolder}}fa-folder-tree{{else}}fa-folder{{/if}}"></i>
                 </button>
 
                 <!-- Create Button (Center/Main) -->
@@ -272,10 +273,9 @@
                     <i class="fas fa-folder-plus"></i> Create Encounter
                 </button>
                 
-                <!-- NEW Auto-Folder Toggle Button (Right) -->
-                <button type="button" class="eb-folder-btn {{#if useAutoFolder}}active{{/if}}" 
-                        data-action="toggleAutoFolder" title="{{autoFolderTooltip}}">
-                    <i class="fas {{#if useAutoFolder}}fa-folder-tree{{else}}fa-folder{{/if}}"></i>
+                <!-- Place Button (Right) -->
+                <button type="button" class="eb-place-btn" data-action="placeEncounter" title="Create & Place Invisible">
+                    <i class="fas fa-street-view"></i>
                 </button>
             </div>
 

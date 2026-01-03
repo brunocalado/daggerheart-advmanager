@@ -2,7 +2,8 @@ import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING
 import { POWERFUL_FEATURES } from "./rules.js";
 import { LiveManager } from "./live-manager.js"; 
 
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+// Import DialogV2 to fix deprecation warning
+const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
 /**
  * Encounter Builder Application.
@@ -71,7 +72,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             placeEncounter: EncounterBuilder.prototype._onPlaceEncounter,
             editAdversary: EncounterBuilder.prototype._onEditAdversary,
             clearEncounter: EncounterBuilder.prototype._onClearEncounter,
-            toggleAutoFolder: EncounterBuilder.prototype._onToggleAutoFolder // NEW ACTION
+            toggleAutoFolder: EncounterBuilder.prototype._onToggleAutoFolder
         },
         form: {
             handler: EncounterBuilder.prototype.submitHandler,
@@ -543,22 +544,21 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         let featureIndex = null;
         if (featurePack) {
             featureIndex = await featurePack.getIndex();
-        } else {
-            console.warn(`Daggerheart AdvManager | Compendium '${featurePackId}' not found. Extra damage features will not be added.`);
         }
 
         const rootName = game.settings.get(MODULE_ID, SETTING_ENCOUNTER_FOLDER) || "💀 My Encounters";
         
+        // Ensure Root Folder Exists
         let rootFolder = game.folders.find(f => f.name === rootName && f.type === "Actor");
         if (!rootFolder) {
             rootFolder = await Folder.create({ name: rootName, type: "Actor", color: "#430047" });
         }
 
-        let subFolderName;
+        let baseName;
 
         if (customName) {
-            // Manual Mode: Use the custom name
-            subFolderName = customName;
+            // Manual Mode: Use the custom name as base
+            baseName = customName;
         } else {
             // Auto Mode: Date + Time + BP/Tier
             const now = new Date();
@@ -572,140 +572,160 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             this.encounterList.forEach(u => totalTier += (u.tier || 1));
             const avgTier = this.encounterList.length > 0 ? Math.round(totalTier / this.encounterList.length) : 1;
 
-            subFolderName = `${dateString} ${timeString} BP${currentBP}/T${avgTier}`; 
+            baseName = `${dateString} ${timeString} BP${currentBP}/T${avgTier}`; 
         }
         
-        // Find or create the subfolder
-        let subFolder = rootFolder.children.find(c => c.folder.name === subFolderName)?.folder; // Foundry V11+ folder structure check might differ, safe generic search below
-        
-        // Standard global folder search restricted to parent
-        if (!subFolder) {
-            subFolder = game.folders.find(f => f.name === subFolderName && f.folder?.id === rootFolder.id && f.type === "Actor");
+        // --- UNIQUE NAME GENERATION LOGIC ---
+        // Ensure unique folder name to prevent merging
+        let finalName = baseName;
+        let counter = 1;
+
+        const folderExists = (name) => {
+            return game.folders.some(f => 
+                f.type === "Actor" && 
+                f.folder?.id === rootFolder.id && 
+                f.name === name
+            );
+        };
+
+        while (folderExists(finalName)) {
+            finalName = `${baseName} (${counter})`;
+            counter++;
         }
 
-        if (!subFolder) {
-            subFolder = await Folder.create({ 
-                name: subFolderName, 
-                type: "Actor", 
-                folder: rootFolder.id, 
-                color: "#9c27b0" 
-            });
-        }
+        // Create the new folder
+        const subFolder = await Folder.create({ 
+            name: finalName, 
+            type: "Actor", 
+            folder: rootFolder.id, 
+            color: "#9c27b0" 
+        });
 
         const createdActors = [];
 
+        // Iterate and Create Actors
         for (const unit of this.encounterList) {
-            const originalActor = await fromUuid(unit.uuid);
-            if (!originalActor) continue;
-
-            let createdActor;
-            if (originalActor.compendium) {
-                createdActor = await game.actors.importFromCompendium(originalActor.compendium, originalActor.id, { 
-                    folder: subFolder.id
-                });
-            } else {
-                createdActor = await originalActor.clone({ 
-                    folder: subFolder.id 
-                }, { save: true });
-            }
-
-            if (createdActor) {
-                if (unit.hasDamageBoost && featurePack && featureIndex) {
-                    const tier = unit.tier || 1;
-                    let featureName = "More Damage (1d4)";
-
-                    if (tier === 1) featureName = "More Damage (1d4)";
-                    else if (tier === 2) featureName = "More Damage (1d6)";
-                    else if (tier === 3) featureName = "More Damage (1d8)";
-                    else if (tier >= 4) featureName = "More Damage (1d10)";
-
-                    const entry = featureIndex.find(i => i.name === featureName);
-                    
-                    if (entry) {
-                        const itemDoc = await featurePack.getDocument(entry._id);
-                        if (itemDoc) {
-                            await createdActor.createEmbeddedDocuments("Item", [itemDoc.toObject()]);
-                        }
-                    }
+            try {
+                const originalActor = await fromUuid(unit.uuid);
+                if (!originalActor) {
+                    console.warn(`Daggerheart AdvManager | Could not find actor with UUID: ${unit.uuid}`);
+                    continue;
                 }
 
-                createdActors.push(createdActor);
+                let createdActor;
+                if (originalActor.compendium) {
+                    // Method 1: Robust Copy via toObject (Works reliably in V13)
+                    const data = originalActor.toObject();
+                    delete data._id; // Ensure new ID
+                    data.folder = subFolder.id;
+                    createdActor = await Actor.create(data);
+                } else {
+                    // Method 2: Clone for World Actors
+                    createdActor = await originalActor.clone({ 
+                        folder: subFolder.id 
+                    }, { save: true });
+                }
+
+                if (createdActor) {
+                    // Apply Damage Boost Feature if needed
+                    if (unit.hasDamageBoost && featurePack && featureIndex) {
+                        const tier = unit.tier || 1;
+                        let featureName = "More Damage (1d4)";
+
+                        if (tier === 2) featureName = "More Damage (1d6)";
+                        else if (tier === 3) featureName = "More Damage (1d8)";
+                        else if (tier >= 4) featureName = "More Damage (1d10)";
+
+                        const entry = featureIndex.find(i => i.name === featureName);
+                        
+                        if (entry) {
+                            const itemDoc = await featurePack.getDocument(entry._id);
+                            if (itemDoc) {
+                                await createdActor.createEmbeddedDocuments("Item", [itemDoc.toObject()]);
+                            }
+                        }
+                    }
+
+                    createdActors.push(createdActor);
+                }
+            } catch (err) {
+                console.error("Daggerheart AdvManager | Error creating actor:", err);
             }
         }
         
-        return { actors: createdActors, folderName: `${rootName}/${subFolderName}` };
+        return { actors: createdActors, folderName: `${rootName}/${finalName}` };
+    }
+
+    /**
+     * Helper: Determines folder name based on mode (auto vs manual prompt).
+     * Returns the name string, null (for auto), or false (cancelled).
+     */
+    async _getFolderNameOrCancel() {
+        if (this.useAutoFolder) return null; // Use auto name logic
+
+        // Manual Mode: Prompt via DialogV2 with safe ID-based input retrieval
+        const inputId = `dh-folder-name-${foundry.utils.randomID()}`;
+        
+        try {
+            const result = await DialogV2.prompt({
+                window: { title: "Encounter Name" },
+                content: `
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px;" for="${inputId}">Folder Name:</label>
+                        <input type="text" id="${inputId}" placeholder="e.g., Boss Fight Room 3" autofocus required 
+                               style="width: 100%; box-sizing: border-box; padding: 5px; background: #222; color: #fff; border: 1px solid #777;"/>
+                    </div>
+                `,
+                ok: {
+                    label: "Create",
+                    icon: "fas fa-check",
+                    callback: (event, button, dialog) => {
+                        const input = document.getElementById(inputId);
+                        return input ? input.value : "Untitled Encounter";
+                    }
+                },
+                rejectClose: false
+            });
+
+            return result || false; 
+        } catch (e) {
+            // User closed/cancelled
+            return false;
+        }
     }
 
     async _onCreateEncounter(event, target) {
         event.preventDefault();
-        
-        // Check mode
-        if (this.useAutoFolder) {
-            // Default behavior
-            try {
-                const result = await this._executeCreateEncounter();
-                if (result && result.actors && result.actors.length > 0) {
-                    this.lastCreatedActors = result.actors;
-                    ui.notifications.info(`Encounter created in: "${result.folderName}". Check the Actor directory.`);
-                }
-            } catch (err) {
-                console.error(err);
-                ui.notifications.error("Failed to create encounter. Check console.");
-            }
-        } else {
-            // Manual Mode: Prompt for Name
-            new Dialog({
-                title: "Encounter Name",
-                content: `
-                    <form class="dh-dialog-form">
-                        <div class="form-group">
-                            <label>Folder Name:</label>
-                            <input type="text" name="folderName" placeholder="e.g., Boss Fight Room 3" autofocus required/>
-                        </div>
-                    </form>
-                `,
-                buttons: {
-                    create: {
-                        icon: '<i class="fas fa-check"></i>',
-                        label: "Create",
-                        callback: async (html) => {
-                            const name = html.find('[name="folderName"]').val();
-                            if (!name) {
-                                ui.notifications.warn("Please enter a folder name.");
-                                return;
-                            }
 
-                            try {
-                                const result = await this._executeCreateEncounter(name);
-                                if (result && result.actors && result.actors.length > 0) {
-                                    this.lastCreatedActors = result.actors;
-                                    ui.notifications.info(`Encounter created in: "${result.folderName}".`);
-                                }
-                            } catch (err) {
-                                console.error(err);
-                                ui.notifications.error("Failed to create encounter.");
-                            }
-                        }
-                    },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: "Cancel"
-                    }
-                },
-                default: "create"
-            }).render(true);
+        // Get Name or Auto status
+        const folderName = await this._getFolderNameOrCancel();
+        
+        // If false, it means manual mode was active and user cancelled
+        if (folderName === false && !this.useAutoFolder) return;
+
+        try {
+            const result = await this._executeCreateEncounter(folderName);
+            if (result && result.actors && result.actors.length > 0) {
+                this.lastCreatedActors = result.actors;
+                ui.notifications.info(`Encounter created in: "${result.folderName}". Check the Actor directory.`);
+            }
+        } catch (err) {
+            console.error(err);
+            ui.notifications.error("Failed to create encounter. Check console.");
         }
     }
 
     async _onPlaceEncounter(event, target) {
         event.preventDefault();
 
+        // Get Name or Auto status (Same logic as Create)
+        const folderName = await this._getFolderNameOrCancel();
+        
+        // If false, it means manual mode was active and user cancelled
+        if (folderName === false && !this.useAutoFolder) return;
+
         try {
-            // Place always uses auto-folder for now, or could re-use logic. 
-            // For now, let's assume it re-uses standard logic without prompt to keep it fast, 
-            // unless we want to enforce the name here too. 
-            // The request focused on "onCreateEncounter". Let's stick to default execution behavior for placement to keep it snappy.
-            const result = await this._executeCreateEncounter();
+            const result = await this._executeCreateEncounter(folderName);
             if (!result || !result.actors || result.actors.length === 0) return; 
             
             const created = result.actors;

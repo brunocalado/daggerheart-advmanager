@@ -11,6 +11,7 @@
 - live manager You can preview damage type and change it
 - live manager You can change the critical now + crit chance
 - you can change direct damage
+- you can name the folder before create the encounter
 
 # 0.1.6
 - compendium-stats shows experience

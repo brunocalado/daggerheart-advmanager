@@ -1418,6 +1418,7 @@
     box-shadow: 0 0 10px rgba(156, 39, 176, 0.4);
 }
 
+/* Updated Place Button (Right) */
 .eb-place-btn {
     flex: 0 0 60px;
     padding: 0 10px;
@@ -1441,7 +1442,7 @@
     border-color: #ea80fc;
 }
 
-/* NEW: Folder Toggle Button Style (Matches Place Button) */
+/* Updated Folder Toggle Button (Left) */
 .eb-folder-btn {
     flex: 0 0 60px;
     padding: 0 10px;
