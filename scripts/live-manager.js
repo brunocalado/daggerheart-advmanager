@@ -1044,35 +1044,67 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
+            // 1. Perform automated updates (Tier changes, etc)
             const result = await Manager.updateSingleActor(actor, this.targetTier, this.overrides);
             
-            // NEW: Manually update damage types if overridden, to ensure it sticks
+            // NEW: Fetch fresh actor instance immediately after Manager update to ensure we have latest data structure
+            let freshActor = actor;
+            // Only re-fetch if it's a world actor to ensure we get the database version
+            if (!actor.pack && !actor.compendium && !actor.isToken) {
+                 freshActor = game.actors.get(actor.id) || actor;
+            }
+
+            // 2. Prepare manual updates based on fresh actor data
+            const manualUpdates = {};
+            let hasManualUpdates = false;
+
             if (this.overrides.damageTypes) {
-                const parts = foundry.utils.deepClone(actor.system.attack.damage.parts);
+                // Must clone from FRESH actor pure Object to avoid any reactive wrappers
+                const actorData = freshActor.toObject();
+                const parts = actorData.system.attack?.damage?.parts ? foundry.utils.deepClone(actorData.system.attack.damage.parts) : [];
+                
                 if (parts && parts.length > 0) {
-                    parts[0].type = this.overrides.damageTypes;
-                    await actor.update({"system.attack.damage.parts": parts});
+                    parts[0].type = this.overrides.damageTypes; // This is the array ["physical", "magical"]
+                    manualUpdates["system.attack.damage.parts"] = parts;
+                    hasManualUpdates = true;
                 }
             }
 
-            // NEW: Manually update Critical Threshold if overridden
             if (this.overrides.criticalThreshold !== undefined) {
-                await actor.update({ "system.criticalThreshold": parseInt(this.overrides.criticalThreshold) });
+                manualUpdates["system.criticalThreshold"] = parseInt(this.overrides.criticalThreshold);
+                hasManualUpdates = true;
             }
 
-            if (!result) {
+            if (hasManualUpdates) {
+                // Wait for the update to complete and get the resulting document
+                const updatedActor = await freshActor.update(manualUpdates);
+                // If update returns the document, use it. If it returns data (older versions), re-fetch.
+                if (updatedActor && updatedActor.id) {
+                    freshActor = updatedActor;
+                }
+            }
+
+            if (!result && !hasManualUpdates) {
                 ui.notifications.warn("No changes were necessary.");
             }
 
             this.filterTier = String(this.targetTier); 
             await game.settings.set(MODULE_ID, SETTING_LAST_FILTER_TIER, this.filterTier);
 
-            const typeKey = (actor.system.type || "standard").toLowerCase();
+            const typeKey = (freshActor.system.type || "standard").toLowerCase();
             this.filterType = typeKey; 
 
             this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined };
             this._suggestionCache = {}; 
             this._cachedValues = null;
+
+            // NEW: Explicitly set initialActor to the fully updated freshActor
+            // Force a re-fetch from game.actors collection to be 100% sure we have the cache version
+            if (this.selectedActorId && !actor.pack && !actor.compendium && !actor.isToken) {
+                 this.initialActor = game.actors.get(this.selectedActorId);
+            } else {
+                 this.initialActor = freshActor;
+            }
 
             this.render();
 
@@ -1310,9 +1342,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     damageParts.push(formula); // Pushed RAW formula
                     if (idx === 0) {
                         firstDamageFormula = formula;
-                        // NEW LOGIC: Extract Damage Types for Label
-                        if (p.type && Array.isArray(p.type) && p.type.length > 0) {
-                            const typeNames = p.type.map(t => t.charAt(0).toUpperCase() + t.slice(1));
+                        // NEW LOGIC: Extract Damage Types for Label (Robust String/Array check)
+                        let types = [];
+                        if (p.type) {
+                            if (Array.isArray(p.type)) types = p.type;
+                            else if (typeof p.type === "string") types = [p.type];
+                        }
+                        
+                        if (types.length > 0) {
+                            const typeNames = types.map(t => t.charAt(0).toUpperCase() + t.slice(1));
                             damageTypesLabel = `(${typeNames.join("/")})`;
                         }
                     }
