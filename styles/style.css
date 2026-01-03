@@ -461,10 +461,11 @@
 .feature-link {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 8px; /* Spacing between icon, name and tags */
     color: #eee;
     text-decoration: none;
     transition: color 0.2s;
+    flex-wrap: wrap; /* Allows tags to wrap if needed */
 }
 
 .feature-link:hover {
@@ -480,6 +481,67 @@
     background: #000;
     border-radius: 3px;
 }
+
+/* ========================================= */
+/* TAGS FOR FEATURES (IMPROVED)              */
+/* ========================================= */
+
+.dh-tag {
+    font-size: 0.9em; /* Larger for readability */
+    padding: 2px 8px; /* More padding for button feel */
+    border-radius: 4px;
+    margin-left: 6px;
+    font-weight: 800; /* Extra Bold */
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.1);
+    white-space: nowrap;
+    line-height: 1;
+    display: inline-flex; /* Ensures content is centered */
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4); /* Subtly raised */
+}
+
+/* Action Type Tags - High Contrast Solid Colors */
+.tag-action {
+    background: #c62828; /* Deep Red */
+    color: #ffffff;
+    border-color: #ef5350;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+}
+
+.tag-reaction {
+    background: #f9a825; /* Dark Yellow/Amber */
+    color: #000000; /* Black text for contrast */
+    border-color: #fdd835;
+    font-weight: 900;
+}
+
+.tag-passive {
+    background: #2e7d32; /* Deep Green */
+    color: #ffffff;
+    border-color: #66bb6a;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+}
+
+/* Flag Info Tags */
+.tag-tier {
+    background: #424242; /* Dark Gray */
+    color: #ffffff;
+    border-color: #9e9e9e;
+}
+
+.tag-type {
+    background: #4527a0; /* Deep Purple */
+    color: #ffffff;
+    border-color: #7c4dff;
+    text-transform: capitalize;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+}
+
+/* ========================================= */
 
 .feature-control {
     flex: 0 0 45%;

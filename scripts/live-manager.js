@@ -130,6 +130,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     /**
      * Finds a feature item by name to retrieve its image, UUID, and Type (Action/Reaction/Passive).
+     * Now also retrieves 'flags.importedFrom' for tagging.
      * Searches in: 
      * 1. daggerheart-advmanager.all-features (Priority 1)
      * 2. daggerheart-advmanager.custom-features (Priority 2)
@@ -151,8 +152,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const pack = game.packs.get(packId);
             if (!pack) continue;
             
-            // Optimization: Load index only if not loaded or just check efficiently
-            const index = await pack.getIndex({ fields: ["system.featureForm"] }); 
+            // Optimization: Load index with featureForm AND flags.importedFrom
+            const index = await pack.getIndex({ fields: ["system.featureForm", "flags.importedFrom"] }); 
             
             // Try exact match first
             let entry = index.find(i => i.name === name);
@@ -164,20 +165,27 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
             if (entry) {
                 const type = entry.system?.featureForm || "";
-                const data = { img: entry.img, uuid: entry.uuid, type: type };
+                const flags = entry.flags || {};
+                const data = { 
+                    img: entry.img, 
+                    uuid: entry.uuid, 
+                    type: type,
+                    flags: flags 
+                };
                 this._featureCache.set(name, data);
                 return data;
             }
         }
 
         // Return default if not found
-        const defaultData = { img: "icons/svg/item-bag.svg", uuid: null, type: "" };
+        const defaultData = { img: "icons/svg/item-bag.svg", uuid: null, type: "", flags: {} };
         this._featureCache.set(name, defaultData);
         return defaultData;
     }
 
     /**
      * Helper to convert featureForm value to label (A), (R), or (P).
+     * DEPRECATED for New Features list (uses Tags), but kept for legacy/other views.
      */
     _getFeatureTypeLabel(type) {
         if (!type) return "";
@@ -467,17 +475,36 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 // MODIFIED: Use the merged and sorted list from simulateStats
                 const rawSuggested = simResult.suggestedFeatures;
                 
-                // Enrich with Image and UUID
+                // Enrich with Image and UUID and TAGS
                 allSuggestedFeatures = [];
                 for (const feat of rawSuggested) {
                     const itemData = await this._findFeatureItem(feat.name);
-                    const typeLabel = this._getFeatureTypeLabel(itemData.type);
+                    
+                    // Logic for Action Type Tag
+                    let actionTag = "";
+                    let actionClass = "";
+                    if (itemData.type) {
+                        const t = itemData.type.toLowerCase();
+                        if (t === "action") { actionTag = "Action"; actionClass = "tag-action"; }
+                        else if (t === "reaction") { actionTag = "Reaction"; actionClass = "tag-reaction"; }
+                        else if (t === "passive") { actionTag = "Passive"; actionClass = "tag-passive"; }
+                    }
+
+                    // Logic for Imported Flag Tags
+                    const imported = itemData.flags?.importedFrom || {};
+                    const tierTag = imported.tier ? `Tier ${imported.tier}` : null;
+                    const typeTag = imported.type || null;
+
                     allSuggestedFeatures.push({
                         name: feat.name,
-                        checked: feat.checked, // This is now correctly set by simulateStats logic
+                        checked: feat.checked, 
                         img: itemData.img,
                         uuid: itemData.uuid,
-                        typeLabel: typeLabel
+                        tags: {
+                            action: { label: actionTag, css: actionClass },
+                            tier: tierTag,
+                            type: typeTag
+                        }
                     });
                 }
 

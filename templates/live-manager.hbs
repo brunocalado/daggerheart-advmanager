@@ -352,10 +352,25 @@
                         {{#each allSuggestedFeatures}}
                             <div class="feature-change-row new-feature-row">
                                 <label class="feature-label" style="cursor: pointer; display: flex; align-items: center; width: 100%;">
-                                    <input type="checkbox" class="feature-checkbox" data-feature="{{this.name}}" {{#if this.checked}}checked{{/if}} style="margin-right: 8px;">
+                                    <input type="checkbox" class="feature-checkbox" data-feature="{{this.name}}" {{#if this.checked}}checked{{/if}} style="margin-right: 8px; flex-shrink: 0;">
                                     <a class="feature-link" data-action="openFeature" data-uuid="{{this.uuid}}">
-                                        <img src="{{this.img}}" class="feature-icon-small" alt="{{this.name}}">
-                                        <strong style="color: #eee;">{{this.typeLabel}} {{this.name}}</strong>
+                                        {{#if this.img}}
+                                            <img src="{{this.img}}" class="feature-icon-small" alt="{{this.name}}" style="flex-shrink: 0;">
+                                        {{/if}}
+                                        
+                                        <!-- NAME FIRST -->
+                                        <strong style="color: #eee;">{{this.name}}</strong>
+
+                                        <!-- TAGS AFTER -->
+                                        {{#if this.tags.action.label}}
+                                            <span class="dh-tag {{this.tags.action.css}}">{{this.tags.action.label}}</span>
+                                        {{/if}}
+                                        {{#if this.tags.tier}}
+                                            <span class="dh-tag tag-tier">{{this.tags.tier}}</span>
+                                        {{/if}}
+                                        {{#if this.tags.type}}
+                                            <span class="dh-tag tag-type">{{this.tags.type}}</span>
+                                        {{/if}}
                                     </a>
                                 </label>
                             </div>
