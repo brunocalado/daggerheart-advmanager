@@ -1,5 +1,5 @@
 import { Manager } from "./manager.js";
-import { ADVERSARY_BENCHMARKS } from "./rules.js";
+import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js"; // IMPORT ATUALIZADO
 import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
@@ -250,13 +250,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     _getRandomExperienceName(typeKey, excludeList = []) {
         if (!typeKey || typeKey === "all") typeKey = "standard";
         
-        if (ADVERSARY_BENCHMARKS[typeKey] && ADVERSARY_BENCHMARKS[typeKey].experiences) {
-            const list = ADVERSARY_BENCHMARKS[typeKey].experiences;
+        // NEW LOGIC: Use ADVERSARY_EXPERIENCES directly
+        const list = ADVERSARY_EXPERIENCES[typeKey];
+        if (list && Array.isArray(list)) {
             const candidates = list.filter(n => !excludeList.includes(n));
             
             if (candidates.length > 0) {
                 return candidates[Math.floor(Math.random() * candidates.length)];
             } else if (list.length > 0) {
+                // Fallback to duplicate if all used
                 return list[Math.floor(Math.random() * list.length)];
             }
         }

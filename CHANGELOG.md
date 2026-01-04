@@ -1,5 +1,7 @@
 # 0.1.8
 - fixed CSS leak
+- moved exps out of the community table
+- more experiences
 
 # 0.1.7
 - encounter builder shows cost for each actor

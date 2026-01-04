@@ -17,7 +17,12 @@ export const ADVERSARY_EXPERIENCES = {
     "Unveiled Threats",
     "Unstoppable",
     "Heavy-Handed",
-    "Guarded"
+    "Guarded",
+    "Demolition",
+    "Brawling",
+    "Athletics",
+    "Tenacious",
+    "Siegebreaker"
   ],
   "horde": [
     "Camouflage",
@@ -27,7 +32,12 @@ export const ADVERSARY_EXPERIENCES = {
     "Swimming",
     "Pack Mentality",
     "Endless",
-    "Swarm"
+    "Swarm",
+    "Overwhelm",
+    "Infestation",
+    "Hive Mind",
+    "Stampede",
+    "Encircle"
   ],
   "leader": [
     "Ancient Knowledge",
@@ -53,7 +63,12 @@ export const ADVERSARY_EXPERIENCES = {
     "Wisdom of Centuries",
     "Authority",
     "Grand Strategist",
-    "Bolstering"
+    "Bolstering",
+    "Oratory",
+    "Warlord",
+    "Politics",
+    "Cult of Personality",
+    "Overseer"
   ],
   "minion": [
     "Distraction",
@@ -64,7 +79,12 @@ export const ADVERSARY_EXPERIENCES = {
     "Stealth",
     "Lookout",
     "Quick-Reflexes",
-    "Expendable"
+    "Expendable",
+    "Loyal",
+    "Scout",
+    "Runner",
+    "Opportunist",
+    "Obedient"
   ],
   "ranged": [
     "Ancient Knowledge",
@@ -77,7 +97,12 @@ export const ADVERSARY_EXPERIENCES = {
     "Strategize",
     "Eagle Eye",
     "High-Ground Advantage",
-    "Suppressing Fire"
+    "Suppressing Fire",
+    "Sniper",
+    "Ricochet",
+    "Ballistics",
+    "Spotter",
+    "Quick Draw"
   ],
   "skulk": [
     "Acrobatics",
@@ -93,7 +118,12 @@ export const ADVERSARY_EXPERIENCES = {
     "Sleight of Hand",
     "Infiltrator",
     "Silent-Step",
-    "Saboteur"
+    "Saboteur",
+    "Shadows",
+    "Escape Artist",
+    "Assassination",
+    "Dirty Tricks",
+    "Disguise"
   ],
   "solo": [
     "Adaptability",
@@ -116,7 +146,12 @@ export const ADVERSARY_EXPERIENCES = {
     "Tracker",
     "Legendary Prowess",
     "Unyielding",
-    "Apex Predator"
+    "Apex Predator",
+    "Immortal",
+    "Mastermind",
+    "Arcane Mastery",
+    "Indomitable",
+    "Mythic"
   ],
   "social": [
     "Administration",
@@ -132,7 +167,12 @@ export const ADVERSARY_EXPERIENCES = {
     "Social Manners",
     "Regal Bearing",
     "Eloquence",
-    "Insightful"
+    "Insightful",
+    "Bribery",
+    "Charm",
+    "Courtier",
+    "Gossip",
+    "Connections"
   ],
   "standard": [
     "Ancient Knowledge",
@@ -144,7 +184,12 @@ export const ADVERSARY_EXPERIENCES = {
     "Swimming",
     "Combat Training",
     "Versatility",
-    "Stout"
+    "Stout",
+    "Patrol",
+    "Drill",
+    "Formation",
+    "Teamwork",
+    "Vigilance"
   ],
   "support": [
     "Animal Knowledge",
@@ -162,10 +207,14 @@ export const ADVERSARY_EXPERIENCES = {
     "Rituals",
     "Restoration",
     "Warding",
-    "Guidance"
+    "Guidance",
+    "Blessing",
+    "Alchemy",
+    "Scholar",
+    "Herbalism",
+    "Divination"
   ]
 };
-
 export const ADVERSARY_BENCHMARKS = {
   "bruiser": {
     "tiers": {
