@@ -1035,6 +1035,14 @@
     overflow: hidden;
 }
 
+/* NEW: Header line for Tier and Name */
+.eb-row-header-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
 .eb-row-name {
     font-weight: bold;
     color: #ffffff;
@@ -1042,6 +1050,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 1.1em; /* Larger */
+}
+
+/* UPDATED: Adjust Name when inside flex container */
+.eb-row-header-line .eb-row-name {
+    flex: 1; /* Allow name to take remaining space */
 }
 
 .eb-row-meta {
@@ -1052,7 +1065,14 @@
     color: #ccc;
 }
 
-.eb-type-tag { text-transform: capitalize; color: #ea80fc; font-weight: bold; }
+/* UPDATED: Enforce 0.8em as requested */
+.eb-type-tag, .feature-tag { 
+    text-transform: capitalize; 
+    color: #ea80fc; 
+    font-weight: bold; 
+    font-size: 0.8em !important; 
+}
+
 .eb-compendium-icon { color: #bbb; font-size: 0.95em; }
 
 .eb-row-tier .badge-tier {
@@ -1065,11 +1085,13 @@
     font-weight: 800;
 }
 
+/* UPDATED: Tier Badge styling for header line */
 .badge-tier.small {
-    font-size: 0.9em;
-    padding: 0 6px;
-    margin-top: 2px;
-    align-self: flex-start;
+    font-size: 0.85em; /* Slightly smaller to fit */
+    padding: 1px 6px;
+    margin-top: 0;
+    align-self: center;
+    height: fit-content;
 }
 
 .eb-row-actions-left {
@@ -1348,7 +1370,6 @@
 
 /* Feature Tag Style */
 .feature-tag {
-    font-size: 0.9em;
     background: #4a148c;
     color: #ea80fc;
     padding: 2px 6px;

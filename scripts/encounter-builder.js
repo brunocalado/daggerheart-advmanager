@@ -235,7 +235,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             if (features.includes("Momentum") || features.includes("Terrifying")) {
                 synergy.momentum = true;
             }
-            if (features.some(f => f.startsWith("Relentless"))) synergy.relentless = true;
+            // UPDATED: Check for simple "Relentless" string now
+            if (features.includes("Relentless")) synergy.relentless = true;
         });
 
         // --- Budget Calculation ---
@@ -322,7 +323,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             if (feats.includes("Spotlighter")) hasSpotlighter = true;
             if (feats.includes("Momentum")) hasMomentum = true;
             if (feats.includes("Terrifying")) hasTerrifying = true;
-            if (feats.some(f => f.startsWith("Relentless"))) hasRelentless = true;
+            // UPDATED: Check for simple "Relentless" string
+            if (feats.includes("Relentless")) hasRelentless = true;
 
             // Cost Calculation
             if (type === "minion") {
@@ -491,7 +493,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             if (allFeatureNames.includes("Momentum")) specialFeatures.push("Momentum");
             if (allFeatureNames.includes("Terrifying")) specialFeatures.push("Terrifying");
             const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
-            if (relentless) specialFeatures.push(relentless.name);
+            // UPDATED: Push only the string "Relentless" instead of the full name
+            if (relentless) specialFeatures.push("Relentless");
 
             if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) {
                 specialFeatures.push("Summoner");
@@ -941,8 +944,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
                     specialFeatures.push("Terrifying");
                 }
                 const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
+                // UPDATED: Push only "Relentless" string
                 if (relentless) {
-                    specialFeatures.push(relentless.name);
+                    specialFeatures.push("Relentless");
                 }
                 
                 // Check Summoner

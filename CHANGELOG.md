@@ -2,6 +2,7 @@
 - fixed CSS leak
 - moved exps out of the community table
 - more experiences
+- small css fix for encounter builder
 
 # 0.1.7
 - encounter builder shows cost for each actor
