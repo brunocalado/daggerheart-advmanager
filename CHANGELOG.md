@@ -3,6 +3,12 @@
 - moved exps out of the community table
 - more experiences
 - small css fix for encounter builder
+- custom features can be tagged
+- new function to import the features from an entire compendium flaging it to use in the live manager
+- live manager visual improvements
+- You can add more compendiuns to compendium-stats 
+- 
+
 
 # 0.1.7
 - encounter builder shows cost for each actor
