@@ -1,5 +1,5 @@
 import { Manager } from "./manager.js";
-import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js"; // IMPORT ATUALIZADO
+import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js"; 
 import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
@@ -27,7 +27,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         // Cache for auto-suggested names to prevent flickering on re-renders
         this._suggestionCache = {};
         
-        // NEW: Cache for simulated stats to prevent re-rolling on UI updates
+        // Cache for simulated stats to prevent re-rolling on UI updates
         this._cachedValues = null;
 
         // Store overrides separated by type
@@ -39,7 +39,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             suggestedFeatures: null, 
             suggestedFeaturesType: "default", 
             suggestedFeaturesTier: "default", 
-            experiences: {}, // Map of ID -> { name: string, value: number, deleted: boolean }
+            experiences: {}, 
             damageFormula: undefined,
             halvedDamageFormula: undefined,
             difficulty: undefined,
@@ -50,9 +50,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             attackMod: undefined,
             expAmount: undefined,
             expMod: undefined,
-            damageTypes: null, // Stores ["physical", "magical"] etc or null
-            criticalThreshold: undefined, // Stores integer 1-20
-            directDamage: undefined // NEW: Stores "true" or "false" string for override
+            damageTypes: null, 
+            criticalThreshold: undefined, 
+            directDamage: undefined 
         };
 
         // Initialize Settings
@@ -60,7 +60,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             // FORCE overrides for the provided actor so it's not filtered out
             this.filterTier = String(Number(this.initialActor.system.tier) || 1);
             this.filterType = (this.initialActor.system.type || "standard").toLowerCase();
-            this.source = "world"; // Token actors are effectively world/scene context
+            this.source = "world"; 
         } else {
             // Use saved persistence if no specific actor was requested
             this.filterTier = game.settings.get(MODULE_ID, SETTING_LAST_FILTER_TIER) || "all"; 
@@ -122,7 +122,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             return game.actors.get(actorId);
         }
 
-        // FIXED: Handling for "all" source - Try to find actor everywhere
         if (this.source === "all") {
              // 1. World
              const worldActor = game.actors.get(actorId);
@@ -172,7 +171,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     async _findFeatureItem(name) {
         if (this._featureCache.has(name)) return this._featureCache.get(name);
 
-        // Include user selected feature packs in search if needed
         const extraFeaturePacks = game.settings.get(MODULE_ID, SETTING_FEATURE_COMPENDIUMS) || [];
         const packIds = [
             "daggerheart-advmanager.all-features", 
@@ -180,7 +178,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             ...extraFeaturePacks
         ];
         
-        // Prepare clean name (e.g., "Relentless (2)" or "Relentless (X)" becomes "Relentless")
         let cleanName = name;
         const match = name.match(/^(.*?)\s*\([^)]+\)$/);
         if (match) cleanName = match[1];
@@ -192,10 +189,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             // Optimization: Load index with featureForm AND flags.importedFrom
             const index = await pack.getIndex({ fields: ["system.featureForm", "flags.importedFrom"] }); 
             
-            // Try exact match first
             let entry = index.find(i => i.name === name);
             
-            // If not found and name was cleaned, try cleaned name (e.g. Relentless)
             if (!entry && cleanName !== name) {
                 entry = index.find(i => i.name === cleanName);
             }
@@ -214,7 +209,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // Return default if not found
         const defaultData = { img: "icons/svg/item-bag.svg", uuid: null, type: "", flags: {} };
         this._featureCache.set(name, defaultData);
         return defaultData;
@@ -236,10 +230,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.selectedActorId = actor.id;
         this.targetTier = Number(actor.system.tier) || 1;
         
-        // Reset overrides to avoid confusion
         this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined }; 
         this._suggestionCache = {}; 
-        this._cachedValues = null; // Clear seed cache on actor change
+        this._cachedValues = null; 
 
         this.filterTier = String(this.targetTier); 
         this.filterType = (actor.system.type || "standard").toLowerCase();
@@ -250,7 +243,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     _getRandomExperienceName(typeKey, excludeList = []) {
         if (!typeKey || typeKey === "all") typeKey = "standard";
         
-        // NEW LOGIC: Use ADVERSARY_EXPERIENCES directly
         const list = ADVERSARY_EXPERIENCES[typeKey];
         if (list && Array.isArray(list)) {
             const candidates = list.filter(n => !excludeList.includes(n));
@@ -258,14 +250,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (candidates.length > 0) {
                 return candidates[Math.floor(Math.random() * candidates.length)];
             } else if (list.length > 0) {
-                // Fallback to duplicate if all used
                 return list[Math.floor(Math.random() * list.length)];
             }
         }
         return "New Experience"; 
     }
 
-    // NEW: Helper to calculate critical chance percentage
     _calculateCritChance(threshold) {
         if (!threshold) return "";
         const chance = Math.max(0, (21 - threshold) * 5);
@@ -283,7 +273,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         ];
 
         const extraCompendiums = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
-        // FIXED: Added check for 'all' to be valid
         let currentSourceIsValid = (this.source === "world" || this.source === "daggerheart.adversaries" || this.source === "all");
 
         extraCompendiums.forEach(packId => {
@@ -329,8 +318,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
         } else if (this.source === "all") {
-            // FIXED: Logic for aggregating ALL sources
-            
             // 1. World
             const worldAdvs = game.actors
                 .filter(a => a.type === "adversary")
@@ -430,7 +417,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let suggestedFeaturesTypeOptions = []; 
         let suggestedFeaturesTierOptions = [];
         let criticalOptions = []; 
-        let directOptions = []; // NEW
+        let directOptions = []; 
 
         let isPhysical = false;
         let isMagical = false;
@@ -458,7 +445,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     portraitImg = rawImg;
                 }
 
-                // Updated Link Data logic: hide if actor is in compendium (has pack)
                 linkData = {
                     isLinked: isLinked,
                     icon: isLinked ? "fa-link" : "fa-unlink",
@@ -467,12 +453,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 };
                 if (actor.compendium || actor.pack) linkData = null;
 
-                // Determine Damage Types state for Checkboxes
                 let previewDamageTypes = this.overrides.damageTypes;
                 
-                // Explicit check for null (initial state) to allow empty array (user cleared all)
                 if (previewDamageTypes === null) {
-                    // Use toObject() to ensure we extract the raw data array correctly, avoiding DataModel proxy issues
                     const actorData = actor.toObject();
                     const mainPart = actorData.system.attack?.damage?.parts?.[0];
                     
@@ -489,7 +472,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
                 }
                 
-                // Normalize to lowercase to ensure matching works regardless of data source casing
                 const activeTypes = (previewDamageTypes || []).map(t => String(t).toLowerCase());
                 
                 isPhysical = activeTypes.includes("physical");
@@ -526,12 +508,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     halvedDamageTooltip = "Suggested:<br>" + halvedDamageOptions.map(o => `• ${o.label}`).join("<br>");
                 }
 
-                // PREPARE CRITICAL THRESHOLD OPTIONS
-                // Default to actor's current, allow override
                 const currentCritical = currentStats.critical;
                 const previewCritical = this.overrides.criticalThreshold !== undefined ? Number(this.overrides.criticalThreshold) : currentCritical;
                 
-                // NEW: Calculate Preview Crit Chance
                 const previewCritChance = this._calculateCritChance(previewCritical);
 
                 criticalOptions = [];
@@ -543,7 +522,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     });
                 }
 
-                // NEW: Direct Damage Options
                 const currentDirect = actor.system.attack?.damage?.direct ?? false;
                 const previewDirect = this.overrides.directDamage !== undefined ? (this.overrides.directDamage === "true") : currentDirect;
                 
@@ -577,7 +555,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     isMinion: isMinion,
                     hitChance: simResult.stats.hitChance,
                     hitChanceAgainst: simResult.stats.hitChanceAgainst,
-                    critChance: previewCritChance // NEW: Pass to HBS
+                    critChance: previewCritChance 
                 };
 
                 if (isMinion) {
@@ -585,7 +563,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     previewStats.hpDisplay = "(Fixed)"; 
                 }
                 
-                // Prepare Structured Feature Data
                 featurePreviewData = await Promise.all(simResult.structuredFeatures.map(async f => {
                     let overrideVal = undefined;
                     if (f.type === 'damage' || f.type === 'name_horde') {
@@ -657,18 +634,16 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     };
                 }));
 
-                // 1. Determine Suggestion Keys based on overrides
                 let suggestionTypeKey = typeKey;
                 if (this.overrides.suggestedFeaturesType && this.overrides.suggestedFeaturesType !== "default") {
                     suggestionTypeKey = this.overrides.suggestedFeaturesType;
                 }
 
-                let suggestionTier = this.targetTier; // Use this.targetTier as default
+                let suggestionTier = this.targetTier; 
                 if (this.overrides.suggestedFeaturesTier && this.overrides.suggestedFeaturesTier !== "default") {
                     suggestionTier = parseInt(this.overrides.suggestedFeaturesTier);
                 }
 
-                // --- BUILD SUGGESTED FEATURES TYPE & TIER OPTIONS ---
                 suggestedFeaturesTypeOptions = []; 
                 const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
                 typeKeys.forEach(k => {
@@ -681,16 +656,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     });
                 });
 
-                // Tier options
                 suggestedFeaturesTierOptions = [1, 2, 3, 4].map(t => ({
                     value: t,
                     label: `Tier ${t}`,
                     selected: t === suggestionTier
                 }));
 
-                // --- SUGGESTED FEATURES LOGIC (UPDATED WITH FLAGS CHECK & HOMEBREW) ---
-                
-                // Helper to generate tags
+                // Helper to generate tags (UPDATED)
                 const getTags = (type, flags, isHomebrew) => {
                     let actionTag = "";
                     let actionClass = "";
@@ -704,19 +676,26 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     const imported = flags?.importedFrom || {};
                     const tierTag = imported.tier ? `Tier ${imported.tier}` : null;
                     const typeTag = imported.type || null;
+                    const customTag = imported.customTag || null; // <--- Capture Custom Tag
+
+                    let sourceLabel = null;
+                    if (customTag && customTag.trim() !== "") {
+                         sourceLabel = customTag; // Priority: Custom Tag
+                    } else if (isHomebrew) {
+                         sourceLabel = "Homebrew";
+                    }
                     
                     return {
                         action: { label: actionTag, css: actionClass },
                         tier: tierTag,
                         type: typeTag,
-                        homebrew: isHomebrew ? "Homebrew" : null
+                        homebrew: sourceLabel // Re-using homebrew key for UI compatibility
                     };
                 };
 
                 let possibleMatches = [];
                 let ruleSuggestions = [];
 
-                // 1. Determine "Rule Suggestions" for Star marking
                 const suggestionBenchmark = ADVERSARY_BENCHMARKS[suggestionTypeKey]?.tiers[`tier_${suggestionTier}`];
                 if (suggestionBenchmark && suggestionBenchmark.suggested_features) {
                     if (Array.isArray(suggestionBenchmark.suggested_features)) {
@@ -726,7 +705,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
                 }
 
-                // 2. Query Compendiums with Filter (Including Extra Packs)
                 const extraFeaturePacks = game.settings.get(MODULE_ID, SETTING_FEATURE_COMPENDIUMS) || [];
                 const packsToQuery = [...new Set(["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features", ...extraFeaturePacks])];
                 const enableSuggestions = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
@@ -736,28 +714,19 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         const pack = game.packs.get(packId);
                         if (!pack) continue;
                         
-                        // Load index with necessary fields for display
                         const index = await pack.getIndex({ fields: ["img", "system.featureForm", "flags.importedFrom"] });
                         
-                        // Filter
                         const matches = index.filter(i => {
-                            // Ensure strictly only feature items (ignore classes, subclasses etc if in mixed compendium)
-                            // We rely on type 'feature' as common convention or if user explicitly put in feature compendium.
-                            // To be safe, we can check i.type if available in index (V10+ default).
-                            // Assuming 'feature' is the Item Type for adversary moves.
                             if (i.type !== "feature") return false;
 
                             const imported = i.flags?.importedFrom;
                             
-                            // Case 1: Standard Imported Item -> Strict Filter
                             if (imported && imported.tier !== undefined && imported.type) {
                                 const matchesTier = imported.tier === suggestionTier;
                                 const matchesType = imported.type?.toLowerCase() === suggestionTypeKey.toLowerCase();
                                 return matchesTier && matchesType;
                             } 
                             
-                            // Case 2: Homebrew/Manual Item -> Universal Inclusion
-                            // If it lacks specific import flags, show it for ANY Tier/Type selection
                             i.isHomebrew = true;
                             return true;
                         });
@@ -772,10 +741,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 possibleMatches.sort((a, b) => a.name.localeCompare(b.name));
 
-                // 3. Build UI List
                 allSuggestedFeatures = [];
                 
-                // Existing Actor Items check
                 const allItems = actor.items instanceof Array ? actor.items : actor.items.contents || [];
                 const isOwned = (name) => allItems.some(i => i.name === name);
 
@@ -786,16 +753,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const addedSet = new Set();
                 const isRuleSuggested = (name) => ruleSuggestions.includes(name);
 
-                // A. Selected Features (Loop over stored names)
                 const selectedNames = [...this.overrides.suggestedFeatures].sort((a, b) => a.localeCompare(b));
                 
                 for (const name of selectedNames) {
                     if (!isOwned(name)) {
-                        // Check if this selected item name exists in our current filtered possibilities (Smart Lookup)
-                        // If found, use that specific item to show correct stats for the current filter view
                         let itemData = possibleMatches.find(pm => pm.name === name);
                         
-                        // Fallback: If not in current filter, find generically (might show wrong tier/type but name matches)
                         if (!itemData) {
                             const found = await this._findFeatureItem(name);
                             itemData = {
@@ -812,18 +775,16 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                             checked: true,
                             isRuleSuggestion: isRuleSuggested(itemData.name),
                             img: itemData.img,
-                            uuid: itemData.uuid || itemData._id, // Handle index _id fallback if uuid missing
+                            uuid: itemData.uuid || itemData._id, 
                             tags: getTags(itemData.system?.featureForm, itemData.flags, itemData.isHomebrew)
                         });
                         addedSet.add(name);
                     }
                 }
 
-                // B. Filtered Options (Loop over actual items found in compendium)
                 for (const item of possibleMatches) {
                     const name = item.name;
                     
-                    // Skip if already added (selected)
                     if (addedSet.has(name)) continue;
                     
                     if (!isOwned(name)) {
@@ -832,7 +793,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                             checked: false,
                             isRuleSuggestion: isRuleSuggested(item.name),
                             img: item.img,
-                            uuid: item.uuid || item._id, // Index entries usually have _id, check uuid support
+                            uuid: item.uuid || item._id, 
                             tags: getTags(item.system?.featureForm, item.flags, item.isHomebrew)
                         });
                         addedSet.add(name);
@@ -889,10 +850,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             actorTypeLabel: actorTypeLabel,
             suggestedFeaturesTypeOptions,
             suggestedFeaturesTierOptions,
-            isPhysical, // NEW
-            isMagical, // NEW
-            criticalOptions, // NEW
-            directOptions // NEW
+            isPhysical, 
+            isMagical, 
+            criticalOptions, 
+            directOptions 
         };
     }
 
@@ -900,7 +861,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         super._onRender(context, options);
         const html = this.element;
 
-        // ... existing listeners ...
         const sourceSelect = html.querySelector('.source-select');
         if (sourceSelect) sourceSelect.addEventListener('change', (e) => this._onSelectSource(e, sourceSelect));
 
@@ -914,17 +874,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (actorSelect) actorSelect.addEventListener('change', (e) => this._onSelectActor(e, actorSelect));
 
         html.querySelectorAll('.override-input').forEach(input => {
-            // EXCLUDE critical select and direct select from standard generic listener if we add a specific one, 
             if (!input.classList.contains('critical-select') && !input.classList.contains('direct-select')) {
                 input.addEventListener('change', (e) => this._onOverrideChange(e, input));
             }
         });
 
-        // NEW: Critical Threshold Listener
         const critSelect = html.querySelector('.critical-select');
         if (critSelect) critSelect.addEventListener('change', (e) => this._onCriticalChange(e, critSelect));
 
-        // NEW: Direct Damage Listener
         const directSelect = html.querySelector('.direct-select');
         if (directSelect) directSelect.addEventListener('change', (e) => this._onDirectChange(e, directSelect));
 
@@ -948,12 +905,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener('change', (e) => this._onExpModChange(e, input));
         });
 
-        // NEW: Damage Type Checkbox Listeners
         html.querySelectorAll('.damage-type-checkbox').forEach(input => {
             input.addEventListener('change', (e) => this._onDamageTypeChange(e, input));
         });
 
-        // --- Suggestion Handlers ---
         const suggestionTypeSelect = html.querySelector('.suggestion-type-select');
         if (suggestionTypeSelect) {
             suggestionTypeSelect.addEventListener('change', (e) => this._onChangeSuggestedType(e, suggestionTypeSelect));
@@ -964,8 +919,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             suggestionTierSelect.addEventListener('change', (e) => this._onChangeSuggestedTier(e, suggestionTierSelect));
         }
     }
-
-    // ... existing actions and handlers ...
 
     async _onOpenSettings(event, target) {
         new CompendiumManager().render(true);
@@ -1039,8 +992,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!actor) return;
 
         try {
-            // FIXED: Use actor's intrinsic info to check for compendium status
-            // instead of relying on 'this.source', which fails for 'all' mode.
             if (actor.compendium || actor.pack) {
                 const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
                 let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
@@ -1060,27 +1011,22 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
-            // 1. Perform automated updates (Tier changes, etc)
             const result = await Manager.updateSingleActor(actor, this.targetTier, this.overrides);
             
-            // NEW: Fetch fresh actor instance immediately after Manager update to ensure we have latest data structure
             let freshActor = actor;
-            // Only re-fetch if it's a world actor to ensure we get the database version
             if (!actor.pack && !actor.compendium && !actor.isToken) {
                  freshActor = game.actors.get(actor.id) || actor;
             }
 
-            // 2. Prepare manual updates based on fresh actor data
             const manualUpdates = {};
             let hasManualUpdates = false;
 
             if (this.overrides.damageTypes) {
-                // Must clone from FRESH actor pure Object to avoid any reactive wrappers
                 const actorData = freshActor.toObject();
                 const parts = actorData.system.attack?.damage?.parts ? foundry.utils.deepClone(actorData.system.attack.damage.parts) : [];
                 
                 if (parts && parts.length > 0) {
-                    parts[0].type = this.overrides.damageTypes; // This is the array ["physical", "magical"]
+                    parts[0].type = this.overrides.damageTypes; 
                     manualUpdates["system.attack.damage.parts"] = parts;
                     hasManualUpdates = true;
                 }
@@ -1091,16 +1037,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 hasManualUpdates = true;
             }
 
-            // NEW: Apply Direct Damage Override
             if (this.overrides.directDamage !== undefined) {
                 manualUpdates["system.attack.damage.direct"] = (this.overrides.directDamage === "true");
                 hasManualUpdates = true;
             }
 
             if (hasManualUpdates) {
-                // Wait for the update to complete and get the resulting document
                 const updatedActor = await freshActor.update(manualUpdates);
-                // If update returns the document, use it. If it returns data (older versions), re-fetch.
                 if (updatedActor && updatedActor.id) {
                     freshActor = updatedActor;
                 }
@@ -1120,8 +1063,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             this._suggestionCache = {}; 
             this._cachedValues = null;
 
-            // NEW: Explicitly set initialActor to the fully updated freshActor
-            // Force a re-fetch from game.actors collection to be 100% sure we have the cache version
             if (this.selectedActorId && !actor.pack && !actor.compendium && !actor.isToken) {
                  this.initialActor = game.actors.get(this.selectedActorId);
             } else {
@@ -1199,13 +1140,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
     }
 
-    // NEW: Handler for damage type checkboxes
     _onDamageTypeChange(event, target) {
-        // We need to read the state of BOTH checkboxes to construct the array
-        const container = target.closest('.stat-label'); // Assuming they are in the label container
-        
-        // Actually simpler: re-read from DOM or use event.
-        // We need to update based on what is currently checked in the UI.
         const checkboxPhysical = this.element.querySelector('.damage-type-checkbox[value="physical"]');
         const checkboxMagical = this.element.querySelector('.damage-type-checkbox[value="magical"]');
         
@@ -1214,24 +1149,16 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (checkboxMagical && checkboxMagical.checked) newTypes.push("magical");
         
         this.overrides.damageTypes = newTypes;
-        // Don't re-render whole app for this to avoid flickering, just update internal state
-        // But if user wants visual confirmation or side effects, we might need render.
-        // For simple checkbox toggle, render isn't strictly necessary if it just sets state,
-        // but let's render to be consistent.
-        // this.render(); 
-        // Rendering causes focus loss on checkboxes. Let's NOT render.
     }
 
-    // NEW: Handler for Critical Threshold
     _onCriticalChange(event, target) {
         const val = parseInt(target.value);
         if (!isNaN(val)) {
             this.overrides.criticalThreshold = val;
         }
-        this.render(); // Need render to update the chance percentage text
+        this.render(); 
     }
 
-    // NEW: Handler for Direct Damage
     _onDirectChange(event, target) {
         const val = target.value;
         this.overrides.directDamage = val;
@@ -1368,10 +1295,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     let formula = p.value.custom?.enabled ? p.value.custom.formula : 
                         (p.value.dice ? `${p.value.flatMultiplier || 1}${p.value.dice}${p.value.bonus ? (p.value.bonus > 0 ? '+'+p.value.bonus : p.value.bonus) : ''}` : p.value.flatMultiplier);
                     
-                    damageParts.push(formula); // Pushed RAW formula
+                    damageParts.push(formula); 
                     if (idx === 0) {
                         firstDamageFormula = formula;
-                        // NEW LOGIC: Extract Damage Types for Label (Robust String/Array check)
                         let types = [];
                         if (p.type) {
                             if (Array.isArray(p.type)) types = p.type;
@@ -1397,9 +1323,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const hitChance = Manager.calculateHitChance(attackMod, tier);
         const difficulty = Number(sys.difficulty) || 0;
         const hitChanceAgainst = Manager.calculateHitChanceAgainst(difficulty, tier);
-        const critical = Number(sys.criticalThreshold) || 20; // NEW: Extract Critical
+        const critical = Number(sys.criticalThreshold) || 20; 
 
-        // NEW: Crit Chance calculation
         const critChance = this._calculateCritChance(critical);
 
         const experiences = sys.experiences || {};
@@ -1413,7 +1338,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
              });
         }
 
-        // NEW: Check Direct Damage Flag
         const isDirect = sys.attack?.damage?.direct ?? false;
         const directLabel = isDirect ? "Direct: Yes" : "Direct: No";
 
@@ -1432,9 +1356,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             hitChance: hitChance,
             hitChanceAgainst: hitChanceAgainst,
             experiences: expList,
-            critical: critical, // NEW
-            critChance: critChance, // NEW
-            directLabel: directLabel // NEW
+            critical: critical, 
+            critChance: critChance, 
+            directLabel: directLabel 
         };
     }
 
@@ -1442,8 +1366,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorData = actor.toObject();
         const typeKey = (actorData.system.type || "standard").toLowerCase();
         
-        // ... (existing implementation unchanged) ...
-        // --- Determine Suggestions Keys ---
         let suggestionTypeKey = typeKey;
         if (this.overrides.suggestedFeaturesType && this.overrides.suggestedFeaturesType !== "default") {
             suggestionTypeKey = this.overrides.suggestedFeaturesType;
@@ -1460,7 +1382,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [], structuredFeatures: [] };
 
-        // === CACHING SYSTEM FOR RANDOM ROLLS ===
         if (!this._cachedValues) {
             this._cachedValues = {};
             this._cachedValues.difficulty = Manager.getRollFromRange(benchmark.difficulty);
@@ -1468,7 +1389,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             this._cachedValues.stress = Manager.getRollFromRange(benchmark.stress);
             this._cachedValues.attackMod = Manager.getRollFromSignedRange(benchmark.attack_modifier);
             
-            // Thresholds
             if (benchmark.threshold_min && benchmark.threshold_max) {
                  const minPair = Manager.parseThresholdPair(benchmark.threshold_min);
                  const maxPair = Manager.parseThresholdPair(benchmark.threshold_max);
@@ -1478,15 +1398,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                  }
             }
 
-            // Minion/Horde specific ranges
             if (benchmark.basic_attack_y) this._cachedValues.basic_attack_y = Manager.getRollFromRange(benchmark.basic_attack_y);
             if (benchmark.minion_feature_x) this._cachedValues.minion_feature_x = Manager.getRollFromRange(benchmark.minion_feature_x);
-            // Halved Damage (X)
             if (benchmark.halved_damage_x && Array.isArray(benchmark.halved_damage_x) && benchmark.halved_damage_x.length > 0 && benchmark.halved_damage_x[0].includes("-")) {
             }
         }
 
-        // CREATE A FROZEN BENCHMARK
         const frozenBenchmark = foundry.utils.deepClone(benchmark);
         if (this._cachedValues.basic_attack_y !== undefined) frozenBenchmark.basic_attack_y = String(this._cachedValues.basic_attack_y);
         if (this._cachedValues.minion_feature_x !== undefined) frozenBenchmark.minion_feature_x = String(this._cachedValues.minion_feature_x);
@@ -1502,7 +1419,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             sim.severeRaw = this._cachedValues.severe;
         }
 
-        // --- Experience Simulation ---
         sim.previewExperiences = [];
         if (benchmark.experiences) {
             const targetMod = this.overrides.expMod !== undefined ? this.overrides.expMod : Manager.getRollFromSignedRange(benchmark.experiences.modifier);
@@ -1682,7 +1598,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     item, 
                     targetTier, 
                     currentTier, 
-                    frozenBenchmark, // Pass frozen benchmark
+                    frozenBenchmark, 
                     featureLog, 
                     this.overrides.features.names, 
                     this.overrides.features.damage
@@ -1716,7 +1632,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             stats: sim, 
             features: featureLog, 
             structuredFeatures: structuredFeatures,
-            suggestedFeatures: [] // Placeholder, filled in _prepareContext loop
+            suggestedFeatures: [] 
         };
     }
 }
