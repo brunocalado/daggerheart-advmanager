@@ -287,32 +287,37 @@
                     </div>
                 </div>
 
+                <!-- MODIFIED: Attack Damage Layout -->
                 <div class="stat-group">
                     <div style="display:flex; flex-wrap: wrap; justify-content:space-between; align-items:center;">
                         <span class="stat-label" style="display: flex; align-items: center; gap: 8px;">
                             Attack Damage
                         </span>
                         
-                        <div class="feature-input-group" style="width: 100%; max-width: 150px; margin-top: 0;">
+                        <!-- Moved hint text here and adjusted styles -->
+                        <div class="feature-input-group" style="width: auto; margin-top: 0; flex: 1; justify-content: flex-end;">
+                            <span class="preview-hint-text" style="margin-right: 8px; white-space: nowrap;">{{previewStats.damageStats}}</span>
                             <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{damageTooltip}}}"></i>
-                            <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 100%;">
+                            <input type="text" class="override-input" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}" style="text-align: right; width: 90px;">
                         </div>
                     </div>
-                    <!-- Stats moved to use preview-hint-text -->
-                    <div class="stat-block inverted-colors">{{{previewStats.damage}}} <span class="preview-hint-text">{{previewStats.damageStats}}</span></div>
+                    <!-- REMOVED div.stat-block below -->
                 </div>
 
                 {{#if previewStats.halvedDamage}}
+                <!-- MODIFIED: Halved Damage Layout -->
                 <div class="stat-group">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="stat-label">Halved Damage (Horde)</span>
-                        <div class="feature-input-group" style="width: 100%; max-width: 150px;">
+                        
+                         <!-- Moved hint text here and adjusted styles -->
+                        <div class="feature-input-group" style="width: auto; margin-top: 0; flex: 1; justify-content: flex-end;">
+                            <span class="preview-hint-text" style="margin-right: 8px; white-space: nowrap;">{{previewStats.halvedDamageStats}}</span>
                             <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{halvedDamageTooltip}}}"></i>
-                            <input type="text" class="override-input" data-field="halvedDamageFormula" value="{{previewStats.mainHalvedDamageFormula}}" style="text-align: right; width: 100%;">
+                            <input type="text" class="override-input" data-field="halvedDamageFormula" value="{{previewStats.mainHalvedDamageFormula}}" style="text-align: right; width: 90px;">
                         </div>
                     </div>
-                    <!-- Stats moved to use preview-hint-text -->
-                    <div class="stat-block inverted-colors">{{{previewStats.halvedDamage}}} <span class="preview-hint-text">{{previewStats.halvedDamageStats}}</span></div>
+                    <!-- REMOVED div.stat-block below -->
                 </div>
                 {{/if}}
                 
