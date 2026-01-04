@@ -1,23 +1,47 @@
 <div class="dh-adv-manager-content">
+    
+    <!-- Header with Warning -->
     <div class="status-header">
         <h3>Select Stat Sources</h3>
-        <p style="font-size: 0.8em; color: #aaa; margin-top: 5px;">
-            Choose actor compendiums to include in the analysis.
-        </p>
+        <div style="background: rgba(255, 152, 0, 0.1); border: 1px solid #ff9800; padding: 8px; border-radius: 4px; margin-top: 5px; text-align: left;">
+            <p style="font-size: 0.9em; color: #ffd740; margin: 0;">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong>
+                Selecting a new compendium will trigger an automated import process. 
+                Features from the selected actors will be copied to your world items. 
+                <strong>Please wait for the import notification to finish.</strong>
+            </p>
+        </div>
     </div>
 
-    <!-- Lista Simples (Sem Abas) -->
-    <div class="dh-tabs-body" style="height: 300px; overflow-y: hidden; display: flex; flex-direction: column; border-top: 1px solid #555; margin-top: 10px;">
+    <!-- List Area -->
+    <div class="dh-tabs-body" style="height: 350px; overflow-y: hidden; display: flex; flex-direction: column; border-top: 1px solid #555; margin-top: 10px;">
         
         <div class="compendium-list" style="border: none; padding-top: 10px;">
             {{#if hasActors}}
                 {{#each actorList}}
-                <div class="form-group compendium-row">
-                    <input type="checkbox" name="{{this.id}}" id="stat-chk-{{this.id}}" {{#if this.checked}}checked{{/if}}>
-                    <label for="stat-chk-{{this.id}}" class="compendium-label">
+                <div class="form-group compendium-row" style="display: flex; align-items: center; gap: 10px; padding: 5px; background: rgba(0,0,0,0.3); border-bottom: 1px solid #444; margin-bottom: 2px;">
+                    
+                    <!-- Checkbox -->
+                    <input type="checkbox" name="{{this.id}}" id="stat-chk-{{this.id}}" {{#if this.checked}}checked{{/if}} style="flex: 0 0 auto;">
+                    
+                    <!-- Label -->
+                    <label for="stat-chk-{{this.id}}" class="compendium-label" style="flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer;">
                         <strong>{{this.label}}</strong>
-                        <span class="pkg-name">({{this.package}})</span>
+                        <span class="pkg-name" style="font-size: 0.8em; color: #aaa;">({{this.package}})</span>
                     </label>
+
+                    <!-- Custom Tag Input -->
+                    <div style="flex: 0 0 140px; display: flex; flex-direction: column;">
+                        <input type="text" name="tag_{{this.id}}" placeholder="Tag (Def: Label)" 
+                               style="background: #222; color: #fff; border: 1px solid #555; border-radius: 3px; padding: 3px; font-size: 0.85em; width: 100%;">
+                    </div>
+
+                    <!-- Custom Folder Input -->
+                    <div style="flex: 0 0 180px; display: flex; flex-direction: column;">
+                        <input type="text" name="folder_{{this.id}}" placeholder="Folder (Def: Imported...)" 
+                               style="background: #222; color: #fff; border: 1px solid #555; border-radius: 3px; padding: 3px; font-size: 0.85em; width: 100%;">
+                    </div>
+
                 </div>
                 {{/each}}
             {{else}}
@@ -29,7 +53,7 @@
 
     <footer class="sheet-footer">
         <button type="submit">
-            <i class="fas fa-save"></i> Save Selection
+            <i class="fas fa-save"></i> Save Selection & Import
         </button>
     </footer>
 </div>

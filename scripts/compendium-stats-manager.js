@@ -2,8 +2,8 @@ import { MODULE_ID, SETTING_STATS_COMPENDIUMS } from "./module.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
- * Gerenciador simplificado para fontes do Compendium Stats.
- * Permite selecionar apenas compêndios de Atores.
+ * Simplified manager for Compendium Stats sources.
+ * Allows selecting Actor compendiums and defining import settings.
  */
 export class CompendiumStatsManager extends HandlebarsApplicationMixin(ApplicationV2) {
     
@@ -14,10 +14,10 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
             title: "Manage Stat Sources",
             icon: "fas fa-chart-pie",
             resizable: false,
-            width: 400,
+            width: 700, // Increased width to fit new inputs
             height: "auto"
         },
-        position: { width: 400, height: "auto" },
+        position: { width: 700, height: "auto" },
         form: {
             handler: CompendiumStatsManager.submitHandler,
             closeOnSubmit: true
@@ -33,6 +33,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
 
     async _prepareContext(_options) {
         const savedActors = game.settings.get(MODULE_ID, SETTING_STATS_COMPENDIUMS) || [];
+        // Filter for Actor packs, excluding the system default
         const actorPacks = game.packs.filter(p => p.documentName === "Actor" && p.metadata.id !== "daggerheart.adversaries");
 
         const actorList = actorPacks.map(p => ({
@@ -42,6 +43,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
             checked: savedActors.includes(p.metadata.id)
         }));
 
+        // Sort alphabetically
         actorList.sort((a, b) => a.label.localeCompare(b.label));
 
         return {
@@ -51,35 +53,57 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
     }
 
     static async submitHandler(event, form, formData) {
-        // 1. Identificar o que estava salvo antes
+        // 1. Identify what was previously saved
         const oldSettings = game.settings.get(MODULE_ID, SETTING_STATS_COMPENDIUMS) || [];
         const selectedActors = [];
         
+        // formData.object contains checkboxes (boolean) and text inputs (strings)
+        // We iterate to find the selected checkboxes (pack IDs)
         for (const [key, value] of Object.entries(formData.object)) {
+            // Checkboxes return boolean true when checked
             if (value === true) {
-                selectedActors.push(key);
+                // Verify if this key corresponds to a pack (ignoring text inputs)
+                if (game.packs.has(key)) {
+                    selectedActors.push(key);
+                }
             }
         }
 
-        // 2. Identificar novos compêndios adicionados nesta sessão
+        // 2. Identify newly added compendiums in this session
         const newlyAdded = selectedActors.filter(id => !oldSettings.includes(id));
 
-        // 3. Salvar configurações
+        // 3. Save settings
         await game.settings.set(MODULE_ID, SETTING_STATS_COMPENDIUMS, selectedActors);
         
-        // 4. Importar Features dos novos compêndios
+        // 4. Import Features from new compendiums
         if (newlyAdded.length > 0) {
             ui.notifications.info(`Found ${newlyAdded.length} new source(s). Importing features...`);
             
             for (const packId of newlyAdded) {
                 const pack = game.packs.get(packId);
                 if (pack) {
-                    const label = pack.metadata.label;
-                    const folderName = `Imported from ${label}`;
+                    const defaultLabel = pack.metadata.label;
                     
-                    // Executa a importação usando a função global exposta no module.js
+                    // Retrieve custom values from form data
+                    // Keys are prefixed based on the Handlebars template
+                    const tagKey = `tag_${packId}`;
+                    const folderKey = `folder_${packId}`;
+                    
+                    const customTagInput = formData.object[tagKey];
+                    const customFolderInput = formData.object[folderKey];
+
+                    // Determine final values: Use input if present, otherwise default
+                    const finalTag = customTagInput && customTagInput.trim() !== "" 
+                        ? customTagInput.trim() 
+                        : defaultLabel;
+
+                    const finalFolder = customFolderInput && customFolderInput.trim() !== "" 
+                        ? customFolderInput.trim() 
+                        : `Imported from ${defaultLabel}`;
+                    
+                    // Execute import using the exposed global function
                     if (globalThis.AM && globalThis.AM.ImportFeatures) {
-                        await globalThis.AM.ImportFeatures(packId, folderName, label);
+                        await globalThis.AM.ImportFeatures(packId, finalFolder, finalTag);
                     } else {
                         console.error("Daggerheart Manager | AM.ImportFeatures not available.");
                     }
@@ -89,7 +113,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
 
         ui.notifications.info("Stat sources updated.");
         
-        // 5. Recarregar a janela de Stats
+        // 5. Reload Stats Window if open
         const statsApp = Object.values(ui.windows).find(w => w.id === "daggerheart-compendium-stats");
         if (statsApp) {
             statsApp.loading = true;

@@ -1,15 +1,8 @@
-2026/01/04-18:00:24.067 624 Recovering log #141
-2026/01/04-18:00:24.071 624 Delete type=0 #141
-2026/01/04-18:00:24.072 624 Delete type=3 #139
-2026/01/04-18:51:04.545 dfc Level-0 table #146: started
-2026/01/04-18:51:04.551 dfc Level-0 table #146: 337472 bytes OK
-2026/01/04-18:51:04.552 dfc Delete type=0 #144
-2026/01/04-18:51:04.556 dfc Manual compaction at level-0 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
-2026/01/04-18:51:04.556 dfc Manual compaction at level-1 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 1023 : 1
-2026/01/04-18:51:04.557 dfc Compacting 1@1 + 1@2 files
-2026/01/04-18:51:04.565 dfc Generated table #147@1: 479 keys, 320989 bytes
-2026/01/04-18:51:04.565 dfc Compacted 1@1 + 1@2 files => 320989 bytes
-2026/01/04-18:51:04.566 dfc compacted to: files[ 0 0 1 0 0 0 0 ]
-2026/01/04-18:51:04.566 dfc Delete type=2 #16
-2026/01/04-18:51:04.566 dfc Delete type=2 #146
-2026/01/04-18:51:04.569 dfc Manual compaction at level-1 from '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 1023 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
+2026/01/04-18:51:13.186 4860 Recovering log #145
+2026/01/04-18:51:13.189 4860 Delete type=0 #145
+2026/01/04-18:51:13.189 4860 Delete type=3 #143
+2026/01/04-19:05:07.164 dfc Level-0 table #151: started
+2026/01/04-19:05:07.164 dfc Level-0 table #151: 0 bytes OK
+2026/01/04-19:05:07.165 dfc Delete type=0 #149
+2026/01/04-19:05:07.169 dfc Manual compaction at level-0 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
+2026/01/04-19:05:07.169 dfc Manual compaction at level-1 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
