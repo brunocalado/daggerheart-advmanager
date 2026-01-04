@@ -1,0 +1,35 @@
+<div class="dh-adv-manager-content">
+    <div class="status-header">
+        <h3>Select Stat Sources</h3>
+        <p style="font-size: 0.8em; color: #aaa; margin-top: 5px;">
+            Choose actor compendiums to include in the analysis.
+        </p>
+    </div>
+
+    <!-- Lista Simples (Sem Abas) -->
+    <div class="dh-tabs-body" style="height: 300px; overflow-y: hidden; display: flex; flex-direction: column; border-top: 1px solid #555; margin-top: 10px;">
+        
+        <div class="compendium-list" style="border: none; padding-top: 10px;">
+            {{#if hasActors}}
+                {{#each actorList}}
+                <div class="form-group compendium-row">
+                    <input type="checkbox" name="{{this.id}}" id="stat-chk-{{this.id}}" {{#if this.checked}}checked{{/if}}>
+                    <label for="stat-chk-{{this.id}}" class="compendium-label">
+                        <strong>{{this.label}}</strong>
+                        <span class="pkg-name">({{this.package}})</span>
+                    </label>
+                </div>
+                {{/each}}
+            {{else}}
+                <p class="empty-msg">No other Actor compendiums found.</p>
+            {{/if}}
+        </div>
+
+    </div>
+
+    <footer class="sheet-footer">
+        <button type="submit">
+            <i class="fas fa-save"></i> Save Selection
+        </button>
+    </footer>
+</div>

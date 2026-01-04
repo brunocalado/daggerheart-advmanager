@@ -7,8 +7,8 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
     constructor(options = {}) {
         super(options);
         this.allActors = [];
-        this.featureIndex = []; // Changed to Array to support mixed sources
-        this.selectedType = "bruiser"; 
+        this.featureIndex = null; // Store features index
+        this.selectedType = "bruiser"; // Default selection
         this.statsCache = null;
         this.loading = true;
     }
@@ -38,11 +38,13 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
     };
 
     async _prepareContext(_options) {
+        // Load actors if not loaded yet or if forced via loading flag
         if (this.loading) {
             await this._loadCompendiumData();
             this.loading = false;
         }
 
+        // Get unique types for the dropdown
         const types = new Set(this.allActors.map(a => a.system.type?.toLowerCase() || "standard"));
         const typeOptions = Array.from(types).sort().map(t => ({
             value: t,
@@ -50,6 +52,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             selected: t === this.selectedType
         }));
 
+        // Calculate stats for the selected type
         const statsData = this._calculateStats(this.selectedType);
 
         return {
@@ -64,6 +67,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         super._onRender(context, options);
         const html = this.element;
 
+        // Bind Type Select
         const typeSelect = html.querySelector('.stats-type-select');
         if (typeSelect) {
             typeSelect.addEventListener('change', (e) => {
@@ -72,25 +76,30 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             });
         }
 
+        // Bind Feature Links (Click & Drag)
         html.querySelectorAll('.feature-link').forEach(link => {
+            // Click to Open (Updated to prioritize UUID)
             link.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const uuid = link.dataset.uuid;
                 
+                // Try to open by UUID first (Correct specific item)
                 if (uuid) {
                     const doc = await fromUuid(uuid);
                     if (doc) return doc.sheet.render(true);
                 }
-                
-                // Fallback (apenas se UUID falhar)
+
+                // Fallback to name search
                 const featureName = link.dataset.featureName;
-                ui.notifications.warn(`Could not find sheet for ${featureName}`);
+                await this._openFeatureSheet(featureName);
             });
 
+            // Drag Start
             link.addEventListener('dragstart', (e) => {
                 const uuid = link.dataset.uuid;
                 if (!uuid) return;
                 
+                // Foundry Drag Data Format
                 const dragData = { 
                     type: "Item", 
                     uuid: uuid 
@@ -100,27 +109,55 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         });
     }
 
+    // Handler para abrir o gerenciador
     async _onOpenSettings(event, target) {
         new CompendiumStatsManager().render(true);
     }
 
+    // Handler para recarregar dados
     async _onRefresh(event, target) {
         this.loading = true;
         this.render();
     }
 
+    async _openFeatureSheet(featureName) {
+        // This is a fallback if UUID isn't on the element
+        const packName = "daggerheart-advmanager.all-features";
+        const pack = game.packs.get(packName);
+        
+        if (!pack) {
+            ui.notifications.warn(`Compendium '${packName}' not found. Ensure the module is active.`);
+            return;
+        }
+
+        // Note: This fallback search is imperfect for duplicates, relies on the first one found
+        const index = await pack.getIndex();
+        const entry = index.find(i => i.name === featureName);
+
+        if (entry) {
+            const doc = await pack.getDocument(entry._id);
+            doc.sheet.render(true);
+        } else {
+            ui.notifications.warn(`Feature "${featureName}" not found in compendium.`);
+        }
+    }
+
     async _loadCompendiumData() {
         this.allActors = [];
-        this.featureIndex = []; // Reset as Array
-
-        // 1. Load Adversaries (System + Selected)
+        
+        // 1. Load System Default Compendium
         const systemPack = game.packs.get("daggerheart.adversaries");
         if (systemPack) {
             const sysDocs = await systemPack.getDocuments();
             this.allActors.push(...sysDocs);
+        } else {
+            ui.notifications.warn("Compendium 'daggerheart.adversaries' not found.");
         }
 
+        // 2. Load User Selected Compendiums
+        // Usa a constante importada para ler a configuração correta
         const extraPacks = game.settings.get(MODULE_ID, SETTING_STATS_COMPENDIUMS) || [];
+        
         for (const packId of extraPacks) {
             const pack = game.packs.get(packId);
             if (pack) {
@@ -133,33 +170,25 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        // 2. Load Features Index (System Default)
-        // Isso carrega features do módulo "core" se existir
+        // Load Features Index for UUID lookup
         const featurePack = game.packs.get("daggerheart-advmanager.all-features");
         if (featurePack) {
-            const index = await featurePack.getIndex({ 
-                fields: ["flags.importedFrom.adversary", "flags.importedFrom.tier", "flags.importedFrom.type"] 
+            // Request flags fields to be available in the index for filtering logic
+            this.featureIndex = await featurePack.getIndex({ 
+                fields: [
+                    "flags.importedFrom.adversary", 
+                    "flags.importedFrom.tier", 
+                    "flags.importedFrom.type"
+                ] 
             });
-            this.featureIndex.push(...index);
+        } else {
+            console.warn("Daggerheart Manager | Features compendium not found. Drag/Drop may not work for all items.");
+            this.featureIndex = new foundry.utils.Collection();
         }
-
-        // 3. Load Features from WORLD ITEMS (Imported)
-        // Isso pega tudo que foi importado via AM.ImportFeatures
-        // Filtramos itens que tenham a flag 'importedFrom'
-        const worldFeatures = game.items.filter(i => i.flags?.importedFrom);
-        
-        const mappedWorldItems = worldFeatures.map(i => ({
-            name: i.name,
-            uuid: i.uuid, // IMPORTANTE: Usa o UUID do item no mundo
-            img: i.img,
-            flags: i.flags
-        }));
-
-        // Adiciona à lista geral de features disponíveis para busca
-        this.featureIndex.push(...mappedWorldItems);
     }
 
     _calculateStats(type) {
+        // Initialize structure for Tiers 1-4
         const data = {
             1: this._initTierStats(),
             2: this._initTierStats(),
@@ -167,73 +196,101 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             4: this._initTierStats()
         };
 
+        // Filter actors by type
         const filteredActors = this.allActors.filter(a => (a.system.type?.toLowerCase() || "standard") === type);
 
+        // Collect Values
         for (const actor of filteredActors) {
             const actorTier = Number(actor.system.tier) || 1;
             if (data[actorTier]) {
                 const sys = actor.system;
                 
-                // --- Simple Stats Collection ---
+                // Difficulty
                 if (sys.difficulty) data[actorTier].difficulty.push(Number(sys.difficulty));
+
+                // Thresholds
                 if (sys.damageThresholds?.major) data[actorTier].major.push(Number(sys.damageThresholds.major));
                 if (sys.damageThresholds?.severe) data[actorTier].severe.push(Number(sys.damageThresholds.severe));
+
+                // HP & Stress
                 if (sys.resources?.hitPoints?.max) data[actorTier].hp.push(Number(sys.resources.hitPoints.max));
                 if (sys.resources?.stress?.max) data[actorTier].stress.push(Number(sys.resources.stress.max));
+
+                // Attack Modifier
                 if (sys.attack?.roll?.bonus !== undefined) data[actorTier].attackMod.push(Number(sys.attack.roll.bonus));
 
-                // --- Experiences ---
+                // Experiences
+                let expCount = 0;
                 if (sys.experiences) {
                     const expList = Object.values(sys.experiences);
-                    data[actorTier].expCounts.push(expList.length);
+                    expCount = expList.length;
                     expList.forEach(e => {
                         const val = Number(e.value);
                         if (!isNaN(val)) data[actorTier].expValues.push(val);
                     });
-                } else {
-                    data[actorTier].expCounts.push(0);
                 }
+                data[actorTier].expCounts.push(expCount);
 
-                // --- Damage ---
+                // Damage Rolls & Halved Damage
                 if (sys.attack?.damage?.parts) {
                     sys.attack.damage.parts.forEach(part => {
-                        let formula = this._extractFormula(part.value);
+                        // Regular
+                        let formula = "";
+                        if (part.value?.custom?.enabled) formula = part.value.custom.formula;
+                        else if (part.value) {
+                            const count = part.value.flatMultiplier || 1;
+                            const dice = part.value.dice || "";
+                            const bonus = part.value.bonus ? (Number(part.value.bonus) > 0 ? `+${part.value.bonus}` : part.value.bonus) : "";
+                            if (!dice) formula = `${part.value.flatMultiplier}`;
+                            else formula = `${count}${dice}${bonus}`;
+                        }
                         if (formula) data[actorTier].damageRolls.add(formula);
 
-                        let halved = this._extractFormula(part.valueAlt);
-                        if (halved) data[actorTier].halvedDamageRolls.add(halved);
+                        // Halved
+                        let halvedFormula = "";
+                        if (part.valueAlt?.custom?.enabled) halvedFormula = part.valueAlt.custom.formula;
+                        else if (part.valueAlt) {
+                            const count = part.valueAlt.flatMultiplier || 1;
+                            const dice = part.valueAlt.dice || "";
+                            const bonus = part.valueAlt.bonus ? (Number(part.valueAlt.bonus) > 0 ? `+${part.valueAlt.bonus}` : part.valueAlt.bonus) : "";
+                            if (!dice) halvedFormula = `${part.valueAlt.flatMultiplier}`;
+                            else halvedFormula = `${count}${dice}${bonus}`;
+                        }
+                        if (halvedFormula) data[actorTier].halvedDamageRolls.add(halvedFormula);
                     });
                 }
 
-                // --- Features (Updated Lookup Logic) ---
+                // --- Features (Items) ---
                 if (actor.items) {
                     actor.items.forEach(item => {
-                        // Determinar Tier (override via flag ou tier do ator)
-                        let itemTier = item.flags?.importedFrom?.tier ? Number(item.flags.importedFrom.tier) : actorTier;
+                        // Determine correct tier for display
+                        let itemTier = actorTier;
+                        if (item.flags?.importedFrom?.tier) {
+                            itemTier = Number(item.flags.importedFrom.tier);
+                        }
 
                         if (data[itemTier]) {
+                            // Only add if not already in the map for this tier
                             if (!data[itemTier].features.has(item.name)) {
                                 
-                                // === LOGICA DE BUSCA DE UUID ===
-                                // Agora buscamos no this.featureIndex que contem AMBOS (Compendio e Mundo)
+                                // --- UUID LOOKUP LOGIC ---
+                                let uuid = "";
                                 
-                                // 1. Match Perfeito: Nome + Adversário + Custom Tag (do Pack importado)
-                                // Se o ator veio de um pack importado, tentamos achar o item importado correspondente
-                                let entry = null;
-
-                                // Tentar achar um item que pertença a este adversário específico
-                                entry = this.featureIndex.find(i => 
+                                // Priority 1: Match by Name AND Source Adversary (Precise match for duplicates)
+                                let entry = this.featureIndex.find(i => 
                                     i.name === item.name && 
                                     i.flags?.importedFrom?.adversary === actor.name
                                 );
 
-                                // 2. Match Genérico por Nome (Fallback)
+                                // Priority 2: Match by Name only (Fallback)
                                 if (!entry) {
                                     entry = this.featureIndex.find(i => i.name === item.name);
                                 }
 
-                                const uuid = entry ? entry.uuid : "";
-                                // ==============================
+                                if (entry) {
+                                    uuid = entry.uuid; 
+                                }
+                                // -------------------------
 
                                 let typeLabel = "";
                                 const form = item.system?.featureForm?.toLowerCase();
@@ -253,35 +310,20 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        return this._formatStatsRows(data, type);
-    }
-
-    // Helper para extrair fórmula de dano
-    _extractFormula(valObj) {
-        if (!valObj) return "";
-        if (valObj.custom?.enabled) return valObj.custom.formula;
-        if (valObj.dice) {
-            const count = valObj.flatMultiplier || 1;
-            const bonus = valObj.bonus ? (Number(valObj.bonus) > 0 ? `+${valObj.bonus}` : valObj.bonus) : "";
-            return `${count}${valObj.dice}${bonus}`;
-        }
-        return `${valObj.flatMultiplier || 0}`;
-    }
-
-    _formatStatsRows(data, type) {
+        // Process Ranges
         const rows = [
             { label: "Difficulty", t1: this._getRange(data[1].difficulty), t2: this._getRange(data[2].difficulty), t3: this._getRange(data[3].difficulty), t4: this._getRange(data[4].difficulty) },
-            { label: "Threshold Min", t1: this._getRange(data[1].major), t2: this._getRange(data[2].major), t3: this._getRange(data[3].major), t4: this._getRange(data[4].major) },
-            { label: "Threshold Max", t1: this._getRange(data[1].severe), t2: this._getRange(data[2].severe), t3: this._getRange(data[3].severe), t4: this._getRange(data[4].severe) },
+            { label: "Threshold Minimums", t1: this._getRange(data[1].major), t2: this._getRange(data[2].major), t3: this._getRange(data[3].major), t4: this._getRange(data[4].major) },
+            { label: "Threshold Maximums", t1: this._getRange(data[1].severe), t2: this._getRange(data[2].severe), t3: this._getRange(data[3].severe), t4: this._getRange(data[4].severe) },
             { label: "Hit Points", t1: this._getRange(data[1].hp), t2: this._getRange(data[2].hp), t3: this._getRange(data[3].hp), t4: this._getRange(data[4].hp) },
             { label: "Stress", t1: this._getRange(data[1].stress), t2: this._getRange(data[2].stress), t3: this._getRange(data[3].stress), t4: this._getRange(data[4].stress) },
-            { label: "Attack Mod", t1: this._getSignedRange(data[1].attackMod), t2: this._getSignedRange(data[2].attackMod), t3: this._getSignedRange(data[3].attackMod), t4: this._getSignedRange(data[4].attackMod) },
+            { label: "Attack Modifier", t1: this._getSignedRange(data[1].attackMod), t2: this._getSignedRange(data[2].attackMod), t3: this._getSignedRange(data[3].attackMod), t4: this._getSignedRange(data[4].attackMod) },
             { label: "Damage Rolls", t1: this._getList(data[1].damageRolls), t2: this._getList(data[2].damageRolls), t3: this._getList(data[3].damageRolls), t4: this._getList(data[4].damageRolls), isList: true }
         ];
 
         if (type === "horde") {
             rows.push({ 
-                label: "Halved Dmg", 
+                label: "Halved Damage (Horde)", 
                 t1: this._getList(data[1].halvedDamageRolls), 
                 t2: this._getList(data[2].halvedDamageRolls), 
                 t3: this._getList(data[3].halvedDamageRolls), 
