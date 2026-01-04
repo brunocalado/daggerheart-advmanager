@@ -1,3 +1,6 @@
+# 0.1.8
+- fixed CSS leak
+
 # 0.1.7
 - encounter builder shows cost for each actor
 - encounter builder shows how many adversaries you added

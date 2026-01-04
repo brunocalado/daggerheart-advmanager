@@ -1,25 +1,173 @@
+export const ADVERSARY_EXPERIENCES = {
+  "bruiser": [
+    "Ambusher",
+    "Battle-Hardened",
+    "Camouflage",
+    "Collateral Damage",
+    "Huge",
+    "Incredible Strength",
+    "Intimidation",
+    "Intrusion",
+    "Keen Senses",
+    "Protection",
+    "Resilience",
+    "Stealth",
+    "Swimming",
+    "Throw",
+    "Unveiled Threats",
+    "Unstoppable",
+    "Heavy-Handed",
+    "Guarded"
+  ],
+  "horde": [
+    "Camouflage",
+    "Mob Tactics",
+    "Scent Tracking",
+    "Scavenging",
+    "Swimming",
+    "Pack Mentality",
+    "Endless",
+    "Swarm"
+  ],
+  "leader": [
+    "Ancient Knowledge",
+    "Animal Handling",
+    "Battle Tactics",
+    "Bloodhound",
+    "Coercion",
+    "Command",
+    "Diplomacy",
+    "Divine Knowledge",
+    "Fallen Lore",
+    "Forbidden Knowledge",
+    "Forest Knowledge",
+    "High Society",
+    "Intrusion",
+    "Leadership",
+    "Local Knowledge",
+    "Magical Knowledge",
+    "Manipulation",
+    "Persuasion",
+    "Strategic Planning",
+    "Swimming",
+    "Wisdom of Centuries",
+    "Authority",
+    "Grand Strategist",
+    "Bolstering"
+  ],
+  "minion": [
+    "Distraction",
+    "Evasion",
+    "Intrusion",
+    "Keen Senses",
+    "Sleight of Hand",
+    "Stealth",
+    "Lookout",
+    "Quick-Reflexes",
+    "Expendable"
+  ],
+  "ranged": [
+    "Ancient Knowledge",
+    "Deadly Aim",
+    "Heightened Perception",
+    "Local Knowledge",
+    "Magical Knowledge",
+    "Manipulation",
+    "Marksmanship",
+    "Strategize",
+    "Eagle Eye",
+    "High-Ground Advantage",
+    "Suppressing Fire"
+  ],
+  "skulk": [
+    "Acrobatics",
+    "Blend In",
+    "Bloodthirsty",
+    "Camouflage",
+    "Deception",
+    "Intrusion",
+    "Keen Senses",
+    "Light Feet",
+    "Manipulation",
+    "Poisoner",
+    "Sleight of Hand",
+    "Infiltrator",
+    "Silent-Step",
+    "Saboteur"
+  ],
+  "solo": [
+    "Adaptability",
+    "Boundless Knowledge",
+    "Camouflage",
+    "Combat Mastery",
+    "Conquest",
+    "History",
+    "Hunt from Above",
+    "Intimidation",
+    "Local Knowledge",
+    "Magical Knowledge",
+    "Manipulation",
+    "Navigation",
+    "Perception",
+    "Scent Tracking",
+    "Self-Sufficiency",
+    "Stealth",
+    "Survival",
+    "Tracker",
+    "Legendary Prowess",
+    "Unyielding",
+    "Apex Predator"
+  ],
+  "social": [
+    "Administration",
+    "Barter",
+    "Deception",
+    "High Society",
+    "History",
+    "Manipulation",
+    "Negotiation",
+    "Performance",
+    "Shrewd Negotiator",
+    "Silver Tongue",
+    "Social Manners",
+    "Regal Bearing",
+    "Eloquence",
+    "Insightful"
+  ],
+  "standard": [
+    "Ancient Knowledge",
+    "Discipline",
+    "Local Knowledge",
+    "Magical Knowledge",
+    "Mechanics",
+    "Stealth",
+    "Swimming",
+    "Combat Training",
+    "Versatility",
+    "Stout"
+  ],
+  "support": [
+    "Animal Knowledge",
+    "Assistance",
+    "Cartography",
+    "First Aid",
+    "Forest Knowledge",
+    "Healing",
+    "History",
+    "Inspiration",
+    "Lay of the Land",
+    "Magical Knowledge",
+    "Manipulation",
+    "Nature's Friend",
+    "Rituals",
+    "Restoration",
+    "Warding",
+    "Guidance"
+  ]
+};
+
 export const ADVERSARY_BENCHMARKS = {
   "bruiser": {
-    "experiences": [
-      "Ambusher",
-      "Battle-Hardened",
-      "Camouflage",
-      "Collateral Damage",
-      "Huge",
-      "Incredible Strength",
-      "Intimidation",
-      "Intrusion",
-      "Keen Senses",
-      "Protection",
-      "Resilience",
-      "Stealth",
-      "Swimming",
-      "Throw",
-      "Unveiled Threats",
-      "Unstoppable",
-      "Heavy-Handed",
-      "Guarded"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "12/14",
@@ -151,16 +299,6 @@ export const ADVERSARY_BENCHMARKS = {
     }
   },
   "horde": {
-    "experiences": [
-      "Camouflage",
-      "Mob Tactics",
-      "Scent Tracking",
-      "Scavenging",
-      "Swimming",
-      "Pack Mentality",
-      "Endless",
-      "Swarm"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "10/12",
@@ -280,32 +418,6 @@ export const ADVERSARY_BENCHMARKS = {
     }
   },
   "leader": {
-    "experiences": [
-      "Ancient Knowledge",
-      "Animal Handling",
-      "Battle Tactics",
-      "Bloodhound",
-      "Coercion",
-      "Command",
-      "Diplomacy",
-      "Divine Knowledge",
-      "Fallen Lore",
-      "Forbidden Knowledge",
-      "Forest Knowledge",
-      "High Society",
-      "Intrusion",
-      "Leadership",
-      "Local Knowledge",
-      "Magical Knowledge",
-      "Manipulation",
-      "Persuasion",
-      "Strategic Planning",
-      "Swimming",
-      "Wisdom of Centuries",
-      "Authority",
-      "Grand Strategist",
-      "Bolstering"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "12/14",
@@ -436,17 +548,6 @@ export const ADVERSARY_BENCHMARKS = {
     }
   },
   "minion": {
-    "experiences": [
-      "Distraction",
-      "Evasion",
-      "Intrusion",
-      "Keen Senses",
-      "Sleight of Hand",
-      "Stealth",
-      "Lookout",
-      "Quick-Reflexes",
-      "Expendable"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "10/13",
@@ -520,19 +621,6 @@ export const ADVERSARY_BENCHMARKS = {
     }
   },
   "ranged": {
-    "experiences": [
-      "Ancient Knowledge",
-      "Deadly Aim",
-      "Heightened Perception",
-      "Local Knowledge",
-      "Magical Knowledge",
-      "Manipulation",
-      "Marksmanship",
-      "Strategize",
-      "Eagle Eye",
-      "High-Ground Advantage",
-      "Suppressing Fire"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "10/12",
@@ -638,22 +726,6 @@ export const ADVERSARY_BENCHMARKS = {
     }
   },
   "skulk": {
-    "experiences": [
-      "Acrobatics",
-      "Blend In",
-      "Bloodthirsty",
-      "Camouflage",
-      "Deception",
-      "Intrusion",
-      "Keen Senses",
-      "Light Feet",
-      "Manipulation",
-      "Poisoner",
-      "Sleight of Hand",
-      "Infiltrator",
-      "Silent-Step",
-      "Saboteur"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "10/12",
@@ -768,29 +840,6 @@ export const ADVERSARY_BENCHMARKS = {
     }
   },
   "solo": {
-    "experiences": [
-      "Adaptability",
-      "Boundless Knowledge",
-      "Camouflage",
-      "Combat Mastery",
-      "Conquest",
-      "History",
-      "Hunt from Above",
-      "Intimidation",
-      "Local Knowledge",
-      "Magical Knowledge",
-      "Manipulation",
-      "Navigation",
-      "Perception",
-      "Scent Tracking",
-      "Self-Sufficiency",
-      "Stealth",
-      "Survival",
-      "Tracker",
-      "Legendary Prowess",
-      "Unyielding",
-      "Apex Predator"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "12/14",
@@ -945,22 +994,6 @@ export const ADVERSARY_BENCHMARKS = {
     }
   },
   "social": {
-    "experiences": [
-      "Administration",
-      "Barter",
-      "Deception",
-      "High Society",
-      "History",
-      "Manipulation",
-      "Negotiation",
-      "Performance",
-      "Shrewd Negotiator",
-      "Silver Tongue",
-      "Social Manners",
-      "Regal Bearing",
-      "Eloquence",
-      "Insightful"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "12/14",
@@ -1093,18 +1126,6 @@ export const ADVERSARY_BENCHMARKS = {
     }
   },
   "standard": {
-    "experiences": [
-      "Ancient Knowledge",
-      "Discipline",
-      "Local Knowledge",
-      "Magical Knowledge",
-      "Mechanics",
-      "Stealth",
-      "Swimming",
-      "Combat Training",
-      "Versatility",
-      "Stout"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "11/13",
@@ -1235,24 +1256,6 @@ export const ADVERSARY_BENCHMARKS = {
     }
   },
   "support": {
-    "experiences": [
-      "Animal Knowledge",
-      "Assistance",
-      "Cartography",
-      "First Aid",
-      "Forest Knowledge",
-      "Healing",
-      "History",
-      "Inspiration",
-      "Lay of the Land",
-      "Magical Knowledge",
-      "Manipulation",
-      "Nature's Friend",
-      "Rituals",
-      "Restoration",
-      "Warding",
-      "Guidance"
-    ],
     "tiers": {
       "tier_1": {
         "difficulty": "12/14",

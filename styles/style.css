@@ -710,10 +710,10 @@
 }
 
 /* ========================================= */
-/* COMPENDIUM STATS (RESTORED - UNSCOPED)    */
+/* COMPENDIUM STATS (SCOPED)                 */
 /* ========================================= */
 
-.stats-controls {
+#daggerheart-compendium-stats .stats-controls {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -722,7 +722,7 @@
     border-radius: 5px;
 }
 
-.stats-type-select {
+#daggerheart-compendium-stats .stats-type-select {
     width: 100%;
     height: 40px;
     padding: 0 10px;
@@ -733,13 +733,14 @@
     border-radius: 4px;
 }
 
-.dh-stats-table {
+#daggerheart-compendium-stats .dh-stats-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
 }
 
-.dh-stats-table th, .dh-stats-table td {
+#daggerheart-compendium-stats .dh-stats-table th, 
+#daggerheart-compendium-stats .dh-stats-table td {
     padding: 10px;
     border: 1px solid #555;
     text-align: center;
@@ -747,7 +748,7 @@
     color: #ffffff;
 }
 
-.dh-stats-table th {
+#daggerheart-compendium-stats .dh-stats-table th {
     background: #191919;
     color: #ea80fc;
     font-family: 'Aleo', serif;
@@ -756,21 +757,21 @@
     border-bottom: 2px solid #ea80fc;
 }
 
-.dh-stats-table th.col-type {
+#daggerheart-compendium-stats .dh-stats-table th.col-type {
     width: 15%;
     background: #111;
     color: #ddd;
 }
 
-.dh-stats-table tr:nth-child(even) {
+#daggerheart-compendium-stats .dh-stats-table tr:nth-child(even) {
     background: rgba(255, 255, 255, 0.05);
 }
 
-.dh-stats-table tr:hover {
+#daggerheart-compendium-stats .dh-stats-table tr:hover {
     background: rgba(156, 39, 176, 0.2);
 }
 
-.dh-stats-table td.row-label {
+#daggerheart-compendium-stats .dh-stats-table td.row-label {
     font-weight: bold;
     color: #ffffff;
     text-align: left;
@@ -778,7 +779,7 @@
     white-space: nowrap;
 }
 
-.damage-list {
+#daggerheart-compendium-stats .damage-list {
     font-size: 0.9em;
     color: #ddd;
     max-width: 200px;
@@ -786,7 +787,7 @@
     word-wrap: break-word;
 }
 
-.feature-list {
+#daggerheart-compendium-stats .feature-list {
     text-align: left;
     max-width: 250px;
     margin: 0 auto;
@@ -798,7 +799,7 @@
     border-radius: 4px;
 }
 
-.feature-entry {
+#daggerheart-compendium-stats .feature-entry {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -810,18 +811,18 @@
     transition: background 0.2s;
 }
 
-.feature-entry:hover {
+#daggerheart-compendium-stats .feature-entry:hover {
     background: rgba(234, 128, 252, 0.3);
 }
 
-.feature-icon {
+#daggerheart-compendium-stats .feature-icon {
     width: 22px;
     height: 22px;
     border: 0;
     flex-shrink: 0;
 }
 
-.feature-name {
+#daggerheart-compendium-stats .feature-name {
     font-size: 0.9em;
     color: #fff;
     line-height: 1.2;
