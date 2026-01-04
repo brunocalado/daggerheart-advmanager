@@ -674,13 +674,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
 
                     const imported = flags?.importedFrom || {};
-                    const tierTag = imported.tier ? `Tier ${imported.tier}` : null;
+                    const tierTag = imported.tier ? `T${imported.tier}` : null; // <--- Changed from `Tier ${imported.tier}` to `T${imported.tier}`
                     const typeTag = imported.type || null;
-                    const customTag = imported.customTag || null; // <--- Capture Custom Tag
+                    const customTag = imported.customTag || null; 
 
                     let sourceLabel = null;
                     if (customTag && customTag.trim() !== "") {
-                         sourceLabel = customTag; // Priority: Custom Tag
+                         sourceLabel = customTag; 
                     } else if (isHomebrew) {
                          sourceLabel = "Homebrew";
                     }
@@ -689,7 +689,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         action: { label: actionTag, css: actionClass },
                         tier: tierTag,
                         type: typeTag,
-                        homebrew: sourceLabel // Re-using homebrew key for UI compatibility
+                        homebrew: sourceLabel 
                     };
                 };
 

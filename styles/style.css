@@ -1647,7 +1647,7 @@
 /* ========================================= */
 
 .dh-tag {
-    font-size: 0.85em; /* UPDATE: Smaller font */
+    font-size: 0.75em; /* UPDATE: Smaller font */
     padding: 3px 8px; /* More padding for button feel */
     border-radius: 4px;
     margin-left: 6px;
