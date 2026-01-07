@@ -8,7 +8,7 @@
 - live manager visual improvements
 - You can add more compendiuns to compendium-stats 
 - removed custom features from live manager
-
+- mass update uses suggested experiences
 
 # 0.1.7
 - encounter builder shows cost for each actor

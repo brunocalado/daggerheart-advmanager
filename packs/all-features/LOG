@@ -1,15 +1,8 @@
-2026/01/07-08:39:14.877 165c Recovering log #412
-2026/01/07-08:39:14.879 165c Delete type=0 #412
-2026/01/07-08:39:14.879 165c Delete type=3 #410
-2026/01/07-09:10:01.910 348c Level-0 table #417: started
-2026/01/07-09:10:01.916 348c Level-0 table #417: 331211 bytes OK
-2026/01/07-09:10:01.917 348c Delete type=0 #415
-2026/01/07-09:10:01.918 348c Manual compaction at level-0 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
-2026/01/07-09:10:01.920 348c Manual compaction at level-1 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 1909 : 1
-2026/01/07-09:10:01.920 348c Compacting 1@1 + 1@2 files
-2026/01/07-09:10:01.929 348c Generated table #418@1: 479 keys, 320878 bytes
-2026/01/07-09:10:01.929 348c Compacted 1@1 + 1@2 files => 320878 bytes
-2026/01/07-09:10:01.930 348c compacted to: files[ 0 0 1 0 0 0 0 ]
-2026/01/07-09:10:01.930 348c Delete type=2 #147
-2026/01/07-09:10:01.930 348c Delete type=2 #417
-2026/01/07-09:10:01.933 348c Manual compaction at level-1 from '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 1909 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
+2026/01/07-09:10:21.790 165c Recovering log #416
+2026/01/07-09:10:21.794 165c Delete type=0 #416
+2026/01/07-09:10:21.795 165c Delete type=3 #414
+2026/01/07-09:53:56.542 348c Level-0 table #422: started
+2026/01/07-09:53:56.542 348c Level-0 table #422: 0 bytes OK
+2026/01/07-09:53:56.543 348c Delete type=0 #420
+2026/01/07-09:53:56.545 348c Manual compaction at level-0 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
+2026/01/07-09:53:56.545 348c Manual compaction at level-1 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)

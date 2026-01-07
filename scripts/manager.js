@@ -1,6 +1,7 @@
 // ... existing imports
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-import { ADVERSARY_BENCHMARKS, PC_BENCHMARKS } from "./rules.js";
+// CHANGE: Added ADVERSARY_EXPERIENCES to imports
+import { ADVERSARY_BENCHMARKS, PC_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID, SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SETTING_ADD_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
 
 export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -856,10 +857,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
      * UPDATE SINGLE ACTOR - NOW ACCEPTS MANUAL OVERRIDES
      */
     static async updateSingleActor(actor, newTier, overrides = {}) {
-        // ... (rest of the file content remains exactly the same as uploaded, just updated updateDamageParts and processFeatureUpdate above)
-        // Since I cannot paste the entire file if it's too big, assume standard flow.
-        // But for completeness in this block:
-        
         const actorData = actor.toObject();
         const currentTier = Number(actorData.system.tier) || 1;
 
@@ -1068,12 +1065,21 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (currentCount < targetAmount) {
                 const needed = targetAmount - currentCount;
                 let availableNames = [];
-                if (ADVERSARY_BENCHMARKS[typeKey] && ADVERSARY_BENCHMARKS[typeKey].experiences) {
+                // UPDATED: Use ADVERSARY_EXPERIENCES constant instead of BENCHMARKS
+                if (ADVERSARY_EXPERIENCES[typeKey]) {
                     const usedNames = new Set([
                         ...Object.values(currentExperiences).map(e => e.name),
                         ...Object.values(expOverrides).map(e => e.name)
                     ]);
-                    availableNames = ADVERSARY_BENCHMARKS[typeKey].experiences.filter(n => !usedNames.has(n));
+                    // Filter names that are already used
+                    availableNames = ADVERSARY_EXPERIENCES[typeKey].filter(n => !usedNames.has(n));
+                } else if (ADVERSARY_EXPERIENCES["standard"]) {
+                    // Fallback to standard if typeKey is unknown
+                    const usedNames = new Set([
+                        ...Object.values(currentExperiences).map(e => e.name),
+                        ...Object.values(expOverrides).map(e => e.name)
+                    ]);
+                    availableNames = ADVERSARY_EXPERIENCES["standard"].filter(n => !usedNames.has(n));
                 }
 
                 for (let i = 0; i < needed; i++) {
