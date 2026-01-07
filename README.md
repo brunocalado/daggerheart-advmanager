@@ -127,20 +127,20 @@ You can read the full history of changes in the [CHANGELOG](CHANGELOG.md).
 
 # 🧰 My Daggerheart Modules
 
-| Módulo | Descrição |
+| Module | Description |
 | :--- | :--- |
-| 💀 [**Adv. Manager**](https://github.com/brunocalado/daggerheart-advmanager) | Escalone adversários e crie encontros balanceados no Foundry. |
-| ☠️ [**Death Moves**](https://github.com/brunocalado/daggerheart-death-moves) | Efeitos visuais e sonoros imersivos para o momento da morte. |
-| 📏 [**Distances**](https://github.com/brunocalado/daggerheart-distances) | Visualização de alcances de combate com anéis e cálculos. |
-| 🤖 [**Fear Macros**](https://github.com/brunocalado/daggerheart-fear-macros) | Automação de macros baseada no recurso Fear. |
-| 😱 [**Fear Tracker**](https://github.com/brunocalado/daggerheart-fear-tracker) | Slider animado e configurável para controle de Fear na UI. |
-| 🛒 [**Store**](https://github.com/brunocalado/daggerheart-store) | Loja dinâmica e interativa totalmente configurável. |
-| 📦 [**Extra Content**](https://github.com/brunocalado/daggerheart-extra-content) | Coleção de recursos diversos para o sistema. |
-| 📜 [**Quick Rules**](https://github.com/brunocalado/daggerheart-quickrules) | Guia de referência rápida para as regras centrais. |
+| 💀 [**Adversary Manager**](https://github.com/brunocalado/daggerheart-advmanager) | Scale adversaries instantly and build balanced encounters in Foundry VTT. |
+| ☠️ [**Death Moves**](https://github.com/brunocalado/daggerheart-death-moves) | Enhances the Death Move moment with immersive audio and visual effects. |
+| 📏 [**Distances**](https://github.com/brunocalado/daggerheart-distances) | Visualizes combat ranges with customizable rings and hover calculations. |
+| 🤖 [**Fear Macros**](https://github.com/brunocalado/daggerheart-fear-macros) | Automatically executes macros when the Fear resource is changed. |
+| 😱 [**Fear Tracker**](https://github.com/brunocalado/daggerheart-fear-tracker) | Adds an animated slider bar with configurable fear tokens to the UI. |
+| 🛒 [**Store**](https://github.com/brunocalado/daggerheart-store) | A dynamic, interactive, and fully configurable store for Foundry VTT. |
+| 📦 [**Extra Content**](https://github.com/brunocalado/daggerheart-extra-content) | Additional resources and materials for Daggerheart. |
+| 📜 [**Quick Rules**](https://github.com/brunocalado/daggerheart-quickrules) | Fast and accessible reference guide for the core rules. |
 
 # 🗺️ Adventures
 
-| Aventura | Descrição |
+| Adventure | Description |
 | :--- | :--- |
-| ✨ [**I Wish**](https://github.com/brunocalado/i-wish-daggerheart-adventure) | Um mercador amaldiçoado busca sua última esperança em uma expedição. |
-| 💣 [**Suicide Squad**](https://github.com/brunocalado/suicide-squad-daggerheart-adventure) | Criminosos forçados a servir um mestre em uma terra à beira da guerra. |
+| ✨ [**I Wish**](https://github.com/brunocalado/i-wish-daggerheart-adventure) | A wealthy merchant is cursed; one final expedition may be the only hope. |
+| 💣 [**Suicide Squad**](https://github.com/brunocalado/suicide-squad-daggerheart-adventure) | Criminals forced to serve a ruthless master in a land on the brink of war. |
