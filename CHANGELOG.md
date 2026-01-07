@@ -7,7 +7,7 @@
 - new function to import the features from an entire compendium flaging it to use in the live manager
 - live manager visual improvements
 - You can add more compendiuns to compendium-stats 
-- 
+- removed custom features from live manager
 
 
 # 0.1.7

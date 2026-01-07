@@ -172,9 +172,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (this._featureCache.has(name)) return this._featureCache.get(name);
 
         const extraFeaturePacks = game.settings.get(MODULE_ID, SETTING_FEATURE_COMPENDIUMS) || [];
+        
+        // Changed: Removed "daggerheart-advmanager.custom-features" from hardcoded list
         const packIds = [
             "daggerheart-advmanager.all-features", 
-            "daggerheart-advmanager.custom-features",
             ...extraFeaturePacks
         ];
         
@@ -706,7 +707,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
 
                 const extraFeaturePacks = game.settings.get(MODULE_ID, SETTING_FEATURE_COMPENDIUMS) || [];
-                const packsToQuery = [...new Set(["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features", ...extraFeaturePacks])];
+                // Changed: Removed "daggerheart-advmanager.custom-features" from hardcoded list
+                const packsToQuery = [...new Set(["daggerheart-advmanager.all-features", ...extraFeaturePacks])];
                 const enableSuggestions = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
 
                 if (enableSuggestions) {
