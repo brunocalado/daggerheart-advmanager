@@ -99,8 +99,11 @@ AM.DiceProbability();
 ```
 
 ## ⚙️ Instructions
-[How to Import Features from an Adversary Compendium](https://github.com/brunocalado/daggerheart-advmanager/wiki/How-to-Import-Features-from-an-Adversary-Compendium).
-[How to Add Your Features to the Manager
+
+- [How to Import Features from an Adversary Compendium]
+(https://github.com/brunocalado/daggerheart-advmanager/wiki/How-to-Import-Features-from-an-Adversary-Compendium).
+
+- [How to Add Your Features to the Manager
 ](https://github.com/brunocalado/daggerheart-advmanager/wiki/How-to-Add-Your-Features-to-the-Manager).
 
 Learn more at [WIKI](https://github.com/brunocalado/daggerheart-advmanager/wiki).
