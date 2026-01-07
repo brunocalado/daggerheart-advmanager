@@ -10,6 +10,7 @@
 - removed custom features from live manager
 - mass update uses suggested experiences
 - minion feature show linked feature
+- You can edit flags from feature
 
 # 0.1.7
 - encounter builder shows cost for each actor

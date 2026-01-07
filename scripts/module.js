@@ -4,6 +4,7 @@ import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js";
 import { EncounterBuilder } from "./encounter-builder.js";
+import { FeatureUpdater } from "./feature-updater.js"; // <--- Import Nova Classe
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -380,7 +381,8 @@ Hooks.once("ready", () => {
         CompendiumStats: () => new CompendiumStats().render(true),
         DiceProbability: () => new DiceProbability().render(true),
         EncounterBuilder: () => new EncounterBuilder().render(true),
-        ImportFeatures: importFeatures // <--- Exposed Function
+        ImportFeatures: importFeatures, 
+        UpdateFeatures: () => new FeatureUpdater().render(true) // <--- Exposed New Functionality
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });

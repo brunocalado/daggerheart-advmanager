@@ -1,0 +1,111 @@
+<div class="dh-adv-manager-content feature-updater-container">
+    <style>
+        .feature-updater-container {
+            padding: 10px;
+        }
+        .drop-zone {
+            border: 2px dashed #555;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .drop-zone.drag-over {
+            border-color: #ff9c5a;
+            background: rgba(255, 156, 90, 0.1);
+        }
+        .drop-zone.has-item {
+            border-style: solid;
+            border-color: #4caf50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        .drop-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px; /* Espaço entre ícone e texto */
+        }
+        .dropped-item-content {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centraliza conteúdo do item */
+            width: 100%;
+        }
+        .item-name {
+            text-align: left;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .form-field {
+            margin-bottom: 10px;
+        }
+        .form-field label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        .updater-input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+
+    <div class="form-group" style="margin-bottom: 15px;">
+        <label style="font-weight: bold; color: #ff9c5a;">1. Drop Feature Here</label>
+        <div class="drop-zone {{#if item}}has-item{{/if}}">
+            {{#if item}}
+                <div class="dropped-item-content">
+                    <img src="{{item.img}}" class="item-icon" style="width: 32px; height: 32px; border: none; margin-right: 10px;">
+                    <span class="item-name">{{item.name}}</span>
+                </div>
+            {{else}}
+                <div class="drop-placeholder">
+                    <i class="fas fa-box-open" style="font-size: 2em; opacity: 0.3;"></i>
+                    <span>Drag a Feature from the World</span>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+
+    <hr style="border-top: 1px solid #444;">
+
+    <div class="form-group">
+        <label>2. Configure Flags</label>
+        
+        <div class="form-field">
+            <label>Target Tier</label>
+            <select name="tier" class="updater-input">
+                {{#each tierOptions}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label>Adversary Type</label>
+            <select name="type" class="updater-input">
+                {{#each typeOptions}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label>Custom Tag</label>
+            <input type="text" name="customTag" value="{{customTagValue}}" class="updater-input" placeholder="e.g. Core, Homebrew">
+        </div>
+    </div>
+
+    <footer class="sheet-footer" style="margin-top: 20px;">
+        <button type="submit" class="apply-btn" {{#unless item}}disabled{{/unless}}>
+            <i class="fas fa-save"></i> Update Feature Flags
+        </button>
+    </footer>
+</div>
