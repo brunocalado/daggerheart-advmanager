@@ -5,7 +5,7 @@
 
 The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries instantly, build balanced encounters.
 
-<video src="https://github.com/user-attachments/assets/a875027b-eb4a-4637-a4f5-7c61064da22d" 
+<video src="[https://github.com/user-attachments/assets/a875027b-eb4a-4637-a4f5-7c61064da22d](https://github.com/user-attachments/assets/a875027b-eb4a-4637-a4f5-7c61064da22d)" 
        controls 
        width="720"
        autoplay 
@@ -18,7 +18,9 @@ The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries 
 
 <p align="center"><img width="1400" src="docs/view-livemanager.webp"></p>
 
-* **📈 Instant Tier Scaling:** Effortlessly scale any Adversary from Tier 1 to 4 using official benchmarks.
+<p align="center"><img width="1400" src="docs/view-livemanager2.webp"></p>
+
+* **📈 Instant Tier Scaling:** Effortlessly scale any Adversary from Tier 1 to 4 using benchmarks.
 * **👀 Live Preview Dashboard:** Compare "Current" stats vs. "Target Tier" stats side-by-side before applying any changes.
 * **🎲 Smart Math & Probabilities:**
     * Automatically recalculates HP, Stress, Difficulty, and Damage Thresholds.
@@ -31,14 +33,22 @@ The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries 
     * Update multiple selected tokens on the canvas simultaneously.
     * Import and auto-scale adversaries directly from Compendiums into your world.
 
+### 🏷️ Feature Management
+
+<p align="center"><img width="1400" src="docs/view-flageditor.webp"></p>
+
+* **Add your Homebrew:** You can add your homebrew features to the manager.
+* **Feature Flag Updater:** A drag-and-drop utility to manually configure scaling metadata (Tier, Adversary Type, Custom Tag) for feature items in your world.
+* **Import all Features:** You can import all features directly from adversaries in a compendium.
+
 ### ⚔️ Encounter Builder
 
 <p align="center"><img width="1400" src="docs/view-encounterbuilder.webp"></p>
 
 * **🔎 Search & Library:** Robust search across World actors and System Compendiums with filters for Tier and Type.
 * **🧮 Smart Budgeting:** Automatic **Battle Point (BP)** calculation based on Party Size and Tier. Tracks current cost vs budget limit.
-* **🧠 Synergy & Role Detection:** Automatically detects tactical roles like **Summoner**, **Spotlighter**, **Momentum**, and **Relentless**, adjusting the difficulty estimate based on enemy combinations.
-* **💀 Difficulty Estimator:** Real-time difficulty assessment (Balanced, Challenging, Deadly, Out of Tier) with visual indicators.
+* **🧠 Synergy & Role Detection:** Automatically detects tactical roles like **Summoner**, **Spotlighter**, **Momentum/Terrifying**, and **Relentless**, adjusting the difficulty estimate based on enemy combinations.
+* **💀 Difficulty Estimator:** Real-time difficulty assessment (Balanced, Challenging, Deadly, Out of Tier).
 * **🔥 Custom Modifiers:** Apply **Damage Boosts** to specific units or toggle manual difficulty modifiers (Easier/Harder) to fine-tune the challenge.
 * **⚡ Quick Deployment:** Build your encounter list and **place tokens directly on the scene** (hidden by default) or organize them into folders.
 
@@ -50,6 +60,7 @@ The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries 
 * **📋 Data Tables:** View calculated ranges for Difficulty, HP, Stress, Thresholds, Attack Modifiers, and Damage Rolls.
 * **🧩 Feature Browser:** See a list of all features found in the compendium for each Tier.
 * **🖐️ Drag & Drop:** Click to view feature details or **drag them directly onto an actor sheet**.
+* **📦 Add your Compendium:** You can add more compendiuns.
 
 ### 🎲 Dice Probability Calculator
 
@@ -65,10 +76,10 @@ Access all functions (Adversary Manager, Encounter Builder, Compendium Stats, an
 
 <p align="center"><img width="600" src="docs/system-button.webp"></p>
 
-You can also use macros:
+You can also use macros to access the API:
 
 ```js
-// Adversary Manager
+// Adversary Manager (Live or Batch based on selection)
 AM.Manage();
 ```
 
@@ -87,6 +98,8 @@ AM.CompendiumStats();
 AM.DiceProbability();
 ```
 
+You can learn how to use **Import Features** and **Update Feature** functions with [Feature-Management-API](https://github.com/brunocalado/daggerheart-advmanager/wiki/Feature-Management-API).
+
 ## ⚙️ Instructions
 Learn more at [WIKI](https://github.com/brunocalado/daggerheart-advmanager/wiki).
 
@@ -95,7 +108,7 @@ Learn more at [WIKI](https://github.com/brunocalado/daggerheart-advmanager/wiki)
 Install via the Foundry VTT Module browser or use this manifest link:
 
 ```js
-https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json
+[https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json](https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json)
 ```
 
 ## 📜 Changelog
