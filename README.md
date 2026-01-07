@@ -35,7 +35,7 @@ The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries 
 
 ### 🏷️ Feature Management
 
-<p align="center"><img width="1400" src="docs/view-flageditor.webp"></p>
+<p align="center"><img width="400" src="docs/view-flageditor.webp"></p>
 
 * **Add your Homebrew:** You can add your homebrew features to the manager.
 * **Feature Flag Updater:** A drag-and-drop utility to manually configure scaling metadata (Tier, Adversary Type, Custom Tag) for feature items in your world.
@@ -54,7 +54,7 @@ The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries 
 
 ### 📊 Compendium Statistics
 
-<p align="center"><img width="1400" src="docs/view-compendiumstats.webp"></p>
+<p align="center"><img width="1000" src="docs/view-compendiumstats.webp"></p>
 
 * **🔍 Stats Explorer:** Browse comprehensive statistics for every adversary type across all 4 Tiers.
 * **📋 Data Tables:** View calculated ranges for Difficulty, HP, Stress, Thresholds, Attack Modifiers, and Damage Rolls.
