@@ -171,9 +171,32 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     async _findFeatureItem(name) {
         if (this._featureCache.has(name)) return this._featureCache.get(name);
 
+        // --- SPECIAL HANDLING FOR MINION (X) ---
+        const minionMatch = name.match(/^Minion\s*\((\d+)\)$/i);
+        if (minionMatch) {
+            const customPack = game.packs.get("daggerheart-advmanager.custom-features");
+            if (customPack) {
+                // We need featureForm and flags for consistent data return
+                const index = await customPack.getIndex({ fields: ["system.featureForm", "flags.importedFrom"] });
+                // Explicitly look for the template item "Minion (X)"
+                const entry = index.find(i => i.name === "Minion (X)");
+                
+                if (entry) {
+                    const data = { 
+                        img: entry.img, 
+                        uuid: entry.uuid, 
+                        type: entry.system?.featureForm || "",
+                        flags: entry.flags || {} 
+                    };
+                    // Cache it under the specific name "Minion (5)" so we don't re-fetch
+                    this._featureCache.set(name, data);
+                    return data;
+                }
+            }
+        }
+
         const extraFeaturePacks = game.settings.get(MODULE_ID, SETTING_FEATURE_COMPENDIUMS) || [];
         
-        // Changed: Removed "daggerheart-advmanager.custom-features" from hardcoded list
         const packIds = [
             "daggerheart-advmanager.all-features", 
             ...extraFeaturePacks

@@ -9,6 +9,7 @@
 - You can add more compendiuns to compendium-stats 
 - removed custom features from live manager
 - mass update uses suggested experiences
+- minion feature show linked feature
 
 # 0.1.7
 - encounter builder shows cost for each actor
