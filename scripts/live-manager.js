@@ -296,8 +296,24 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             { value: "daggerheart.adversaries", label: "System Compendium", selected: this.source === "daggerheart.adversaries" }
         ];
 
+        // --- NEW: Add Template Option (New Adversary) ---
+        const templatePackId = "daggerheart-advmanager.templates";
+        const templatePack = game.packs.get(templatePackId);
+        if (templatePack) {
+            sourceOptions.push({
+                value: templatePackId,
+                label: "New Adversary",
+                selected: this.source === templatePackId
+            });
+        }
+
         const extraCompendiums = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
         let currentSourceIsValid = (this.source === "world" || this.source === "daggerheart.adversaries" || this.source === "all");
+
+        // Validate Template Source
+        if (this.source === templatePackId && templatePack) {
+            currentSourceIsValid = true;
+        }
 
         extraCompendiums.forEach(packId => {
             const pack = game.packs.get(packId);

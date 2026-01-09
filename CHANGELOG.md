@@ -1,3 +1,6 @@
+# 0.1.9
+- new adversaries template
+
 # 0.1.8
 - fixed CSS leak
 - moved exps out of the community table
