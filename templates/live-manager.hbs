@@ -187,7 +187,10 @@
 
         <!-- Right Column: Preview State -->
         <div class="preview-column future-column">
-            <h3 class="col-header future-header">Preview (T{{previewStats.tier}})</h3>
+            <h3 class="col-header future-header" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                <span>Preview (T{{previewStats.tier}})</span>
+                <input type="text" class="preview-actor-name-input" value="{{previewActorName}}" placeholder="New Actor Name" style="flex: 0 0 auto; min-width: 150px; max-width: 250px; padding: 4px 8px; background: rgba(0, 0, 0, 0.3); border: 1px solid #555; color: #eee; border-radius: 3px; font-size: 0.85em;" title="Name for new actor">
+            </h3>
             
             {{#if previewStats.error}}
                 <div class="error-msg">{{previewStats.error}}</div>
