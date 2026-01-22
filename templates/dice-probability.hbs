@@ -1,15 +1,40 @@
 <div class="dh-adv-manager-content">
-    
+
+    <!-- Mode Toggle Buttons -->
+    <div class="stat-row" style="margin-bottom: 15px; border-bottom: 1px solid #C9A060; padding-bottom: 10px;">
+        <div class="mode-toggle-buttons" style="width: 100%; display: flex; gap: 4px;">
+            <button type="button"
+                data-action="setMode"
+                data-value="duality"
+                class="roll-btn {{#if isDualityMode}}active{{/if}}"
+                style="flex: 1;"
+                title="Duality Dice (2d12)">
+                <i class="fas fa-dice"></i> Duality Dice
+            </button>
+            <button type="button"
+                data-action="setMode"
+                data-value="d20"
+                class="roll-btn {{#if isD20Mode}}active{{/if}}"
+                style="flex: 1;"
+                title="D20 System">
+                <i class="fas fa-dice-d20"></i> D20
+            </button>
+        </div>
+    </div>
+
     <div class="form-group">
-        
+
+        {{#if isDualityMode}}
+        <!-- ========== DUALITY DICE MODE ========== -->
+
         <!-- Die 1 Buttons -->
         <div class="stat-row">
             <span class="stat-label">Die 1</span>
             <div class="die-btn-group">
                 {{#each die1Buttons}}
-                <button type="button" 
-                        class="roll-btn small {{this.cssClass}}" 
-                        data-action="setDie1" 
+                <button type="button"
+                        class="roll-btn small {{this.cssClass}}"
+                        data-action="setDie1"
                         data-value="{{this.value}}">
                     {{this.label}}
                 </button>
@@ -22,9 +47,9 @@
             <span class="stat-label">Die 2</span>
             <div class="die-btn-group">
                 {{#each die2Buttons}}
-                <button type="button" 
-                        class="roll-btn small {{this.cssClass}}" 
-                        data-action="setDie2" 
+                <button type="button"
+                        class="roll-btn small {{this.cssClass}}"
+                        data-action="setDie2"
                         data-value="{{this.value}}">
                     {{this.label}}
                 </button>
@@ -36,24 +61,24 @@
         <div class="stat-row">
             <span class="stat-label">Roll Type</span>
             <div class="roll-type-buttons" style="width: 70%; display: flex; gap: 4px;">
-                <button type="button" 
-                    data-action="setRollType" 
-                    data-value="-1" 
-                    class="roll-btn {{#if isDisadvantage}}active{{/if}}" 
+                <button type="button"
+                    data-action="setRollType"
+                    data-value="-1"
+                    class="roll-btn {{#if isDisadvantage}}active{{/if}}"
                     title="Disadvantage">
                     Dis
                 </button>
-                <button type="button" 
-                    data-action="setRollType" 
-                    data-value="0" 
-                    class="roll-btn {{#if isNormal}}active{{/if}}" 
+                <button type="button"
+                    data-action="setRollType"
+                    data-value="0"
+                    class="roll-btn {{#if isNormal}}active{{/if}}"
                     title="Normal">
                     Norm
                 </button>
-                <button type="button" 
-                    data-action="setRollType" 
-                    data-value="1" 
-                    class="roll-btn {{#if isAdvantage}}active{{/if}}" 
+                <button type="button"
+                    data-action="setRollType"
+                    data-value="1"
+                    class="roll-btn {{#if isAdvantage}}active{{/if}}"
                     title="Advantage">
                     Adv
                 </button>
@@ -65,15 +90,63 @@
             <span class="stat-label">{{advLabel}}</span>
             <div class="die-btn-group">
                 {{#each advButtons}}
-                <button type="button" 
-                        class="roll-btn small {{this.cssClass}}" 
-                        data-action="setAdvDie" 
+                <button type="button"
+                        class="roll-btn small {{this.cssClass}}"
+                        data-action="setAdvDie"
                         data-value="{{this.value}}">
                     {{this.label}}
                 </button>
                 {{/each}}
             </div>
         </div>
+
+        {{else}}
+        <!-- ========== D20 MODE ========== -->
+
+        <!-- Roll Type Buttons -->
+        <div class="stat-row">
+            <span class="stat-label">Roll Type</span>
+            <div class="roll-type-buttons" style="width: 70%; display: flex; gap: 4px;">
+                <button type="button"
+                    data-action="setRollType"
+                    data-value="-1"
+                    class="roll-btn {{#if isDisadvantage}}active{{/if}}"
+                    title="Disadvantage (2d20 keep lowest)">
+                    Dis
+                </button>
+                <button type="button"
+                    data-action="setRollType"
+                    data-value="0"
+                    class="roll-btn {{#if isNormal}}active{{/if}}"
+                    title="Normal (1d20)">
+                    Norm
+                </button>
+                <button type="button"
+                    data-action="setRollType"
+                    data-value="1"
+                    class="roll-btn {{#if isAdvantage}}active{{/if}}"
+                    title="Advantage (2d20 keep highest)">
+                    Adv
+                </button>
+            </div>
+        </div>
+
+        <!-- Critical Threshold -->
+        <div class="stat-row">
+            <span class="stat-label">Critical Threshold</span>
+            <div class="select-wrapper" style="width: 70%;">
+                <select name="criticalThreshold" class="stats-type-select">
+                    {{#each critOptions}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}+</option>
+                    {{/each}}
+                </select>
+                <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
+        </div>
+
+        {{/if}}
+
+        <!-- ========== SHARED FIELDS ========== -->
 
         <!-- Modifier Input -->
         <div class="stat-row">
@@ -101,12 +174,12 @@
     <!-- Results Section -->
     <div class="probability-results" style="margin-top: 15px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; border: 1px solid #C9A060;">
         <h3 style="color: #C9A060; border-bottom: 1px solid #444; margin-bottom: 5px; text-align: center;">Results</h3>
-        
+
         <div class="stat-row">
             <span class="stat-label">Roll</span>
             <span class="stat-value" style="font-size: 0.9em;">{{results.diceNotation}}</span>
         </div>
-        
+
         <div class="stat-row" style="margin-top: 5px; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.1);">
             <span class="stat-label" style="color: #98fb98;">Success Chance</span>
             <span class="stat-value" style="color: #98fb98; font-weight: bold; font-size: 1.1em;">{{results.success}}%</span>
@@ -118,7 +191,11 @@
         </div>
 
         <div class="stat-row">
+            {{#if isDualityMode}}
             <span class="stat-label" style="color: #ea80fc;">Critical (Doubles)</span>
+            {{else}}
+            <span class="stat-label" style="color: #ea80fc;">Critical ({{results.criticalThreshold}}+)</span>
+            {{/if}}
             <span class="stat-value" style="color: #ea80fc;">{{results.crit}}%</span>
         </div>
     </div>

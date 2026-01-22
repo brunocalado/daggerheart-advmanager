@@ -1,6 +1,7 @@
 # 0.2.0
 - you can change the name of an actor
 - compendium stats only read adversaries
+- dice probability does d20 now
 
 # 0.1.9
 - new adversaries template

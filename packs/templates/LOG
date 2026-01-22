@@ -1,13 +1,7 @@
-2026/01/22-17:12:02.354 58e8 Delete type=3 #1
-2026/01/22-17:30:51.480 5ff4 Level-0 table #65: started
-2026/01/22-17:30:51.481 5ff4 Level-0 table #65: 2293 bytes OK
-2026/01/22-17:30:51.482 5ff4 Delete type=0 #63
-2026/01/22-17:30:51.484 5ff4 Manual compaction at level-0 from '!actors!3QuaJOFf07f1Gpnb' @ 72057594037927935 : 1 .. '!actors.effects!yMO82g01P4RVB92T.WJujmckn8GHjDASI' @ 0 : 0; will stop at '!actors.effects!yMO82g01P4RVB92T.WJujmckn8GHjDASI' @ 2 : 1
-2026/01/22-17:30:51.485 5ff4 Compacting 3@0 + 0@1 files
-2026/01/22-17:30:51.486 5ff4 Generated table #66@0: 11 keys, 12569 bytes
-2026/01/22-17:30:51.486 5ff4 Compacted 3@0 + 0@1 files => 12569 bytes
-2026/01/22-17:30:51.487 5ff4 compacted to: files[ 0 1 0 0 0 0 0 ]
-2026/01/22-17:30:51.487 5ff4 Delete type=2 #5
-2026/01/22-17:30:51.488 5ff4 Delete type=2 #59
-2026/01/22-17:30:51.488 5ff4 Delete type=2 #65
-2026/01/22-17:30:51.490 5ff4 Manual compaction at level-0 from '!actors.effects!yMO82g01P4RVB92T.WJujmckn8GHjDASI' @ 2 : 1 .. '!actors.effects!yMO82g01P4RVB92T.WJujmckn8GHjDASI' @ 0 : 0; will stop at (end)
+2026/01/22-17:34:48.977 58e8 Recovering log #64
+2026/01/22-17:34:48.980 58e8 Delete type=0 #64
+2026/01/22-17:34:48.980 58e8 Delete type=3 #62
+2026/01/22-17:39:52.360 5ff4 Level-0 table #70: started
+2026/01/22-17:39:52.360 5ff4 Level-0 table #70: 0 bytes OK
+2026/01/22-17:39:52.361 5ff4 Delete type=0 #68
+2026/01/22-17:39:52.365 5ff4 Manual compaction at level-0 from '!actors!3QuaJOFf07f1Gpnb' @ 72057594037927935 : 1 .. '!actors.effects!yMO82g01P4RVB92T.WJujmckn8GHjDASI' @ 0 : 0; will stop at (end)

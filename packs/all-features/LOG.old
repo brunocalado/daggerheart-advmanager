@@ -1,9 +1,12 @@
-2026/01/22-17:12:02.299 23b4 Log #470: 0 ops saved to Table #554 OK
-2026/01/22-17:12:02.299 23b4 Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features/000470.log: OK
-2026/01/22-17:12:02.300 23b4 Log #553: 0 ops saved to Table #555 OK
-2026/01/22-17:12:02.300 23b4 Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features/000553.log: OK
-2026/01/22-17:12:02.301 23b4 Table #418: 479 entries OK
-2026/01/22-17:12:02.302 23b4 Table #472: 479 entries OK
-2026/01/22-17:12:02.304 23b4 Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features/MANIFEST-000468: OK
-2026/01/22-17:12:02.304 23b4 Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features/MANIFEST-000551: OK
-2026/01/22-17:12:02.308 23b4 **** Repaired leveldb C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features; recovered 2 files; 641756 bytes. Some data may have been lost. ****
+2026/01/22-17:12:02.314 23b4 Delete type=3 #1
+2026/01/22-17:30:51.461 5ff4 Level-0 table #559: started
+2026/01/22-17:30:51.461 5ff4 Level-0 table #559: 0 bytes OK
+2026/01/22-17:30:51.462 5ff4 Delete type=0 #557
+2026/01/22-17:30:51.465 5ff4 Manual compaction at level-0 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 1909 : 1
+2026/01/22-17:30:51.465 5ff4 Compacting 2@0 + 0@1 files
+2026/01/22-17:30:51.473 5ff4 Generated table #560@0: 479 keys, 320878 bytes
+2026/01/22-17:30:51.473 5ff4 Compacted 2@0 + 0@1 files => 320878 bytes
+2026/01/22-17:30:51.474 5ff4 compacted to: files[ 0 1 0 0 0 0 0 ]
+2026/01/22-17:30:51.474 5ff4 Delete type=2 #418
+2026/01/22-17:30:51.475 5ff4 Delete type=2 #472
+2026/01/22-17:30:51.476 5ff4 Manual compaction at level-0 from '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 1909 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
