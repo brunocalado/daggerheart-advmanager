@@ -31,15 +31,15 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this._cachedValues = null;
 
         // Store overrides separated by type
-        this.overrides = { 
+        this.overrides = {
             features: {
                 names: {},
                 damage: {}
             },
-            suggestedFeatures: null, 
-            suggestedFeaturesType: "default", 
-            suggestedFeaturesTier: "default", 
-            experiences: {}, 
+            suggestedFeatures: null,
+            suggestedFeaturesType: "default",
+            suggestedFeaturesTier: "default",
+            experiences: {},
             damageFormula: undefined,
             halvedDamageFormula: undefined,
             difficulty: undefined,
@@ -50,9 +50,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             attackMod: undefined,
             expAmount: undefined,
             expMod: undefined,
-            damageTypes: null, 
-            criticalThreshold: undefined, 
-            directDamage: undefined 
+            damageTypes: null,
+            criticalThreshold: undefined,
+            directDamage: undefined,
+            previewActorName: undefined
         };
 
         // Initialize Settings
@@ -254,7 +255,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.selectedActorId = actor.id;
         this.targetTier = Number(actor.system.tier) || 1;
         
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined }; 
         this._suggestionCache = {}; 
         this._cachedValues = null; 
 
@@ -868,33 +869,48 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }))
         ];
 
+        // Generate preview actor name
+        let previewActorName = "";
+        if (this.overrides.previewActorName !== undefined) {
+            previewActorName = this.overrides.previewActorName;
+        } else if (actor) {
+            const baseName = actor.name;
+            const currentTier = Number(actor.system.tier) || 1;
+            if (this.targetTier !== currentTier) {
+                previewActorName = `${baseName} (T${this.targetTier})`;
+            } else {
+                previewActorName = baseName;
+            }
+        }
+
         return {
             adversaries: displayedAdversaries,
             hasActor: !!actor,
             selectedActorId: this.selectedActorId,
             currentStats,
             previewStats,
-            featurePreviewData, 
-            allSuggestedFeatures, 
+            featurePreviewData,
+            allSuggestedFeatures,
             tiers,
             linkData,
             sourceOptions,
             filterOptions,
             typeOptions,
-            damageOptions, 
+            damageOptions,
             halvedDamageOptions,
             damageTooltip,
             halvedDamageTooltip,
             actorName: actor?.name || "None",
             portraitImg: portraitImg,
-            isHorde: isHorde, 
+            isHorde: isHorde,
             actorTypeLabel: actorTypeLabel,
             suggestedFeaturesTypeOptions,
             suggestedFeaturesTierOptions,
-            isPhysical, 
-            isMagical, 
-            criticalOptions, 
-            directOptions 
+            isPhysical,
+            isMagical,
+            criticalOptions,
+            directOptions,
+            previewActorName: previewActorName
         };
     }
 
@@ -959,6 +975,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (suggestionTierSelect) {
             suggestionTierSelect.addEventListener('change', (e) => this._onChangeSuggestedTier(e, suggestionTierSelect));
         }
+
+        const previewActorNameInput = html.querySelector('.preview-actor-name-input');
+        if (previewActorNameInput) {
+            previewActorNameInput.addEventListener('change', (e) => this._onPreviewActorNameChange(e, previewActorNameInput));
+        }
     }
 
     async _onOpenSettings(event, target) {
@@ -978,7 +999,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.stopPropagation();
         this.source = target.value;
         this.selectedActorId = null;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined }; 
         this._suggestionCache = {}; 
         this._cachedValues = null;
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
@@ -1004,7 +1025,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.preventDefault();
         event.stopPropagation();
         this.selectedActorId = target.value;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined }; 
+        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined }; 
         this._suggestionCache = {}; 
         this._cachedValues = null;
         
@@ -1019,7 +1040,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const tier = Number(target.dataset.tier);
         if (tier) {
             this.targetTier = tier;
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined }; 
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined }; 
             this._suggestionCache = {}; 
             this._cachedValues = null;
             this.render();
@@ -1083,6 +1104,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 hasManualUpdates = true;
             }
 
+            if (this.overrides.previewActorName !== undefined && this.overrides.previewActorName.trim() !== "") {
+                manualUpdates["name"] = this.overrides.previewActorName;
+                hasManualUpdates = true;
+            }
+
             if (hasManualUpdates) {
                 const updatedActor = await freshActor.update(manualUpdates);
                 if (updatedActor && updatedActor.id) {
@@ -1100,7 +1126,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const typeKey = (freshActor.system.type || "standard").toLowerCase();
             this.filterType = typeKey; 
 
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined };
+            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined };
             this._suggestionCache = {}; 
             this._cachedValues = null;
 
@@ -1204,6 +1230,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const val = target.value;
         this.overrides.directDamage = val;
         this.render();
+    }
+
+    _onPreviewActorNameChange(event, target) {
+        this.overrides.previewActorName = target.value;
     }
 
     async _onOpenFeature(event, target) {

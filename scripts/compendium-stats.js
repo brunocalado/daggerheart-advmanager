@@ -117,7 +117,9 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         const systemPack = game.packs.get("daggerheart.adversaries");
         if (systemPack) {
             const sysDocs = await systemPack.getDocuments();
-            this.allActors.push(...sysDocs);
+            // Filter to only include adversary type actors
+            const adversaries = sysDocs.filter(doc => doc.type === "adversary");
+            this.allActors.push(...adversaries);
         }
 
         const extraPacks = game.settings.get(MODULE_ID, SETTING_STATS_COMPENDIUMS) || [];
@@ -126,7 +128,9 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             if (pack) {
                 try {
                     const docs = await pack.getDocuments();
-                    this.allActors.push(...docs);
+                    // Filter to only include adversary type actors
+                    const adversaries = docs.filter(doc => doc.type === "adversary");
+                    this.allActors.push(...adversaries);
                 } catch (e) {
                     console.error(`Daggerheart Stats | Failed to load pack ${packId}`, e);
                 }
