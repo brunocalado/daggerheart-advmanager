@@ -836,6 +836,23 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             item.setAttribute('draggable', 'true');
             item.addEventListener('dragstart', this._onDragStart.bind(this));
         });
+
+        // Drop zone for actors and folders
+        const encounterList = html.querySelector('.eb-encounter-list');
+        if (encounterList) {
+            encounterList.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                encounterList.classList.add('drop-highlight');
+            });
+            encounterList.addEventListener('dragleave', (e) => {
+                encounterList.classList.remove('drop-highlight');
+            });
+            encounterList.addEventListener('drop', (e) => {
+                e.preventDefault();
+                encounterList.classList.remove('drop-highlight');
+                this._onDropActor(e);
+            });
+        }
     }
 
     _onDragStart(event) {
@@ -975,5 +992,111 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const entryId = target.dataset.entryid;
         this.encounterList = this.encounterList.filter(item => item.entryId !== entryId);
         this.render();
+    }
+
+    /**
+     * Handle drop events for actors and folders from the Foundry directory.
+     */
+    async _onDropActor(event) {
+        let data;
+        try {
+            data = JSON.parse(event.dataTransfer.getData("text/plain"));
+        } catch (e) {
+            return;
+        }
+
+        // Handle Actor drop
+        if (data.type === "Actor") {
+            const actor = await fromUuid(data.uuid);
+            if (actor) {
+                await this._addActorToEncounter(actor);
+            }
+        }
+
+        // Handle Folder drop
+        if (data.type === "Folder") {
+            const folder = await fromUuid(data.uuid);
+            if (folder && folder.type === "Actor") {
+                // Get all actors in this folder (including subfolders)
+                const actors = this._getActorsFromFolder(folder);
+                for (const actor of actors) {
+                    await this._addActorToEncounter(actor);
+                }
+            }
+        }
+
+        this.render();
+    }
+
+    /**
+     * Recursively get all actors from a folder and its subfolders.
+     */
+    _getActorsFromFolder(folder) {
+        let actors = [];
+
+        // Get actors directly in this folder
+        const folderActors = game.actors.filter(a => a.folder?.id === folder.id);
+        actors.push(...folderActors);
+
+        // Get actors from subfolders
+        const subfolders = game.folders.filter(f => f.type === "Actor" && f.folder?.id === folder.id);
+        for (const subfolder of subfolders) {
+            actors.push(...this._getActorsFromFolder(subfolder));
+        }
+
+        return actors;
+    }
+
+    /**
+     * Add a single actor to the encounter list (if it's a valid adversary).
+     */
+    async _addActorToEncounter(actor) {
+        // Only add adversary type actors
+        if (actor.type !== "adversary") {
+            return;
+        }
+
+        // Collect special features
+        const specialFeatures = [];
+        const allFeatureNames = [];
+
+        if (actor.items) {
+            actor.items.forEach(i => allFeatureNames.push(i.name));
+
+            if (allFeatureNames.includes("Momentum")) {
+                specialFeatures.push("Momentum");
+            }
+            if (allFeatureNames.includes("Terrifying")) {
+                specialFeatures.push("Terrifying");
+            }
+            const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
+            if (relentless) {
+                specialFeatures.push("Relentless");
+            }
+
+            // Check Summoner
+            if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) {
+                specialFeatures.push("Summoner");
+            }
+
+            // Check Spotlighter
+            if (allFeatureNames.some(name => POWERFUL_FEATURES.spotlighter.includes(name))) {
+                specialFeatures.push("Spotlighter");
+            }
+        }
+
+        this.encounterList.push({
+            entryId: foundry.utils.randomID(),
+            uuid: actor.uuid,
+            id: actor.id,
+            name: actor.name,
+            tier: Number(actor.system.tier) || 1,
+            type: (actor.system.type || "standard").toLowerCase(),
+            img: this._resolveImage(actor.img),
+            isCompendium: false,
+            packId: null,
+            hasDamageBoost: false,
+            specialFeatures: specialFeatures
+        });
     }
 }

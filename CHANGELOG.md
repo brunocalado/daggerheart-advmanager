@@ -2,6 +2,7 @@
 - you can change the name of an actor
 - compendium stats only read adversaries
 - dice probability does d20 now
+- You can drag actors or a folder with actors to the encounter builder.
 
 # 0.1.9
 - new adversaries template

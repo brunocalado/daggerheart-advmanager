@@ -1362,6 +1362,12 @@
 
 .eb-encounter-list { flex: 1; overflow-y: auto; }
 
+.eb-encounter-list.drop-highlight {
+    background: rgba(152, 251, 152, 0.15);
+    border: 2px dashed #98fb98;
+    border-radius: 4px;
+}
+
 .eb-item-actions {
     display: flex;
     gap: 5px;

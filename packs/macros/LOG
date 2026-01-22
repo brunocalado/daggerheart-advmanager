@@ -1,7 +1,7 @@
-2026/01/22-17:34:48.969 23b4 Recovering log #762
-2026/01/22-17:34:48.973 23b4 Delete type=0 #762
-2026/01/22-17:34:48.973 23b4 Delete type=3 #760
-2026/01/22-17:39:52.363 5ff4 Level-0 table #768: started
-2026/01/22-17:39:52.363 5ff4 Level-0 table #768: 0 bytes OK
-2026/01/22-17:39:52.364 5ff4 Delete type=0 #766
-2026/01/22-17:39:52.365 5ff4 Manual compaction at level-0 from '!macros!WbRm9MnIxX51Svky' @ 72057594037927935 : 1 .. '!macros!uvAlpxWSA3uVepDq' @ 0 : 0; will stop at (end)
+2026/01/22-17:40:18.082 13ec Recovering log #767
+2026/01/22-17:40:18.086 13ec Delete type=0 #767
+2026/01/22-17:40:18.086 13ec Delete type=3 #765
+2026/01/22-17:46:06.999 5ff4 Level-0 table #772: started
+2026/01/22-17:46:06.999 5ff4 Level-0 table #772: 0 bytes OK
+2026/01/22-17:46:07.000 5ff4 Delete type=0 #770
+2026/01/22-17:46:07.006 5ff4 Manual compaction at level-0 from '!macros!WbRm9MnIxX51Svky' @ 72057594037927935 : 1 .. '!macros!uvAlpxWSA3uVepDq' @ 0 : 0; will stop at (end)
