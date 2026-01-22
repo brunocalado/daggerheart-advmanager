@@ -228,15 +228,28 @@ async function importFeatures(compendiumId, rootFolderName, customTag) {
     }
 
     // 2. Load Documents
-    const adversaries = await pack.getDocuments();
-    console.log(`Found ${adversaries.length} adversaries in ${compendiumId}...`);
+    const allDocs = await pack.getDocuments();
+    console.log(`Found ${allDocs.length} documents in ${compendiumId}...`);
+
+    // Filter to only include adversary type actors
+    const adversaries = allDocs.filter(doc => doc.type === "adversary");
+    const filteredOut = allDocs.length - adversaries.length;
+
+    if (filteredOut > 0) {
+        console.log(`Filtered out ${filteredOut} non-adversary actors.`);
+    }
+    console.log(`Processing ${adversaries.length} adversaries...`);
 
     let totalCreated = 0;
     let skippedCount = 0;
 
     // 3. Process Adversaries
     for (const adversary of adversaries) {
-        if (adversary.type !== "adversary") continue;
+        // Double-check type safety
+        if (adversary.type !== "adversary") {
+            console.warn(`Skipping non-adversary: ${adversary.name} (type: ${adversary.type})`);
+            continue;
+        }
 
         const rawType = adversary.system?.type || "Standard";
         const advType = capitalize(rawType); 
@@ -260,10 +273,14 @@ async function importFeatures(compendiumId, rootFolderName, customTag) {
 
     // Final Report
     console.log(`--- IMPORT FINISHED ---`);
-    console.log(`Total Created: ${totalCreated}`);
-    console.log(`Total Skipped: ${skippedCount}`);
+    console.log(`Total Adversaries Processed: ${adversaries.length}`);
+    console.log(`Total Items Created: ${totalCreated}`);
+    console.log(`Total Items Skipped: ${skippedCount}`);
+    if (filteredOut > 0) {
+        console.log(`Non-Adversary Actors Filtered: ${filteredOut}`);
+    }
 
-    ui.notifications.info(`Import complete! Created: ${totalCreated} items. See console for details.`);
+    ui.notifications.info(`Import complete! Created ${totalCreated} items from ${adversaries.length} adversaries. See console for details.`);
 
     // Expand main folder in directory
     if (mainFolder) {
