@@ -1,5 +1,6 @@
 # 0.2.0
-- 
+- you can change the name of an actor
+- compendium stats only read adversaries
 
 # 0.1.9
 - new adversaries template
