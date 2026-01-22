@@ -178,16 +178,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const customPack = game.packs.get("daggerheart-advmanager.custom-features");
             if (customPack) {
                 // We need featureForm and flags for consistent data return
-                const index = await customPack.getIndex({ fields: ["system.featureForm", "flags.importedFrom"] });
+                const index = await customPack.getIndex({ fields: ["system.featureForm", "system.description", "flags.importedFrom"] });
                 // Explicitly look for the template item "Minion (X)"
                 const entry = index.find(i => i.name === "Minion (X)");
                 
                 if (entry) {
-                    const data = { 
-                        img: entry.img, 
-                        uuid: entry.uuid, 
+                    const data = {
+                        img: entry.img,
+                        uuid: entry.uuid,
                         type: entry.system?.featureForm || "",
-                        flags: entry.flags || {} 
+                        description: entry.system?.description || "",
+                        flags: entry.flags || {}
                     };
                     // Cache it under the specific name "Minion (5)" so we don't re-fetch
                     this._featureCache.set(name, data);
@@ -211,8 +212,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const pack = game.packs.get(packId);
             if (!pack) continue;
             
-            // Optimization: Load index with featureForm AND flags.importedFrom
-            const index = await pack.getIndex({ fields: ["system.featureForm", "flags.importedFrom"] }); 
+            // Optimization: Load index with featureForm, description AND flags.importedFrom
+            const index = await pack.getIndex({ fields: ["system.featureForm", "system.description", "flags.importedFrom"] }); 
             
             let entry = index.find(i => i.name === name);
             
@@ -223,18 +224,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (entry) {
                 const type = entry.system?.featureForm || "";
                 const flags = entry.flags || {};
-                const data = { 
-                    img: entry.img, 
-                    uuid: entry.uuid, 
+                const description = entry.system?.description || "";
+                const data = {
+                    img: entry.img,
+                    uuid: entry.uuid,
                     type: type,
-                    flags: flags 
+                    description: description,
+                    flags: flags
                 };
                 this._featureCache.set(name, data);
                 return data;
             }
         }
 
-        const defaultData = { img: "icons/svg/item-bag.svg", uuid: null, type: "", flags: {} };
+        const defaultData = { img: "icons/svg/item-bag.svg", uuid: null, type: "", description: "", flags: {} };
         this._featureCache.set(name, defaultData);
         return defaultData;
     }
@@ -756,7 +759,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         const pack = game.packs.get(packId);
                         if (!pack) continue;
                         
-                        const index = await pack.getIndex({ fields: ["img", "system.featureForm", "flags.importedFrom"] });
+                        const index = await pack.getIndex({ fields: ["img", "system.featureForm", "system.description", "flags.importedFrom"] });
                         
                         const matches = index.filter(i => {
                             if (i.type !== "feature") return false;
@@ -800,14 +803,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 for (const name of selectedNames) {
                     if (!isOwned(name)) {
                         let itemData = possibleMatches.find(pm => pm.name === name);
-                        
+
                         if (!itemData) {
                             const found = await this._findFeatureItem(name);
                             itemData = {
                                 name: name,
                                 img: found.img,
                                 uuid: found.uuid,
-                                system: { featureForm: found.type },
+                                system: { featureForm: found.type, description: found.description },
                                 flags: found.flags
                             };
                         }
@@ -817,7 +820,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                             checked: true,
                             isRuleSuggestion: isRuleSuggested(itemData.name),
                             img: itemData.img,
-                            uuid: itemData.uuid || itemData._id, 
+                            uuid: itemData.uuid || itemData._id,
+                            description: itemData.system?.description || "",
                             tags: getTags(itemData.system?.featureForm, itemData.flags, itemData.isHomebrew)
                         });
                         addedSet.add(name);
@@ -826,16 +830,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
                 for (const item of possibleMatches) {
                     const name = item.name;
-                    
+
                     if (addedSet.has(name)) continue;
-                    
+
                     if (!isOwned(name)) {
                         allSuggestedFeatures.push({
                             name: item.name,
                             checked: false,
                             isRuleSuggestion: isRuleSuggested(item.name),
                             img: item.img,
-                            uuid: item.uuid || item._id, 
+                            uuid: item.uuid || item._id,
+                            description: item.system?.description || "",
                             tags: getTags(item.system?.featureForm, item.flags, item.isHomebrew)
                         });
                         addedSet.add(name);

@@ -435,7 +435,7 @@
                     </div>
                     <div class="feature-changes-list">
                         {{#each allSuggestedFeatures}}
-                            <div class="feature-change-row new-feature-row">
+                            <div class="feature-change-row new-feature-row" {{#if this.description}}data-tooltip="{{this.description}}"{{/if}}>
                                 <label class="feature-label" style="cursor: pointer; display: flex; align-items: center; width: 100%;">
                                     <input type="checkbox" class="feature-checkbox" data-feature="{{this.name}}" {{#if this.checked}}checked{{/if}} style="margin-right: 8px; flex-shrink: 0;">
                                     <a class="feature-link" data-action="openFeature" data-uuid="{{this.uuid}}" style="flex: 1; display: flex; align-items: center;">

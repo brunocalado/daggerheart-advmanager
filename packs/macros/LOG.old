@@ -1,8 +1,10 @@
-2026/01/09-08:28:19.732 4df0 Recovering log #749
-2026/01/09-08:28:19.736 4df0 Delete type=0 #749
-2026/01/09-08:28:19.737 4df0 Delete type=3 #747
-2026/01/09-08:58:02.493 1c8c Level-0 table #754: started
-2026/01/09-08:58:02.493 1c8c Level-0 table #754: 0 bytes OK
-2026/01/09-08:58:02.494 1c8c Delete type=0 #752
-2026/01/09-08:58:02.497 1c8c Manual compaction at level-0 from '!macros!WbRm9MnIxX51Svky' @ 72057594037927935 : 1 .. '!macros!uvAlpxWSA3uVepDq' @ 0 : 0; will stop at (end)
-2026/01/09-08:58:02.497 1c8c Manual compaction at level-1 from '!macros!WbRm9MnIxX51Svky' @ 72057594037927935 : 1 .. '!macros!uvAlpxWSA3uVepDq' @ 0 : 0; will stop at (end)
+2026/01/22-17:12:02.324 13ec Log #690: 0 ops saved to Table #758 OK
+2026/01/22-17:12:02.325 13ec Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\macros/000690.log: OK
+2026/01/22-17:12:02.325 13ec Log #757: 0 ops saved to Table #759 OK
+2026/01/22-17:12:02.326 13ec Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\macros/000757.log: OK
+2026/01/22-17:12:02.326 13ec Table #110: 4 entries OK
+2026/01/22-17:12:02.326 13ec Table #638: 1 entries OK
+2026/01/22-17:12:02.326 13ec Table #692: 5 entries OK
+2026/01/22-17:12:02.329 13ec Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\macros/MANIFEST-000688: OK
+2026/01/22-17:12:02.329 13ec Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\macros/MANIFEST-000755: OK
+2026/01/22-17:12:02.332 13ec **** Repaired leveldb C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\macros; recovered 3 files; 2748 bytes. Some data may have been lost. ****

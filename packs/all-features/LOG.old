@@ -1,8 +1,9 @@
-2026/01/09-08:28:19.723 557c Recovering log #545
-2026/01/09-08:28:19.726 557c Delete type=0 #545
-2026/01/09-08:28:19.726 557c Delete type=3 #543
-2026/01/09-08:58:02.492 1c8c Level-0 table #550: started
-2026/01/09-08:58:02.492 1c8c Level-0 table #550: 0 bytes OK
-2026/01/09-08:58:02.493 1c8c Delete type=0 #548
-2026/01/09-08:58:02.497 1c8c Manual compaction at level-0 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
-2026/01/09-08:58:02.497 1c8c Manual compaction at level-1 from '!folders!2tHjKcQETFJYlg91' @ 72057594037927935 : 1 .. '!items.effects!zPxmJCNJrNhwrhtS.CjMrSdL6kgD8mKRQ' @ 0 : 0; will stop at (end)
+2026/01/22-17:12:02.299 23b4 Log #470: 0 ops saved to Table #554 OK
+2026/01/22-17:12:02.299 23b4 Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features/000470.log: OK
+2026/01/22-17:12:02.300 23b4 Log #553: 0 ops saved to Table #555 OK
+2026/01/22-17:12:02.300 23b4 Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features/000553.log: OK
+2026/01/22-17:12:02.301 23b4 Table #418: 479 entries OK
+2026/01/22-17:12:02.302 23b4 Table #472: 479 entries OK
+2026/01/22-17:12:02.304 23b4 Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features/MANIFEST-000468: OK
+2026/01/22-17:12:02.304 23b4 Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features/MANIFEST-000551: OK
+2026/01/22-17:12:02.308 23b4 **** Repaired leveldb C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\all-features; recovered 2 files; 641756 bytes. Some data may have been lost. ****
