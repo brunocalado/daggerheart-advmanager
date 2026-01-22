@@ -1,8 +1,2 @@
-2026/01/22-09:19:17.434 c28 Recovering log #300
-2026/01/22-09:19:17.437 c28 Delete type=0 #300
-2026/01/22-09:19:17.437 c28 Delete type=3 #298
-2026/01/22-09:19:40.066 5ff4 Level-0 table #305: started
-2026/01/22-09:19:40.066 5ff4 Level-0 table #305: 0 bytes OK
-2026/01/22-09:19:40.070 5ff4 Delete type=0 #303
-2026/01/22-09:19:40.073 5ff4 Manual compaction at level-0 from '!actors!3QuaJOFf07f1Gpnb' @ 72057594037927935 : 1 .. '!actors.effects!yMO82g01P4RVB92T.WJujmckn8GHjDASI' @ 0 : 0; will stop at (end)
-2026/01/22-09:19:40.073 5ff4 Manual compaction at level-1 from '!actors!3QuaJOFf07f1Gpnb' @ 72057594037927935 : 1 .. '!actors.effects!yMO82g01P4RVB92T.WJujmckn8GHjDASI' @ 0 : 0; will stop at (end)
+2026/01/22-15:38:48.708 13ec Table #5: 11 entries OK
+2026/01/22-15:38:48.713 13ec **** Repaired leveldb C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\templates; recovered 1 files; 12546 bytes. Some data may have been lost. ****
