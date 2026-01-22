@@ -1,2 +1,11 @@
-2026/01/22-15:38:48.662 c28 Table #475: 12 entries OK
-2026/01/22-15:38:48.665 c28 **** Repaired leveldb C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\custom-features; recovered 1 files; 4511 bytes. Some data may have been lost. ****
+2026/01/22-15:38:48.670 c28 Delete type=3 #1
+2026/01/22-15:43:13.101 5ff4 Level-0 table #479: started
+2026/01/22-15:43:13.101 5ff4 Level-0 table #479: 0 bytes OK
+2026/01/22-15:43:13.103 5ff4 Delete type=0 #477
+2026/01/22-15:43:13.106 5ff4 Manual compaction at level-0 from '!items!AzEJqUAnlfac2THg' @ 72057594037927935 : 1 .. '!items.effects!w55UDPWC0WIgXxWS.qjrgnUmYmWGr1q5W' @ 0 : 0; will stop at '!items.effects!w55UDPWC0WIgXxWS.qjrgnUmYmWGr1q5W' @ 78 : 1
+2026/01/22-15:43:13.106 5ff4 Compacting 1@0 + 0@1 files
+2026/01/22-15:43:13.107 5ff4 Generated table #480@0: 12 keys, 4511 bytes
+2026/01/22-15:43:13.107 5ff4 Compacted 1@0 + 0@1 files => 4511 bytes
+2026/01/22-15:43:13.108 5ff4 compacted to: files[ 0 1 0 0 0 0 0 ]
+2026/01/22-15:43:13.108 5ff4 Delete type=2 #475
+2026/01/22-15:43:13.118 5ff4 Manual compaction at level-0 from '!items.effects!w55UDPWC0WIgXxWS.qjrgnUmYmWGr1q5W' @ 78 : 1 .. '!items.effects!w55UDPWC0WIgXxWS.qjrgnUmYmWGr1q5W' @ 0 : 0; will stop at (end)
