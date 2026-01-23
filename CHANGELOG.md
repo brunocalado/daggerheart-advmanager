@@ -1,3 +1,6 @@
+# 0.2.2
+- fixed empty compendiuns
+
 # 0.2.1
 - better feature detection to live manager
 
