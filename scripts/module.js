@@ -184,14 +184,16 @@ async function importFeatures(compendiumId, rootFolderName, customTag) {
             const isSpecialCase = ALWAYS_DUPLICATE.includes(iName);
 
             // Duplicate check within the specific folder
+            // Allow items with the same name if they have different tiers
             if (!isSpecialCase) {
-                const existing = game.items.find(i => 
-                    i.name === iName && 
-                    i.type === iType && 
-                    i.folder?.id === folderObj.id
+                const existing = game.items.find(i =>
+                    i.name === iName &&
+                    i.type === iType &&
+                    i.folder?.id === folderObj.id &&
+                    i.flags?.importedFrom?.tier === sourceTier
                 );
 
-                if (existing) return false; 
+                if (existing) return false;
             }
 
             // Prepare Data
