@@ -1,3 +1,6 @@
+# 0.2.3
+- refactor for the future
+
 # 0.2.2
 - fixed empty compendiuns
 
