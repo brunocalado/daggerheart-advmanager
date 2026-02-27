@@ -1,5 +1,6 @@
 # 0.2.3
 - refactor for the future
+- Non GM users can't access the module anymore
 
 # 0.2.2
 - fixed empty compendiuns

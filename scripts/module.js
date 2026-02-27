@@ -55,6 +55,22 @@ const TYPE_COLORS = {
 
 // --- Main Logic ---
 
+/**
+ * Guards a function so only GMs can execute it.
+ * Shows a warning notification for non-GM users.
+ * @param {Function} fn - The function to protect.
+ * @returns {Function} Wrapped function with GM check.
+ */
+function gmOnly(fn) {
+    return function (...args) {
+        if (!game.user.isGM) {
+            ui.notifications.warn("Only a GM can use this feature.");
+            return;
+        }
+        return fn.apply(this, args);
+    };
+}
+
 function manage() {
     const tokens = canvas.tokens.controlled;
     
@@ -394,14 +410,14 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
     // Expose API globally
     globalThis.AM = {
-        Manage: manage, 
+        Manage: gmOnly(manage),
         LiveManager: () => new LiveManager().render(true),
         CompendiumManager: () => new CompendiumManager().render(true),
-        CompendiumStats: () => new CompendiumStats().render(true),
+        CompendiumStats: gmOnly(() => new CompendiumStats().render(true)),
         DiceProbability: () => new DiceProbability().render(true),
-        EncounterBuilder: () => new EncounterBuilder().render(true),
-        ImportFeatures: importFeatures, 
-        UpdateFeatures: () => new FeatureUpdater().render(true) // <--- Exposed New Functionality
+        EncounterBuilder: gmOnly(() => new EncounterBuilder().render(true)),
+        ImportFeatures: importFeatures,
+        UpdateFeatures: gmOnly(() => new FeatureUpdater().render(true))
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });
@@ -420,8 +436,10 @@ Hooks.on("controlToken", (token, controlled) => {
 });
 
 Hooks.on("renderDaggerheartMenu", (app, html) => {
+    if (!game.user.isGM) return;
+
     const element = (html instanceof HTMLElement) ? html : html[0];
-    
+
     const createBtn = (text, icon, onClick) => {
         const btn = document.createElement("button");
         btn.type = "button";
@@ -458,6 +476,8 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
 });
 
 Hooks.on("renderActorDirectory", (app, html) => {
+    if (!game.user.isGM) return;
+
     const element = (html instanceof HTMLElement) ? html : html[0];
     const actionButtons = element.querySelector(".header-actions");
     
