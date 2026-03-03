@@ -1,3 +1,6 @@
+# 0.2.4
+- Minion (X) feature will be updated
+
 # 0.2.3
 - refactor for the future
 - Non GM users can't access the module anymore

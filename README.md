@@ -120,7 +120,7 @@ You can read the full history of changes in the [CHANGELOG](CHANGELOG.md).
 
 ## ⚖️ Credits and License
 
-* **Code License:** MIT License.
+* **Code License:** GNU GPLv3.
 * **Assets:** AI Audio and images provided are [CC0 1.0 Universal Public Domain](https://creativecommons.org/publicdomain/zero/1.0/).
 
 **Disclaimer:** This module is an independent creation and is not affiliated with Darrington Press.

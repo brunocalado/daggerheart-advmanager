@@ -1681,6 +1681,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 );
                 if (result && result.structured) {
                     structuredFeatures.push(...result.structured);
+                    // Lock in auto-calculated minion values so the apply path uses
+                    // the exact same number shown in the preview, not a second random roll.
+                    for (const sf of result.structured) {
+                        if (sf.type === 'name_minion' && this.overrides.features.names[sf.itemId] === undefined) {
+                            this.overrides.features.names[sf.itemId] = sf.to;
+                        }
+                    }
                 }
             }
         }
