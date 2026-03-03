@@ -401,10 +401,13 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                     part.value.flatMultiplier = newVal;
                     // Usually we don't clear dice for minions if they have a visual dice set, but for damage calc, formula is king.
                     
-                    // Only record change if value actually changed
+                    // Record change if value actually changed
                     if (currentFormula !== String(newVal)) {
                         hasChanges = true;
                         changes.push({ from: currentFormula, to: String(newVal), isCustom: true, labelSuffix: "" });
+                    } else {
+                        // Always report for UI display (read-only preview of minion damage features)
+                        changes.push({ from: currentFormula, to: String(newVal), isCustom: true, labelSuffix: "", unchanged: true });
                     }
                     return; // Skip standard processing for this part
                 }
@@ -495,23 +498,25 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                     const result = Manager.updateDamageParts(action.damage.parts, newTier, currentTier, benchmark, manualDamage);
                     if (result.hasChanges) {
                         hasChanges = true;
-                        result.changes.forEach(c => {
+                    }
+                    result.changes.forEach(c => {
+                        if (!c.unchanged) {
                             const customLabel = c.isCustom ? " (Custom)" : "";
                             const altLabel = c.labelSuffix || "";
                             const logMsg = `<strong>${itemData.name}:</strong> ${c.from} -> ${c.to}${customLabel}${altLabel}`;
                             changeLog.push(logMsg);
                             replacements.push(c);
-                            
-                            // Track for UI
-                            structuredChanges.push({
-                                itemId: itemData._id,
-                                itemName: itemData.name,
-                                type: "damage",
-                                from: c.from,
-                                to: c.to
-                            });
+                        }
+
+                        // Track for UI (including unchanged minion damage features as read-only)
+                        structuredChanges.push({
+                            itemId: itemData._id,
+                            itemName: itemData.name,
+                            type: c.unchanged ? "damage_readonly" : "damage",
+                            from: c.from,
+                            to: c.to
                         });
-                    }
+                    });
                 }
             }
         }
@@ -732,10 +737,14 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         if (hasChanges) {
-            return { 
+            return {
                 update: { _id: itemData._id, system: system, name: newName },
                 structured: structuredChanges
             };
+        }
+        // Return structured-only entries for UI display (e.g., unchanged minion damage features)
+        if (structuredChanges.length > 0) {
+            return { update: null, structured: structuredChanges };
         }
         return null;
     }
@@ -1188,7 +1197,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                     { minion: cleanMinion, horde: cleanHorde, minionUuid, hordeUuid }
                 );
                 if (result) {
-                    itemsToUpdate.push(result.update);
+                    if (result.update) itemsToUpdate.push(result.update);
                     if (result.structured) structuredFeatureChanges.push(...result.structured);
                 }
             }

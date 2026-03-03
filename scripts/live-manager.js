@@ -616,7 +616,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
                     
                     let displayFrom = f.from;
-                    if (f.type === 'damage') {
+                    if (f.type === 'damage' || f.type === 'damage_readonly') {
                         displayFrom = `<strong>${f.itemName}</strong> <span class="old-value-sub">(${f.from})</span>`;
                     } else if (f.type === 'name_horde') {
                         displayFrom = `<strong>${f.from}</strong>`;
@@ -650,6 +650,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
 
                     const isMinionFeature = f.type === 'name_minion';
+                    const isDamageReadonly = f.type === 'damage_readonly';
                     let minionValue = "";
                     if (isMinionFeature) {
                         const targetStr = overrideVal !== undefined ? overrideVal : f.to;
@@ -663,18 +664,19 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     return {
                         itemId: f.itemId,
                         originalName: displayFrom,
-                        originalFormula: f.from, 
-                        newName: valueToShow, 
-                        isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion', 
-                        options: featureOptions, 
+                        originalFormula: f.from,
+                        newName: valueToShow,
+                        isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion',
+                        options: featureOptions,
                         optionsTooltip: optionsTooltip,
                         isMinionFeature: isMinionFeature,
                         isHordeFeature: isHordeFeature,
+                        isDamageReadonly: isDamageReadonly,
                         minionValue: minionValue,
                         img: itemData.img,
                         uuid: itemData.uuid,
-                        stats: damageStats, 
-                        typeLabel: typeLabel 
+                        stats: damageStats,
+                        typeLabel: typeLabel
                     };
                 }));
 
@@ -1689,6 +1691,25 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         }
                     }
                 }
+            }
+        }
+
+        // For minion actors, ensure all non-Minion/Horde feature items appear in Feature Changes
+        // as read-only entries showing the projected basic_attack_y value.
+        // processFeatureUpdate may not emit structured entries when the value hasn't changed.
+        if (frozenBenchmark.basic_attack_y && actorData.items) {
+            for (const item of actorData.items) {
+                if (structuredFeatures.find(f => f.itemId === item._id)) continue;
+                const trimmedName = item.name.trim();
+                if (trimmedName.match(/^Minion(\s*\(.*\))?$/i)) continue;
+                if (trimmedName.match(/^Horde(\s*\(.*\))?$/i)) continue;
+                structuredFeatures.push({
+                    itemId: item._id,
+                    itemName: item.name,
+                    type: "damage_readonly",
+                    from: "—",
+                    to: String(frozenBenchmark.basic_attack_y)
+                });
             }
         }
 

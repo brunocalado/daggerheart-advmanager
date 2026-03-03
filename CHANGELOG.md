@@ -1,5 +1,6 @@
 # 0.2.4
 - Minion (X) feature will be updated
+- Minion Group Attack feature will show up
 
 # 0.2.3
 - refactor for the future
