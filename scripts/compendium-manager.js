@@ -113,6 +113,6 @@ export class CompendiumManager extends HandlebarsApplicationMixin(ApplicationV2)
         await game.settings.set(MODULE_ID, SETTING_EXTRA_COMPENDIUMS, selectedActors);
         await game.settings.set(MODULE_ID, SETTING_FEATURE_COMPENDIUMS, selectedFeatures);
         
-        ui.notifications.info("Compendium sources updated successfully.");
+        console.log("Adversary Manager | Compendium sources updated.");
     }
 }

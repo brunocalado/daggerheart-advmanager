@@ -122,28 +122,10 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
             this.selectedItem = item;
             this.selectedItemUuid = data.uuid;
             
-            // Atualizar valores do form se existirem no item, senão manter defaults ou valores anteriores
-            // Prioriza valor da flag, se não existir, usa "Bruiser"/"Homebrew" como fallback seguro apenas na primeira vez,
-            // ou mantém o que o usuário já tinha digitado se quisesse editar em lote.
-            // A lógica pedida foi: "atualizar os campos com esses valores SE ELES EXISTIREM"
-            
-            if (flags.tier) this.formState.tier = Number(flags.tier);
-            if (flags.type) this.formState.type = flags.type;
-            if (flags.customTag) this.formState.customTag = flags.customTag;
-            
-            // Se não tiver customTag definida no item, reseta para Homebrew ou mantém o último digitado?
-            // "Se houver um valor nesses 3 vc substituie." - Implica que se não houver, não substitui (mantém o que está na tela)
-            // Mas para uma experiência de usuário limpa ao trocar de item, talvez seja melhor mostrar os dados do item novo 100%.
-            // Vou assumir: Se tem flag, usa a flag. Se não tem flag, volta para o default para evitar confusão de editar Item B com dados do Item A.
-            
-            if (!flags.tier) this.formState.tier = 1;
-            if (!flags.type) this.formState.type = "Bruiser";
-            if (!flags.customTag) this.formState.customTag = "Homebrew";
-
-            // Se as flags existirem, elas sobrescrevem os defaults acima
-            if (flags.tier) this.formState.tier = Number(flags.tier);
-            if (flags.type) this.formState.type = flags.type;
-            if (flags.customTag) this.formState.customTag = flags.customTag;
+            // Reset to defaults, then apply flag values if present
+            this.formState.tier = flags.tier ? Number(flags.tier) : 1;
+            this.formState.type = flags.type || "Bruiser";
+            this.formState.customTag = flags.customTag || "Homebrew";
 
             this.render();
 
@@ -191,7 +173,7 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
                 "flags.importedFrom": newFlags
             });
 
-            ui.notifications.info(`Updated flags for "${item.name}".`);
+            console.log(`Adversary Manager | Updated flags for "${item.name}".`);
             
             // Atualiza o estado do form com o que foi salvo, para consistência visual
             this.formState.tier = tier;

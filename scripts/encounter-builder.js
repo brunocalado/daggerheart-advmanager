@@ -485,25 +485,26 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         return all;
     }
 
-    _formatActorData(actor) {
+    /**
+     * Extracts synergy-relevant special feature names from an actor's item list.
+     * Used to populate the specialFeatures array for encounter budget and synergy detection.
+     * @param {Actor} actor - The actor to inspect.
+     * @returns {string[]} Array of special feature labels present on the actor.
+     */
+    _extractSpecialFeatures(actor) {
         const specialFeatures = [];
-        if (actor.items) {
-            const allFeatureNames = actor.items.map(i => i.name);
+        if (!actor.items) return specialFeatures;
+        const allFeatureNames = actor.items.map(i => i.name);
+        if (allFeatureNames.includes("Momentum")) specialFeatures.push("Momentum");
+        if (allFeatureNames.includes("Terrifying")) specialFeatures.push("Terrifying");
+        if (actor.items.find(i => i.name.startsWith("Relentless"))) specialFeatures.push("Relentless");
+        if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) specialFeatures.push("Summoner");
+        if (allFeatureNames.some(name => POWERFUL_FEATURES.spotlighter.includes(name))) specialFeatures.push("Spotlighter");
+        return specialFeatures;
+    }
 
-            if (allFeatureNames.includes("Momentum")) specialFeatures.push("Momentum");
-            if (allFeatureNames.includes("Terrifying")) specialFeatures.push("Terrifying");
-            const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
-            // UPDATED: Push only the string "Relentless" instead of the full name
-            if (relentless) specialFeatures.push("Relentless");
-
-            if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) {
-                specialFeatures.push("Summoner");
-            }
-
-            if (allFeatureNames.some(name => POWERFUL_FEATURES.spotlighter.includes(name))) {
-                specialFeatures.push("Spotlighter");
-            }
-        }
+    _formatActorData(actor) {
+        const specialFeatures = this._extractSpecialFeatures(actor);
 
         return {
             uuid: actor.uuid,
@@ -946,42 +947,14 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const actorData = this._cachedAdversaries.find(a => a.uuid === uuid);
         
         if (actorData) {
-            // Retrieve Features (Momentum, Relentless, Summoner, Spotlighter)
             const actor = await fromUuid(uuid);
-            const specialFeatures = [];
-            const allFeatureNames = []; // Used to check synergy keywords
-
-            if (actor && actor.items) {
-                actor.items.forEach(i => allFeatureNames.push(i.name));
-
-                if (allFeatureNames.includes("Momentum")) {
-                    specialFeatures.push("Momentum");
-                }
-                if (allFeatureNames.includes("Terrifying")) { 
-                    specialFeatures.push("Terrifying");
-                }
-                const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
-                // UPDATED: Push only "Relentless" string
-                if (relentless) {
-                    specialFeatures.push("Relentless");
-                }
-                
-                // Check Summoner
-                if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) {
-                    specialFeatures.push("Summoner");
-                }
-
-                // Check Spotlighter
-                if (allFeatureNames.some(name => POWERFUL_FEATURES.spotlighter.includes(name))) {
-                    specialFeatures.push("Spotlighter");
-                }
-            }
+            const specialFeatures = actor ? this._extractSpecialFeatures(actor) : [];
 
             this.encounterList.push({
                 entryId: foundry.utils.randomID(),
                 ...actorData,
                 hasDamageBoost: false,
-                specialFeatures: specialFeatures 
+                specialFeatures: specialFeatures
             });
             this.render();
         }
@@ -1056,34 +1029,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             return;
         }
 
-        // Collect special features
-        const specialFeatures = [];
-        const allFeatureNames = [];
-
-        if (actor.items) {
-            actor.items.forEach(i => allFeatureNames.push(i.name));
-
-            if (allFeatureNames.includes("Momentum")) {
-                specialFeatures.push("Momentum");
-            }
-            if (allFeatureNames.includes("Terrifying")) {
-                specialFeatures.push("Terrifying");
-            }
-            const relentless = actor.items.find(i => i.name.startsWith("Relentless"));
-            if (relentless) {
-                specialFeatures.push("Relentless");
-            }
-
-            // Check Summoner
-            if (allFeatureNames.some(name => POWERFUL_FEATURES.summoner.includes(name))) {
-                specialFeatures.push("Summoner");
-            }
-
-            // Check Spotlighter
-            if (allFeatureNames.some(name => POWERFUL_FEATURES.spotlighter.includes(name))) {
-                specialFeatures.push("Spotlighter");
-            }
-        }
+        const specialFeatures = this._extractSpecialFeatures(actor);
 
         this.encounterList.push({
             entryId: foundry.utils.randomID(),

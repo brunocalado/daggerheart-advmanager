@@ -77,7 +77,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
         
         // 4. Import Features from new compendiums
         if (newlyAdded.length > 0) {
-            ui.notifications.info(`Found ${newlyAdded.length} new source(s). Importing features...`);
+            console.log(`Adversary Manager | Found ${newlyAdded.length} new source(s). Importing features...`);
             
             for (const packId of newlyAdded) {
                 const pack = game.packs.get(packId);
@@ -111,7 +111,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
             }
         }
 
-        ui.notifications.info("Stat sources updated.");
+        console.log("Adversary Manager | Stat sources updated.");
         
         // 5. Reload Stats Window if open
         const statsApp = Object.values(ui.windows).find(w => w.id === "daggerheart-compendium-stats");

@@ -41,6 +41,31 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
         }
     }
 
+    /**
+     * Builds the human-readable dice notation string for the current mode and settings.
+     * Shared between _prepareContext and _onSendToChat to avoid duplication.
+     * @returns {string} Dice expression string (e.g. "1d12 + 1d12 + 3").
+     */
+    _buildDiceNotation() {
+        if (this.mode === "duality") {
+            let n = `1d${this.formData.die1} + 1d${this.formData.die2}`;
+            if (this.formData.rollType === 1) n += ` + 1d${this.formData.advDie}`;
+            else if (this.formData.rollType === -1) n += ` - 1d${this.formData.advDie}`;
+            if (this.formData.modifier !== 0) {
+                const sign = this.formData.modifier > 0 ? "+" : "-";
+                n += ` ${sign} ${Math.abs(this.formData.modifier)}`;
+            }
+            return n;
+        }
+        // D20 mode
+        let n = this.d20Data.rollType === 1 ? "2d20kh1" : (this.d20Data.rollType === -1 ? "2d20kl1" : "1d20");
+        if (this.d20Data.modifier !== 0) {
+            const sign = this.d20Data.modifier > 0 ? "+" : "-";
+            n += ` ${sign} ${Math.abs(this.d20Data.modifier)}`;
+        }
+        return n;
+    }
+
     static DEFAULT_OPTIONS = {
         id: "daggerheart-dice-prob",
         tag: "form",
@@ -115,15 +140,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
                 this.formData.advDie
             );
 
-            // Format dice notation
-            diceNotation = `1d${this.formData.die1} + 1d${this.formData.die2}`;
-            if (this.formData.rollType === 1) diceNotation += ` + 1d${this.formData.advDie}`;
-            else if (this.formData.rollType === -1) diceNotation += ` - 1d${this.formData.advDie}`;
-
-            if (this.formData.modifier !== 0) {
-                const sign = this.formData.modifier > 0 ? "+" : "-";
-                diceNotation += ` ${sign} ${Math.abs(this.formData.modifier)}`;
-            }
+            diceNotation = this._buildDiceNotation();
 
             results = {
                 ...stats,
@@ -140,19 +157,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
                 this.d20Data.criticalThreshold
             );
 
-            // Format dice notation
-            if (this.d20Data.rollType === 1) {
-                diceNotation = "2d20kh1"; // Keep highest
-            } else if (this.d20Data.rollType === -1) {
-                diceNotation = "2d20kl1"; // Keep lowest
-            } else {
-                diceNotation = "1d20";
-            }
-
-            if (this.d20Data.modifier !== 0) {
-                const sign = this.d20Data.modifier > 0 ? "+" : "-";
-                diceNotation += ` ${sign} ${Math.abs(this.d20Data.modifier)}`;
-            }
+            diceNotation = this._buildDiceNotation();
 
             results = {
                 ...stats,
@@ -273,13 +278,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
                 this.formData.advDie
             );
 
-            diceNotation = `1d${this.formData.die1} + 1d${this.formData.die2}`;
-            if (this.formData.rollType === 1) diceNotation += ` + 1d${this.formData.advDie}`;
-            else if (this.formData.rollType === -1) diceNotation += ` - 1d${this.formData.advDie}`;
-            if (this.formData.modifier !== 0) {
-                const sign = this.formData.modifier > 0 ? "+" : "-";
-                diceNotation += ` ${sign} ${Math.abs(this.formData.modifier)}`;
-            }
+            diceNotation = this._buildDiceNotation();
 
             const { success, fail, crit } = stats;
             const commandContent = `
@@ -317,18 +316,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
                 this.d20Data.criticalThreshold
             );
 
-            if (this.d20Data.rollType === 1) {
-                diceNotation = "2d20kh1";
-            } else if (this.d20Data.rollType === -1) {
-                diceNotation = "2d20kl1";
-            } else {
-                diceNotation = "1d20";
-            }
-
-            if (this.d20Data.modifier !== 0) {
-                const sign = this.d20Data.modifier > 0 ? "+" : "-";
-                diceNotation += ` ${sign} ${Math.abs(this.d20Data.modifier)}`;
-            }
+            diceNotation = this._buildDiceNotation();
 
             const rollTypeLabel = this.d20Data.rollType === 1 ? "Advantage" : (this.d20Data.rollType === -1 ? "Disadvantage" : "Normal");
             const { success, fail, crit } = stats;

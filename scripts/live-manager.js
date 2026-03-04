@@ -1,5 +1,5 @@
-import { Manager } from "./manager.js";
-import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js"; 
+import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor } from "./damage-engine.js";
+import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
@@ -31,30 +31,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this._cachedValues = null;
 
         // Store overrides separated by type
-        this.overrides = {
-            features: {
-                names: {},
-                damage: {}
-            },
-            suggestedFeatures: null,
-            suggestedFeaturesType: "default",
-            suggestedFeaturesTier: "default",
-            experiences: {},
-            damageFormula: undefined,
-            halvedDamageFormula: undefined,
-            difficulty: undefined,
-            hp: undefined,
-            stress: undefined,
-            major: undefined,
-            severe: undefined,
-            attackMod: undefined,
-            expAmount: undefined,
-            expMod: undefined,
-            damageTypes: null,
-            criticalThreshold: undefined,
-            directDamage: undefined,
-            previewActorName: undefined
-        };
+        this.overrides = this._defaultOverrides();
 
         // Initialize Settings
         if (this.initialActor) {
@@ -74,6 +51,35 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         /** @type {boolean} Whether to open the actor sheet after applying changes */
         this.openAfterApply = game.settings.get(MODULE_ID, SETTING_OPEN_SHEET_AFTER_APPLY);
+    }
+
+    /**
+     * Returns a fresh, empty overrides object.
+     * Called whenever the selected actor or target tier changes to wipe user overrides.
+     * @returns {Object} Default overrides state.
+     */
+    _defaultOverrides() {
+        return {
+            features: { names: {}, damage: {} },
+            suggestedFeatures: null,
+            suggestedFeaturesType: "default",
+            suggestedFeaturesTier: "default",
+            experiences: {},
+            damageFormula: undefined,
+            halvedDamageFormula: undefined,
+            difficulty: undefined,
+            hp: undefined,
+            stress: undefined,
+            major: undefined,
+            severe: undefined,
+            attackMod: undefined,
+            expAmount: undefined,
+            expMod: undefined,
+            damageTypes: null,
+            criticalThreshold: undefined,
+            directDamage: undefined,
+            previewActorName: undefined
+        };
     }
 
     static DEFAULT_OPTIONS = {
@@ -262,7 +268,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.selectedActorId = actor.id;
         this.targetTier = Number(actor.system.tier) || 1;
         
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined }; 
+        this.overrides = this._defaultOverrides();
         this._suggestionCache = {}; 
         this._cachedValues = null; 
 
@@ -1011,7 +1017,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.stopPropagation();
         this.source = target.value;
         this.selectedActorId = null;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined }; 
+        this.overrides = this._defaultOverrides();
         this._suggestionCache = {}; 
         this._cachedValues = null;
         await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, this.source);
@@ -1037,7 +1043,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         event.preventDefault();
         event.stopPropagation();
         this.selectedActorId = target.value;
-        this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined }; 
+        this.overrides = this._defaultOverrides();
         this._suggestionCache = {}; 
         this._cachedValues = null;
         
@@ -1052,7 +1058,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const tier = Number(target.dataset.tier);
         if (tier) {
             this.targetTier = tier;
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined }; 
+            this.overrides = this._defaultOverrides();
             this._suggestionCache = {}; 
             this._cachedValues = null;
             this.render();
@@ -1085,7 +1091,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
-            const result = await Manager.updateSingleActor(actor, this.targetTier, this.overrides);
+            const result = await updateSingleActor(actor, this.targetTier, this.overrides);
             
             let freshActor = actor;
             if (!actor.pack && !actor.compendium && !actor.isToken) {
@@ -1138,7 +1144,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const typeKey = (freshActor.system.type || "standard").toLowerCase();
             this.filterType = typeKey; 
 
-            this.overrides = { features: { names: {}, damage: {} }, suggestedFeatures: null, experiences: {}, suggestedFeaturesType: "default", suggestedFeaturesTier: "default", damageTypes: null, criticalThreshold: undefined, directDamage: undefined, previewActorName: undefined };
+            this.overrides = this._defaultOverrides();
             this._suggestionCache = {}; 
             this._cachedValues = null;
 
@@ -1356,7 +1362,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     _calculateDamageStats(formula) {
         if (!formula) return "";
-        const parsed = Manager.parseDamageString(formula);
+        const parsed = parseDamageString(formula);
         if (!parsed) return "";
 
         let min, max, mean;
@@ -1419,9 +1425,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
         
         const attackMod = Number(sys.attack?.roll?.bonus) || 0;
-        const hitChance = Manager.calculateHitChance(attackMod, tier);
+        const hitChance = calculateHitChance(attackMod, tier);
         const difficulty = Number(sys.difficulty) || 0;
-        const hitChanceAgainst = Manager.calculateHitChanceAgainst(difficulty, tier);
+        const hitChanceAgainst = calculateHitChanceAgainst(difficulty, tier);
         const critical = Number(sys.criticalThreshold) || 20; 
 
         const critChance = this._calculateCritChance(critical);
@@ -1483,22 +1489,22 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (!this._cachedValues) {
             this._cachedValues = {};
-            this._cachedValues.difficulty = Manager.getRollFromRange(benchmark.difficulty);
-            this._cachedValues.hp = Manager.getRollFromRange(benchmark.hp);
-            this._cachedValues.stress = Manager.getRollFromRange(benchmark.stress);
-            this._cachedValues.attackMod = Manager.getRollFromSignedRange(benchmark.attack_modifier);
-            
+            this._cachedValues.difficulty = getRollFromRange(benchmark.difficulty);
+            this._cachedValues.hp = getRollFromRange(benchmark.hp);
+            this._cachedValues.stress = getRollFromRange(benchmark.stress);
+            this._cachedValues.attackMod = getRollFromSignedRange(benchmark.attack_modifier);
+
             if (benchmark.threshold_min && benchmark.threshold_max) {
-                 const minPair = Manager.parseThresholdPair(benchmark.threshold_min);
-                 const maxPair = Manager.parseThresholdPair(benchmark.threshold_max);
+                 const minPair = parseThresholdPair(benchmark.threshold_min);
+                 const maxPair = parseThresholdPair(benchmark.threshold_max);
                  if (minPair && maxPair) {
                      this._cachedValues.major = Math.floor(Math.random() * (maxPair.major - minPair.major + 1)) + minPair.major;
                      this._cachedValues.severe = Math.floor(Math.random() * (maxPair.severe - minPair.severe + 1)) + minPair.severe;
                  }
             }
 
-            if (benchmark.basic_attack_y) this._cachedValues.basic_attack_y = Manager.getRollFromRange(benchmark.basic_attack_y);
-            if (benchmark.minion_feature_x) this._cachedValues.minion_feature_x = Manager.getRollFromRange(benchmark.minion_feature_x);
+            if (benchmark.basic_attack_y) this._cachedValues.basic_attack_y = getRollFromRange(benchmark.basic_attack_y);
+            if (benchmark.minion_feature_x) this._cachedValues.minion_feature_x = getRollFromRange(benchmark.minion_feature_x);
             if (benchmark.halved_damage_x && Array.isArray(benchmark.halved_damage_x) && benchmark.halved_damage_x.length > 0 && benchmark.halved_damage_x[0].includes("-")) {
             }
         }
@@ -1520,13 +1526,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         sim.previewExperiences = [];
         if (benchmark.experiences) {
-            const targetMod = this.overrides.expMod !== undefined ? this.overrides.expMod : Manager.getRollFromSignedRange(benchmark.experiences.modifier);
+            const targetMod = this.overrides.expMod !== undefined ? this.overrides.expMod : getRollFromSignedRange(benchmark.experiences.modifier);
             
             let targetAmount = 0;
             if (this.overrides.expAmount !== undefined) {
                 targetAmount = this.overrides.expAmount;
             } else {
-                targetAmount = Manager.getRollFromRange(benchmark.experiences.amount);
+                targetAmount = getRollFromRange(benchmark.experiences.amount);
                 this.overrides.expAmount = targetAmount; 
             }
             
@@ -1614,10 +1620,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         sim.tier = targetTier;
 
         const previewAttackMod = this.overrides.attackMod !== undefined ? Number(this.overrides.attackMod) : sim.attackModRaw;
-        sim.hitChance = Manager.calculateHitChance(previewAttackMod, targetTier);
+        sim.hitChance = calculateHitChance(previewAttackMod, targetTier);
 
         const previewDifficulty = this.overrides.difficulty !== undefined ? Number(this.overrides.difficulty) : sim.difficultyRaw;
-        sim.hitChanceAgainst = Manager.calculateHitChanceAgainst(previewDifficulty, targetTier);
+        sim.hitChanceAgainst = calculateHitChanceAgainst(previewDifficulty, targetTier);
 
         const damageParts = [];
         const halvedParts = []; 
@@ -1638,7 +1644,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                          rawVal = String(newVal);
                          damageParts.push(`<span class="stat-changed">${newVal}</span>`);
                     } else if (part.value) {
-                        const result = Manager.processDamageValue(part.value, targetTier, currentTier, frozenBenchmark.damage_rolls);
+                        const result = processDamageValue(part.value, targetTier, currentTier, frozenBenchmark.damage_rolls);
                         if (result) {
                             rawVal = result.to;
                             damageParts.push(`<span class="stat-changed">${result.to}</span>`);
@@ -1661,7 +1667,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         rawHalved = this.overrides.halvedDamageFormula;
                         halvedParts.push(`<span class="stat-changed">${this.overrides.halvedDamageFormula}</span>`);
                     } else {
-                        const result = Manager.processDamageValue(part.valueAlt, targetTier, currentTier, frozenBenchmark.halved_damage_x);
+                        const result = processDamageValue(part.valueAlt, targetTier, currentTier, frozenBenchmark.halved_damage_x);
                         if (result) {
                             rawHalved = result.to;
                             halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
@@ -1693,7 +1699,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         
         if (actorData.items) {
             for (const item of actorData.items) {
-                const result = Manager.processFeatureUpdate(
+                const result = processFeatureUpdate(
                     item, 
                     targetTier, 
                     currentTier, 
