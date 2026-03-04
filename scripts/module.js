@@ -24,6 +24,7 @@ export const SKULL_IMAGE_PATH = "modules/daggerheart-advmanager/assets/images/sk
 // Settings for Persistence (Client Side - Per User)
 export const SETTING_LAST_SOURCE = "lastSource";
 export const SETTING_LAST_FILTER_TIER = "lastFilterTier";
+export const SETTING_OPEN_SHEET_AFTER_APPLY = "openSheetAfterApply";
 
 // --- Import Logic Constants ---
 
@@ -404,6 +405,13 @@ Hooks.once("init", () => {
         config: false,
         type: String,
         default: "all"
+    });
+
+    game.settings.register(MODULE_ID, SETTING_OPEN_SHEET_AFTER_APPLY, {
+        scope: "client",
+        config: false,
+        type: Boolean,
+        default: false
     });
 });
 

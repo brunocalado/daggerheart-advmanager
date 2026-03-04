@@ -1,6 +1,6 @@
 import { Manager } from "./manager.js";
 import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js"; 
-import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
+import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js"; 
@@ -71,6 +71,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // Cache for feature lookup
         this._featureCache = new Map();
+
+        /** @type {boolean} Whether to open the actor sheet after applying changes */
+        this.openAfterApply = game.settings.get(MODULE_ID, SETTING_OPEN_SHEET_AFTER_APPLY);
     }
 
     static DEFAULT_OPTIONS = {
@@ -94,7 +97,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             openSheet: LiveManager.prototype._onOpenSheet,
             addExperience: LiveManager.prototype._onAddExperience,
             deleteExperience: LiveManager.prototype._onDeleteExperience,
-            rollExperienceName: LiveManager.prototype._onRollExperienceName
+            rollExperienceName: LiveManager.prototype._onRollExperienceName,
+            toggleOpenSheet: LiveManager.prototype._onToggleOpenSheet
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -917,7 +921,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             isMagical,
             criticalOptions,
             directOptions,
-            previewActorName: previewActorName
+            previewActorName: previewActorName,
+            openAfterApply: this.openAfterApply
         };
     }
 
@@ -1143,6 +1148,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                  this.initialActor = freshActor;
             }
 
+            // Open the actor sheet after applying if the toggle is active
+            if (this.openAfterApply && freshActor?.sheet) {
+                freshActor.sheet.render(true);
+            }
+
             this.render();
 
         } catch (e) {
@@ -1265,6 +1275,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 actor.sheet.render(true);
             }
         }
+    }
+
+    /**
+     * Toggles whether the actor sheet opens automatically after applying changes.
+     * Triggered by the toggleOpenSheet action button in the footer.
+     * Persists the preference via client-scoped setting.
+     */
+    _onToggleOpenSheet(event, target) {
+        this.openAfterApply = !this.openAfterApply;
+        target.closest(".open-sheet-toggle").classList.toggle("active", this.openAfterApply);
+        game.settings.set(MODULE_ID, SETTING_OPEN_SHEET_AFTER_APPLY, this.openAfterApply);
     }
 
     _onOverrideChange(event, target) {

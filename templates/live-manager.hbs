@@ -479,13 +479,18 @@
     </div>
 
     <footer class="sheet-footer">
-        <button type="button" data-action="applyChanges" class="apply-btn">
-            {{#if (eq linkData null)}}
-                <i class="fas fa-file-import"></i> Import & Apply Tier {{previewStats.tier}}
-            {{else}}
-                <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
-            {{/if}}
-        </button>
+        <div class="footer-row">
+            <button type="button" data-action="applyChanges" class="apply-btn">
+                {{#if (eq linkData null)}}
+                    <i class="fas fa-file-import"></i> Import & Apply Tier {{previewStats.tier}}
+                {{else}}
+                    <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
+                {{/if}}
+            </button>
+            <button type="button" data-action="toggleOpenSheet" class="open-sheet-toggle {{#if openAfterApply}}active{{/if}}" title="Open sheet after applying">
+                <i class="fas fa-external-link-alt"></i>
+            </button>
+        </div>
     </footer>
 
     {{else}}

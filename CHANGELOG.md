@@ -3,6 +3,7 @@
 - Minion Group Attack feature will show up
 - Migrate to SCSS
 - Updated Core Features with system compendium 1.7.2
+- Live Manager toogle button to auto render the modified actor
 
 # 0.2.3
 - refactor for the future

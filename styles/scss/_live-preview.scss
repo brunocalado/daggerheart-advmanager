@@ -461,13 +461,47 @@
     }
 }
 
+.footer-row {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+}
+
 .apply-btn {
     @include purple-gradient-btn;
+    flex: 1;
     font-size: 1.2em !important;
     text-transform: uppercase;
     font-family: 'Aleo', serif;
     letter-spacing: 0.5px;
     text-shadow: $shadow-text;
+}
+
+.open-sheet-toggle {
+    flex: 0 0 38px;
+    width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $bg-medium;
+    border: 1px solid $border-darker;
+    color: $text-faint;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 0.9em;
+    opacity: 0.5;
+
+    &:hover {
+        opacity: 0.8;
+        border-color: $border-dark;
+    }
+
+    &.active {
+        @include purple-gradient-btn;
+        opacity: 1;
+        outline: none;
+    }
 }
 
 .portrait-display-wrapper {
