@@ -1,0 +1,15 @@
+// =========================================
+// GLOBAL MODULE WINDOW OVERRIDES
+// =========================================
+
+@use 'variables' as *;
+
+// Enforce 9px spacing from window borders for all module apps
+#daggerheart-adv-manager .window-content,
+#daggerheart-live-preview .window-content,
+#daggerheart-encounter-builder .window-content,
+#daggerheart-compendium-stats .window-content,
+#daggerheart-dice-prob .window-content {
+    padding: 9px;
+    overflow-x: hidden;
+}

@@ -1,0 +1,608 @@
+// =========================================
+// ENCOUNTER BUILDER
+// =========================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.encounter-builder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.eb-layout {
+    display: flex;
+    gap: 15px;
+    height: 100%;
+    overflow: hidden;
+    flex: 1;
+}
+
+.eb-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.eb-column-library {
+    flex: 0 0 550px;
+    min-width: 0;
+}
+
+.eb-column-encounter {
+    flex: 1;
+    background: $bg-overlay-mid;
+    border-left: 1px solid $border-dark;
+    padding-left: 15px;
+    padding-right: 2px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+// Controls
+.eb-controls {
+    @include dark-panel;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.eb-search-wrapper { position: relative; width: 100%; }
+
+.eb-search-input {
+    width: 100%;
+    height: 40px;
+    background: $bg-dark;
+    border: 1px solid $border-default;
+    color: $text-primary;
+    padding-left: 35px;
+    padding-right: 35px;
+    border-radius: 20px;
+    font-size: 1.15em;
+
+    &:focus {
+        @include input-focus($glow: true);
+    }
+}
+
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: $text-dim; }
+
+.clear-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: $text-dim;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    @include flex-center;
+
+    &:hover { color: $accent; }
+}
+
+.eb-filters-row { display: flex; gap: 10px; align-items: center; }
+.eb-source-wrapper { flex: 0 0 28%; }
+.eb-type-wrapper { flex: 0 0 28%; }
+.eb-tier-buttons { flex: 1; display: flex; gap: 5px; }
+
+// Lists
+.eb-results-header,
+.eb-encounter-header {
+    margin: 10px 0 5px 0;
+    font-size: 1.0em;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid $border-dark;
+    padding-bottom: 5px;
+    flex-shrink: 0;
+    font-weight: bold;
+}
+
+.eb-encounter-header {
+    @include flex-between;
+
+    h3 {
+        margin: 0;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: $accent;
+    }
+}
+
+.eb-encounter-summary {
+    font-size: 0.9em;
+    display: flex;
+    gap: 10px;
+}
+
+.eb-results-list,
+.eb-encounter-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-right: 5px;
+    min-height: 0;
+}
+
+// Rows
+.eb-adversary-row,
+.eb-encounter-item {
+    @include flex-between;
+    background: $bg-white-hover;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+
+    &:hover {
+        background: rgba(156, 39, 176, 0.25);
+        border-color: $purple-sat;
+    }
+}
+
+.eb-row-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.eb-row-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: cover;
+    border: 1px solid $border-light;
+    background: $bg-black;
+
+    &.small {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+.eb-row-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.eb-row-header-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+
+    .eb-row-name {
+        flex: 1;
+    }
+}
+
+.eb-row-name {
+    font-weight: bold;
+    color: $text-primary;
+    @include text-ellipsis;
+    font-size: 1.1em;
+}
+
+.eb-row-meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 0.9em;
+    color: $text-muted;
+}
+
+.eb-type-tag, .feature-tag {
+    text-transform: capitalize;
+    color: $accent;
+    font-weight: bold;
+    font-size: 0.8em !important;
+}
+
+.eb-compendium-icon { color: $text-disabled; font-size: 0.95em; }
+
+.eb-row-tier .badge-tier {
+    font-size: 1.05em;
+    padding: 2px 8px;
+    background: $bg-medium;
+    border: 1px solid $border-light;
+    color: $accent;
+    border-radius: 12px;
+    font-weight: 800;
+}
+
+.eb-row-actions-left {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-right: 10px;
+}
+
+.eb-add-btn {
+    @include small-action-btn;
+    color: $color-green-pale;
+
+    &:hover {
+        background: $color-green-pale;
+        color: $bg-black;
+        border-color: $color-green-pale;
+    }
+}
+
+.eb-edit-btn {
+    @include small-action-btn;
+    color: $accent;
+
+    &:hover {
+        background: $accent;
+        color: $bg-black;
+        border-color: $accent;
+    }
+}
+
+.eb-remove-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: $text-dim;
+    cursor: pointer;
+    transition: color 0.2s;
+    @include flex-center;
+
+    &:hover { color: $color-red; }
+}
+
+// Settings Panel
+.eb-settings-panel {
+    @include dark-panel;
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+    flex-direction: column;
+}
+
+.eb-settings-row-group {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.eb-setting-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pc-col { flex: 0 0 60px; }
+.tier-col { flex: 0 0 100px; }
+.fear-col { flex: 1; }
+
+.eb-setting-row {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.eb-setting-row label, .eb-setting-col label {
+    font-size: 0.9em;
+    color: $text-secondary;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.pc-count-input {
+    width: 100%;
+    background: $bg-dark;
+    border: 1px solid $border-default;
+    color: $text-primary;
+    padding: 5px;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+// BP Header
+.eb-bp-header {
+    @include flex-between;
+    background: $bg-dark;
+    padding: 12px;
+    border-radius: 5px;
+    border: 2px solid $purple-indigo;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+    flex: 1;
+}
+
+.bp-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bp-label {
+    font-size: 0.9em;
+    text-transform: uppercase;
+    color: $accent;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.bp-value {
+    font-size: 2.0em;
+    font-weight: 900;
+    color: $text-primary;
+    line-height: 1;
+    text-shadow: 0 0 4px $bg-black;
+}
+
+.bp-sub-badge {
+    font-size: 0.9em;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-align: center;
+    letter-spacing: 0.5px;
+    color: $color-lavender;
+    border: 1px solid $color-lavender;
+}
+
+.bp-skull-container {
+    width: 60px;
+    height: 60px;
+    @include flex-center;
+}
+
+.bp-skull-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.bp-difficulty {
+    font-size: 0.95em;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.diff-very-easy { color: $color-green; border: 1px solid $color-green; }
+.diff-easy { color: $color-green-light; border: 1px solid $color-green-light; }
+.diff-balanced { color: $color-gold; border: 1px solid $color-gold; }
+.diff-challenging { color: $color-orange; border: 1px solid $color-orange; }
+.diff-deadly { color: $color-red; border: 1px solid $color-red; }
+
+.cost-red { color: $color-red; text-shadow: 0 0 4px rgba(255, 82, 82, 0.4); }
+.cost-green { color: $color-green; text-shadow: 0 0 4px rgba(105, 240, 174, 0.4); }
+.cost-gold { color: $color-gold; text-shadow: 0 0 4px rgba(255, 215, 64, 0.4); }
+
+// Modifiers - 2 Columns Grid
+.eb-modifiers-list {
+    margin-bottom: 0;
+    background: $bg-overlay-subtle;
+    border-radius: 5px;
+    padding: 5px;
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+.eb-modifier-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    border-radius: 3px;
+    font-size: 1.0em;
+    cursor: default;
+    color: $text-dim;
+
+    &.active {
+        color: $text-primary;
+        background: $bg-white-subtle;
+        font-weight: bold;
+    }
+
+    &[data-action] {
+        cursor: pointer;
+
+        &:hover { background: $purple-glow-sm; }
+    }
+
+    &.disabled { opacity: 0.5; }
+}
+
+.mod-check { width: 16px; text-align: center; color: $accent; }
+.mod-info { flex: 1; display: flex; justify-content: space-between; }
+.mod-val { font-weight: bold; color: $accent; }
+
+// Encounter List
+.eb-encounter-list-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.eb-encounter-list {
+    flex: 1;
+    overflow-y: auto;
+
+    &.drop-highlight {
+        background: rgba(152, 251, 152, 0.15);
+        border: 2px dashed $color-green-pale;
+        border-radius: 4px;
+    }
+}
+
+.eb-item-actions {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+// Feature Tag Style
+.feature-tag {
+    background: $purple-deep;
+    color: $accent;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid $purple-mid;
+    margin-left: 4px;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.unit-boost-btn {
+    background: transparent;
+    border: 1px solid $border-default;
+    color: $text-dim;
+    width: 26px;
+    height: 26px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    @include flex-center;
+    font-size: 0.9em;
+
+    &:hover { border-color: $color-orange; color: $color-orange; }
+    &.active { background: $color-orange; color: $bg-black; border-color: $color-orange; box-shadow: 0 0 5px rgba(255, 152, 0, 0.5); }
+}
+
+// Footer Buttons
+.eb-action-footer {
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 1px solid $border-dark;
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.eb-create-btn {
+    flex: 1;
+    padding: 0 10px;
+    height: 40px;
+    @include purple-gradient-btn;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    @include flex-center;
+    gap: 10px;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    text-shadow: $shadow-text;
+}
+
+.eb-place-btn {
+    flex: 0 0 60px;
+    padding: 0 10px;
+    height: 40px;
+    background: $bg-medium;
+    border: 1px solid $border-default;
+    color: $text-muted;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    @include flex-center;
+    transition: all 0.2s;
+    box-sizing: border-box;
+
+    @include purple-hover;
+}
+
+.eb-folder-btn {
+    flex: 0 0 60px;
+    padding: 0 10px;
+    height: 40px;
+    background: $bg-medium;
+    border: 1px solid $border-default;
+    color: $text-muted;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    @include flex-center;
+    transition: all 0.2s;
+    box-sizing: border-box;
+
+    @include purple-hover;
+
+    &.active {
+        @include active-state;
+    }
+}
+
+// Synergy & Feature Icons
+.eb-synergy-grid {
+    flex: 0 0 20%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 5px;
+    background: $bg-overlay-mid;
+    border: 1px solid $border-dark;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.synergy-item {
+    @include flex-center;
+    background: $bg-white-subtle;
+    border-radius: 3px;
+    border: 1px solid $border-darker;
+    transition: all 0.3s;
+
+    &.active {
+        background: $purple-glow-md;
+        border-color: $purple-sat;
+        box-shadow: 0 0 8px $purple-glow-lg;
+
+        .synergy-icon {
+            filter: drop-shadow(0 0 5px $accent-glow-md);
+            opacity: 1;
+        }
+    }
+}
+
+.synergy-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    filter: grayscale(100%) brightness(50%);
+    opacity: 0.6;
+    transition: all 0.3s;
+}
+
+.eb-header-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+}

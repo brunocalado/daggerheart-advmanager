@@ -1,0 +1,159 @@
+// =========================================
+// SHARED & ADVERSARY MANAGER
+// =========================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.dh-adv-manager-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: $text-primary;
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    font-size: 1.05em;
+
+    .actor-name {
+        font-weight: bold;
+        font-size: 1.0em;
+        @include text-ellipsis;
+        max-width: 70%;
+        color: $text-primary;
+    }
+
+    select option {
+        background-color: $bg-dark;
+        color: $text-primary;
+        padding: 5px;
+    }
+
+    select:focus {
+        @include input-focus;
+    }
+}
+
+.status-header {
+    text-align: center;
+    border-bottom: 1px solid var(--color-border-light-2);
+    padding-bottom: 0.5rem;
+
+    h3 {
+        margin: 0;
+        font-size: 1.5em;
+        font-family: var(--font-primary);
+        color: $text-primary;
+    }
+}
+
+// Actor List Styles
+.actor-list-container {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid $border-default;
+    background: $bg-overlay-heavy;
+    border-radius: 4px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.actor-item {
+    @include flex-between;
+    background: $bg-white-subtle;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border-bottom: 1px solid $border-darker;
+}
+
+.actor-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-tier {
+    background: $bg-dark;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    border: 1px solid $border-light;
+    color: $text-primary;
+    font-weight: bold;
+
+    &.small {
+        font-size: 0.85em;
+        padding: 1px 6px;
+        margin-top: 0;
+        align-self: center;
+        height: fit-content;
+    }
+}
+
+.status-linked { color: $color-green-pale; font-weight: bold; }
+.status-unlinked { color: $color-gold-pure; font-weight: bold; }
+
+// Tier Selector Buttons
+.tier-selector {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.tier-option {
+    flex: 1;
+
+    input[type="radio"] {
+        display: none;
+
+        &:checked + .tier-btn {
+            background: $purple-mid;
+            border-color: $accent;
+            color: $text-primary;
+            box-shadow: 0 0 8px $purple-glow-lg;
+        }
+    }
+}
+
+.tier-btn {
+    @include flex-center;
+    width: 100%;
+    height: 40px;
+    background: $bg-overlay-heavy;
+    border: 1px solid $border-default;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: all 0.2s;
+    color: $text-secondary;
+
+    &:hover {
+        background: $purple-glow-md;
+        border-color: $accent;
+        color: $text-primary;
+    }
+
+    &.current {
+        background: $purple-deep;
+        border-color: $bg-medium;
+        color: $text-disabled;
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+}
+
+.sheet-footer {
+    margin-top: 10px;
+
+    button {
+        width: 100%;
+        padding: 8px;
+        font-size: 1.2em;
+        @include purple-gradient-btn;
+    }
+}

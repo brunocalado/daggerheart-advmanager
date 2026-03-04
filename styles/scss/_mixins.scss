@@ -1,0 +1,97 @@
+// =========================================
+// REUSABLE PATTERNS
+// =========================================
+
+@use 'variables' as *;
+
+// --- Purple hover: dark bg → deep purple + accent border ---
+// Used by: .settings-btn, .tier-tab-btn, .roll-btn, .eb-place-btn, .eb-folder-btn
+@mixin purple-hover {
+  &:hover {
+    background: $purple-deep;
+    color: $text-primary;
+    border-color: $accent;
+  }
+}
+
+// --- Primary action button with gradient ---
+// Used by: .sheet-footer button, .eb-create-btn, .apply-btn
+@mixin purple-gradient-btn {
+  background: linear-gradient(to bottom, $purple-dark, $purple-deep);
+  border: 1px solid $accent;
+  color: $text-primary;
+  font-weight: bold;
+
+  &:hover {
+    background: linear-gradient(to bottom, $purple-mid, $purple-dark);
+    box-shadow: $shadow-box-purple;
+  }
+}
+
+// --- Active/selected toggle state ---
+// Used by: .tier-tab-btn.active, .roll-btn.active, .dh-tab-link.active
+@mixin active-state($shadow-size: 5px) {
+  background: $purple-mid;
+  color: $text-primary;
+  border-color: $accent;
+  box-shadow: 0 0 $shadow-size $purple-glow-lg;
+}
+
+// --- Input focus ring ---
+// Used by: select:focus, .override-input:focus, .feature-override-input:focus, etc.
+@mixin input-focus($glow: false) {
+  border-color: $accent;
+  outline: none;
+  background-color: $bg-black;
+
+  @if $glow {
+    box-shadow: 0 0 5px $accent-glow-md;
+  }
+}
+
+// --- Text overflow ellipsis ---
+// Used by: .actor-name, .eb-row-name, select inputs
+@mixin text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// --- Small square action button (32x32 default) ---
+// Used by: .eb-add-btn, .eb-edit-btn
+@mixin small-action-btn($size: 32px) {
+  width: $size;
+  height: $size;
+  border-radius: 4px;
+  border: 1px solid $border-default;
+  background: $bg-overlay-heavy;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+// --- Dark panel container ---
+// Used by: .eb-controls, .eb-settings-panel, .stats-controls
+@mixin dark-panel($bg: $bg-overlay-light) {
+  background: $bg;
+  border-radius: 5px;
+  border: 1px solid $border-dark;
+  padding: 10px;
+}
+
+// --- Flex row with space-between ---
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// --- Flex center (for icon containers, buttons) ---
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

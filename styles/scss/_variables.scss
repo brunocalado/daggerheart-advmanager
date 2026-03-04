@@ -1,0 +1,76 @@
+// =========================================
+// COLOR PALETTE & SHARED VALUES
+// =========================================
+
+// === Primary Accent (purple-pink) ===
+$accent:          #ea80fc;
+$purple-deep:     #4a148c;
+$purple-dark:     #6a1b9a;
+$purple-mid:      #7b1fa2;
+$purple-sat:      #9c27b0;
+$purple-bright:   #8e24aa;
+$purple-indigo:   #512da8;
+$purple-tag:      #5e35b1;
+
+// === Accent Glow (rgba variants) ===
+$accent-glow-xs:  rgba(234, 128, 252, 0.3);
+$accent-glow-sm:  rgba(234, 128, 252, 0.4);
+$accent-glow-md:  rgba(234, 128, 252, 0.5);
+$accent-glow-lg:  rgba(234, 128, 252, 0.6);
+$purple-glow-xs:  rgba(156, 39, 176, 0.2);
+$purple-glow-sm:  rgba(156, 39, 176, 0.3);
+$purple-glow-md:  rgba(156, 39, 176, 0.4);
+$purple-glow-lg:  rgba(156, 39, 176, 0.5);
+
+// === Text ===
+$text-primary:    #ffffff;
+$text-light:      #eee;
+$text-secondary:  #ddd;
+$text-muted:      #ccc;
+$text-dim:        #aaa;
+$text-faint:      #888;
+$text-disabled:   #bbb;
+
+// === Backgrounds ===
+$bg-input:        #1a1a1a;
+$bg-table:        #191919;
+$bg-table-alt:    #111;
+$bg-dark:         #222;
+$bg-medium:       #333;
+$bg-black:        #000;
+$bg-overlay-heavy: rgba(0, 0, 0, 0.6);
+$bg-overlay-mid:  rgba(0, 0, 0, 0.5);
+$bg-overlay-light: rgba(0, 0, 0, 0.4);
+$bg-overlay-dark: rgba(0, 0, 0, 0.7);
+$bg-overlay-subtle: rgba(0, 0, 0, 0.3);
+$bg-white-subtle: rgba(255, 255, 255, 0.1);
+$bg-white-faint:  rgba(255, 255, 255, 0.05);
+$bg-white-hover:  rgba(255, 255, 255, 0.08);
+$bg-future:       rgba(20, 0, 30, 0.6);
+
+// === Borders ===
+$border-default:  #666;
+$border-dark:     #555;
+$border-darker:   #444;
+$border-light:    #777;
+
+// === Semantic Colors ===
+$color-green:     #69f0ae;
+$color-green-pale: #98fb98;
+$color-green-light: #b9f6ca;
+$color-green-tag: #388e3c;
+$color-orange:    #ff9800;
+$color-red:       #ff5252;
+$color-red-dark:  #d32f2f;
+$color-gold:      #ffd740;
+$color-gold-pure: #ffd700;
+$color-amber:     #fbc02d;
+$color-teal:      #00897b;
+$color-teal-light: #4db6ac;
+$color-lavender:  #b39ddb;
+
+// === Shadows ===
+$shadow-text:     0 1px 2px black;
+$shadow-text-heavy: 0 2px 3px rgba(0, 0, 0, 0.8);
+$shadow-box-purple: 0 0 10px $purple-glow-sm;
+$shadow-box-subtle: 0 1px 3px rgba(0, 0, 0, 0.6);

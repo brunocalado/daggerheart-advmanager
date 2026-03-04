@@ -1,0 +1,136 @@
+// =========================================
+// TAGS FOR FEATURES + UTILITY CLASSES
+// =========================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.dh-tag {
+    font-size: 0.75em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 6px;
+    font-weight: 800;
+    text-transform: uppercase;
+    border: none;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+    box-shadow: $shadow-box-subtle;
+}
+
+// Action Type Tags
+.tag-action {
+    background: $color-red-dark;
+    color: $text-primary;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+.tag-reaction {
+    background: $color-amber;
+    color: #000000;
+    font-weight: 900;
+}
+
+.tag-passive {
+    background: $color-green-tag;
+    color: $text-primary;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+// Flag Info Tags
+.tag-tier {
+    background: #616161;
+    color: $text-primary;
+    font-weight: bold;
+}
+
+.tag-type {
+    background: $purple-tag;
+    color: $text-primary;
+    text-transform: capitalize;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+.tag-homebrew {
+    background: $color-teal;
+    color: $text-primary;
+    border-color: $color-teal-light;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+// Damage Type Controls
+.damage-type-current {
+    font-weight: normal;
+    color: $text-muted;
+    font-size: 0.9em;
+    margin-left: 5px;
+}
+
+.damage-type-controls {
+    display: inline-flex;
+    gap: 10px;
+    margin-left: 10px;
+    background: $bg-overlay-subtle;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid $border-dark;
+
+    label {
+        font-size: 0.85em;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        color: $text-secondary;
+        font-weight: normal;
+    }
+}
+
+.damage-type-checkbox {
+    margin: 0;
+    cursor: pointer;
+}
+
+// Consistent sizing overrides
+.range-hint, .stat-value-hint, .feature-stats {
+    font-size: 1em !important;
+}
+
+// Dual Row (HP & Stress)
+.stat-row-dual {
+    @include flex-between;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    gap: 15px;
+}
+
+.stat-col-half {
+    flex: 1;
+    @include flex-between;
+    min-width: 0;
+}
+
+.stat-separator {
+    width: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    height: 25px;
+    margin: 0 5px;
+}
+
+.current-hint-text {
+    color: $text-dim !important;
+    font-size: 1em;
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+.preview-hint-text {
+    color: $accent !important;
+    font-style: italic;
+    font-weight: normal;
+    margin-left: 5px;
+}
