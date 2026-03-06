@@ -4,7 +4,8 @@
 - Migrate to SCSS
 - Updated Core Features with system compendium 1.7.2
 - Live Manager toogle button to auto render the modified actor
-- code refactor
+- js code refactor
+- Refactored all templates
 
 # 0.2.3
 - refactor for the future

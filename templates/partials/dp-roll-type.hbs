@@ -1,0 +1,27 @@
+<!-- Roll Type Buttons (Dis/Norm/Adv) -->
+<div class="stat-row">
+    <span class="stat-label">Roll Type</span>
+    <div class="roll-type-buttons dp-roll-type">
+        <button type="button"
+            data-action="setRollType"
+            data-value="-1"
+            class="roll-btn {{#if isDisadvantage}}active{{/if}}"
+            title="{{disTitle}}">
+            Dis
+        </button>
+        <button type="button"
+            data-action="setRollType"
+            data-value="0"
+            class="roll-btn {{#if isNormal}}active{{/if}}"
+            title="{{normTitle}}">
+            Norm
+        </button>
+        <button type="button"
+            data-action="setRollType"
+            data-value="1"
+            class="roll-btn {{#if isAdvantage}}active{{/if}}"
+            title="{{advTitle}}">
+            Adv
+        </button>
+    </div>
+</div>

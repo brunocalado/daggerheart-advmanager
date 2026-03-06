@@ -69,28 +69,21 @@
                 <div class="eb-row-main">
                     <img src="{{this.img}}" class="eb-row-img" alt="{{this.name}}">
                     <div class="eb-row-info">
-                        <!-- UPDATED: Tier and Name on same top line -->
                         <div class="eb-row-header-line">
                             <span class="badge-tier small">T{{this.tier}}</span>
                             <div class="eb-row-name">{{this.name}}</div>
                         </div>
-                        
                         <div class="eb-row-meta">
                             <span class="eb-type-tag">{{this.type}}</span>
                             {{#if this.isCompendium}}
                             <i class="fas fa-book eb-compendium-icon" title="Compendium"></i>
                             {{/if}}
-                            <!-- Tier removed from here -->
-                            
-                            <!-- Special Features Display (Left) -->
                             {{#each this.specialFeatures}}
                                 <span class="feature-tag">{{this}}</span>
                             {{/each}}
                         </div>
                     </div>
-                    
-                    <!-- Added Cost Display with Background -->
-                    <div class="eb-row-cost" style="margin-left: auto; padding: 2px 6px; font-weight: bold; color: #ea80fc; min-width: 25px; text-align: center; background: rgba(0, 0, 0, 0.6); border: 1px solid #555; border-radius: 4px;">
+                    <div class="eb-row-cost">
                         {{this.cost}}
                     </div>
                 </div>
@@ -136,7 +129,7 @@
                 <!-- Moved Fear to Right -->
                 <div class="eb-setting-col fear-col">
                     <label title="Spending more Fear increases the perceived difficulty level.">
-                        Fear Budget: <i class="fas fa-question-circle" style="font-size:0.8em; color:#888;"></i>
+                        Fear Budget: <i class="fas fa-question-circle eb-hint-icon"></i>
                     </label>
                     <div class="select-wrapper mini">
                         <select class="pc-fear-select">
@@ -151,7 +144,7 @@
 
         <!-- BP Header + Synergy Grid Wrapper -->
         <!-- The flex container ensures items are side-by-side -->
-        <div class="eb-header-row" style="display: flex; gap: 10px;">
+        <div class="eb-header-row">
             
             <!-- 1. BP Calculation Header -->
             <div class="eb-bp-header">
@@ -212,10 +205,10 @@
         <!-- Encounter Units List -->
         <div class="eb-encounter-list-wrapper">
             <!-- Header Container with Flexbox for Alignment -->
-            <div class="eb-results-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="eb-results-header eb-encounter-header-row">
                 <span>Adversaries ({{encounterCount}})</span>
                 {{#if encounterCount}}
-                <button type="button" data-action="clearEncounter" style="background: none; border: none; color: #ff5252; cursor: pointer; font-size: 0.9em;">
+                <button type="button" data-action="clearEncounter" class="eb-clear-btn">
                     <i class="fas fa-trash-alt"></i> Clear All
                 </button>
                 {{/if}}

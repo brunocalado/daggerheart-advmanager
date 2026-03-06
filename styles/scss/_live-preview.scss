@@ -572,3 +572,332 @@
     margin-bottom: 10px;
     text-shadow: $shadow-text;
 }
+
+// --- Live Manager layout utility classes ---
+
+.current-column-start { justify-content: flex-start; }
+
+.lm-link-icon {
+    font-size: 0.7em;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.lm-hit-chance-hint {
+    color: $text-dim;
+    font-size: 1em;
+    margin-right: 5px;
+    cursor: help;
+}
+
+.lm-hit-chance-hint-accent {
+    color: $accent;
+    margin-right: 5px;
+    cursor: help;
+}
+
+.lm-crit-chance-hint {
+    color: $text-dim;
+    font-size: 1em;
+    margin-right: 5px;
+}
+
+.lm-crit-chance-hint-accent {
+    color: $accent;
+    margin-right: 5px;
+}
+
+.lm-direct-label {
+    color: $text-light;
+    font-weight: bold;
+    font-size: 1.0em;
+    white-space: nowrap;
+}
+
+.stat-block-auto {
+    height: auto;
+    white-space: normal;
+}
+
+.lm-portrait-note { margin-top: 5px; }
+
+.lm-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.preview-actor-name-input {
+    flex: 0 0 auto;
+    min-width: 150px;
+    max-width: 250px;
+    padding: 4px 8px;
+    background: $bg-overlay-subtle;
+    border: 1px solid $border-dark;
+    color: $text-light;
+    border-radius: 3px;
+    font-size: 0.85em;
+}
+
+.lm-critical-select { width: 60px; }
+
+// Damage type / direct damage config row
+.lm-damage-config-row { margin-bottom: 5px; }
+
+.lm-damage-type-col {
+    flex: 1.5;
+    justify-content: flex-start;
+}
+
+.lm-direct-col {
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.lm-type-label {
+    margin-right: 5px;
+    white-space: nowrap;
+    font-size: 0.9em;
+}
+
+.damage-type-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.lm-damage-type-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    cursor: pointer;
+
+    input { margin-right: 2px; }
+}
+
+.lm-direct-select {
+    width: 50px;
+    font-size: 0.9em;
+}
+
+// Damage group layout
+.lm-damage-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lm-damage-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lm-damage-input-group {
+    width: auto;
+    margin-top: 0;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.lm-hint-nowrap {
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+.lm-damage-override {
+    text-align: right;
+    width: 90px;
+}
+
+.lm-info-note { margin: 15px 0 10px 0; }
+
+// Experiences
+.lm-exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.exp-item-preview {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 4px;
+}
+
+.exp-name-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.roll-btn-small {
+    flex: 0 0 28px;
+    height: 28px;
+    border: 1px solid $border-dark;
+    background: $bg-medium;
+    color: $accent;
+    cursor: pointer;
+    @include flex-center;
+    border-radius: 3px;
+}
+
+.exp-mod-select { flex: 0 0 60px; }
+
+.delete-btn-small {
+    flex: 0 0 24px;
+    color: #ff6b6b;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+// Feature changes
+.feature-change-row-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+}
+
+.feature-label-layout {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.feature-icon-link { flex-shrink: 0; }
+
+.feature-icon-img {
+    width: 24px;
+    height: 24px;
+    border: none;
+    vertical-align: middle;
+}
+
+.feature-text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.feature-arrow {
+    font-size: 0.8em;
+    opacity: 0.5;
+    margin: 0 5px;
+}
+
+.feature-control-layout {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.feature-horde-input {
+    width: 80px;
+    text-align: center;
+    opacity: 0.7;
+}
+
+.feature-damage-group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.feature-damage-input { width: 80px; }
+
+.minion-group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: bold;
+    color: $accent;
+}
+
+// New Features section
+.lm-new-features-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.lm-new-features-title {
+    color: $color-green-pale;
+    margin: 0;
+}
+
+.feature-header-controls {
+    width: 180px;
+    display: flex;
+    gap: 5px;
+}
+
+.suggestion-tier-select,
+.suggestion-type-select {
+    font-size: 0.85em;
+    height: 26px;
+    background: $bg-overlay-mid;
+    border: 1px solid $border-dark;
+    color: $accent;
+    border-radius: 3px;
+}
+
+.suggestion-tier-select { width: 70px; }
+.suggestion-type-select { flex: 1; }
+
+.new-feature-label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.new-feature-checkbox {
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.new-feature-link {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.new-feature-name { color: $text-light; }
+
+.new-feature-star {
+    color: $color-gold-pure;
+    margin-left: auto;
+    font-size: 0.8em;
+}
+
+// Stat group headers
+.lm-stat-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+// Empty state
+.empty-state-icon {
+    font-size: 4em;
+    opacity: 0.3;
+    margin-bottom: 20px;
+}
+
+// Tier control row
+.tier-control-label {
+    white-space: nowrap;
+    margin-right: 5px;
+    font-weight: bold;
+    color: $text-dim;
+}
+
+.tier-buttons-flush { margin-top: 0; flex: 1; }
+
+.lm-actor-name-margin { margin-top: 15px; }

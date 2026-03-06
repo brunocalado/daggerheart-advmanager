@@ -1,0 +1,60 @@
+<!-- FEATURES SECTION -->
+<div class="features-preview-section">
+    <h4 class="features-header">Feature Changes</h4>
+    {{#if featurePreviewData.length}}
+        <div class="feature-changes-list">
+            {{#each featurePreviewData}}
+                <div class="feature-change-row feature-change-row-layout">
+                    <div class="feature-label feature-label-layout">
+                        {{#if this.img}}
+                            <a class="feature-icon-link" data-action="openFeature" data-uuid="{{this.uuid}}" title="Open Item">
+                                <img src="{{this.img}}" class="feature-icon-img">
+                            </a>
+                        {{/if}}
+                        <div class="feature-text-overflow">
+                            {{this.typeLabel}}
+                            {{{this.originalName}}} <i class="fas fa-arrow-right feature-arrow"></i>
+                        </div>
+                    </div>
+                    {{#if this.stats}}
+                        <div class="feature-stats">
+                            {{this.stats}}
+                        </div>
+                    {{/if}}
+                    <div class="feature-control feature-control-layout">
+                        {{#if this.isHordeFeature}}
+                            <div class="feature-input-group">
+                                <input type="text" class="feature-override-input feature-horde-input" value="{{this.newName}}" disabled>
+                            </div>
+                        {{else if this.options}}
+                            <div class="feature-input-group feature-damage-group">
+                                <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{this.optionsTooltip}}}"></i>
+
+                                <input type="text" class="feature-override-input feature-damage-input"
+                                       data-itemid="{{this.itemId}}"
+                                       data-original="{{this.originalFormula}}"
+                                       value="{{this.newName}}">
+                            </div>
+                        {{else if this.isMinionFeature}}
+                            <div class="minion-group">
+                                Minion ( <input type="number" class="minion-val-input" data-itemid="{{this.itemId}}" value="{{this.minionValue}}"> )
+                            </div>
+                        {{else if this.isDamageReadonly}}
+                            <div class="feature-input-group">
+                                <input type="text" class="feature-override-input feature-horde-input" value="{{this.newName}}" disabled>
+                            </div>
+                        {{else}}
+                            {{#if this.isRenamed}}
+                                <input type="text" class="feature-override-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" title="Rename Feature">
+                            {{else}}
+                                <div class="feature-new-static">{{this.newName}}</div>
+                            {{/if}}
+                        {{/if}}
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {{else}}
+        <div class="no-changes">No modified features.</div>
+    {{/if}}
+</div>

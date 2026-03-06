@@ -1,0 +1,54 @@
+<!-- Top Control: Actor Selection & Filter -->
+<div class="preview-controls form-group">
+    <div class="actor-selection-row">
+
+        <div class="select-wrapper source-wrapper">
+            <select name="source" class="source-select">
+                {{#each sourceOptions}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                {{/each}}
+            </select>
+            <i class="fas fa-database select-arrow"></i>
+        </div>
+
+        <button type="button" data-action="openSettings" class="settings-btn" title="Manage Compendiums">
+            <i class="fas fa-cog"></i>
+        </button>
+
+        <div class="select-wrapper filter-wrapper small-filter">
+            <select name="filterTier" class="filter-tier-select">
+                {{#each filterOptions}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                {{/each}}
+            </select>
+            <i class="fas fa-filter select-arrow"></i>
+        </div>
+
+        <div class="select-wrapper filter-wrapper small-filter">
+            <select name="filterType" class="filter-type-select">
+                {{#each typeOptions}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                {{/each}}
+            </select>
+            <i class="fas fa-paw select-arrow"></i>
+        </div>
+
+        <div class="select-wrapper actor-wrapper">
+            <select name="actorSelect" class="main-actor-select">
+                <option value="" disabled {{#unless selectedActorId}}selected{{/unless}}>-- Choose an Adversary --</option>
+                {{#each adversaries}}
+                <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
+                {{/each}}
+            </select>
+            <i class="fas fa-chevron-down select-arrow"></i>
+        </div>
+
+        <button type="button" data-action="openStats" class="settings-btn" title="Compendium Stats">
+            <i class="fas fa-chart-pie"></i>
+        </button>
+
+        <button type="button" data-action="openDiceProb" class="settings-btn" title="Dice Probability">
+            <i class="fas fa-dice-d20"></i>
+        </button>
+    </div>
+</div>

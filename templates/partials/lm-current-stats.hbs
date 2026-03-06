@@ -1,0 +1,104 @@
+<!-- Left Column: Current State -->
+<div class="preview-column current-column current-column-start">
+    <h3 class="col-header">
+        Current (T{{currentStats.tier}})
+        {{#if linkData}}
+            <i class="fas {{linkData.icon}} {{linkData.cssClass}} lm-link-icon" title="{{linkData.label}}"></i>
+        {{/if}}
+    </h3>
+
+    <div class="stat-row">
+        <span class="stat-label">Difficulty</span>
+        <span class="stat-value">
+            {{#if currentStats.hitChanceAgainst}}
+                <span class="lm-hit-chance-hint" title="{{currentStats.hitChanceAgainst.tooltip}}">{{currentStats.hitChanceAgainst.text}}</span>
+            {{/if}}
+            {{currentStats.difficulty}}
+        </span>
+    </div>
+
+    <!-- HP & STRESS ROW (CURRENT) -->
+    <div class="stat-row-dual">
+        <div class="stat-col-half">
+            <span class="stat-label">HP</span>
+            <span class="stat-value">{{currentStats.hp}}</span>
+        </div>
+        <div class="stat-separator"></div>
+        <div class="stat-col-half">
+            <span class="stat-label">Stress</span>
+            <span class="stat-value">{{currentStats.stress}}</span>
+        </div>
+    </div>
+
+    <div class="stat-row">
+        <span class="stat-label">Thresholds</span>
+        <span class="stat-value">{{currentStats.thresholds}}</span>
+    </div>
+    <div class="stat-row">
+        <span class="stat-label">Attack Bonus</span>
+        <span class="stat-value">
+            {{#if currentStats.hitChance}}
+                <span class="lm-hit-chance-hint" title="{{currentStats.hitChance.tooltip}}">{{currentStats.hitChance.text}}</span>
+            {{/if}}
+            {{currentStats.attackMod}}
+        </span>
+    </div>
+    <div class="stat-row">
+        <span class="stat-label">Critical Threshold</span>
+        <span class="stat-value">
+            <span class="lm-crit-chance-hint">{{currentStats.critChance}}</span>
+            {{currentStats.critical}}
+        </span>
+    </div>
+
+    <div class="stat-group">
+        <div class="lm-stat-group-header">
+            <span class="stat-label">
+                Attack Damage
+                {{#if currentStats.damageTypesLabel}}
+                    <span class="current-hint-text">{{currentStats.damageTypesLabel}}</span>
+                {{/if}}
+            </span>
+            <span class="lm-direct-label">
+                {{currentStats.directLabel}}
+            </span>
+        </div>
+        <div class="stat-block">{{currentStats.damage}} <span class="current-hint-text">{{currentStats.damageStats}}</span></div>
+    </div>
+
+    {{#if isHorde}}
+        {{#if currentStats.halvedDamage}}
+        <div class="stat-group">
+            <span class="stat-label">Halved Damage (Horde)</span>
+            <div class="stat-block">{{currentStats.halvedDamage}} <span class="current-hint-text">{{currentStats.halvedDamageStats}}</span></div>
+        </div>
+        {{/if}}
+    {{/if}}
+
+    {{#if currentStats.experiences.length}}
+        <div class="stat-group">
+            <span class="stat-label">Experiences</span>
+            <div class="stat-block stat-block-auto">
+                {{#each currentStats.experiences}}
+                    {{this.name}} {{this.value}}{{#unless @last}}, {{/unless}}
+                {{/each}}
+            </div>
+        </div>
+    {{/if}}
+
+    <div class="actor-preview-name lm-actor-name-margin">
+        {{actorName}} ({{actorTypeLabel}})
+    </div>
+
+    {{#if portraitImg}}
+    <div class="portrait-display-wrapper">
+        <div class="portrait-display" data-action="openSheet">
+            <img src="{{portraitImg}}" alt="{{actorName}}" class="actor-portrait">
+        </div>
+    </div>
+    <div class="preview-note lm-portrait-note">
+        <i class="fas fa-external-link-alt"></i> Click image to open sheet
+    </div>
+    {{/if}}
+
+</div>

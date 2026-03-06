@@ -147,6 +147,77 @@
     }
 }
 
+// --- Compendium Stats Manager ---
+.csm-warning-box {
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid $color-orange;
+    padding: 8px;
+    border-radius: 4px;
+    margin-top: 5px;
+    text-align: left;
+}
+
+.csm-warning-text {
+    font-size: 0.9em;
+    color: $color-gold;
+    margin: 0;
+}
+
+.csm-list-area {
+    height: 350px;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid $border-dark;
+    margin-top: 10px;
+}
+
+.csm-compendium-list {
+    border: none;
+    padding-top: 10px;
+}
+
+.csm-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+    background: $bg-overlay-subtle;
+    border-bottom: 1px solid $border-darker;
+    margin-bottom: 2px;
+}
+
+.csm-checkbox { flex: 0 0 auto; }
+
+.csm-label {
+    flex: 1;
+    @include text-ellipsis;
+    cursor: pointer;
+
+    .pkg-name {
+        font-size: 0.8em;
+        color: $text-dim;
+    }
+}
+
+.csm-input-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.csm-tag-col { flex: 0 0 140px; }
+.csm-folder-col { flex: 0 0 180px; }
+
+.csm-input {
+    background: $bg-dark;
+    color: $text-primary;
+    border: 1px solid $border-dark;
+    border-radius: 3px;
+    padding: 3px;
+    font-size: 0.85em;
+    width: 100%;
+}
+
 .sheet-footer {
     margin-top: 10px;
 

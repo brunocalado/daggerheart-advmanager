@@ -606,3 +606,34 @@
     width: 100%;
     margin-bottom: 15px;
 }
+
+.eb-hint-icon {
+    font-size: 0.8em;
+    color: $text-faint;
+}
+
+.eb-row-cost {
+    margin-left: auto;
+    padding: 2px 6px;
+    font-weight: bold;
+    color: $accent;
+    min-width: 25px;
+    text-align: center;
+    background: $bg-overlay-heavy;
+    border: 1px solid $border-dark;
+    border-radius: 4px;
+}
+
+.eb-encounter-header-row {
+    @include flex-between;
+}
+
+.eb-clear-btn {
+    background: none;
+    border: none;
+    color: $color-red;
+    cursor: pointer;
+    font-size: 0.9em;
+
+    &:hover { color: #ff8a8a; }
+}

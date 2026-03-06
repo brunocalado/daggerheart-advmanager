@@ -88,6 +88,16 @@ function manage() {
 // --- Init & Hooks ---
 
 Hooks.once("init", () => {
+    // Pre-load Handlebars partials for template decomposition
+    loadTemplates([
+        "modules/daggerheart-advmanager/templates/partials/lm-controls.hbs",
+        "modules/daggerheart-advmanager/templates/partials/lm-current-stats.hbs",
+        "modules/daggerheart-advmanager/templates/partials/lm-preview-stats.hbs",
+        "modules/daggerheart-advmanager/templates/partials/lm-feature-changes.hbs",
+        "modules/daggerheart-advmanager/templates/partials/lm-new-features.hbs",
+        "modules/daggerheart-advmanager/templates/partials/dp-roll-type.hbs"
+    ]);
+
     game.settings.register(MODULE_ID, SETTING_CHAT_LOG, {
         name: "Log Changes to Chat",
         hint: "If enabled, sends a whisper to the GM whenever an Adversary is updated via the Manager.",

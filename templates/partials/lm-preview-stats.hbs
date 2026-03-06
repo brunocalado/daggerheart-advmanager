@@ -1,0 +1,174 @@
+<!-- Right Column: Preview State -->
+<div class="preview-column future-column">
+    <h3 class="col-header future-header lm-preview-header">
+        <span>Preview (T{{previewStats.tier}})</span>
+        <input type="text" class="preview-actor-name-input" value="{{previewActorName}}" placeholder="New Actor Name" title="Name for new actor">
+    </h3>
+
+    {{#if previewStats.error}}
+        <div class="error-msg">{{previewStats.error}}</div>
+    {{else}}
+
+        <div class="stat-row">
+            <span class="stat-label">Difficulty</span>
+            <div class="stat-input-group">
+                <span class="stat-value-hint">
+                    {{#if previewStats.hitChanceAgainst}}
+                        <span class="lm-hit-chance-hint-accent" title="{{previewStats.hitChanceAgainst.tooltip}}">{{previewStats.hitChanceAgainst.text}}</span>
+                    {{/if}}
+                    {{{previewStats.difficultyDisplay}}}
+                </span>
+                <input type="number" class="override-input" data-field="difficulty" value="{{previewStats.difficulty}}" title="Manual Override">
+            </div>
+        </div>
+
+        <!-- HP & STRESS ROW (PREVIEW) -->
+        <div class="stat-row-dual">
+            <div class="stat-col-half">
+                <span class="stat-label">HP</span>
+                <div class="stat-input-group dual-compact">
+                    <span class="stat-value-hint">{{{previewStats.hpDisplay}}}</span>
+                    <input type="number" class="override-input" data-field="hp" value="{{previewStats.hp}}" title="Manual Override" {{#if previewStats.isMinion}}disabled{{/if}}>
+                </div>
+            </div>
+            <div class="stat-separator"></div>
+            <div class="stat-col-half">
+                <span class="stat-label">Stress</span>
+                <div class="stat-input-group dual-compact">
+                    <span class="stat-value-hint">{{{previewStats.stressDisplay}}}</span>
+                    <input type="number" class="override-input" data-field="stress" value="{{previewStats.stress}}" title="Manual Override">
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-row">
+            <span class="stat-label">Thresholds</span>
+            <div class="stat-input-group dual-input">
+                <span class="stat-value-hint">{{{previewStats.thresholdsDisplay}}}</span>
+                {{#if previewStats.isMinion}}
+                {{else}}
+                    <input type="number" class="override-input small" data-field="major" value="{{previewStats.major}}" placeholder="Maj" title="Major">
+                    /
+                    <input type="number" class="override-input small" data-field="severe" value="{{previewStats.severe}}" placeholder="Sev" title="Severe">
+                {{/if}}
+            </div>
+        </div>
+
+        <div class="stat-row">
+            <span class="stat-label">Attack Bonus</span>
+            <div class="stat-input-group">
+                <span class="stat-value-hint">
+                    {{#if previewStats.hitChance}}
+                        <span class="lm-hit-chance-hint-accent" title="{{previewStats.hitChance.tooltip}}">{{previewStats.hitChance.text}}</span>
+                    {{/if}}
+                    {{{previewStats.attackModDisplay}}}
+                </span>
+                <input type="number" class="override-input" data-field="attackMod" value="{{previewStats.attackMod}}" title="Manual Override">
+            </div>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Critical Threshold</span>
+            <div class="stat-input-group">
+                 <span class="stat-value-hint lm-crit-chance-hint-accent">{{previewStats.critChance}}</span>
+                <select class="override-input critical-select lm-critical-select">
+                    {{#each criticalOptions}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+
+        <!-- Damage Type and Direct Damage Configuration Row -->
+        <div class="stat-row-dual lm-damage-config-row">
+            <!-- Left: Damage Types -->
+            <div class="stat-col-half lm-damage-type-col">
+                <span class="stat-label lm-type-label">Damage Type:</span>
+                <div class="damage-type-controls">
+                    <label class="lm-damage-type-label" title="Physical Damage"><input type="checkbox" class="damage-type-checkbox" value="physical" {{#if isPhysical}}checked{{/if}}> Phys</label>
+                    <label class="lm-damage-type-label" title="Magical Damage"><input type="checkbox" class="damage-type-checkbox" value="magical" {{#if isMagical}}checked{{/if}}> Mag</label>
+                </div>
+            </div>
+
+            <!-- Separator -->
+            <div class="stat-separator"></div>
+
+            <!-- Right: Direct Damage -->
+            <div class="stat-col-half lm-direct-col">
+                <span class="stat-label lm-type-label">Direct:</span>
+                <select class="override-input direct-select lm-direct-select">
+                    {{#each directOptions}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+
+        <!-- Attack Damage Layout -->
+        <div class="stat-group">
+            <div class="lm-damage-header">
+                <span class="stat-label lm-damage-label">
+                    Attack Damage
+                </span>
+
+                <div class="feature-input-group lm-damage-input-group">
+                    <span class="preview-hint-text lm-hint-nowrap">{{previewStats.damageStats}}</span>
+                    <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{damageTooltip}}}"></i>
+                    <input type="text" class="override-input lm-damage-override" data-field="damageFormula" value="{{previewStats.mainDamageFormula}}">
+                </div>
+            </div>
+        </div>
+
+        {{#if previewStats.halvedDamage}}
+        <!-- Halved Damage Layout -->
+        <div class="stat-group">
+            <div class="lm-damage-header">
+                <span class="stat-label">Halved Damage (Horde)</span>
+
+                <div class="feature-input-group lm-damage-input-group">
+                    <span class="preview-hint-text lm-hint-nowrap">{{previewStats.halvedDamageStats}}</span>
+                    <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{halvedDamageTooltip}}}"></i>
+                    <input type="text" class="override-input lm-damage-override" data-field="halvedDamageFormula" value="{{previewStats.mainHalvedDamageFormula}}">
+                </div>
+            </div>
+        </div>
+        {{/if}}
+
+        <div class="preview-note lm-info-note">
+            <i class="fas fa-info-circle"></i> Edit values to override random rolls.
+        </div>
+
+        <!-- PREVIEW EXPERIENCES -->
+        <div class="stat-group">
+            <div class="lm-exp-header">
+                <span class="stat-label">
+                    Experiences
+                    <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{previewStats.expTooltip}}}"></i>
+                </span>
+                <button type="button" data-action="addExperience" class="add-btn-small" title="Add Experience"><i class="fas fa-plus"></i></button>
+            </div>
+            <div class="stat-block-list experiences-list">
+                {{#each previewStats.experiences}}
+                    <div class="exp-item-preview {{#if this.isNew}}exp-new{{/if}}">
+                        <input type="text" class="exp-name-input" data-id="{{this.id}}" value="{{this.name}}" placeholder="Exp Name">
+
+                        <button type="button" data-action="rollExperienceName" data-id="{{this.id}}" class="roll-btn-small" title="Roll Random Name">
+                            <i class="fas fa-dice"></i>
+                        </button>
+
+                        <select class="exp-mod-select" data-id="{{this.id}}">
+                            {{#each this.options}}
+                                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                            {{/each}}
+                        </select>
+                        <button type="button" data-action="deleteExperience" data-id="{{this.id}}" class="delete-btn-small" title="Remove"><i class="fas fa-trash"></i></button>
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+
+        {{> "modules/daggerheart-advmanager/templates/partials/lm-feature-changes.hbs"}}
+
+        {{> "modules/daggerheart-advmanager/templates/partials/lm-new-features.hbs"}}
+
+    {{/if}}
+</div>
