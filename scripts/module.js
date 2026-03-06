@@ -89,6 +89,7 @@ function manage() {
 
 Hooks.once("init", () => {
     // Pre-load Handlebars partials for template decomposition
+    const loadTemplates = foundry.applications?.handlebars?.loadTemplates || globalThis.loadTemplates;
     loadTemplates([
         "modules/daggerheart-advmanager/templates/partials/lm-controls.hbs",
         "modules/daggerheart-advmanager/templates/partials/lm-current-stats.hbs",
