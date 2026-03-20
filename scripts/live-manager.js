@@ -1526,14 +1526,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         sim.previewExperiences = [];
         if (benchmark.experiences) {
-            const targetMod = this.overrides.expMod !== undefined ? this.overrides.expMod : getRollFromSignedRange(benchmark.experiences.modifier);
-            
+            let targetMod;
+            if (this.overrides.expMod !== undefined) {
+                targetMod = this.overrides.expMod;
+            } else {
+                targetMod = getRollFromSignedRange(benchmark.experiences.modifier);
+                this.overrides.expMod = targetMod;
+            }
+
             let targetAmount = 0;
             if (this.overrides.expAmount !== undefined) {
                 targetAmount = this.overrides.expAmount;
             } else {
                 targetAmount = getRollFromRange(benchmark.experiences.amount);
-                this.overrides.expAmount = targetAmount; 
+                this.overrides.expAmount = targetAmount;
             }
             
             sim.expAmountRange = benchmark.experiences.amount;

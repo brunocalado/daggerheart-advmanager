@@ -1,3 +1,6 @@
+# 0.2.5
+- small fix for experiences
+
 # 0.2.4
 - Minion (X) feature will be updated
 - Minion Group Attack feature will show up
