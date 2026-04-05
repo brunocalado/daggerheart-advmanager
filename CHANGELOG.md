@@ -1,3 +1,6 @@
+# 0.2.7
+- Last release for v13
+
 # 0.2.5
 - small fix for experiences
 
