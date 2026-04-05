@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'module.json'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extrair versão do module.json
+        id: version
+        run: echo "version=$(jq -r .version module.json)" >> $GITHUB_OUTPUT
+
+      - name: Atualizar download URL no module.json
+        run: |
+          VERSION=$(jq -r .version module.json)
+          jq --arg url "https://github.com/brunocalado/daggerheart-advmanager/releases/download/v${VERSION}/daggerheart-advmanager.zip" \
+            '.download = $url' module.json > module.tmp.json
+          mv module.tmp.json module.json
+
+      - name: Criar ZIP do módulo
+        run: |
+          zip -r daggerheart-advmanager.zip . \
+            $(grep -v '^#' .gitignore | grep -v '^$' | sed 's|^|--exclude "|' | sed 's|$|"|' | tr '\n' ' ') \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "*.zip"
+
+      - name: Extrair notas da versão do CHANGELOG
+        id: notes
+        run: |
+          VERSION=$(jq -r .version module.json)
+          NOTES=$(awk "/^## ${VERSION}/{flag=1; next} /^## /{flag=0} flag" CHANGELOG.md)
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Criar Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ steps.version.outputs.version }}"
+          name: "v${{ steps.version.outputs.version }}"
+          body: ${{ steps.notes.outputs.notes }}
+          files: |
+            daggerheart-advmanager.zip
+            module.json

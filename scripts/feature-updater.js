@@ -55,7 +55,7 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
         const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
         const types = typeKeys.map(k => {
             const capitalizedKey = k.charAt(0).toUpperCase() + k.slice(1);
-            // Comparação insensível a maiúsculas/minúsculas para marcar selecionado
+            // Case-insensitive comparison to mark the selected type
             const isSelected = capitalizedKey.toLowerCase() === (this.formState.type || "").toLowerCase();
             return {
                 value: capitalizedKey, 
@@ -64,8 +64,7 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
             };
         });
 
-        // Garantir que se o tipo atual não estiver na lista (ex: custom), seleciona o primeiro ou mantém visualmente errado
-        // (Opcional: adicionar lógica de fallback se necessário, mas o padrão Bruiser cobre init)
+        // If the current type isn't in the list (e.g., custom), fallback may be needed — default Bruiser covers init
 
         return {
             item: this.selectedItem ? { name: this.selectedItem.name, img: this.selectedItem.img } : null,
