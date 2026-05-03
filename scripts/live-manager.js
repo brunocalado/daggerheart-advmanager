@@ -1,4 +1,4 @@
-import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor } from "./damage-engine.js";
+import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor, getDamagePartsArray } from "./damage-engine.js";
 import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
@@ -511,7 +511,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 if (previewDamageTypes === null) {
                     const actorData = actor.toObject();
-                    const mainPart = actorData.system.attack?.damage?.parts?.[0];
+                    const mainPart = getDamagePartsArray(actorData.system.attack?.damage?.parts)[0];
                     
                     if (mainPart) {
                         if (Array.isArray(mainPart.type)) {
@@ -1104,9 +1104,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             if (this.overrides.damageTypes) {
                 const actorData = freshActor.toObject();
                 const parts = actorData.system.attack?.damage?.parts ? foundry.utils.deepClone(actorData.system.attack.damage.parts) : [];
+                const damageParts = getDamagePartsArray(parts);
                 
-                if (parts && parts.length > 0) {
-                    parts[0].type = this.overrides.damageTypes; 
+                if (damageParts.length > 0) {
+                    damageParts[0].type = this.overrides.damageTypes;
                     manualUpdates["system.attack.damage.parts"] = parts;
                     hasManualUpdates = true;
                 }
@@ -1394,8 +1395,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let firstHalvedFormula = null;
         let damageTypesLabel = "";
         
-        if (sys.attack?.damage?.parts) {
-            sys.attack.damage.parts.forEach((p, idx) => {
+        const rawDamageParts = sys.attack?.damage?.parts;
+        const actorDamageParts = getDamagePartsArray(rawDamageParts);
+        if (actorDamageParts.length) {
+            actorDamageParts.forEach((p, idx) => {
                 if(p.value) {
                     let formula = p.value.custom?.enabled ? p.value.custom.formula : 
                         (p.value.dice ? `${p.value.flatMultiplier || 1}${p.value.dice}${p.value.bonus ? (p.value.bonus > 0 ? '+'+p.value.bonus : p.value.bonus) : ''}` : p.value.flatMultiplier);
@@ -1638,7 +1641,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (actorData.system.attack?.damage?.parts) {
             const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
-            tempParts.forEach((part, index) => {
+            const tempDamageParts = getDamagePartsArray(tempParts);
+            tempDamageParts.forEach((part, index) => {
                 
                 let rawVal = "";
                 if (this.overrides.damageFormula) {

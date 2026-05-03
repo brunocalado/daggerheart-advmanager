@@ -1,6 +1,7 @@
 import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING_LAST_SOURCE } from "./module.js";
 import { POWERFUL_FEATURES } from "./rules.js";
 import { LiveManager } from "./live-manager.js"; 
+import { prepareDocumentCreateData } from "./foundry-compat.js";
 
 // Import DialogV2 to fix deprecation warning
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
@@ -619,10 +620,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
                 let createdActor;
                 if (originalActor.compendium) {
-                    // Method 1: Robust Copy via toObject (Works reliably in V13)
-                    const data = originalActor.toObject();
-                    delete data._id; // Ensure new ID
-                    data.folder = subFolder.id;
+                    const data = prepareDocumentCreateData(originalActor, game.actors, { folder: subFolder.id });
                     createdActor = await Actor.create(data);
                 } else {
                     // Method 2: Clone for World Actors
@@ -646,7 +644,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
                         if (entry) {
                             const itemDoc = await featurePack.getDocument(entry._id);
                             if (itemDoc) {
-                                await createdActor.createEmbeddedDocuments("Item", [itemDoc.toObject()]);
+                                const itemData = prepareDocumentCreateData(itemDoc, game.items);
+                                await createdActor.createEmbeddedDocuments("Item", [itemData]);
                             }
                         }
                     }

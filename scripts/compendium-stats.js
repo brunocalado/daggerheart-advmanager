@@ -1,6 +1,7 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { CompendiumStatsManager } from "./compendium-stats-manager.js";
 import { MODULE_ID, SETTING_STATS_COMPENDIUMS } from "./module.js";
+import { getDamagePartsArray } from "./damage-engine.js";
 
 export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
     
@@ -200,7 +201,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
                 // --- Damage ---
                 if (sys.attack?.damage?.parts) {
-                    sys.attack.damage.parts.forEach(part => {
+                    getDamagePartsArray(sys.attack.damage.parts).forEach(part => {
                         let formula = this._extractFormula(part.value);
                         if (formula) data[actorTier].damageRolls.add(formula);
 

@@ -1,4 +1,5 @@
 import { MODULE_ID, SETTING_STATS_COMPENDIUMS } from "./module.js";
+import { findApplicationById } from "./foundry-compat.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
@@ -114,7 +115,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
         console.log("Adversary Manager | Stat sources updated.");
         
         // 5. Reload Stats Window if open
-        const statsApp = Object.values(ui.windows).find(w => w.id === "daggerheart-compendium-stats");
+        const statsApp = findApplicationById("daggerheart-compendium-stats");
         if (statsApp) {
             statsApp.loading = true;
             statsApp.render();

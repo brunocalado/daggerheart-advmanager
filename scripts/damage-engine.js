@@ -7,6 +7,7 @@
  */
 import { ADVERSARY_BENCHMARKS, PC_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID, SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SETTING_ADD_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
+import { prepareDocumentCreateData } from "./foundry-compat.js";
 
 // --- Utility Parsers ---
 
@@ -198,6 +199,23 @@ export function calculateHitChanceAgainst(difficulty, tier) {
 // --- Core Damage Logic ---
 
 /**
+ * Normalizes Foundry damage parts to an iterable array without changing the
+ * original container shape. Daggerheart data may store parts as an Array or as
+ * an object keyed by part id/index.
+ * @param {Array|Object|null|undefined} parts - Raw damage parts container.
+ * @returns {Array} Damage part objects.
+ */
+export function getDamagePartsArray(parts) {
+    const isDamagePart = part => part && typeof part === "object" && ("value" in part || "valueAlt" in part || "type" in part);
+    if (Array.isArray(parts)) return parts.filter(isDamagePart);
+    if (parts && typeof parts === "object") {
+        if (isDamagePart(parts)) return [parts];
+        return Object.values(parts).filter(isDamagePart);
+    }
+    return [];
+}
+
+/**
  * Selects the best matching damage formula from the benchmark list for the new tier.
  * @param {string|null} currentDie - Current die type (e.g. "d8") or null for flat damage.
  * @param {number} currentBonus - Current bonus value.
@@ -334,7 +352,7 @@ export function processDamageValue(val, newTier, currentTier, damageRolls) {
 /**
  * Iterates all damage parts of an attack, applying auto-scaling or forced overrides.
  * Handles Minion flat-damage and Horde halved-damage paths.
- * @param {Array} parts - Array of damage part objects.
+ * @param {Array|Object} parts - Damage part objects as an array or keyed object.
  * @param {number} newTier - Target tier.
  * @param {number} currentTier - Current tier.
  * @param {Object} benchmark - Tier benchmark data.
@@ -344,14 +362,15 @@ export function processDamageValue(val, newTier, currentTier, damageRolls) {
 export function updateDamageParts(parts, newTier, currentTier, benchmark, forceFormula = null) {
     let hasChanges = false;
     const changes = [];
+    const damageParts = getDamagePartsArray(parts);
 
-    if (!parts || !Array.isArray(parts)) return { hasChanges, changes };
+    if (!damageParts.length) return { hasChanges, changes };
 
     // Handle Legacy String Override (Applies to first part only)
     if (typeof forceFormula === 'string' && forceFormula) {
         const parsed = parseDamageString(forceFormula);
         if (parsed) {
-            const part = parts.find(p => p.value);
+            const part = damageParts.find(p => p.value);
             if (part) {
                 let oldFormula = part.value.custom?.enabled ? part.value.custom.formula : (part.value.dice ? `${part.value.flatMultiplier}${part.value.dice}` : `${part.value.flatMultiplier}`);
 
@@ -377,7 +396,7 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
     }
 
     // Standard logic with Multipart Override Support (Object Map)
-    parts.forEach(part => {
+    damageParts.forEach(part => {
         // MINION CHECK: If benchmark has 'basic_attack_y', use it instead of scaling
         if (benchmark.basic_attack_y && part.value) {
             const currentFormula = part.value.custom?.enabled ? part.value.custom.formula : `${part.value.flatMultiplier}`;
@@ -783,7 +802,7 @@ export async function handleNewFeatures(actor, typeKey, newTier, currentTier, ch
 
             if (entry) {
                 const doc = await pack.getDocument(entry._id);
-                featureData = doc.toObject();
+                featureData = prepareDocumentCreateData(doc, game.items);
                 sourceUuid = doc.uuid;
                 break;
             }
@@ -800,7 +819,7 @@ export async function handleNewFeatures(actor, typeKey, newTier, currentTier, ch
                     const templateEntry = index.find(e => e.name === "Minion (X)");
                     if (templateEntry) {
                         const doc = await customPack.getDocument(templateEntry._id);
-                        featureData = doc.toObject();
+                        featureData = prepareDocumentCreateData(doc, game.items);
                         sourceUuid = doc.uuid;
 
                         featureData.name = featureName;
@@ -818,9 +837,7 @@ export async function handleNewFeatures(actor, typeKey, newTier, currentTier, ch
             continue;
         }
 
-        if (sourceUuid) {
-            featureData.uuid = sourceUuid;
-        }
+        if (sourceUuid) foundry.utils.setProperty(featureData, "flags.core.sourceId", sourceUuid);
 
         toCreate.push(featureData);
 
@@ -920,11 +937,12 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
 
     if (actorData.system.attack && actorData.system.attack.damage && actorData.system.attack.damage.parts) {
         const sheetDamageParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
+        const sheetDamagePartList = getDamagePartsArray(sheetDamageParts);
 
-        if (overrides.damageFormula && sheetDamageParts.length > 0) {
+        if (overrides.damageFormula && sheetDamagePartList.length > 0) {
             const parsed = parseDamageString(overrides.damageFormula);
             if (parsed) {
-                const part = sheetDamageParts[0];
+                const part = sheetDamagePartList[0];
                 if (part.value) {
                     if (parsed.die === null) {
                         part.value.flatMultiplier = parsed.count;
@@ -941,11 +959,11 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
             }
         }
 
-        if (overrides.halvedDamageFormula && sheetDamageParts.length > 0) {
+        if (overrides.halvedDamageFormula && sheetDamagePartList.length > 0) {
              calculatedHalvedDamage = overrides.halvedDamageFormula;
              const parsed = parseDamageString(overrides.halvedDamageFormula);
-             if (parsed && sheetDamageParts[0].valueAlt) {
-                 const part = sheetDamageParts[0];
+             if (parsed && sheetDamagePartList[0].valueAlt) {
+                 const part = sheetDamagePartList[0];
                  if (part.valueAlt) {
                      if (parsed.die === null) {
                         part.valueAlt.flatMultiplier = parsed.count;
@@ -971,17 +989,17 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
             });
         }
 
-        if (!calculatedHalvedDamage && sheetDamageParts.length > 0 && sheetDamageParts[0].valueAlt) {
-            const part = sheetDamageParts[0];
+        if (!calculatedHalvedDamage && sheetDamagePartList.length > 0 && sheetDamagePartList[0].valueAlt) {
+            const part = sheetDamagePartList[0];
             const altFormula = part.valueAlt.custom?.enabled ? part.valueAlt.custom.formula : (part.valueAlt.dice ? `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus?(part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}` : `${part.valueAlt.flatMultiplier}`);
             calculatedHalvedDamage = altFormula;
         }
 
         // Apply Manual Overrides again to be safe
-        if (overrides.damageFormula && sheetDamageParts.length > 0) {
+        if (overrides.damageFormula && sheetDamagePartList.length > 0) {
             const parsed = parseDamageString(overrides.damageFormula);
-            if (parsed && sheetDamageParts[0].value) {
-                 const part = sheetDamageParts[0];
+            if (parsed && sheetDamagePartList[0].value) {
+                 const part = sheetDamagePartList[0];
                  if (parsed.die === null) {
                     part.value.flatMultiplier = parsed.count;
                     part.value.dice = "";
@@ -999,10 +1017,10 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
             }
         }
 
-        if (overrides.halvedDamageFormula && sheetDamageParts.length > 0) {
+        if (overrides.halvedDamageFormula && sheetDamagePartList.length > 0) {
             const parsed = parseDamageString(overrides.halvedDamageFormula);
-            if (parsed && sheetDamageParts[0].valueAlt) {
-                 const part = sheetDamageParts[0];
+            if (parsed && sheetDamagePartList[0].valueAlt) {
+                 const part = sheetDamagePartList[0];
                  if (parsed.die === null) {
                     part.valueAlt.flatMultiplier = parsed.count;
                     part.valueAlt.dice = "";
