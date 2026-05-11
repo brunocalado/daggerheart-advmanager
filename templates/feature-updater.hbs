@@ -1,7 +1,7 @@
 <div class="dh-adv-manager-content feature-updater-container">
 
     <div class="form-group" style="margin-bottom: 15px;">
-        <label class="drop-label">1. Drop Feature Here</label>
+        <label class="drop-label">{{localize "DHAM.FeatureUpdater.DropFeature"}}</label>
         <div class="drop-zone {{#if item}}has-item{{/if}}">
             {{#if item}}
                 <div class="dropped-item-content">
@@ -11,7 +11,7 @@
             {{else}}
                 <div class="drop-placeholder">
                     <i class="fas fa-box-open drop-icon-placeholder"></i>
-                    <span>Drag a Feature from the World</span>
+                    <span>{{localize "DHAM.FeatureUpdater.DragFeature"}}</span>
                 </div>
             {{/if}}
         </div>
@@ -20,10 +20,10 @@
     <hr class="updater-divider">
 
     <div class="form-group">
-        <label>2. Configure Flags</label>
+        <label>{{localize "DHAM.FeatureUpdater.ConfigureFlags"}}</label>
 
         <div class="form-field">
-            <label>Target Tier</label>
+            <label>{{localize "DHAM.FeatureUpdater.TargetTier"}}</label>
             <select name="tier" class="updater-input">
                 {{#each tierOptions}}
                 <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
@@ -32,7 +32,7 @@
         </div>
 
         <div class="form-field">
-            <label>Adversary Type</label>
+            <label>{{localize "DHAM.FeatureUpdater.AdversaryType"}}</label>
             <select name="type" class="updater-input">
                 {{#each typeOptions}}
                 <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
@@ -41,14 +41,14 @@
         </div>
 
         <div class="form-field">
-            <label>Custom Tag</label>
-            <input type="text" name="customTag" value="{{customTagValue}}" class="updater-input" placeholder="e.g. Core, Homebrew">
+            <label>{{localize "DHAM.FeatureUpdater.CustomTag"}}</label>
+            <input type="text" name="customTag" value="{{customTagValue}}" class="updater-input" placeholder="{{localize "DHAM.FeatureUpdater.CustomTagPlaceholder"}}">
         </div>
     </div>
 
     <footer class="sheet-footer updater-footer">
         <button type="submit" class="apply-btn" {{#unless item}}disabled{{/unless}}>
-            <i class="fas fa-save"></i> Update Feature Flags
+            <i class="fas fa-save"></i> {{localize "DHAM.FeatureUpdater.UpdateFlags"}}
         </button>
     </footer>
 </div>

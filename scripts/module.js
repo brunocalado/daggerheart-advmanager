@@ -8,6 +8,7 @@ import { EncounterBuilder } from "./encounter-builder.js";
 import { FeatureUpdater } from "./feature-updater.js";
 import { importFeatures } from "./importer.js";
 import { findApplicationById } from "./foundry-compat.js";
+import { localize } from "./i18n.js";
 
 // --- Settings Constants ---
 export const MODULE_ID = "daggerheart-advmanager";
@@ -38,7 +39,7 @@ export const SETTING_OPEN_SHEET_AFTER_APPLY = "openSheetAfterApply";
 function gmOnly(fn) {
     return function (...args) {
         if (!game.user.isGM) {
-            ui.notifications.warn("Only a GM can use this feature.");
+            ui.notifications.warn(localize("Notifications.GmOnly"));
             return;
         }
         return fn.apply(this, args);
@@ -57,7 +58,7 @@ function manage() {
     });
 
     if (brokenToken) {
-        ui.notifications.error(`Error: The token "${brokenToken.name}" references an Actor that no longer exists in the directory.`);
+        ui.notifications.error(localize("Notifications.BrokenToken", { token: brokenToken.name }));
         return;
     }
 
@@ -101,8 +102,8 @@ Hooks.once("init", () => {
     ]);
 
     game.settings.register(MODULE_ID, SETTING_CHAT_LOG, {
-        name: "Log Changes to Chat",
-        hint: "If enabled, sends a whisper to the GM whenever an Adversary is updated via the Manager.",
+        name: localize("Settings.ChatLog.Name"),
+        hint: localize("Settings.ChatLog.Hint"),
         scope: "world",
         config: true,
         type: Boolean,
@@ -110,8 +111,8 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_UPDATE_EXP, {
-        name: "Auto-Update Experiences",
-        hint: "If enabled, experiences will increase/decrease by 1 for each Tier change.",
+        name: localize("Settings.UpdateExp.Name"),
+        hint: localize("Settings.UpdateExp.Hint"),
         scope: "world",
         config: true,
         type: Boolean,
@@ -119,8 +120,8 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_ADD_FEATURES, {
-        name: "Auto-Add Features on Tier Up",
-        hint: "If enabled, randomly suggests adding features when leveling up.",
+        name: localize("Settings.AddFeatures.Name"),
+        hint: localize("Settings.AddFeatures.Hint"),
         scope: "world",
         config: true,
         type: Boolean,
@@ -128,8 +129,8 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_SUGGEST_FEATURES, {
-        name: "Enable Suggested Features",
-        hint: "If enabled, shows the 'New Suggested Features' section in the Live Manager preview.",
+        name: localize("Settings.SuggestFeatures.Name"),
+        hint: localize("Settings.SuggestFeatures.Hint"),
         scope: "world",
         config: true,
         type: Boolean,
@@ -137,25 +138,25 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_IMPORT_FOLDER, {
-        name: "Compendium Import Folder",
-        hint: "Name of the folder where adversaries imported from Compendiums will be created.",
+        name: localize("Settings.ImportFolder.Name"),
+        hint: localize("Settings.ImportFolder.Hint"),
         scope: "world",
         config: true,
         type: String,
-        default: "💀 Imported Adversaries"
+        default: localize("Defaults.ImportedAdversaries")
     });
 
     game.settings.register(MODULE_ID, SETTING_ENCOUNTER_FOLDER, {
-        name: "Encounter Folder Name",
-        hint: "Name of the root folder where encounters created by the builder will be stored.",
+        name: localize("Settings.EncounterFolder.Name"),
+        hint: localize("Settings.EncounterFolder.Hint"),
         scope: "world",
         config: true,
         type: String,
-        default: "💀 My Encounters"
+        default: localize("Defaults.MyEncounters")
     });
 
     game.settings.register(MODULE_ID, SETTING_EXTRA_COMPENDIUMS, {
-        name: "Extra Compendiums (Actors)",
+        name: localize("Settings.ExtraCompendiums.Name"),
         scope: "world",
         config: false,
         type: Array,
@@ -163,7 +164,7 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_FEATURE_COMPENDIUMS, {
-        name: "Feature Compendiums",
+        name: localize("Settings.FeatureCompendiums.Name"),
         scope: "world",
         config: false,
         type: Array,
@@ -172,7 +173,7 @@ Hooks.once("init", () => {
 
     // --- REGISTRO DA CONFIGURAÇÃO DE STATS ---
     game.settings.register(MODULE_ID, SETTING_STATS_COMPENDIUMS, {
-        name: "Stats Compendiums",
+        name: localize("Settings.StatsCompendiums.Name"),
         scope: "world",
         config: false,
         type: Array,
@@ -247,17 +248,17 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
         return btn;
     };
 
-    const btnManage = createBtn("Manage Adversaries", "fa-skull", manage);
-    const btnStats = createBtn("Compendium Stats", "fa-chart-pie", () => new CompendiumStats().render(true));
-    const btnProb = createBtn("Dice Probability", "fa-dice-d20", () => new DiceProbability().render(true));
-    const btnBuilder = createBtn("Encounter Builder", "fa-dungeon", () => new EncounterBuilder().render(true));
+    const btnManage = createBtn(localize("ModuleMenu.ManageAdversaries"), "fa-skull", manage);
+    const btnStats = createBtn(localize("ModuleMenu.CompendiumStats"), "fa-chart-pie", () => new CompendiumStats().render(true));
+    const btnProb = createBtn(localize("ModuleMenu.DiceProbability"), "fa-dice-d20", () => new DiceProbability().render(true));
+    const btnBuilder = createBtn(localize("ModuleMenu.EncounterBuilder"), "fa-dungeon", () => new EncounterBuilder().render(true));
 
     const fieldset = element.querySelector("fieldset");
     if (fieldset) {
         const newFieldset = document.createElement("fieldset");
         newFieldset.classList.add("dh-adv-tools");
         const legend = document.createElement("legend");
-        legend.innerText = "Adversary Tools";
+        legend.innerText = localize("ModuleMenu.AdversaryTools");
         newFieldset.appendChild(legend);
         newFieldset.appendChild(btnManage);
         newFieldset.appendChild(btnBuilder);
@@ -291,7 +292,7 @@ Hooks.on("renderActorDirectory", (app, html) => {
         btn.style.flex = "0 0 100%";
         btn.style.maxWidth = "100%";
         btn.style.marginTop = "6px";
-        btn.innerHTML = `<i class="fas fa-skull"></i> Manage Adversaries`;
+        btn.innerHTML = `<i class="fas fa-skull"></i> ${localize("ModuleMenu.ManageAdversaries")}`;
         
         btn.addEventListener("click", (e) => {
             e.preventDefault();

@@ -11,7 +11,7 @@
             <i class="fas fa-database select-arrow"></i>
         </div>
 
-        <button type="button" data-action="openSettings" class="settings-btn" title="Manage Compendiums">
+        <button type="button" data-action="openSettings" class="settings-btn" title="{{localize "DHAM.LiveManager.ManageCompendiums"}}">
             <i class="fas fa-cog"></i>
         </button>
 
@@ -35,7 +35,7 @@
 
         <div class="select-wrapper actor-wrapper">
             <select name="actorSelect" class="main-actor-select">
-                <option value="" disabled {{#unless selectedActorId}}selected{{/unless}}>-- Choose an Adversary --</option>
+                <option value="" disabled {{#unless selectedActorId}}selected{{/unless}}>{{localize "DHAM.Common.ChooseAdversary"}}</option>
                 {{#each adversaries}}
                 <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
                 {{/each}}
@@ -43,11 +43,11 @@
             <i class="fas fa-chevron-down select-arrow"></i>
         </div>
 
-        <button type="button" data-action="openStats" class="settings-btn" title="Compendium Stats">
+        <button type="button" data-action="openStats" class="settings-btn" title="{{localize "DHAM.ModuleMenu.CompendiumStats"}}">
             <i class="fas fa-chart-pie"></i>
         </button>
 
-        <button type="button" data-action="openDiceProb" class="settings-btn" title="Dice Probability">
+        <button type="button" data-action="openDiceProb" class="settings-btn" title="{{localize "DHAM.ModuleMenu.DiceProbability"}}">
             <i class="fas fa-dice-d20"></i>
         </button>
     </div>

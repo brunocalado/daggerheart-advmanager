@@ -2,6 +2,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { CompendiumStatsManager } from "./compendium-stats-manager.js";
 import { MODULE_ID, SETTING_STATS_COMPENDIUMS } from "./module.js";
 import { getDamagePartsArray } from "./damage-engine.js";
+import { localize, localizeType } from "./i18n.js";
 
 export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
     
@@ -18,7 +19,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         id: "daggerheart-compendium-stats",
         tag: "div",
         window: {
-            title: "Compendium Statistics",
+            title: "DHAM.Windows.CompendiumStats",
             icon: "fas fa-chart-bar",
             resizable: true,
             width: 900,
@@ -47,7 +48,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         const types = new Set(this.allActors.map(a => a.system.type?.toLowerCase() || "standard"));
         const typeOptions = Array.from(types).sort().map(t => ({
             value: t,
-            label: t.charAt(0).toUpperCase() + t.slice(1),
+            label: localizeType(t),
             selected: t === this.selectedType
         }));
 
@@ -57,7 +58,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             loading: this.loading,
             typeOptions: typeOptions,
             stats: statsData,
-            headers: ["Tier 1", "Tier 2", "Tier 3", "Tier 4"]
+            headers: [1, 2, 3, 4].map(t => localize("Common.Tier", { tier: t }))
         };
     }
 
@@ -85,7 +86,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 // Fallback (apenas se UUID falhar)
                 const featureName = link.dataset.featureName;
-                ui.notifications.warn(`Could not find sheet for ${featureName}`);
+                ui.notifications.warn(localize("CompendiumStats.CouldNotFindSheet", { feature: featureName }));
             });
 
             link.addEventListener('dragstart', (e) => {
@@ -275,18 +276,18 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
     _formatStatsRows(data, type) {
         const rows = [
-            { label: "Difficulty", t1: this._getRange(data[1].difficulty), t2: this._getRange(data[2].difficulty), t3: this._getRange(data[3].difficulty), t4: this._getRange(data[4].difficulty) },
-            { label: "Threshold Min", t1: this._getRange(data[1].major), t2: this._getRange(data[2].major), t3: this._getRange(data[3].major), t4: this._getRange(data[4].major) },
-            { label: "Threshold Max", t1: this._getRange(data[1].severe), t2: this._getRange(data[2].severe), t3: this._getRange(data[3].severe), t4: this._getRange(data[4].severe) },
-            { label: "Hit Points", t1: this._getRange(data[1].hp), t2: this._getRange(data[2].hp), t3: this._getRange(data[3].hp), t4: this._getRange(data[4].hp) },
-            { label: "Stress", t1: this._getRange(data[1].stress), t2: this._getRange(data[2].stress), t3: this._getRange(data[3].stress), t4: this._getRange(data[4].stress) },
-            { label: "Attack Mod", t1: this._getSignedRange(data[1].attackMod), t2: this._getSignedRange(data[2].attackMod), t3: this._getSignedRange(data[3].attackMod), t4: this._getSignedRange(data[4].attackMod) },
-            { label: "Damage Rolls", t1: this._getList(data[1].damageRolls), t2: this._getList(data[2].damageRolls), t3: this._getList(data[3].damageRolls), t4: this._getList(data[4].damageRolls), isList: true }
+            { label: localize("Common.Difficulty"), t1: this._getRange(data[1].difficulty), t2: this._getRange(data[2].difficulty), t3: this._getRange(data[3].difficulty), t4: this._getRange(data[4].difficulty) },
+            { label: localize("CompendiumStats.ThresholdMin"), t1: this._getRange(data[1].major), t2: this._getRange(data[2].major), t3: this._getRange(data[3].major), t4: this._getRange(data[4].major) },
+            { label: localize("CompendiumStats.ThresholdMax"), t1: this._getRange(data[1].severe), t2: this._getRange(data[2].severe), t3: this._getRange(data[3].severe), t4: this._getRange(data[4].severe) },
+            { label: localize("CompendiumStats.HitPoints"), t1: this._getRange(data[1].hp), t2: this._getRange(data[2].hp), t3: this._getRange(data[3].hp), t4: this._getRange(data[4].hp) },
+            { label: localize("Common.Stress"), t1: this._getRange(data[1].stress), t2: this._getRange(data[2].stress), t3: this._getRange(data[3].stress), t4: this._getRange(data[4].stress) },
+            { label: localize("CompendiumStats.AttackMod"), t1: this._getSignedRange(data[1].attackMod), t2: this._getSignedRange(data[2].attackMod), t3: this._getSignedRange(data[3].attackMod), t4: this._getSignedRange(data[4].attackMod) },
+            { label: localize("CompendiumStats.DamageRolls"), t1: this._getList(data[1].damageRolls), t2: this._getList(data[2].damageRolls), t3: this._getList(data[3].damageRolls), t4: this._getList(data[4].damageRolls), isList: true }
         ];
 
         if (type === "horde") {
             rows.push({ 
-                label: "Halved Dmg", 
+                label: localize("CompendiumStats.HalvedDmg"),
                 t1: this._getList(data[1].halvedDamageRolls), 
                 t2: this._getList(data[2].halvedDamageRolls), 
                 t3: this._getList(data[3].halvedDamageRolls), 
@@ -296,7 +297,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         rows.push({
-            label: "Experiences",
+            label: localize("Common.Experiences"),
             t1: this._formatExpData(data[1]),
             t2: this._formatExpData(data[2]),
             t3: this._formatExpData(data[3]),
@@ -304,7 +305,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         });
 
         rows.push({
-            label: "Features",
+            label: localize("Common.Features"),
             t1: this._getFeatureList(data[1].features),
             t2: this._getFeatureList(data[2].features),
             t3: this._getFeatureList(data[3].features),
@@ -363,7 +364,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             if (minVal === maxVal) valStr = fmt(minVal);
             else valStr = `${fmt(minVal)}/${fmt(maxVal)}`;
         }
-        const tooltip = "Quantity (Min-Max) +Value Range";
+        const tooltip = localize("CompendiumStats.QuantityTooltip");
         return `<span data-tooltip="${tooltip}" style="cursor: help;">${countStr} ${valStr}</span>`;
     }
 
@@ -380,7 +381,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             const draggableAttr = data.uuid ? `draggable="true" data-uuid="${data.uuid}"` : "";
             const displayLabel = data.typeLabel ? `<span style="opacity: 0.7; margin-left: 4px;">${data.typeLabel}</span>` : "";
             
-            return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="Click to view, Drag to Sheet">
+            return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="${localize("CompendiumStats.ClickDragFeature")}">
                 <img src="${data.img}" class="feature-icon" alt="${name}"/>
                 <span class="feature-name">${name}${displayLabel}</span>
              </div>`

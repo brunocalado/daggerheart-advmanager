@@ -10,7 +10,7 @@ export class CompendiumManager extends HandlebarsApplicationMixin(ApplicationV2)
         id: "daggerheart-compendium-manager",
         tag: "form",
         window: {
-            title: "Manage Compendium Sources",
+            title: "DHAM.Windows.CompendiumManager",
             icon: "fas fa-atlas",
             resizable: false,
             width: 450,

@@ -39,7 +39,7 @@
 
   "packs": [
     {
-      "label": "Custom Features",
+      "label": "DHAM.Packs.CustomFeatures",
       "type": "Item",
       "name": "custom-features",
       "path": "packs/custom-features",
@@ -52,7 +52,7 @@
       "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
     },    
     {
-      "label": "All Features",
+      "label": "DHAM.Packs.AllFeatures",
       "type": "Item",
       "name": "all-features",
       "path": "packs/all-features",
@@ -65,7 +65,7 @@
       "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
     },
     {
-      "label": "Macros",
+      "label": "DHAM.Packs.Macros",
       "type": "Macro",
       "name": "macros",
       "path": "packs/macros",
@@ -78,7 +78,7 @@
       "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
     },
     {
-      "label": "Templates",
+      "label": "DHAM.Packs.Templates",
       "type": "Actor",
       "name": "templates",
       "path": "packs/templates",
@@ -94,7 +94,7 @@
 
   "packFolders": [
     {
-      "name": "💀 Adversary Manager 💀",
+      "name": "DHAM.PackFolders.AdversaryManager",
       "sorting": "a",
       "color": "#5c0547",
       "packs": [        
@@ -109,6 +109,18 @@
   
   "esmodules": ["scripts/module.js"],
   "styles": ["styles/style.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "lang/ru.json"
+    }
+  ],
   
   "url": "https://github.com/brunocalado/daggerheart-advmanager",
   "manifest": "https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json",

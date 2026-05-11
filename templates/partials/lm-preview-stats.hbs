@@ -1,8 +1,8 @@
 <!-- Right Column: Preview State -->
 <div class="preview-column future-column">
     <h3 class="col-header future-header lm-preview-header">
-        <span>Preview (T{{previewStats.tier}})</span>
-        <input type="text" class="preview-actor-name-input" value="{{previewActorName}}" placeholder="New Actor Name" title="Name for new actor">
+        <span>{{localize "DAGGERHEART.GENERAL.preview"}} (T{{previewStats.tier}})</span>
+        <input type="text" class="preview-actor-name-input" value="{{previewActorName}}" placeholder="{{localize "DHAM.LiveManager.NewActorName"}}" title="{{localize "DHAM.LiveManager.NameForNewActor"}}">
     </h3>
 
     {{#if previewStats.error}}
@@ -10,7 +10,7 @@
     {{else}}
 
         <div class="stat-row">
-            <span class="stat-label">Difficulty</span>
+            <span class="stat-label">{{localize "DAGGERHEART.GENERAL.difficulty"}}</span>
             <div class="stat-input-group">
                 <span class="stat-value-hint">
                     {{#if previewStats.hitChanceAgainst}}
@@ -18,44 +18,44 @@
                     {{/if}}
                     {{{previewStats.difficultyDisplay}}}
                 </span>
-                <input type="number" class="override-input" data-field="difficulty" value="{{previewStats.difficulty}}" title="Manual Override">
+                <input type="number" class="override-input" data-field="difficulty" value="{{previewStats.difficulty}}" title="{{localize "DHAM.Common.ManualOverride"}}">
             </div>
         </div>
 
         <!-- HP & STRESS ROW (PREVIEW) -->
         <div class="stat-row-dual">
             <div class="stat-col-half">
-                <span class="stat-label">HP</span>
+                <span class="stat-label">{{localize "DAGGERHEART.GENERAL.HitPoints.short"}}</span>
                 <div class="stat-input-group dual-compact">
                     <span class="stat-value-hint">{{{previewStats.hpDisplay}}}</span>
-                    <input type="number" class="override-input" data-field="hp" value="{{previewStats.hp}}" title="Manual Override" {{#if previewStats.isMinion}}disabled{{/if}}>
+                    <input type="number" class="override-input" data-field="hp" value="{{previewStats.hp}}" title="{{localize "DHAM.Common.ManualOverride"}}" {{#if previewStats.isMinion}}disabled{{/if}}>
                 </div>
             </div>
             <div class="stat-separator"></div>
             <div class="stat-col-half">
-                <span class="stat-label">Stress</span>
+                <span class="stat-label">{{localize "DAGGERHEART.GENERAL.stress"}}</span>
                 <div class="stat-input-group dual-compact">
                     <span class="stat-value-hint">{{{previewStats.stressDisplay}}}</span>
-                    <input type="number" class="override-input" data-field="stress" value="{{previewStats.stress}}" title="Manual Override">
+                    <input type="number" class="override-input" data-field="stress" value="{{previewStats.stress}}" title="{{localize "DHAM.Common.ManualOverride"}}">
                 </div>
             </div>
         </div>
 
         <div class="stat-row">
-            <span class="stat-label">Thresholds</span>
+            <span class="stat-label">{{localize "DHAM.Common.Thresholds"}}</span>
             <div class="stat-input-group dual-input">
                 <span class="stat-value-hint">{{{previewStats.thresholdsDisplay}}}</span>
                 {{#if previewStats.isMinion}}
                 {{else}}
-                    <input type="number" class="override-input small" data-field="major" value="{{previewStats.major}}" placeholder="Maj" title="Major">
+                    <input type="number" class="override-input small" data-field="major" value="{{previewStats.major}}" placeholder="{{localize "DHAM.LiveManager.MajorShort"}}" title="{{localize "DHAM.CompendiumStats.ThresholdMin"}}">
                     /
-                    <input type="number" class="override-input small" data-field="severe" value="{{previewStats.severe}}" placeholder="Sev" title="Severe">
+                    <input type="number" class="override-input small" data-field="severe" value="{{previewStats.severe}}" placeholder="{{localize "DHAM.LiveManager.SevereShort"}}" title="{{localize "DHAM.CompendiumStats.ThresholdMax"}}">
                 {{/if}}
             </div>
         </div>
 
         <div class="stat-row">
-            <span class="stat-label">Attack Bonus</span>
+            <span class="stat-label">{{localize "DHAM.Common.AttackBonus"}}</span>
             <div class="stat-input-group">
                 <span class="stat-value-hint">
                     {{#if previewStats.hitChance}}
@@ -63,11 +63,11 @@
                     {{/if}}
                     {{{previewStats.attackModDisplay}}}
                 </span>
-                <input type="number" class="override-input" data-field="attackMod" value="{{previewStats.attackMod}}" title="Manual Override">
+                <input type="number" class="override-input" data-field="attackMod" value="{{previewStats.attackMod}}" title="{{localize "DHAM.Common.ManualOverride"}}">
             </div>
         </div>
         <div class="stat-row">
-            <span class="stat-label">Critical Threshold</span>
+            <span class="stat-label">{{localize "DAGGERHEART.ACTIONS.Settings.criticalThreshold"}}</span>
             <div class="stat-input-group">
                  <span class="stat-value-hint lm-crit-chance-hint-accent">{{previewStats.critChance}}</span>
                 <select class="override-input critical-select lm-critical-select">
@@ -82,10 +82,10 @@
         <div class="stat-row-dual lm-damage-config-row">
             <!-- Left: Damage Types -->
             <div class="stat-col-half lm-damage-type-col">
-                <span class="stat-label lm-type-label">Damage Type:</span>
+                <span class="stat-label lm-type-label">{{localize "DHAM.Common.DamageType"}}</span>
                 <div class="damage-type-controls">
-                    <label class="lm-damage-type-label" title="Physical Damage"><input type="checkbox" class="damage-type-checkbox" value="physical" {{#if isPhysical}}checked{{/if}}> Phys</label>
-                    <label class="lm-damage-type-label" title="Magical Damage"><input type="checkbox" class="damage-type-checkbox" value="magical" {{#if isMagical}}checked{{/if}}> Mag</label>
+                    <label class="lm-damage-type-label" title="{{localize "DAGGERHEART.GENERAL.Damage.physicalDamage"}}"><input type="checkbox" class="damage-type-checkbox" value="physical" {{#if isPhysical}}checked{{/if}}> {{localize "DHAM.LiveManager.PhysShort"}}</label>
+                    <label class="lm-damage-type-label" title="{{localize "DAGGERHEART.GENERAL.Damage.magicalDamage"}}"><input type="checkbox" class="damage-type-checkbox" value="magical" {{#if isMagical}}checked{{/if}}> {{localize "DAGGERHEART.CONFIG.DamageType.magical.abbreviation"}}</label>
                 </div>
             </div>
 
@@ -94,7 +94,7 @@
 
             <!-- Right: Direct Damage -->
             <div class="stat-col-half lm-direct-col">
-                <span class="stat-label lm-type-label">Direct:</span>
+                <span class="stat-label lm-type-label">{{localize "DHAM.Common.Direct"}}</span>
                 <select class="override-input direct-select lm-direct-select">
                     {{#each directOptions}}
                     <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
@@ -107,7 +107,7 @@
         <div class="stat-group">
             <div class="lm-damage-header">
                 <span class="stat-label lm-damage-label">
-                    Attack Damage
+                    {{localize "DHAM.Common.AttackDamage"}}
                 </span>
 
                 <div class="feature-input-group lm-damage-input-group">
@@ -122,7 +122,7 @@
         <!-- Halved Damage Layout -->
         <div class="stat-group">
             <div class="lm-damage-header">
-                <span class="stat-label">Halved Damage (Horde)</span>
+                <span class="stat-label">{{localize "DHAM.Common.HalvedDamageHorde"}}</span>
 
                 <div class="feature-input-group lm-damage-input-group">
                     <span class="preview-hint-text lm-hint-nowrap">{{previewStats.halvedDamageStats}}</span>
@@ -134,24 +134,24 @@
         {{/if}}
 
         <div class="preview-note lm-info-note">
-            <i class="fas fa-info-circle"></i> Edit values to override random rolls.
+            <i class="fas fa-info-circle"></i> {{localize "DHAM.LiveManager.EditValues"}}
         </div>
 
         <!-- PREVIEW EXPERIENCES -->
         <div class="stat-group">
             <div class="lm-exp-header">
                 <span class="stat-label">
-                    Experiences
+                    {{localize "DAGGERHEART.GENERAL.Experience.plural"}}
                     <i class="fas fa-question-circle suggestion-icon" data-tooltip="{{{previewStats.expTooltip}}}"></i>
                 </span>
-                <button type="button" data-action="addExperience" class="add-btn-small" title="Add Experience"><i class="fas fa-plus"></i></button>
+                <button type="button" data-action="addExperience" class="add-btn-small" title="{{localize "DHAM.LiveManager.AddExperience"}}"><i class="fas fa-plus"></i></button>
             </div>
             <div class="stat-block-list experiences-list">
                 {{#each previewStats.experiences}}
                     <div class="exp-item-preview {{#if this.isNew}}exp-new{{/if}}">
-                        <input type="text" class="exp-name-input" data-id="{{this.id}}" value="{{this.name}}" placeholder="Exp Name">
+                        <input type="text" class="exp-name-input" data-id="{{this.id}}" value="{{this.name}}" placeholder="{{localize "DHAM.LiveManager.ExpName"}}">
 
-                        <button type="button" data-action="rollExperienceName" data-id="{{this.id}}" class="roll-btn-small" title="Roll Random Name">
+                        <button type="button" data-action="rollExperienceName" data-id="{{this.id}}" class="roll-btn-small" title="{{localize "DHAM.LiveManager.RollRandomName"}}">
                             <i class="fas fa-dice"></i>
                         </button>
 
@@ -160,7 +160,7 @@
                                 <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
                             {{/each}}
                         </select>
-                        <button type="button" data-action="deleteExperience" data-id="{{this.id}}" class="delete-btn-small" title="Remove"><i class="fas fa-trash"></i></button>
+                        <button type="button" data-action="deleteExperience" data-id="{{this.id}}" class="delete-btn-small" title="{{localize "DHAM.Common.Remove"}}"><i class="fas fa-trash"></i></button>
                     </div>
                 {{/each}}
             </div>

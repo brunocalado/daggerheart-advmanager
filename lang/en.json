@@ -1,0 +1,324 @@
+{
+  "DHAM": {
+    "Common": {
+      "Adversaries": "Adversaries",
+      "Adversary": "Adversary",
+      "AllSources": "All Sources",
+      "AllTiers": "All Tiers",
+      "AllTypes": "All Types",
+      "ApplyChanges": "Apply Changes",
+      "AttackBonus": "Attack Bonus",
+      "AttackDamage": "Attack Damage",
+      "Base": "Base: {base}",
+      "ChooseAdversary": "-- Choose an Adversary --",
+      "Compendium": "Compendium",
+      "Critical": "Critical",
+      "CriticalThreshold": "Critical Threshold",
+      "Current": "Current",
+      "DamageType": "Damage Type:",
+      "Difficulty": "Difficulty",
+      "Direct": "Direct:",
+      "DirectNo": "Direct: No",
+      "DirectYes": "Direct: Yes",
+      "Experiences": "Experiences",
+      "Failure": "Failure",
+      "Feature": "Feature",
+      "Features": "Features",
+      "HalvedDamageHorde": "Halved Damage (Horde)",
+      "Homebrew": "Homebrew",
+      "HP": "HP",
+      "Linked": "Linked",
+      "ManualOverride": "Manual Override",
+      "Max": "Max",
+      "Mean": "Mean",
+      "Min": "Min",
+      "No": "No",
+      "None": "None",
+      "Preview": "Preview",
+      "Recommended": "Recommended",
+      "Remove": "Remove",
+      "RenameFeature": "Rename Feature",
+      "Stress": "Stress",
+      "Success": "Success",
+      "Suggested": "Suggested:",
+      "SystemCompendium": "System Compendium",
+      "Thresholds": "Thresholds",
+      "Tier": "Tier {tier}",
+      "Type": "Type",
+      "Unlinked": "Unlinked",
+      "World": "World",
+      "WorldActors": "World (Actors)",
+      "Yes": "Yes"
+    },
+    "Settings": {
+      "AddFeatures": {
+        "Hint": "If enabled, randomly suggests adding features when leveling up.",
+        "Name": "Auto-Add Features on Tier Up"
+      },
+      "ChatLog": {
+        "Hint": "If enabled, sends a whisper to the GM whenever an Adversary is updated via the Manager.",
+        "Name": "Log Changes to Chat"
+      },
+      "EncounterFolder": {
+        "Hint": "Name of the root folder where encounters created by the builder will be stored.",
+        "Name": "Encounter Folder Name"
+      },
+      "ExtraCompendiums": {
+        "Name": "Extra Compendiums (Actors)"
+      },
+      "FeatureCompendiums": {
+        "Name": "Feature Compendiums"
+      },
+      "ImportFolder": {
+        "Hint": "Name of the folder where adversaries imported from Compendiums will be created.",
+        "Name": "Compendium Import Folder"
+      },
+      "StatsCompendiums": {
+        "Name": "Stats Compendiums"
+      },
+      "SuggestFeatures": {
+        "Hint": "If enabled, shows the 'New Suggested Features' section in the Live Manager preview.",
+        "Name": "Enable Suggested Features"
+      },
+      "UpdateExp": {
+        "Hint": "If enabled, experiences will increase/decrease by 1 for each Tier change.",
+        "Name": "Auto-Update Experiences"
+      }
+    },
+    "Windows": {
+      "AdversaryLiveManager": "Adversary Live Manager",
+      "AdversaryManager": "Adversary Manager",
+      "CompendiumManager": "Manage Compendium Sources",
+      "CompendiumStats": "Compendium Statistics",
+      "DiceProbability": "Dice Probability Calculator",
+      "EncounterBuilder": "Encounter Builder",
+      "EncounterName": "Encounter Name",
+      "FeatureUpdater": "Feature Flag Updater",
+      "StatsManager": "Manage Stat Sources"
+    },
+    "ModuleMenu": {
+      "AdversaryTools": "Adversary Tools",
+      "CompendiumStats": "Compendium Stats",
+      "DiceProbability": "Dice Probability",
+      "EncounterBuilder": "Encounter Builder",
+      "ManageAdversaries": "Manage Adversaries"
+    },
+    "Manager": {
+      "NoAdversariesUpdated": "No Adversaries updated.",
+      "SelectedAdversaries": "Selected Adversaries",
+      "SelectTargetTier": "Select Target Tier:"
+    },
+    "LiveManager": {
+      "AddExperience": "Add Experience",
+      "ClickImageOpenSheet": "Click image to open sheet",
+      "EditValues": "Edit values to override random rolls.",
+      "ErrorApplying": "Error applying changes. Check console.",
+      "ExpName": "Exp Name",
+      "FeatureChanges": "Feature Changes",
+      "Fixed": "Fixed",
+      "ImportApplyTier": "Import & Apply Tier {tier}",
+      "ItemNotFound": "Item not found or has no sheet.",
+      "MagicalDamage": "Magical Damage",
+      "MagShort": "Mag",
+      "MajorShort": "Maj",
+      "ManageCompendiums": "Manage Compendiums",
+      "NameForNewActor": "Name for new actor",
+      "NewActorName": "New Actor Name",
+      "NewAdversary": "New Adversary",
+      "NewExperience": "New Experience",
+      "NewFeatures": "New Features",
+      "NoChangesNecessary": "No changes were necessary.",
+      "NoModifiedFeatures": "No modified features.",
+      "OpenItem": "Open Item",
+      "OpenSheetAfterApplying": "Open sheet after applying",
+      "PhysicalDamage": "Physical Damage",
+      "PhysShort": "Phys",
+      "RollRandomName": "Roll Random Name",
+      "SelectAdversaryPrompt": "Select an Adversary from the list above to begin preview.",
+      "SevereShort": "Sev",
+      "SuggestedAmountModifier": "Suggested:<br>Amount: {amount}<br>Modifier: {modifier}",
+      "TargetTier": "Target Tier:",
+      "TokenSuffix": "Token",
+      "UnknownType": "Unknown Type",
+      "BenchmarkMissing": "Benchmark missing",
+      "ApplyTierToActor": "Apply Tier {tier} to {actor}",
+      "Minion": "Minion"
+    },
+    "CompendiumManager": {
+      "Actors": "Actors",
+      "ChooseCompendiums": "Choose compendiums to be used as sources.",
+      "NoActorCompendiums": "No other Actor compendiums found.",
+      "NoItemCompendiums": "No Item compendiums found.",
+      "SaveSelection": "Save Selection",
+      "SelectAvailableCompendiums": "Select Available Compendiums"
+    },
+    "CompendiumStats": {
+      "AdversaryType": "Adversary Type:",
+      "AttackMod": "Attack Mod",
+      "ClickDragFeature": "Click to view, Drag to Sheet",
+      "CouldNotFindSheet": "Could not find sheet for {feature}",
+      "DamageRolls": "Damage Rolls",
+      "HalvedDmg": "Halved Dmg",
+      "ManageStatSources": "Manage Stat Sources",
+      "QuantityTooltip": "Quantity (Min-Max) +Value Range",
+      "ReadingData": "Reading Compendium Data...",
+      "RefreshStats": "Refresh Stats",
+      "ThresholdMax": "Threshold Max",
+      "ThresholdMin": "Threshold Min"
+    },
+    "StatsManager": {
+      "FolderPlaceholder": "Folder (Def: Imported...)",
+      "Important": "Important:",
+      "ImportNote": "Selecting a new compendium will trigger an automated import process. Features from the selected actors will be copied to your world items.",
+      "SaveSelectionImport": "Save Selection & Import",
+      "SelectStatSources": "Select Stat Sources",
+      "TagPlaceholder": "Tag (Def: Label)",
+      "WaitImport": "Please wait for the import notification to finish."
+    },
+    "DiceProbability": {
+      "Adv": "Adv",
+      "Advantage": "Advantage",
+      "AdvantageD20": "Advantage (2d20 keep highest)",
+      "AdvDie": "Adv. Die",
+      "CriticalDoubles": "Critical (Doubles)",
+      "D20System": "D20 System",
+      "Dice": "Dice",
+      "Dis": "Dis",
+      "Disadvantage": "Disadvantage",
+      "DisadvantageD20": "Disadvantage (2d20 keep lowest)",
+      "DisDie": "Dis. Die",
+      "DualityDice": "Duality Dice",
+      "FailureChance": "Failure Chance",
+      "Modifier": "Modifier (+/-)",
+      "Norm": "Norm",
+      "Normal": "Normal",
+      "NormalD20": "Normal (1d20)",
+      "ProbabilityAnalysis": "Probability Analysis",
+      "Results": "Results",
+      "Roll": "Roll",
+      "RollType": "Roll Type",
+      "SendToChat": "Send to Chat",
+      "SuccessChance": "Success Chance"
+    },
+    "EncounterBuilder": {
+      "AddToEncounter": "Add to Encounter",
+      "AddUnits": "Add units from the library.",
+      "AutoFolder": "Mode: Auto-Generate Folder Name",
+      "BudgetLimit": "Budget Limit",
+      "ClearAll": "Clear All",
+      "Create": "Create",
+      "CreateAndPlaceInvisible": "Create & Place Invisible",
+      "CreateEncounter": "Create Encounter",
+      "CurrentCost": "Current Cost",
+      "DamageBoost": "Add +{die} Damage (Lowers Budget Limit)",
+      "EditLiveManager": "Edit in Live Manager",
+      "EncounterCreated": "Encounter created in: \"{folder}\". Check the Actor directory.",
+      "EncounterPlaced": "Encounter created and {count} tokens placed on scene (Hidden).",
+      "FailedCreate": "Failed to create encounter. Check console.",
+      "FailedPlace": "Failed to place encounter. Check console.",
+      "FearBudget": "Fear Budget:",
+      "FearHint": "Spending more Fear increases the perceived difficulty level.",
+      "FolderName": "Folder Name:",
+      "FolderPlaceholder": "e.g., Boss Fight Room 3",
+      "Library": "Library ({count})",
+      "ManualFolder": "Mode: Manual Folder Name",
+      "NoActiveScene": "No active scene to place tokens.",
+      "NoAdversariesFound": "No adversaries found.",
+      "NoAdversariesToCreate": "No adversaries in the encounter to create.",
+      "PartyTier": "Party Tier:",
+      "PCs": "# PCs:",
+      "SearchPlaceholder": "Search adversaries...",
+      "SynergyMomentum": "There are adversaries capable of gaining Fear.",
+      "SynergyRelentless": "There are adversaries that can be spotlighted multiple times per GM turn.",
+      "SynergySpotlighter": "There are adversaries capable of spotlighting other adversaries.",
+      "SynergySummoner": "There are adversaries capable of summoning other adversaries.",
+      "UntitledEncounter": "Untitled Encounter"
+    },
+    "Encounter": {
+      "Difficulty": {
+        "Balanced": "Balanced",
+        "Challenging": "Challenging",
+        "Deadly": "Deadly",
+        "Easy": "Easy",
+        "Hard": "Hard",
+        "OutOfTier": "Out of Tier",
+        "VeryEasy": "Very Easy"
+      },
+      "Fear": {
+        "Extreme": "Extreme (4-8 Fear)",
+        "High": "High (2-4 Fear)",
+        "Insane": "Insane (6-12 Fear)",
+        "Low": "Low (0-1 Fear)",
+        "Moderate": "Moderate (1-3 Fear)"
+      },
+      "Modifiers": {
+        "DamageBoost": "Damage Boost",
+        "EasierShorter": "Easier/Shorter",
+        "HarderLonger": "Harder/Longer",
+        "LowerTierUsed": "Lower Tier Used",
+        "NoMajorAdversaries": "No Major Adversaries",
+        "TwoPlusSolos": "2+ Solos"
+      }
+    },
+    "FeatureUpdater": {
+      "AdversaryType": "Adversary Type",
+      "ConfigureFlags": "2. Configure Flags",
+      "CouldNotResolveItem": "Could not resolve Item UUID.",
+      "CustomTag": "Custom Tag",
+      "CustomTagPlaceholder": "e.g. Core, Homebrew",
+      "DragFeature": "Drag a Feature from the World",
+      "DropFeature": "1. Drop Feature Here",
+      "FailedUpdate": "Failed to update item flags.",
+      "InvalidDrop": "Invalid drop data.",
+      "NoItemSelected": "No item selected.",
+      "PleaseDropItem": "Please drop an Item.",
+      "TargetTier": "Target Tier",
+      "UpdateFlags": "Update Feature Flags"
+    },
+    "DamageEngine": {
+      "AddedByLiveManager": "Added by Live Manager",
+      "Adjusted": "Adjusted",
+      "Alt": "Alt",
+      "AutoAddedByTierScaling": "Auto-Added by Tier Scaling",
+      "BatchUpdateTier": "Batch Update: Tier {tier}",
+      "ChanceToHit": "{chance}% chance to hit.",
+      "Diff": "Diff",
+      "DmgThresh": "Dmg Thresh",
+      "Experiences": "Experiences",
+      "MaxEvasion": "Max Evasion",
+      "MaxTrait": "Max Trait",
+      "MinEvasion": "Min Evasion",
+      "NameOverride": "Name Override",
+      "NameUpdate": "Name Update",
+      "NewExp": "New Exp",
+      "NewFeature": "New Feature",
+      "PCThresholdTooltip": "PC Hit Chance (2d12 + Trait vs Diff {difficulty}):\nStandard Trait (+{minBonus}): {minChance}%\nMax Trait (+{maxBonus}): {maxChance}%",
+      "Replaced": "Replaced {name}",
+      "SheetDmg": "Sheet Dmg",
+      "SheetDmgManual": "Sheet Dmg (Manual)",
+      "VsPcTierTooltip": "Vs PC Tier {tier} Evasion ({evasion}):\nMin Evasion: {maxChance}% chance to hit.\nMax Evasion: {minChance}% chance to hit."
+    },
+    "Importer": {
+      "CompendiumNotActor": "Compendium \"{compendium}\" is not an Actor compendium.",
+      "CompendiumNotFound": "Compendium \"{compendium}\" not found.",
+      "ImportedFrom": "Imported from {label}"
+    },
+    "Defaults": {
+      "ImportedAdversaries": "Imported Adversaries",
+      "MyEncounters": "My Encounters"
+    },
+    "Notifications": {
+      "BrokenToken": "Error: The token \"{token}\" references an Actor that no longer exists in the directory.",
+      "GmOnly": "Only a GM can use this feature."
+    },
+    "Packs": {
+      "AllFeatures": "All Features",
+      "CustomFeatures": "Custom Features",
+      "Macros": "Macros",
+      "Templates": "Templates"
+    },
+    "PackFolders": {
+      "AdversaryManager": "Adversary Manager"
+    }
+  }
+}

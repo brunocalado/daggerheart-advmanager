@@ -1,5 +1,6 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { SKULL_IMAGE_PATH } from "./module.js";
+import { localize } from "./i18n.js";
 
 export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
 
@@ -70,7 +71,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
         id: "daggerheart-dice-prob",
         tag: "form",
         window: {
-            title: "Dice Probability Calculator",
+            title: "DHAM.Windows.DiceProbability",
             icon: "fas fa-dice-d20",
             resizable: false,
             width: 460,
@@ -146,7 +147,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
                 ...stats,
                 diceNotation,
                 difficulty: this.formData.difficulty,
-                rollTypeLabel: this.formData.rollType === 1 ? "Advantage" : (this.formData.rollType === -1 ? "Disadvantage" : "Normal")
+                rollTypeLabel: this.formData.rollType === 1 ? localize("DiceProbability.Advantage") : (this.formData.rollType === -1 ? localize("DiceProbability.Disadvantage") : localize("DiceProbability.Normal"))
             };
         } else {
             // --- D20 Calculation ---
@@ -163,15 +164,15 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
                 ...stats,
                 diceNotation,
                 difficulty: this.d20Data.difficulty,
-                rollTypeLabel: this.d20Data.rollType === 1 ? "Advantage" : (this.d20Data.rollType === -1 ? "Disadvantage" : "Normal"),
+                rollTypeLabel: this.d20Data.rollType === 1 ? localize("DiceProbability.Advantage") : (this.d20Data.rollType === -1 ? localize("DiceProbability.Disadvantage") : localize("DiceProbability.Normal")),
                 criticalThreshold: this.d20Data.criticalThreshold
             };
         }
 
         // Determine dynamic label for the modifier die row (Duality mode only)
-        let advLabel = "Adv. Die";
+        let advLabel = localize("DiceProbability.AdvDie");
         if (this.formData.rollType === -1) {
-            advLabel = "Dis. Die";
+            advLabel = localize("DiceProbability.DisDie");
         }
 
         // Current data based on mode
@@ -264,7 +265,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
 
     async _onSendToChat(event, target) {
         let stats, diceNotation, content;
-        const MESSAGE_TITLE = "Probability Analysis";
+        const MESSAGE_TITLE = localize("DiceProbability.ProbabilityAnalysis");
         const BACKGROUND_IMAGE = SKULL_IMAGE_PATH;
         const MIN_HEIGHT = "150px";
 
@@ -283,12 +284,12 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
             const { success, fail, crit } = stats;
             const commandContent = `
                 <div style="text-align: left; padding: 5px;">
-                    <p><strong>Dice:</strong> ${diceNotation}</p>
-                    <p><strong>Difficulty:</strong> ${this.formData.difficulty}</p>
+                    <p><strong>${localize("DiceProbability.Dice")}:</strong> ${diceNotation}</p>
+                    <p><strong>${localize("Common.Difficulty")}:</strong> ${this.formData.difficulty}</p>
                     <hr style="border-color: #C9A060; opacity: 0.5;">
-                    <p style="color: #98fb98;"><strong>Success:</strong> ${success}%</p>
-                    <p style="color: #ff6b6b;"><strong>Failure:</strong> ${fail}%</p>
-                    <p style="color: #ea80fc;"><strong>Critical (Doubles):</strong> ${crit}%</p>
+                    <p style="color: #98fb98;"><strong>${localize("Common.Success")}:</strong> ${success}%</p>
+                    <p style="color: #ff6b6b;"><strong>${localize("Common.Failure")}:</strong> ${fail}%</p>
+                    <p style="color: #ea80fc;"><strong>${localize("DiceProbability.CriticalDoubles")}:</strong> ${crit}%</p>
                 </div>
             `;
 
@@ -318,18 +319,18 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
 
             diceNotation = this._buildDiceNotation();
 
-            const rollTypeLabel = this.d20Data.rollType === 1 ? "Advantage" : (this.d20Data.rollType === -1 ? "Disadvantage" : "Normal");
+            const rollTypeLabel = this.d20Data.rollType === 1 ? localize("DiceProbability.Advantage") : (this.d20Data.rollType === -1 ? localize("DiceProbability.Disadvantage") : localize("DiceProbability.Normal"));
             const { success, fail, crit } = stats;
 
             const commandContent = `
                 <div style="text-align: left; padding: 5px;">
-                    <p><strong>Dice:</strong> ${diceNotation} (${rollTypeLabel})</p>
-                    <p><strong>Difficulty:</strong> ${this.d20Data.difficulty}</p>
-                    <p><strong>Critical Threshold:</strong> ${this.d20Data.criticalThreshold}+</p>
+                    <p><strong>${localize("DiceProbability.Dice")}:</strong> ${diceNotation} (${rollTypeLabel})</p>
+                    <p><strong>${localize("Common.Difficulty")}:</strong> ${this.d20Data.difficulty}</p>
+                    <p><strong>${localize("Common.CriticalThreshold")}:</strong> ${this.d20Data.criticalThreshold}+</p>
                     <hr style="border-color: #C9A060; opacity: 0.5;">
-                    <p style="color: #98fb98;"><strong>Success:</strong> ${success}%</p>
-                    <p style="color: #ff6b6b;"><strong>Failure:</strong> ${fail}%</p>
-                    <p style="color: #ea80fc;"><strong>Critical (${this.d20Data.criticalThreshold}+):</strong> ${crit}%</p>
+                    <p style="color: #98fb98;"><strong>${localize("Common.Success")}:</strong> ${success}%</p>
+                    <p style="color: #ff6b6b;"><strong>${localize("Common.Failure")}:</strong> ${fail}%</p>
+                    <p style="color: #ea80fc;"><strong>${localize("Common.Critical")} (${this.d20Data.criticalThreshold}+):</strong> ${crit}%</p>
                 </div>
             `;
 

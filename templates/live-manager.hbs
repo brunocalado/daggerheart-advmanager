@@ -7,7 +7,7 @@
     <!-- Tier Selection Tabs -->
     <div class="tier-tabs">
         <div class="tier-control-row">
-            <label class="tier-control-label">Target Tier:</label>
+            <label class="tier-control-label">{{localize "DHAM.LiveManager.TargetTier"}}</label>
             <div class="tier-buttons tier-buttons-flush">
                 {{#each tiers}}
                 <button type="button"
@@ -34,12 +34,12 @@
         <div class="footer-row">
             <button type="button" data-action="applyChanges" class="apply-btn">
                 {{#if (eq linkData null)}}
-                    <i class="fas fa-file-import"></i> Import & Apply Tier {{previewStats.tier}}
+                    <i class="fas fa-file-import"></i> {{localize "DHAM.LiveManager.ImportApplyTier" tier=previewStats.tier}}
                 {{else}}
-                    <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
+                    <i class="fas fa-bolt"></i> {{localize "DHAM.LiveManager.ApplyTierToActor" tier=previewStats.tier actor=actorName}}
                 {{/if}}
             </button>
-            <button type="button" data-action="toggleOpenSheet" class="open-sheet-toggle {{#if openAfterApply}}active{{/if}}" title="Open sheet after applying">
+            <button type="button" data-action="toggleOpenSheet" class="open-sheet-toggle {{#if openAfterApply}}active{{/if}}" title="{{localize "DHAM.LiveManager.OpenSheetAfterApplying"}}">
                 <i class="fas fa-external-link-alt"></i>
             </button>
         </div>
@@ -48,7 +48,7 @@
     {{else}}
     <div class="empty-state">
         <i class="fas fa-skull empty-state-icon"></i>
-        <p>Select an Adversary from the list above to begin preview.</p>
+        <p>{{localize "DHAM.LiveManager.SelectAdversaryPrompt"}}</p>
     </div>
     {{/if}}
 

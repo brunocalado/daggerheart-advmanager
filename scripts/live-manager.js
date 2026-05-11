@@ -4,6 +4,7 @@ import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FE
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js"; 
+import { localize, localizeType, localizeFeatureForm } from "./i18n.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -86,7 +87,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         id: "daggerheart-live-preview",
         tag: "form",
         window: {
-            title: "Adversary Live Manager",
+            title: "DHAM.Windows.AdversaryLiveManager",
             icon: "fas fa-eye",
             resizable: true,
             width: 1000,
@@ -291,7 +292,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 return list[Math.floor(Math.random() * list.length)];
             }
         }
-        return "New Experience"; 
+        return localize("LiveManager.NewExperience");
     }
 
     _calculateCritChance(threshold) {
@@ -305,9 +306,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // --- Determine Source List ---
         const sourceOptions = [
-            { value: "all", label: "All Sources", selected: this.source === "all" }, 
-            { value: "world", label: "World", selected: this.source === "world" },
-            { value: "daggerheart.adversaries", label: "System Compendium", selected: this.source === "daggerheart.adversaries" }
+            { value: "all", label: localize("Common.AllSources"), selected: this.source === "all" },
+            { value: "world", label: localize("Common.World"), selected: this.source === "world" },
+            { value: "daggerheart.adversaries", label: localize("Common.SystemCompendium"), selected: this.source === "daggerheart.adversaries" }
         ];
 
         // --- NEW: Add Template Option (New Adversary) ---
@@ -316,7 +317,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (templatePack) {
             sourceOptions.push({
                 value: templatePackId,
-                label: "New Adversary",
+                label: localize("LiveManager.NewAdversary"),
                 selected: this.source === templatePackId
             });
         }
@@ -361,7 +362,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const matchIndex = rawAdversaries.findIndex(a => a.id === this.initialActor.id);
                 const tokenData = {
                     id: this.initialActor.id,
-                    name: this.initialActor.name + (this.initialActor.isToken ? " (Token)" : ""),
+                    name: this.initialActor.name + (this.initialActor.isToken ? ` (${localize("LiveManager.TokenSuffix")})` : ""),
                     tier: Number(this.initialActor.system.tier) || 1,
                     advType: (this.initialActor.system.type || "standard").toLowerCase()
                 };
@@ -380,7 +381,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     name: a.name, 
                     tier: Number(a.system.tier) || 1,
                     advType: (a.system.type || "standard").toLowerCase(),
-                    sourceLabel: "World"
+                    sourceLabel: localize("Common.World")
                 }));
             rawAdversaries.push(...worldAdvs);
 
@@ -395,7 +396,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         name: i.name,
                         tier: Number(i.system?.tier) || 1,
                         advType: (i.system?.type || "standard").toLowerCase(),
-                        sourceLabel: "System"
+                        sourceLabel: localize("Common.SystemCompendium")
                     }));
                 rawAdversaries.push(...sysAdvs);
             }
@@ -485,7 +486,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const typeKey = (actor.system.type || "standard").toLowerCase();
                 isMinion = typeKey === "minion";
                 isHorde = typeKey === "horde"; 
-                actorTypeLabel = typeKey.charAt(0).toUpperCase() + typeKey.slice(1); 
+                actorTypeLabel = localizeType(typeKey);
                 
                 const rawImg = actor.img;
                 const defaultIcons = [
@@ -503,7 +504,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     isLinked: isLinked,
                     icon: isLinked ? "fa-link" : "fa-unlink",
                     cssClass: isLinked ? "status-linked" : "status-unlinked",
-                    label: isLinked ? "Linked" : "Unlinked"
+                    label: isLinked ? localize("Common.Linked") : localize("Common.Unlinked")
                 };
                 if (actor.compendium || actor.pack) linkData = null;
 
@@ -556,10 +557,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
                 
                 if (damageOptions.length > 0) {
-                    damageTooltip = "Suggested:<br>" + damageOptions.map(o => `• ${o.label}`).join("<br>");
+                    damageTooltip = localize("Common.Suggested") + "<br>" + damageOptions.map(o => `• ${o.label}`).join("<br>");
                 }
                 if (halvedDamageOptions.length > 0) {
-                    halvedDamageTooltip = "Suggested:<br>" + halvedDamageOptions.map(o => `• ${o.label}`).join("<br>");
+                    halvedDamageTooltip = localize("Common.Suggested") + "<br>" + halvedDamageOptions.map(o => `• ${o.label}`).join("<br>");
                 }
 
                 const currentCritical = currentStats.critical;
@@ -580,8 +581,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const previewDirect = this.overrides.directDamage !== undefined ? (this.overrides.directDamage === "true") : currentDirect;
                 
                 directOptions = [
-                    { value: "true", label: "Yes", selected: previewDirect === true },
-                    { value: "false", label: "No", selected: previewDirect === false }
+                    { value: "true", label: localize("Common.Yes"), selected: previewDirect === true },
+                    { value: "false", label: localize("Common.No"), selected: previewDirect === false }
                 ];
 
                 previewStats = {
@@ -598,7 +599,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     thresholdsDisplay: simResult.stats.thresholds,
                     attackModDisplay: simResult.stats.attackMod,
                     experiences: simResult.stats.previewExperiences || [],
-                    expTooltip: `Suggested:<br>Amount: ${simResult.stats.expAmountRange || "?"}<br>Modifier: ${simResult.stats.expModRange || "?"}`,
+                    expTooltip: localize("LiveManager.SuggestedAmountModifier", { amount: simResult.stats.expAmountRange || "?", modifier: simResult.stats.expModRange || "?" }),
                     damage: simResult.stats.damage,
                     damageStats: simResult.stats.damageStats, 
                     mainDamageFormula: simResult.stats.mainDamageRaw,
@@ -613,8 +614,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 };
 
                 if (isMinion) {
-                    previewStats.thresholdsDisplay = "None"; 
-                    previewStats.hpDisplay = "(Fixed)"; 
+                    previewStats.thresholdsDisplay = localize("Common.None");
+                    previewStats.hpDisplay = `(${localize("LiveManager.Fixed")})`;
                 }
                 
                 featurePreviewData = await Promise.all(simResult.structuredFeatures.map(async f => {
@@ -654,7 +655,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                              selected: d.value === currentVal
                          }));
                          if (featureOptions.length > 0) {
-                             optionsTooltip = "Suggested:<br>" + featureOptions.map(o => `• ${o.label}`).join("<br>");
+                             optionsTooltip = localize("Common.Suggested") + "<br>" + featureOptions.map(o => `• ${o.label}`).join("<br>");
                          }
                          damageStats = this._calculateDamageStats(currentVal);
                     }
@@ -707,14 +708,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                                        (this.overrides.suggestedFeaturesType === k);
                     suggestedFeaturesTypeOptions.push({
                         value: k,
-                        label: k.charAt(0).toUpperCase() + k.slice(1),
+                        label: localizeType(k),
                         selected: isSelected
                     });
                 });
 
                 suggestedFeaturesTierOptions = [1, 2, 3, 4].map(t => ({
                     value: t,
-                    label: `Tier ${t}`,
+                    label: localize("Common.Tier", { tier: t }),
                     selected: t === suggestionTier
                 }));
 
@@ -724,9 +725,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     let actionClass = "";
                     if (type) {
                         const t = type.toLowerCase();
-                        if (t === "action") { actionTag = "Action"; actionClass = "tag-action"; }
-                        else if (t === "reaction") { actionTag = "Reaction"; actionClass = "tag-reaction"; }
-                        else if (t === "passive") { actionTag = "Passive"; actionClass = "tag-passive"; }
+                        if (t === "action") { actionTag = localizeFeatureForm(t); actionClass = "tag-action"; }
+                        else if (t === "reaction") { actionTag = localizeFeatureForm(t); actionClass = "tag-reaction"; }
+                        else if (t === "passive") { actionTag = localizeFeatureForm(t); actionClass = "tag-passive"; }
                     }
 
                     const imported = flags?.importedFrom || {};
@@ -738,7 +739,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     if (customTag && customTag.trim() !== "") {
                          sourceLabel = customTag; 
                     } else if (isHomebrew) {
-                         sourceLabel = "Homebrew";
+                         sourceLabel = localize("Common.Homebrew");
                     }
                     
                     return {
@@ -863,25 +864,25 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const tiers = [1, 2, 3, 4].map(t => ({
             value: t,
-            label: `Tier ${t}`,
+            label: localize("Common.Tier", { tier: t }),
             isCurrent: t === this.targetTier,
             cssClass: t === this.targetTier ? "active" : ""
         }));
 
         const filterOptions = [
-            { value: "all", label: "All Tiers", selected: this.filterTier === "all" },
-            { value: "1", label: "Tier 1", selected: this.filterTier === "1" },
-            { value: "2", label: "Tier 2", selected: this.filterTier === "2" },
-            { value: "3", label: "Tier 3", selected: this.filterTier === "3" },
-            { value: "4", label: "Tier 4", selected: this.filterTier === "4" }
+            { value: "all", label: localize("Common.AllTiers"), selected: this.filterTier === "all" },
+            { value: "1", label: localize("Common.Tier", { tier: 1 }), selected: this.filterTier === "1" },
+            { value: "2", label: localize("Common.Tier", { tier: 2 }), selected: this.filterTier === "2" },
+            { value: "3", label: localize("Common.Tier", { tier: 3 }), selected: this.filterTier === "3" },
+            { value: "4", label: localize("Common.Tier", { tier: 4 }), selected: this.filterTier === "4" }
         ];
 
         const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
         const typeOptions = [
-            { value: "all", label: "All Types", selected: this.filterType === "all" },
+            { value: "all", label: localize("Common.AllTypes"), selected: this.filterType === "all" },
             ...typeKeys.map(k => ({ 
                 value: k, 
-                label: k.charAt(0).toUpperCase() + k.slice(1), 
+                label: localizeType(k),
                 selected: this.filterType === k 
             }))
         ];
@@ -917,7 +918,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             halvedDamageOptions,
             damageTooltip,
             halvedDamageTooltip,
-            actorName: actor?.name || "None",
+            actorName: actor?.name || localize("Common.None"),
             portraitImg: portraitImg,
             isHorde: isHorde,
             actorTypeLabel: actorTypeLabel,
@@ -1073,7 +1074,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         try {
             if (actor.compendium || actor.pack) {
-                const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
+                const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || localize("Defaults.ImportedAdversaries");
                 let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
                 if (!folder) {
                     folder = await Folder.create({ name: folderName, type: "Actor", color: "#430047" });
@@ -1136,7 +1137,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
 
             if (!result && !hasManualUpdates) {
-                ui.notifications.warn("No changes were necessary.");
+                ui.notifications.warn(localize("LiveManager.NoChangesNecessary"));
             }
 
             this.filterTier = String(this.targetTier); 
@@ -1164,7 +1165,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         } catch (e) {
             console.error(e);
-            ui.notifications.error("Error applying changes. Check console.");
+            ui.notifications.error(localize("LiveManager.ErrorApplying"));
         }
     }
 
@@ -1269,7 +1270,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (item && item.sheet) {
             item.sheet.render(true);
         } else {
-            ui.notifications.warn("Item not found or has no sheet.");
+            ui.notifications.warn(localize("LiveManager.ItemNotFound"));
         }
     }
 
@@ -1384,7 +1385,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             mean = Math.ceil(avg);
         }
 
-        return `(Min: ${min}, Mean: ${mean}, Max: ${max})`;
+        return `(${localize("Common.Min")}: ${min}, ${localize("Common.Mean")}: ${mean}, ${localize("Common.Max")}: ${max})`;
     }
 
     _extractStats(actorData, tier) {
@@ -1413,7 +1414,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         }
                         
                         if (types.length > 0) {
-                            const typeNames = types.map(t => t.charAt(0).toUpperCase() + t.slice(1));
+            const typeNames = types.map(t => localizeType(t));
                             damageTypesLabel = `(${typeNames.join("/")})`;
                         }
                     }
@@ -1447,7 +1448,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         const isDirect = sys.attack?.damage?.direct ?? false;
-        const directLabel = isDirect ? "Direct: Yes" : "Direct: No";
+        const directLabel = isDirect ? localize("Common.DirectYes") : localize("Common.DirectNo");
 
         return {
             tier,
@@ -1456,7 +1457,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             stress: sys.resources?.stress?.max,
             thresholds: `${sys.damageThresholds?.major} / ${sys.damageThresholds?.severe}`,
             attackMod: sys.attack?.roll?.bonus,
-            damage: damageParts.join(", ") || "None",
+            damage: damageParts.join(", ") || localize("Common.None"),
             damageTypesLabel: damageTypesLabel, 
             damageStats: this._calculateDamageStats(firstDamageFormula), 
             halvedDamage: halvedParts.join(", ") || null,
@@ -1484,11 +1485,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             suggestionTier = parseInt(this.overrides.suggestedFeaturesTier);
         }
 
-        if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: "Unknown Type" }, features: [], structuredFeatures: [] };
+        if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: localize("LiveManager.UnknownType") }, features: [], structuredFeatures: [] };
         
         const benchmark = ADVERSARY_BENCHMARKS[typeKey].tiers[`tier_${targetTier}`];
 
-        if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [], structuredFeatures: [] };
+        if (!benchmark) return { stats: { error: localize("LiveManager.BenchmarkMissing") }, features: [], structuredFeatures: [] };
 
         if (!this._cachedValues) {
             this._cachedValues = {};
@@ -1579,7 +1580,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 if (!currentExpMap[key] && !data.deleted) {
                      activeCount++;
                      const val = data.value !== undefined ? data.value : targetMod;
-                     const name = data.name || "New Experience";
+                     const name = data.name || localize("LiveManager.NewExperience");
                      usedNames.push(name);
                      
                      sim.previewExperiences.push({
@@ -1599,7 +1600,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     
                     if (!this.overrides.experiences[tempId]) {
                         
-                        let suggestedName = "New Experience";
+                        let suggestedName = localize("LiveManager.NewExperience");
                         if (this._suggestionCache[tempId]) {
                             suggestedName = this._suggestionCache[tempId];
                         } else {
@@ -1694,7 +1695,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             });
         }
-        sim.damage = damageParts.join(", ") || "None";
+        sim.damage = damageParts.join(", ") || localize("Common.None");
         sim.damageStats = this._calculateDamageStats(mainDamageRaw); 
 
         sim.mainDamageRaw = mainDamageRaw;
