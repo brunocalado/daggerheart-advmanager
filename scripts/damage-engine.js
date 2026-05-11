@@ -7,6 +7,8 @@
  */
 import { ADVERSARY_BENCHMARKS, PC_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID, SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SETTING_ADD_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
+import { prepareDocumentCreateData } from "./foundry-compat.js";
+import { localize } from "./i18n.js";
 
 // --- Utility Parsers ---
 
@@ -150,8 +152,8 @@ export function calculateHitChance(attackBonus, tier) {
     const minChance = calculateChance(worstCaseTarget);
 
     return {
-        text: `(Min: ${minChance}% | Max: ${maxChance}%)`,
-        tooltip: `Vs PC Tier ${tier} Evasion (${pcStats.evasion}):\nMin Evasion: ${maxChance}% chance to hit.\nMax Evasion: ${minChance}% chance to hit.`
+        text: `(${localize("Common.Min")}: ${minChance}% | ${localize("Common.Max")}: ${maxChance}%)`,
+        tooltip: localize("DamageEngine.VsPcTierTooltip", { tier, evasion: pcStats.evasion, maxChance, minChance })
     };
 }
 
@@ -190,12 +192,29 @@ export function calculateHitChanceAgainst(difficulty, tier) {
     const maxChance = calculate(maxBonus);
 
     return {
-        text: `(Min: ${minChance}% | Max: ${maxChance}%)`,
-        tooltip: `PC Hit Chance (2d12 + Trait vs Diff ${difficulty}):\nStandard Trait (+${minBonus}): ${minChance}%\nMax Trait (+${maxBonus}): ${maxChance}%`
+        text: `(${localize("Common.Min")}: ${minChance}% | ${localize("Common.Max")}: ${maxChance}%)`,
+        tooltip: localize("DamageEngine.PCThresholdTooltip", { difficulty, minBonus, minChance, maxBonus, maxChance })
     };
 }
 
 // --- Core Damage Logic ---
+
+/**
+ * Normalizes Foundry damage parts to an iterable array without changing the
+ * original container shape. Daggerheart data may store parts as an Array or as
+ * an object keyed by part id/index.
+ * @param {Array|Object|null|undefined} parts - Raw damage parts container.
+ * @returns {Array} Damage part objects.
+ */
+export function getDamagePartsArray(parts) {
+    const isDamagePart = part => part && typeof part === "object" && ("value" in part || "valueAlt" in part || "type" in part);
+    if (Array.isArray(parts)) return parts.filter(isDamagePart);
+    if (parts && typeof parts === "object") {
+        if (isDamagePart(parts)) return [parts];
+        return Object.values(parts).filter(isDamagePart);
+    }
+    return [];
+}
 
 /**
  * Selects the best matching damage formula from the benchmark list for the new tier.
@@ -334,7 +353,7 @@ export function processDamageValue(val, newTier, currentTier, damageRolls) {
 /**
  * Iterates all damage parts of an attack, applying auto-scaling or forced overrides.
  * Handles Minion flat-damage and Horde halved-damage paths.
- * @param {Array} parts - Array of damage part objects.
+ * @param {Array|Object} parts - Damage part objects as an array or keyed object.
  * @param {number} newTier - Target tier.
  * @param {number} currentTier - Current tier.
  * @param {Object} benchmark - Tier benchmark data.
@@ -344,14 +363,15 @@ export function processDamageValue(val, newTier, currentTier, damageRolls) {
 export function updateDamageParts(parts, newTier, currentTier, benchmark, forceFormula = null) {
     let hasChanges = false;
     const changes = [];
+    const damageParts = getDamagePartsArray(parts);
 
-    if (!parts || !Array.isArray(parts)) return { hasChanges, changes };
+    if (!damageParts.length) return { hasChanges, changes };
 
     // Handle Legacy String Override (Applies to first part only)
     if (typeof forceFormula === 'string' && forceFormula) {
         const parsed = parseDamageString(forceFormula);
         if (parsed) {
-            const part = parts.find(p => p.value);
+            const part = damageParts.find(p => p.value);
             if (part) {
                 let oldFormula = part.value.custom?.enabled ? part.value.custom.formula : (part.value.dice ? `${part.value.flatMultiplier}${part.value.dice}` : `${part.value.flatMultiplier}`);
 
@@ -377,7 +397,7 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
     }
 
     // Standard logic with Multipart Override Support (Object Map)
-    parts.forEach(part => {
+    damageParts.forEach(part => {
         // MINION CHECK: If benchmark has 'basic_attack_y', use it instead of scaling
         if (benchmark.basic_attack_y && part.value) {
             const currentFormula = part.value.custom?.enabled ? part.value.custom.formula : `${part.value.flatMultiplier}`;
@@ -498,7 +518,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
                 }
                 result.changes.forEach(c => {
                     if (!c.unchanged) {
-                        const customLabel = c.isCustom ? " (Custom)" : "";
+                        const customLabel = c.isCustom ? ` (${localize("DamageEngine.Custom")})` : "";
                         const altLabel = c.labelSuffix || "";
                         const logMsg = `<strong>${itemData.name}:</strong> ${c.from} -> ${c.to}${customLabel}${altLabel}`;
                         changeLog.push(logMsg);
@@ -526,7 +546,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
     if (nameOverrides && nameOverrides[itemData._id]) {
         newName = nameOverrides[itemData._id];
         if (newName !== itemData.name) {
-            changeLog.push(`<strong>Name Override:</strong> ${itemData.name} -> ${newName}`);
+            changeLog.push(`<strong>${localize("DamageEngine.NameOverride")}:</strong> ${itemData.name} -> ${newName}`);
             hasChanges = true;
 
             const isMinion = newName.match(/^Minion\s*\((\d+)\)$/i);
@@ -604,7 +624,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
             if (newDmgStr) {
                 newName = `Horde (${newDmgStr})`;
                 if (itemData.name !== newName) {
-                    changeLog.push(`<strong>Name Update:</strong> ${itemData.name} -> ${newName}`);
+                    changeLog.push(`<strong>${localize("DamageEngine.NameUpdate")}:</strong> ${itemData.name} -> ${newName}`);
                     hasChanges = true;
                     structuredChanges.push({
                         itemId: itemData._id,
@@ -647,7 +667,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
                 newName = `Minion (${newVal})`;
                 minionVal = newVal;
                 if (itemData.name !== newName) {
-                    changeLog.push(`<strong>Name Update:</strong> ${itemData.name} -> ${newName}`);
+                    changeLog.push(`<strong>${localize("DamageEngine.NameUpdate")}:</strong> ${itemData.name} -> ${newName}`);
                     hasChanges = true;
                     structuredChanges.push({
                         itemId: itemData._id,
@@ -783,7 +803,7 @@ export async function handleNewFeatures(actor, typeKey, newTier, currentTier, ch
 
             if (entry) {
                 const doc = await pack.getDocument(entry._id);
-                featureData = doc.toObject();
+                featureData = prepareDocumentCreateData(doc, game.items);
                 sourceUuid = doc.uuid;
                 break;
             }
@@ -800,7 +820,7 @@ export async function handleNewFeatures(actor, typeKey, newTier, currentTier, ch
                     const templateEntry = index.find(e => e.name === "Minion (X)");
                     if (templateEntry) {
                         const doc = await customPack.getDocument(templateEntry._id);
-                        featureData = doc.toObject();
+                        featureData = prepareDocumentCreateData(doc, game.items);
                         sourceUuid = doc.uuid;
 
                         featureData.name = featureName;
@@ -818,9 +838,7 @@ export async function handleNewFeatures(actor, typeKey, newTier, currentTier, ch
             continue;
         }
 
-        if (sourceUuid) {
-            featureData.uuid = sourceUuid;
-        }
+        if (sourceUuid) foundry.utils.setProperty(featureData, "flags.core.sourceId", sourceUuid);
 
         toCreate.push(featureData);
 
@@ -830,12 +848,12 @@ export async function handleNewFeatures(actor, typeKey, newTier, currentTier, ch
             const existingRelentless = currentItems.find(i => i.name.match(/^Relentless\s*\((\d+)\)$/i));
             if (existingRelentless) {
                 toDelete.push(existingRelentless.id);
-                changeLog.push(`<strong>New Feature:</strong> ${featureName} (Replaced ${existingRelentless.name})`);
+                changeLog.push(`<strong>${localize("DamageEngine.NewFeature")}:</strong> ${featureName} (${localize("DamageEngine.Replaced", { name: existingRelentless.name })})`);
             } else {
-                changeLog.push(`<strong>New Feature:</strong> ${featureName}`);
+                changeLog.push(`<strong>${localize("DamageEngine.NewFeature")}:</strong> ${featureName}`);
             }
         } else {
-            changeLog.push(`<strong>New Feature:</strong> ${featureName}`);
+            changeLog.push(`<strong>${localize("DamageEngine.NewFeature")}:</strong> ${featureName}`);
         }
     }
 
@@ -880,13 +898,13 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
 
     // 2. Update Stats (With Overrides)
     const diff = overrides.difficulty !== undefined ? Number(overrides.difficulty) : getRollFromRange(benchmark.difficulty);
-    if (diff) { updateData["system.difficulty"] = diff; statsLog.push(`<strong>Diff:</strong> ${actorData.system.difficulty} -> ${diff}`); }
+    if (diff) { updateData["system.difficulty"] = diff; statsLog.push(`<strong>${localize("DamageEngine.Diff")}:</strong> ${actorData.system.difficulty} -> ${diff}`); }
 
     const hp = overrides.hp !== undefined ? Number(overrides.hp) : getRollFromRange(benchmark.hp);
-    if (hp) { updateData["system.resources.hitPoints.max"] = hp; updateData["system.resources.hitPoints.value"] = 0; statsLog.push(`<strong>HP:</strong> ${actorData.system.resources.hitPoints.max} -> ${hp}`); }
+    if (hp) { updateData["system.resources.hitPoints.max"] = hp; updateData["system.resources.hitPoints.value"] = 0; statsLog.push(`<strong>${localize("Common.HP")}:</strong> ${actorData.system.resources.hitPoints.max} -> ${hp}`); }
 
     const stress = overrides.stress !== undefined ? Number(overrides.stress) : getRollFromRange(benchmark.stress);
-    if (stress) { updateData["system.resources.stress.max"] = stress; statsLog.push(`<strong>Stress:</strong> ${actorData.system.resources.stress.max} -> ${stress}`); }
+    if (stress) { updateData["system.resources.stress.max"] = stress; statsLog.push(`<strong>${localize("Common.Stress")}:</strong> ${actorData.system.resources.stress.max} -> ${stress}`); }
 
     if (benchmark.threshold_min && benchmark.threshold_max) {
         let major, severe;
@@ -903,7 +921,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
         if (major && severe) {
             updateData["system.damageThresholds.major"] = major;
             updateData["system.damageThresholds.severe"] = severe;
-            statsLog.push(`<strong>Dmg Thresh:</strong> ${actorData.system.damageThresholds.major}/${actorData.system.damageThresholds.severe} -> ${major}/${severe}`);
+            statsLog.push(`<strong>${localize("DamageEngine.DmgThresh")}:</strong> ${actorData.system.damageThresholds.major}/${actorData.system.damageThresholds.severe} -> ${major}/${severe}`);
         }
     }
 
@@ -912,7 +930,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
         updateData["system.attack.roll.bonus"] = atkMod;
         const oldAtk = actorData.system.attack.roll.bonus;
         const sign = atkMod >= 0 ? "+" : "";
-        statsLog.push(`<strong>Atk Mod:</strong> ${oldAtk} -> ${sign}${atkMod}`);
+        statsLog.push(`<strong>${localize("CompendiumStats.AttackMod")}:</strong> ${oldAtk} -> ${sign}${atkMod}`);
     }
 
     // 3. Update Sheet Damage (Main Attack)
@@ -920,11 +938,12 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
 
     if (actorData.system.attack && actorData.system.attack.damage && actorData.system.attack.damage.parts) {
         const sheetDamageParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
+        const sheetDamagePartList = getDamagePartsArray(sheetDamageParts);
 
-        if (overrides.damageFormula && sheetDamageParts.length > 0) {
+        if (overrides.damageFormula && sheetDamagePartList.length > 0) {
             const parsed = parseDamageString(overrides.damageFormula);
             if (parsed) {
-                const part = sheetDamageParts[0];
+                const part = sheetDamagePartList[0];
                 if (part.value) {
                     if (parsed.die === null) {
                         part.value.flatMultiplier = parsed.count;
@@ -936,16 +955,16 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                         part.value.bonus = parsed.bonus;
                     }
                     updateData["system.attack.damage.parts"] = sheetDamageParts;
-                    statsLog.push(`<strong>Sheet Dmg (Manual):</strong> ${overrides.damageFormula}`);
+                    statsLog.push(`<strong>${localize("DamageEngine.SheetDmgManual")}:</strong> ${overrides.damageFormula}`);
                 }
             }
         }
 
-        if (overrides.halvedDamageFormula && sheetDamageParts.length > 0) {
+        if (overrides.halvedDamageFormula && sheetDamagePartList.length > 0) {
              calculatedHalvedDamage = overrides.halvedDamageFormula;
              const parsed = parseDamageString(overrides.halvedDamageFormula);
-             if (parsed && sheetDamageParts[0].valueAlt) {
-                 const part = sheetDamageParts[0];
+             if (parsed && sheetDamagePartList[0].valueAlt) {
+                 const part = sheetDamagePartList[0];
                  if (part.valueAlt) {
                      if (parsed.die === null) {
                         part.valueAlt.flatMultiplier = parsed.count;
@@ -964,24 +983,24 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
         if (result.hasChanges) {
             updateData["system.attack.damage.parts"] = sheetDamageParts;
             result.changes.forEach(c => {
-                statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
+                statsLog.push(`<strong>${localize("DamageEngine.SheetDmg")}:</strong> ${c.from} -> ${c.to}`);
                 if (c.labelSuffix === " (Alt)" && !overrides.halvedDamageFormula) {
                      calculatedHalvedDamage = c.to;
                 }
             });
         }
 
-        if (!calculatedHalvedDamage && sheetDamageParts.length > 0 && sheetDamageParts[0].valueAlt) {
-            const part = sheetDamageParts[0];
+        if (!calculatedHalvedDamage && sheetDamagePartList.length > 0 && sheetDamagePartList[0].valueAlt) {
+            const part = sheetDamagePartList[0];
             const altFormula = part.valueAlt.custom?.enabled ? part.valueAlt.custom.formula : (part.valueAlt.dice ? `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus?(part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}` : `${part.valueAlt.flatMultiplier}`);
             calculatedHalvedDamage = altFormula;
         }
 
         // Apply Manual Overrides again to be safe
-        if (overrides.damageFormula && sheetDamageParts.length > 0) {
+        if (overrides.damageFormula && sheetDamagePartList.length > 0) {
             const parsed = parseDamageString(overrides.damageFormula);
-            if (parsed && sheetDamageParts[0].value) {
-                 const part = sheetDamageParts[0];
+            if (parsed && sheetDamagePartList[0].value) {
+                 const part = sheetDamagePartList[0];
                  if (parsed.die === null) {
                     part.value.flatMultiplier = parsed.count;
                     part.value.dice = "";
@@ -999,10 +1018,10 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
             }
         }
 
-        if (overrides.halvedDamageFormula && sheetDamageParts.length > 0) {
+        if (overrides.halvedDamageFormula && sheetDamagePartList.length > 0) {
             const parsed = parseDamageString(overrides.halvedDamageFormula);
-            if (parsed && sheetDamageParts[0].valueAlt) {
-                 const part = sheetDamageParts[0];
+            if (parsed && sheetDamagePartList[0].valueAlt) {
+                 const part = sheetDamagePartList[0];
                  if (parsed.die === null) {
                     part.valueAlt.flatMultiplier = parsed.count;
                     part.valueAlt.dice = "";
@@ -1050,9 +1069,9 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
              if (!currentExperiences[tempId] && !data.deleted) {
                  const newId = foundry.utils.randomID();
                  updateData[`system.experiences.${newId}`] = {
-                     name: data.name || "New Experience",
+                     name: data.name || localize("LiveManager.NewExperience"),
                      value: data.value !== undefined ? data.value : targetMod,
-                     description: "Added by Live Manager"
+                     description: localize("DamageEngine.AddedByLiveManager")
                  };
                  manualAddedCount++;
              }
@@ -1078,7 +1097,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
 
             for (let i = 0; i < needed; i++) {
                 const newId = foundry.utils.randomID();
-                let name = "New Experience";
+                let name = localize("LiveManager.NewExperience");
                 if (availableNames.length > 0) {
                     const idx = Math.floor(Math.random() * availableNames.length);
                     name = availableNames[idx];
@@ -1087,13 +1106,13 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                 updateData[`system.experiences.${newId}`] = {
                     name: name,
                     value: targetMod,
-                    description: "Auto-Added by Tier Scaling"
+                    description: localize("DamageEngine.AutoAddedByTierScaling")
                 };
-                statsLog.push(`<strong>New Exp:</strong> ${name}`);
+                statsLog.push(`<strong>${localize("DamageEngine.NewExp")}:</strong> ${name}`);
             }
         }
         if (currentCount !== keysToKeep.length || manualAddedCount > 0) {
-             statsLog.push(`<strong>Experiences:</strong> Adjusted`);
+             statsLog.push(`<strong>${localize("Common.Experiences")}:</strong> ${localize("DamageEngine.Adjusted")}`);
         }
     }
 
@@ -1227,6 +1246,6 @@ export function sendBatchChatLog(results, targetTier) {
         if (res.featureLog.length > 0) res.featureLog.forEach(log => { actorBlock += `<div style="font-size: 0.9em; margin-left: 5px;">• ${log}</div>`; });
         consolidatedContent += actorBlock + (index < results.length - 1 ? `<hr style="border: 0; border-top: 1px solid rgba(201, 160, 96, 0.5); margin: 8px 0;">` : "");
     });
-    const finalHtml = `<div class="chat-card" style="border: 2px solid #C9A060; border-radius: 8px; overflow: hidden;"><header class="card-header flexrow" style="background: #191919 !important; padding: 8px; border-bottom: 2px solid #C9A060;"><h3 class="noborder" style="margin: 0; font-weight: bold; color: #C9A060 !important; font-family: 'Aleo', serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 100%;">Batch Update: Tier ${targetTier}</h3></header><div class="card-content" style="background-image: url('${bgImage}'); background-repeat: no-repeat; background-position: center; background-size: cover; padding: 20px; min-height: 150px; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;"><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 0;"></div><span style="color: #ffffff !important; font-size: 1.0em; text-shadow: 0px 0px 8px #000000; position: relative; z-index: 1; font-family: 'Lato', sans-serif; line-height: 1.4; width: 100%; text-align: left;">${consolidatedContent}</span></div></div>`;
-    ChatMessage.create({ content: finalHtml, whisper: ChatMessage.getWhisperRecipients("GM"), speaker: ChatMessage.getSpeaker({ alias: "Adversary Manager" }) });
+    const finalHtml = `<div class="chat-card" style="border: 2px solid #C9A060; border-radius: 8px; overflow: hidden;"><header class="card-header flexrow" style="background: #191919 !important; padding: 8px; border-bottom: 2px solid #C9A060;"><h3 class="noborder" style="margin: 0; font-weight: bold; color: #C9A060 !important; font-family: 'Aleo', serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 100%;">${localize("DamageEngine.BatchUpdateTier", { tier: targetTier })}</h3></header><div class="card-content" style="background-image: url('${bgImage}'); background-repeat: no-repeat; background-position: center; background-size: cover; padding: 20px; min-height: 150px; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;"><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 0;"></div><span style="color: #ffffff !important; font-size: 1.0em; text-shadow: 0px 0px 8px #000000; position: relative; z-index: 1; font-family: 'Lato', sans-serif; line-height: 1.4; width: 100%; text-align: left;">${consolidatedContent}</span></div></div>`;
+    ChatMessage.create({ content: finalHtml, whisper: ChatMessage.getWhisperRecipients("GM"), speaker: ChatMessage.getSpeaker({ alias: localize("Windows.AdversaryManager") }) });
 }

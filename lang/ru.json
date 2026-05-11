@@ -1,0 +1,347 @@
+{
+  "DHAM": {
+    "Common": {
+      "Adversaries": "Противники",
+      "Adversary": "Противник",
+      "AllSources": "Все источники",
+      "AllTiers": "Все ранги",
+      "AllTypes": "Все типы",
+      "ApplyChanges": "Применить изменения",
+      "AttackBonus": "Бонус атаки",
+      "AttackDamage": "Урон атаки",
+      "Base": "База: {base}",
+      "ChooseAdversary": "-- Выберите противника --",
+      "Compendium": "Компендиум",
+      "Critical": "Критический успех",
+      "CriticalThreshold": "Порог критического успеха",
+      "Current": "Текущее",
+      "DamageType": "Тип урона:",
+      "Difficulty": "Сложность",
+      "Direct": "Прямой:",
+      "DirectNo": "Прямой: нет",
+      "DirectYes": "Прямой: да",
+      "Experiences": "Опыт",
+      "Failure": "Провал",
+      "Feature": "Особенность",
+      "Features": "Особенности",
+      "HalvedDamageHorde": "Половинный урон (орда)",
+      "Homebrew": "Домашнее",
+      "HP": "ОЗ",
+      "Linked": "Связан",
+      "ManualOverride": "Ручное значение",
+      "Max": "Макс.",
+      "Mean": "Среднее",
+      "Min": "Мин.",
+      "No": "Нет",
+      "None": "Нет",
+      "Preview": "Предпросмотр",
+      "Recommended": "Рекомендуется",
+      "Remove": "Удалить",
+      "RenameFeature": "Переименовать особенность",
+      "Stress": "Стресс",
+      "Success": "Успех",
+      "Suggested": "Рекомендовано:",
+      "SystemCompendium": "Системный компендиум",
+      "Thresholds": "Пороги",
+      "Tier": "Ранг {tier}",
+      "Type": "Тип",
+      "Unlinked": "Не связан",
+      "World": "Мир",
+      "WorldActors": "Мир (актеры)",
+      "Yes": "Да"
+    },
+    "Settings": {
+      "AddFeatures": {
+        "Hint": "Если включено, при повышении ранга будут случайно предлагаться новые особенности.",
+        "Name": "Автоматически добавлять особенности при повышении ранга"
+      },
+      "ChatLog": {
+        "Hint": "Если включено, Мастеру отправляется шепот в чат при обновлении противника через менеджер.",
+        "Name": "Записывать изменения в чат"
+      },
+      "EncounterFolder": {
+        "Hint": "Имя корневой папки, в которой будут храниться сцены, созданные конструктором.",
+        "Name": "Имя папки сцен"
+      },
+      "ExtraCompendiums": {
+        "Name": "Дополнительные компендиумы (актеры)"
+      },
+      "FeatureCompendiums": {
+        "Name": "Компендиумы особенностей"
+      },
+      "ImportFolder": {
+        "Hint": "Имя папки, куда будут создаваться противники, импортированные из компендиумов.",
+        "Name": "Папка импорта из компендиума"
+      },
+      "StatsCompendiums": {
+        "Name": "Компендиумы статистики"
+      },
+      "SuggestFeatures": {
+        "Hint": "Если включено, в предпросмотре Live Manager показывается раздел новых предложенных особенностей.",
+        "Name": "Включить предложенные особенности"
+      },
+      "UpdateExp": {
+        "Hint": "Если включено, значения опыта будут увеличиваться или уменьшаться на 1 за каждое изменение ранга.",
+        "Name": "Автоматически обновлять опыт"
+      }
+    },
+    "Windows": {
+      "AdversaryLiveManager": "Live Manager противников",
+      "AdversaryManager": "Менеджер противников",
+      "CompendiumManager": "Управление источниками компендиумов",
+      "CompendiumStats": "Статистика компендиумов",
+      "DiceProbability": "Калькулятор вероятности броска",
+      "EncounterBuilder": "Конструктор сцен",
+      "EncounterName": "Название сцены",
+      "FeatureUpdater": "Редактор флагов особенностей",
+      "StatsManager": "Управление источниками статистики"
+    },
+    "ModuleMenu": {
+      "AdversaryTools": "Инструменты противников",
+      "CompendiumStats": "Статистика компендиума",
+      "DiceProbability": "Вероятность броска",
+      "EncounterBuilder": "Конструктор сцен",
+      "ManageAdversaries": "Управлять противниками"
+    },
+    "Manager": {
+      "NoAdversariesUpdated": "Противники не обновлены.",
+      "SelectedAdversaries": "Выбранные противники",
+      "SelectTargetTier": "Выберите целевой ранг:"
+    },
+    "LiveManager": {
+      "AddExperience": "Добавить опыт",
+      "ClickImageOpenSheet": "Нажмите на изображение, чтобы открыть лист",
+      "EditValues": "Измените значения, чтобы переопределить случайные броски.",
+      "ErrorApplying": "Ошибка при применении изменений. Проверьте консоль.",
+      "ExpName": "Название опыта",
+      "FeatureChanges": "Изменения особенностей",
+      "Fixed": "Фиксировано",
+      "ImportApplyTier": "Импортировать и применить ранг {tier}",
+      "ItemNotFound": "Предмет не найден или у него нет листа.",
+      "MagicalDamage": "Магический урон",
+      "MagShort": "Маг.",
+      "MajorShort": "Выс.",
+      "ManageCompendiums": "Управление компендиумами",
+      "NameForNewActor": "Имя нового актера",
+      "NewActorName": "Имя нового актера",
+      "NewAdversary": "Новый противник",
+      "NewExperience": "Новый опыт",
+      "NewFeatures": "Новые особенности",
+      "NoChangesNecessary": "Изменения не требуются.",
+      "NoModifiedFeatures": "Измененных особенностей нет.",
+      "OpenItem": "Открыть предмет",
+      "OpenSheetAfterApplying": "Открыть лист после применения",
+      "PhysicalDamage": "Физический урон",
+      "PhysShort": "Физ.",
+      "RollRandomName": "Случайное название",
+      "SelectAdversaryPrompt": "Выберите противника в списке выше, чтобы начать предпросмотр.",
+      "SevereShort": "Тяж.",
+      "SuggestedAmountModifier": "Рекомендовано:<br>Количество: {amount}<br>Модификатор: {modifier}",
+      "TargetTier": "Целевой ранг:",
+      "TokenSuffix": "токен",
+      "UnknownType": "Неизвестный тип",
+      "BenchmarkMissing": "Нет эталонных значений",
+      "ApplyTierToActor": "Применить ранг {tier} к {actor}",
+      "Minion": "Миньон"
+    },
+    "CompendiumManager": {
+      "Actors": "Актеры",
+      "ChooseCompendiums": "Выберите компендиумы, которые будут использоваться как источники.",
+      "NoActorCompendiums": "Другие компендиумы актеров не найдены.",
+      "NoItemCompendiums": "Компендиумы предметов не найдены.",
+      "SaveSelection": "Сохранить выбор",
+      "SelectAvailableCompendiums": "Выберите доступные компендиумы"
+    },
+    "CompendiumStats": {
+      "AdversaryType": "Тип противника:",
+      "AttackMod": "Мод. атаки",
+      "ClickDragFeature": "Нажмите, чтобы открыть; перетащите на лист",
+      "CouldNotFindSheet": "Не удалось найти лист для {feature}",
+      "DamageRolls": "Броски урона",
+      "HalvedDmg": "Половинный урон",
+      "HitPoints": "Очки здоровья",
+      "ManageStatSources": "Управление источниками статистики",
+      "QuantityTooltip": "Количество (мин.-макс.) + диапазон значения",
+      "ReadingData": "Чтение данных компендиумов...",
+      "RefreshStats": "Обновить статистику",
+      "ThresholdMax": "Макс. порог",
+      "ThresholdMin": "Мин. порог"
+    },
+    "StatsManager": {
+      "FolderPlaceholder": "Папка (по умолч.: Imported...)",
+      "Important": "Важно:",
+      "ImportNote": "Выбор нового компендиума запустит автоматический импорт. Особенности выбранных актеров будут скопированы в предметы мира.",
+      "SaveSelectionImport": "Сохранить выбор и импортировать",
+      "SelectStatSources": "Выберите источники статистики",
+      "TagPlaceholder": "Тег (по умолч.: Label)",
+      "WaitImport": "Дождитесь уведомления о завершении импорта."
+    },
+    "DiceProbability": {
+      "Adv": "Преим.",
+      "Advantage": "Преимущество",
+      "AdvantageD20": "Преимущество (2d20, оставить больший)",
+      "AdvDie": "Кость преим.",
+      "CriticalDoubles": "Крит (дубли)",
+      "D20System": "Система D20",
+      "Dice": "Кости",
+      "Dis": "Помеха",
+      "Disadvantage": "Помеха",
+      "DisadvantageD20": "Помеха (2d20, оставить меньший)",
+      "DisDie": "Кость помехи",
+      "DualityDice": "Кости двойственности",
+      "FailureChance": "Шанс провала",
+      "Modifier": "Модификатор (+/-)",
+      "Norm": "Норм.",
+      "Normal": "Обычный",
+      "NormalD20": "Обычный (1d20)",
+      "ProbabilityAnalysis": "Анализ вероятности",
+      "Results": "Результаты",
+      "Roll": "Бросок",
+      "RollType": "Тип броска",
+      "SendToChat": "Отправить в чат",
+      "SuccessChance": "Шанс успеха"
+    },
+    "EncounterBuilder": {
+      "AddToEncounter": "Добавить в сцену",
+      "AddUnits": "Добавьте существ из библиотеки.",
+      "AutoFolder": "Режим: автоматическое имя папки",
+      "BudgetLimit": "Лимит бюджета",
+      "ClearAll": "Очистить все",
+      "Create": "Создать",
+      "CreateAndPlaceInvisible": "Создать и разместить невидимо",
+      "CreateEncounter": "Создать сцену",
+      "CurrentCost": "Текущая стоимость",
+      "DamageBoost": "Добавить +{die} урона (снижает лимит бюджета)",
+      "EditLiveManager": "Редактировать в Live Manager",
+      "EncounterCreated": "Сцена создана в: \"{folder}\". Проверьте каталог актеров.",
+      "EncounterPlaced": "Сцена создана, и {count} токенов размещено на сцене (скрыто).",
+      "FailedCreate": "Не удалось создать сцену. Проверьте консоль.",
+      "FailedPlace": "Не удалось разместить сцену. Проверьте консоль.",
+      "FearBudget": "Бюджет страха:",
+      "FearHint": "Чем больше страха потрачено, тем выше воспринимаемая сложность.",
+      "FolderName": "Имя папки:",
+      "FolderPlaceholder": "например, Комната босса 3",
+      "Library": "Библиотека ({count})",
+      "ManualFolder": "Режим: ручное имя папки",
+      "NoActiveScene": "Нет активной сцены для размещения токенов.",
+      "NoAdversariesFound": "Противники не найдены.",
+      "NoAdversariesToCreate": "В сцене нет противников для создания.",
+      "PartyTier": "Ранг группы:",
+      "PCs": "# персонажей:",
+      "SearchPlaceholder": "Поиск противников...",
+      "SynergyMomentum": "Есть противники, способные получать страх.",
+      "SynergyRelentless": "Есть противники, которых можно выделять несколько раз за ход Мастера.",
+      "SynergySpotlighter": "Есть противники, способные выделять других противников.",
+      "SynergySummoner": "Есть противники, способные призывать других противников.",
+      "UntitledEncounter": "Безымянная сцена"
+    },
+    "Encounter": {
+      "Difficulty": {
+        "Balanced": "Сбалансировано",
+        "Challenging": "Сложно",
+        "Deadly": "Смертельно",
+        "Easy": "Легко",
+        "Hard": "Тяжело",
+        "OutOfTier": "Вне ранга",
+        "VeryEasy": "Очень легко"
+      },
+      "Fear": {
+        "Extreme": "Экстремально (4-8 страха)",
+        "High": "Высоко (2-4 страха)",
+        "Insane": "Безумно (6-12 страха)",
+        "Low": "Низко (0-1 страха)",
+        "Moderate": "Умеренно (1-3 страха)"
+      },
+      "Modifiers": {
+        "DamageBoost": "Усиление урона",
+        "EasierShorter": "Проще/короче",
+        "HarderLonger": "Сложнее/дольше",
+        "LowerTierUsed": "Использован нижний ранг",
+        "NoMajorAdversaries": "Нет крупных противников",
+        "TwoPlusSolos": "2+ одиночки"
+      }
+    },
+    "FeatureUpdater": {
+      "AdversaryType": "Тип противника",
+      "ConfigureFlags": "2. Настройте флаги",
+      "CouldNotResolveItem": "Не удалось определить UUID предмета.",
+      "CustomTag": "Пользовательский тег",
+      "CustomTagPlaceholder": "например, Core, Homebrew",
+      "DragFeature": "Перетащите особенность из мира",
+      "DropFeature": "1. Перетащите особенность сюда",
+      "FailedUpdate": "Не удалось обновить флаги предмета.",
+      "InvalidDrop": "Недопустимые данные перетаскивания.",
+      "NoItemSelected": "Предмет не выбран.",
+      "PleaseDropItem": "Перетащите предмет.",
+      "TargetTier": "Целевой ранг",
+      "UpdateFlags": "Обновить флаги особенности"
+    },
+    "DamageEngine": {
+      "AddedByLiveManager": "Добавлено через Live Manager",
+      "Adjusted": "скорректировано",
+      "Alt": "альт.",
+      "AutoAddedByTierScaling": "Автоматически добавлено при масштабировании ранга",
+      "BatchUpdateTier": "Пакетное обновление: ранг {tier}",
+      "ChanceToHit": "{chance}% шанс попасть.",
+      "Custom": "ручное",
+      "Diff": "Сложн.",
+      "DmgThresh": "Пороги урона",
+      "Experiences": "Опыт",
+      "MaxEvasion": "Макс. уклонение",
+      "MaxTrait": "Макс. черта",
+      "MinEvasion": "Мин. уклонение",
+      "NameOverride": "Ручное имя",
+      "NameUpdate": "Обновление имени",
+      "NewExp": "Новый опыт",
+      "NewFeature": "Новая особенность",
+      "PCThresholdTooltip": "Шанс попадания персонажа (2d12 + черта против сложности {difficulty}):\nСтандартная черта (+{minBonus}): {minChance}%\nМакс. черта (+{maxBonus}): {maxChance}%",
+      "Replaced": "заменено: {name}",
+      "SheetDmg": "Урон листа",
+      "SheetDmgManual": "Урон листа (ручной)",
+      "VsPcTierTooltip": "Против уклонения персонажей ранга {tier} ({evasion}):\nМин. уклонение: {maxChance}% шанс попасть.\nМакс. уклонение: {minChance}% шанс попасть."
+    },
+    "Importer": {
+      "Action": "Действие",
+      "CompendiumNotActor": "Компендиум \"{compendium}\" не является компендиумом актеров.",
+      "CompendiumNotFound": "Компендиум \"{compendium}\" не найден.",
+      "ImportedFrom": "Импортировано из {label}",
+      "Passive": "Пассивное",
+      "Reaction": "Реакция"
+    },
+    "Types": {
+      "bruiser": "Громила",
+      "horde": "Орда",
+      "leader": "Лидер",
+      "minion": "Миньон",
+      "ranged": "Дальнобойный",
+      "skulk": "Скрытень",
+      "social": "Социальный",
+      "solo": "Одиночка",
+      "standard": "Стандартный",
+      "support": "Поддержка",
+      "unknown": "Неизвестный"
+    },
+    "FeatureForms": {
+      "action": "Действие",
+      "passive": "Пассивное",
+      "reaction": "Реакция"
+    },
+    "Defaults": {
+      "ImportedAdversaries": "Импортированные противники",
+      "MyEncounters": "Мои сцены"
+    },
+    "Notifications": {
+      "BrokenToken": "Ошибка: токен \"{token}\" ссылается на актера, которого больше нет в каталоге.",
+      "GmOnly": "Эта функция доступна только Мастеру."
+    },
+    "Packs": {
+      "AllFeatures": "Все особенности",
+      "CustomFeatures": "Пользовательские особенности",
+      "Macros": "Макросы",
+      "Templates": "Шаблоны"
+    },
+    "PackFolders": {
+      "AdversaryManager": "Менеджер противников"
+    }
+  }
+}

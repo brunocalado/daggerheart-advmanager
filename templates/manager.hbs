@@ -1,7 +1,7 @@
 <div class="dh-adv-manager-content">
 
 <div class="status-header">
-    <h3>Selected Adversaries</h3>
+    <h3>{{localize "DHAM.Manager.SelectedAdversaries"}}</h3>
 </div>
 
 <!-- Scrollable Actor List -->
@@ -11,14 +11,14 @@
         <span class="actor-name">{{this.name}}</span>
         <div class="actor-badges">
             <span class="badge-tier">T{{this.tier}}</span>
-            <i class="fas {{this.linkIcon}} {{this.linkClass}}" title="{{#if this.isLinked}}Linked{{else}}Unlinked{{/if}}"></i>
+            <i class="fas {{this.linkIcon}} {{this.linkClass}}" title="{{#if this.isLinked}}{{localize "DHAM.Common.Linked"}}{{else}}{{localize "DHAM.Common.Unlinked"}}{{/if}}"></i>
         </div>
     </div>
     {{/each}}
 </div>
 
 <div class="form-group" style="margin-top: 10px;">
-    <label>Select Target Tier:</label>
+    <label>{{localize "DHAM.Manager.SelectTargetTier"}}</label>
     
     <div class="tier-selector">
         {{#each tiers}}
@@ -35,7 +35,7 @@
 
 <footer class="sheet-footer">
     <button type="submit">
-        <i class="fas fa-save"></i> Apply Changes
+        <i class="fas fa-save"></i> {{localize "DHAM.Common.ApplyChanges"}}
     </button>
 </footer>
 

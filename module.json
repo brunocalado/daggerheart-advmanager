@@ -1,7 +1,8 @@
 {
   "id": "daggerheart-advmanager",
+  "type": "module",
   "title": "Daggerheart: Adversary Manager",
-  "version": "0.2.7",
+  "version": "0.2.8",
   
   "description": "The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries instantly, build balanced encounters.",
 
@@ -12,9 +13,9 @@
 	}], 
   
   "compatibility": {
-    "minimum": 13,
-    "verified": 13,
-    "maximum": 13
+    "minimum": "14.359",
+    "verified": "14.360",
+    "maximum": 14
   },
   "authors": [
     {
@@ -29,7 +30,8 @@
         "id": "daggerheart",
         "type": "system",
         "compatibility": {
-          "minimum": "1.4.4"
+          "minimum": "2.0.0",
+          "verified": "2"
         }
       }
     ]
@@ -37,7 +39,7 @@
 
   "packs": [
     {
-      "label": "Custom Features",
+      "label": "DHAM.Packs.CustomFeatures",
       "type": "Item",
       "name": "custom-features",
       "path": "packs/custom-features",
@@ -50,7 +52,7 @@
       "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
     },    
     {
-      "label": "All Features",
+      "label": "DHAM.Packs.AllFeatures",
       "type": "Item",
       "name": "all-features",
       "path": "packs/all-features",
@@ -63,7 +65,7 @@
       "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
     },
     {
-      "label": "Macros",
+      "label": "DHAM.Packs.Macros",
       "type": "Macro",
       "name": "macros",
       "path": "packs/macros",
@@ -76,7 +78,7 @@
       "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
     },
     {
-      "label": "Templates",
+      "label": "DHAM.Packs.Templates",
       "type": "Actor",
       "name": "templates",
       "path": "packs/templates",
@@ -92,7 +94,7 @@
 
   "packFolders": [
     {
-      "name": "💀 Adversary Manager 💀",
+      "name": "DHAM.PackFolders.AdversaryManager",
       "sorting": "a",
       "color": "#5c0547",
       "packs": [        
@@ -107,6 +109,18 @@
   
   "esmodules": ["scripts/module.js"],
   "styles": ["styles/style.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "lang/ru.json"
+    }
+  ],
   
   "url": "https://github.com/brunocalado/daggerheart-advmanager",
   "manifest": "https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json",

@@ -3,6 +3,8 @@
  * Reads Actor compendiums, extracts embedded items, and creates organized
  * world Item documents with importedFrom flags for feature lookup.
  */
+import { localize } from "./i18n.js";
+
 
 // Items that should ALWAYS be imported, even if they exist in the folder
 const ALWAYS_DUPLICATE = [
@@ -53,14 +55,14 @@ export async function importFeatures(compendiumId, rootFolderName, customTag) {
 
     const pack = game.packs.get(compendiumId);
     if (!pack) {
-        const msg = `Compendium "${compendiumId}" not found.`;
+        const msg = localize("Importer.CompendiumNotFound", { compendium: compendiumId });
         ui.notifications.error(msg);
         console.error(msg);
         return;
     }
 
     if (pack.documentName !== "Actor") {
-        ui.notifications.error(`Compendium "${compendiumId}" is not an Actor compendium.`);
+        ui.notifications.error(localize("Importer.CompendiumNotActor", { compendium: compendiumId }));
         return;
     }
 
@@ -117,9 +119,9 @@ export async function importFeatures(compendiumId, rootFolderName, customTag) {
      */
     function getFeatureCategory(item) {
         const form = String(item.system?.featureForm || "").toLowerCase().trim();
-        if (form.includes("reaction")) return "Reaction";
-        if (form.includes("action")) return "Action";
-        return "Passive";
+        if (form.includes("reaction")) return localize("Importer.Reaction");
+        if (form.includes("action")) return localize("Importer.Action");
+        return localize("Importer.Passive");
     }
 
     /**

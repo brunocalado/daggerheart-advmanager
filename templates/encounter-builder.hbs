@@ -7,7 +7,7 @@
             <!-- Search -->
             <div class="eb-search-wrapper">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" class="eb-search-input" placeholder="Search adversaries..." value="{{searchQuery}}">
+                <input type="text" class="eb-search-input" placeholder="{{localize "DHAM.EncounterBuilder.SearchPlaceholder"}}" value="{{searchQuery}}">
                 {{#if searchQuery}}
                 <button type="button" data-action="clearSearch" class="clear-btn"><i class="fas fa-times"></i></button>
                 {{/if}}
@@ -47,7 +47,7 @@
         </div>
 
         <div class="eb-results-header">
-            Library ({{resultCount}})
+            {{localize "DHAM.EncounterBuilder.Library" count=resultCount}}
         </div>
 
         <div class="eb-results-list">
@@ -56,12 +56,12 @@
                 
                 <div class="eb-row-actions-left">
                     <!-- Add Button -->
-                    <button type="button" class="eb-add-btn" data-action="addUnit" title="Add to Encounter">
+                    <button type="button" class="eb-add-btn" data-action="addUnit" title="{{localize "DHAM.EncounterBuilder.AddToEncounter"}}">
                         <i class="fas fa-plus"></i>
                     </button>
 
                     <!-- Edit Button -->
-                    <button type="button" class="eb-edit-btn" data-action="editAdversary" title="Edit in Live Manager">
+                    <button type="button" class="eb-edit-btn" data-action="editAdversary" title="{{localize "DHAM.EncounterBuilder.EditLiveManager"}}">
                         <i class="fas fa-sliders-h"></i>
                     </button>
                 </div>
@@ -74,9 +74,9 @@
                             <div class="eb-row-name">{{this.name}}</div>
                         </div>
                         <div class="eb-row-meta">
-                            <span class="eb-type-tag">{{this.type}}</span>
+                            <span class="eb-type-tag">{{this.typeLabel}}</span>
                             {{#if this.isCompendium}}
-                            <i class="fas fa-book eb-compendium-icon" title="Compendium"></i>
+                            <i class="fas fa-book eb-compendium-icon" title="{{localize "DHAM.Common.Compendium"}}"></i>
                             {{/if}}
                             {{#each this.specialFeatures}}
                                 <span class="feature-tag">{{this}}</span>
@@ -90,7 +90,7 @@
             </div>
             {{else}}
             <div class="empty-state">
-                <p>No adversaries found.</p>
+                <p>{{localize "DHAM.EncounterBuilder.NoAdversariesFound"}}</p>
             </div>
             {{/each}}
         </div>
@@ -104,7 +104,7 @@
             <!-- Grouped Row: PC, Tier (moved left), Fear (moved right) -->
             <div class="eb-settings-row-group">
                 <div class="eb-setting-col pc-col">
-                    <label># PCs:</label>
+                    <label>{{localize "DHAM.EncounterBuilder.PCs"}}</label>
                     <div class="select-wrapper mini">
                         <select class="pc-count-select">
                             {{#each pcCountOptions}}
@@ -116,7 +116,7 @@
                 
                 <!-- Moved Tier to Left -->
                 <div class="eb-setting-col tier-col">
-                    <label>Party Tier:</label>
+                    <label>{{localize "DHAM.EncounterBuilder.PartyTier"}}</label>
                     <div class="select-wrapper mini">
                         <select class="pc-tier-select">
                             {{#each pcTierOptions}}
@@ -128,8 +128,8 @@
 
                 <!-- Moved Fear to Right -->
                 <div class="eb-setting-col fear-col">
-                    <label title="Spending more Fear increases the perceived difficulty level.">
-                        Fear Budget: <i class="fas fa-question-circle eb-hint-icon"></i>
+                    <label title="{{localize "DHAM.EncounterBuilder.FearHint"}}">
+                        {{localize "DHAM.EncounterBuilder.FearBudget"}} <i class="fas fa-question-circle eb-hint-icon"></i>
                     </label>
                     <div class="select-wrapper mini">
                         <select class="pc-fear-select">
@@ -149,18 +149,18 @@
             <!-- 1. BP Calculation Header -->
             <div class="eb-bp-header">
                 <div class="bp-stat">
-                    <span class="bp-label">Budget Limit</span>
+                    <span class="bp-label">{{localize "DHAM.EncounterBuilder.BudgetLimit"}}</span>
                     <span class="bp-value">{{bpData.total}}</span>
-                    <div class="bp-sub-badge">Base: {{bpData.base}}</div>
+                    <div class="bp-sub-badge">{{localize "DHAM.Common.Base" base=bpData.base}}</div>
                 </div>
                 
                 <!-- Dynamic Skull Image -->
                 <div class="bp-skull-container">
-                    <img src="{{bpData.skullImage}}" class="bp-skull-img" alt="Difficulty Skull">
+                    <img src="{{bpData.skullImage}}" class="bp-skull-img" alt="{{localize "DAGGERHEART.GENERAL.difficulty"}}">
                 </div>
 
                 <div class="bp-stat">
-                    <span class="bp-label">Current Cost</span>
+                    <span class="bp-label">{{localize "DHAM.EncounterBuilder.CurrentCost"}}</span>
                     <span class="bp-value cost-{{bpData.statusColor}}">{{bpData.cost}}</span>
                     <div class="bp-difficulty {{bpData.difficultyClass}}">{{bpData.difficultyLabel}}</div>
                 </div>
@@ -168,16 +168,16 @@
 
             <!-- 2. Synergy/Feature Icons Grid (20% Width) -->
             <div class="eb-synergy-grid">
-                <div class="synergy-item {{#if synergy.summoner}}active{{/if}}" data-tooltip="There are adversaries capable of summoning other adversaries.">
+                <div class="synergy-item {{#if synergy.summoner}}active{{/if}}" data-tooltip="{{localize "DHAM.EncounterBuilder.SynergySummoner"}}">
                     <img src="icons/environment/people/charge.webp" class="synergy-icon">
                 </div>
-                <div class="synergy-item {{#if synergy.spotlighter}}active{{/if}}" data-tooltip="There are adversaries capable of spotlighting other adversaries.">
+                <div class="synergy-item {{#if synergy.spotlighter}}active{{/if}}" data-tooltip="{{localize "DHAM.EncounterBuilder.SynergySpotlighter"}}">
                     <img src="icons/skills/movement/arrows-up-trio-red.webp" class="synergy-icon">
                 </div>
-                <div class="synergy-item {{#if synergy.momentum}}active{{/if}}" data-tooltip="There are adversaries capable of gaining Fear.">
+                <div class="synergy-item {{#if synergy.momentum}}active{{/if}}" data-tooltip="{{localize "DHAM.EncounterBuilder.SynergyMomentum"}}">
                     <img src="icons/skills/melee/strike-weapons-orange.webp" class="synergy-icon">
                 </div>
-                <div class="synergy-item {{#if synergy.relentless}}active{{/if}}" data-tooltip="There are adversaries that can be spotlighted multiple times per GM turn.">
+                <div class="synergy-item {{#if synergy.relentless}}active{{/if}}" data-tooltip="{{localize "DHAM.EncounterBuilder.SynergyRelentless"}}">
                     <img src="icons/magic/unholy/silhouette-evil-horned-giant.webp" class="synergy-icon">
                 </div>
             </div>
@@ -206,10 +206,10 @@
         <div class="eb-encounter-list-wrapper">
             <!-- Header Container with Flexbox for Alignment -->
             <div class="eb-results-header eb-encounter-header-row">
-                <span>Adversaries ({{encounterCount}})</span>
+                <span>{{localize "DAGGERHEART.GENERAL.Adversary.plural"}} ({{encounterCount}})</span>
                 {{#if encounterCount}}
                 <button type="button" data-action="clearEncounter" class="eb-clear-btn">
-                    <i class="fas fa-trash-alt"></i> Clear All
+                    <i class="fas fa-trash-alt"></i> {{localize "DHAM.EncounterBuilder.ClearAll"}}
                 </button>
                 {{/if}}
             </div>
@@ -227,7 +227,7 @@
                                 <div class="eb-row-name">{{this.name}}</div>
                             </div>
                             <div class="eb-row-meta">
-                                <span class="eb-type-tag">{{this.type}}</span>
+                                <span class="eb-type-tag">{{this.typeLabel}}</span>
                                 <!-- Tier removed from here -->
                                 
                                 <!-- Special Features Display (Right) -->
@@ -254,7 +254,7 @@
                 </div>
                 {{else}}
                 <div class="empty-state small">
-                    <p>Add units from the library.</p>
+                    <p>{{localize "DHAM.EncounterBuilder.AddUnits"}}</p>
                 </div>
                 {{/each}}
             </div>
@@ -270,11 +270,11 @@
 
             <!-- Create Button (Center/Main) -->
             <button type="button" class="eb-create-btn" data-action="createEncounter">
-                <i class="fas fa-folder-plus"></i> Create Encounter
+                <i class="fas fa-folder-plus"></i> {{localize "DHAM.EncounterBuilder.CreateEncounter"}}
             </button>
             
             <!-- Place Button (Right) -->
-            <button type="button" class="eb-place-btn" data-action="placeEncounter" title="Create & Place Invisible">
+            <button type="button" class="eb-place-btn" data-action="placeEncounter" title="{{localize "DHAM.EncounterBuilder.CreateAndPlaceInvisible"}}">
                 <i class="fas fa-street-view"></i>
             </button>
         </div>

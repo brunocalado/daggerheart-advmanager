@@ -1,13 +1,13 @@
 <!-- FEATURES SECTION -->
 <div class="features-preview-section">
-    <h4 class="features-header">Feature Changes</h4>
+    <h4 class="features-header">{{localize "DHAM.LiveManager.FeatureChanges"}}</h4>
     {{#if featurePreviewData.length}}
         <div class="feature-changes-list">
             {{#each featurePreviewData}}
                 <div class="feature-change-row feature-change-row-layout">
                     <div class="feature-label feature-label-layout">
                         {{#if this.img}}
-                            <a class="feature-icon-link" data-action="openFeature" data-uuid="{{this.uuid}}" title="Open Item">
+                            <a class="feature-icon-link" data-action="openFeature" data-uuid="{{this.uuid}}" title="{{localize "DHAM.LiveManager.OpenItem"}}">
                                 <img src="{{this.img}}" class="feature-icon-img">
                             </a>
                         {{/if}}
@@ -37,7 +37,7 @@
                             </div>
                         {{else if this.isMinionFeature}}
                             <div class="minion-group">
-                                Minion ( <input type="number" class="minion-val-input" data-itemid="{{this.itemId}}" value="{{this.minionValue}}"> )
+                                {{localize "DAGGERHEART.CONFIG.AdversaryType.minion.label"}} ( <input type="number" class="minion-val-input" data-itemid="{{this.itemId}}" value="{{this.minionValue}}"> )
                             </div>
                         {{else if this.isDamageReadonly}}
                             <div class="feature-input-group">
@@ -45,7 +45,7 @@
                             </div>
                         {{else}}
                             {{#if this.isRenamed}}
-                                <input type="text" class="feature-override-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" title="Rename Feature">
+                                <input type="text" class="feature-override-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" title="{{localize "DHAM.Common.RenameFeature"}}">
                             {{else}}
                                 <div class="feature-new-static">{{this.newName}}</div>
                             {{/if}}
@@ -55,6 +55,6 @@
             {{/each}}
         </div>
     {{else}}
-        <div class="no-changes">No modified features.</div>
+        <div class="no-changes">{{localize "DHAM.LiveManager.NoModifiedFeatures"}}</div>
     {{/if}}
 </div>

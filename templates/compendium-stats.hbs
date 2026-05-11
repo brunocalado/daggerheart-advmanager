@@ -2,11 +2,11 @@
     {{#if loading}}
         <div class="loading-state" style="text-align: center; padding: 20px;">
             <i class="fas fa-spinner fa-spin fa-3x"></i>
-            <p>Reading Compendium Data...</p>
+            <p>{{localize "DHAM.CompendiumStats.ReadingData"}}</p>
         </div>
     {{else}}
         <div class="form-group stats-controls">
-            <label style="font-weight: bold; font-size: 1.2em;">Adversary Type:</label>
+            <label style="font-weight: bold; font-size: 1.2em;">{{localize "DHAM.CompendiumStats.AdversaryType"}}</label>
             <div class="select-wrapper" style="flex: 1;">
                 <select class="stats-type-select">
                     {{#each typeOptions}}
@@ -17,12 +17,12 @@
             </div>
             
             <!-- Settings Button -->
-            <button type="button" class="settings-btn" data-action="openSettings" data-tooltip="Manage Stat Sources">
+            <button type="button" class="settings-btn" data-action="openSettings" data-tooltip="{{localize "DHAM.CompendiumStats.ManageStatSources"}}">
                 <i class="fas fa-cog"></i>
             </button>
             
             <!-- Refresh Button -->
-            <button type="button" class="settings-btn" data-action="refresh" data-tooltip="Refresh Stats">
+            <button type="button" class="settings-btn" data-action="refresh" data-tooltip="{{localize "DHAM.CompendiumStats.RefreshStats"}}">
                 <i class="fas fa-sync-alt"></i>
             </button>
         </div>
@@ -31,7 +31,7 @@
             <table class="dh-stats-table">
                 <thead>
                     <tr>
-                        <th class="col-type">Type</th>
+                        <th class="col-type">{{localize "DAGGERHEART.GENERAL.type"}}</th>
                         {{#each headers}}
                         <th>{{this}}</th>
                         {{/each}}

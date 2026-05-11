@@ -2,13 +2,12 @@
 
     <!-- Header with Warning -->
     <div class="status-header">
-        <h3>Select Stat Sources</h3>
+        <h3>{{localize "DHAM.StatsManager.SelectStatSources"}}</h3>
         <div class="csm-warning-box">
             <p class="csm-warning-text">
-                <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong>
-                Selecting a new compendium will trigger an automated import process.
-                Features from the selected actors will be copied to your world items.
-                <strong>Please wait for the import notification to finish.</strong>
+                <i class="fas fa-exclamation-triangle"></i> <strong>{{localize "DHAM.StatsManager.Important"}}</strong>
+                {{localize "DHAM.StatsManager.ImportNote"}}
+                <strong>{{localize "DHAM.StatsManager.WaitImport"}}</strong>
             </p>
         </div>
     </div>
@@ -32,18 +31,18 @@
 
                     <!-- Custom Tag Input -->
                     <div class="csm-input-col csm-tag-col">
-                        <input type="text" name="tag_{{this.id}}" placeholder="Tag (Def: Label)" class="csm-input">
+                        <input type="text" name="tag_{{this.id}}" placeholder="{{localize "DHAM.StatsManager.TagPlaceholder"}}" class="csm-input">
                     </div>
 
                     <!-- Custom Folder Input -->
                     <div class="csm-input-col csm-folder-col">
-                        <input type="text" name="folder_{{this.id}}" placeholder="Folder (Def: Imported...)" class="csm-input">
+                        <input type="text" name="folder_{{this.id}}" placeholder="{{localize "DHAM.StatsManager.FolderPlaceholder"}}" class="csm-input">
                     </div>
 
                 </div>
                 {{/each}}
             {{else}}
-                <p class="empty-msg">No other Actor compendiums found.</p>
+                <p class="empty-msg">{{localize "DHAM.CompendiumManager.NoActorCompendiums"}}</p>
             {{/if}}
         </div>
 
@@ -51,7 +50,7 @@
 
     <footer class="sheet-footer">
         <button type="submit">
-            <i class="fas fa-save"></i> Save Selection & Import
+            <i class="fas fa-save"></i> {{localize "DHAM.StatsManager.SaveSelectionImport"}}
         </button>
     </footer>
 </div>

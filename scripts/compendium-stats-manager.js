@@ -1,4 +1,6 @@
 import { MODULE_ID, SETTING_STATS_COMPENDIUMS } from "./module.js";
+import { findApplicationById } from "./foundry-compat.js";
+import { localize } from "./i18n.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
@@ -11,7 +13,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
         id: "daggerheart-stats-manager",
         tag: "form",
         window: {
-            title: "Manage Stat Sources",
+            title: "DHAM.Windows.StatsManager",
             icon: "fas fa-chart-pie",
             resizable: false,
             width: 700, // Increased width to fit new inputs
@@ -99,7 +101,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
 
                     const finalFolder = customFolderInput && customFolderInput.trim() !== "" 
                         ? customFolderInput.trim() 
-                        : `Imported from ${defaultLabel}`;
+                        : localize("Importer.ImportedFrom", { label: defaultLabel });
                     
                     // Execute import using the exposed global function
                     if (globalThis.AM && globalThis.AM.ImportFeatures) {
@@ -114,7 +116,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
         console.log("Adversary Manager | Stat sources updated.");
         
         // 5. Reload Stats Window if open
-        const statsApp = Object.values(ui.windows).find(w => w.id === "daggerheart-compendium-stats");
+        const statsApp = findApplicationById("daggerheart-compendium-stats");
         if (statsApp) {
             statsApp.loading = true;
             statsApp.render();

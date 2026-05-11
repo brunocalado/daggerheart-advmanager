@@ -2,6 +2,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
 import { MODULE_ID, SETTING_CHAT_LOG } from "./module.js";
 import { updateSingleActor, sendBatchChatLog } from "./damage-engine.js";
+import { localize } from "./i18n.js";
 
 /**
  * Batch-update application for Daggerheart Adversaries.
@@ -24,7 +25,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         id: "daggerheart-adv-manager",
         tag: "form",
         window: {
-            title: "Adversary Manager",
+            title: "DHAM.Windows.AdversaryManager",
             icon: "fas fa-skull",
             resizable: false,
             width: 420
@@ -71,7 +72,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const tiers = [1, 2, 3, 4].map(t => ({
             value: t,
-            label: `Tier ${t}`,
+            label: localize("Common.Tier", { tier: t }),
             disabled: !isMixedTier && t === currentSharedTier,
             isCurrent: !isMixedTier && t === currentSharedTier
         }));
@@ -108,6 +109,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                 sendBatchChatLog(batchResults, newTier);
             }
             app.close();
-        } else { ui.notifications.info("No Adversaries updated."); }
+        } else { ui.notifications.info(localize("Manager.NoAdversariesUpdated")); }
     }
 }

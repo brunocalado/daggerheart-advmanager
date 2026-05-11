@@ -1,6 +1,8 @@
 import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING_LAST_SOURCE } from "./module.js";
 import { POWERFUL_FEATURES } from "./rules.js";
 import { LiveManager } from "./live-manager.js"; 
+import { prepareDocumentCreateData } from "./foundry-compat.js";
+import { localize, localizeType } from "./i18n.js";
 
 // Import DialogV2 to fix deprecation warning
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
@@ -52,7 +54,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         id: "daggerheart-encounter-builder",
         tag: "form",
         window: {
-            title: "Encounter Builder",
+            title: "DHAM.Windows.EncounterBuilder",
             icon: "fas fa-dungeon",
             resizable: true,
             width: 1100,
@@ -123,9 +125,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // --- Source Options ---
         const extraPacks = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
         const sourceOptions = [
-            { value: "all", label: "All Sources", selected: this.filterSource === "all" },
-            { value: "world", label: "World (Actors)", selected: this.filterSource === "world" },
-            { value: "daggerheart.adversaries", label: "System Compendium", selected: this.filterSource === "daggerheart.adversaries" }
+            { value: "all", label: localize("Common.AllSources"), selected: this.filterSource === "all" },
+            { value: "world", label: localize("Common.WorldActors"), selected: this.filterSource === "world" },
+            { value: "daggerheart.adversaries", label: localize("Common.SystemCompendium"), selected: this.filterSource === "daggerheart.adversaries" }
         ];
 
         extraPacks.forEach(packId => {
@@ -186,18 +188,18 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const typeSet = new Set(adversaries.map(a => a.type).filter(t => t));
         const typeOptions = Array.from(typeSet).sort().map(t => ({
             value: t,
-            label: t.charAt(0).toUpperCase() + t.slice(1),
+            label: localizeType(t),
             selected: this.filterType === t
         }));
-        typeOptions.unshift({ value: "all", label: "All Types", selected: this.filterType === "all" });
+        typeOptions.unshift({ value: "all", label: localize("Common.AllTypes"), selected: this.filterType === "all" });
 
         // --- Fear Options ---
         const fearOptions = [
-            { value: "0-1", label: "Low (0–1 Fear)", selected: this.fearBudget === "0-1" },
-            { value: "1-3", label: "Moderate (1–3 Fear)", selected: this.fearBudget === "1-3" },
-            { value: "2-4", label: "High (2–4 Fear)", selected: this.fearBudget === "2-4" },
-            { value: "4-8", label: "Extreme (4–8 Fear)", selected: this.fearBudget === "4-8" },
-            { value: "6-12", label: "Insane (6–12 Fear)", selected: this.fearBudget === "6-12" }
+            { value: "0-1", label: localize("Encounter.Fear.Low"), selected: this.fearBudget === "0-1" },
+            { value: "1-3", label: localize("Encounter.Fear.Moderate"), selected: this.fearBudget === "1-3" },
+            { value: "2-4", label: localize("Encounter.Fear.High"), selected: this.fearBudget === "2-4" },
+            { value: "4-8", label: localize("Encounter.Fear.Extreme"), selected: this.fearBudget === "4-8" },
+            { value: "6-12", label: localize("Encounter.Fear.Insane"), selected: this.fearBudget === "6-12" }
         ];
 
         // --- PC Count Options ---
@@ -216,7 +218,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             
             return {
                 ...unit,
-                damageBoostTooltip: `Add +${die} Damage (Lowers Budget Limit)`
+                damageBoostTooltip: localize("EncounterBuilder.DamageBoost", { die })
             };
         });
 
@@ -244,14 +246,14 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         // --- Determine Skull Image ---
         let skullImg = "";
-        switch (bpData.difficultyLabel) {
-            case "Very Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-very-easy.webp"; break;
-            case "Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-easy.webp"; break;
-            case "Balanced": skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp"; break;
-            case "Challenging": skullImg = "modules/daggerheart-advmanager/assets/images/skull-challenging.webp"; break;
-            case "Hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break;
-            case "Deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
-            case "Out of Tier": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
+        switch (bpData.difficultyKey) {
+            case "veryEasy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-very-easy.webp"; break;
+            case "easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-easy.webp"; break;
+            case "balanced": skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp"; break;
+            case "challenging": skullImg = "modules/daggerheart-advmanager/assets/images/skull-challenging.webp"; break;
+            case "hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break;
+            case "deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
+            case "outOfTier": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
             default: skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp";
         }
 
@@ -274,7 +276,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             // BP Data
             pcCount: this.pcCount,
             pcTier: this.pcTier,
-            pcTierOptions: [1, 2, 3, 4].map(t => ({ value: t, label: `Tier ${t}`, selected: t === this.pcTier })),
+            pcTierOptions: [1, 2, 3, 4].map(t => ({ value: t, label: localize("Common.Tier", { tier: t }), selected: t === this.pcTier })),
             bpData: bpData,
             manualModifiers: this.manualModifiers,
             
@@ -286,7 +288,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
             // Folder Mode State (NEW)
             useAutoFolder: this.useAutoFolder,
-            autoFolderTooltip: this.useAutoFolder ? "Mode: Auto-Generate Folder Name" : "Mode: Manual Folder Name"
+            autoFolderTooltip: this.useAutoFolder ? localize("EncounterBuilder.AutoFolder") : localize("EncounterBuilder.ManualFolder")
         };
     }
 
@@ -358,44 +360,44 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         if (this.manualModifiers.easier) {
             limit -= 1;
-            modifiers.push({ label: "Easier/Shorter", val: "-1", active: true, manual: true, key: 'easier' });
+            modifiers.push({ label: localize("Encounter.Modifiers.EasierShorter"), val: "-1", active: true, manual: true, key: 'easier' });
         } else {
-            modifiers.push({ label: "Easier/Shorter", val: "-1", active: false, manual: true, key: 'easier' });
+            modifiers.push({ label: localize("Encounter.Modifiers.EasierShorter"), val: "-1", active: false, manual: true, key: 'easier' });
         }
 
         if (soloCount >= 2) {
             limit -= 2;
-            modifiers.push({ label: "2+ Solos", val: "-2", active: true, manual: false });
+            modifiers.push({ label: localize("Encounter.Modifiers.TwoPlusSolos"), val: "-2", active: true, manual: false });
         } else {
-            modifiers.push({ label: "2+ Solos", val: "-2", active: false, manual: false, disabled: true });
+            modifiers.push({ label: localize("Encounter.Modifiers.TwoPlusSolos"), val: "-2", active: false, manual: false, disabled: true });
         }
 
         if (hasDamageBoost) {
             limit -= 2;
-            modifiers.push({ label: "Damage Boost", val: "-2", active: true, manual: false });
+            modifiers.push({ label: localize("Encounter.Modifiers.DamageBoost"), val: "-2", active: true, manual: false });
         } else {
-            modifiers.push({ label: "Damage Boost", val: "-2", active: false, manual: false, disabled: true });
+            modifiers.push({ label: localize("Encounter.Modifiers.DamageBoost"), val: "-2", active: false, manual: false, disabled: true });
         }
 
         if (hasLowerTier) {
             limit += 1;
-            modifiers.push({ label: "Lower Tier Used", val: "+1", active: true, manual: false });
+            modifiers.push({ label: localize("Encounter.Modifiers.LowerTierUsed"), val: "+1", active: true, manual: false });
         } else {
-            modifiers.push({ label: "Lower Tier Used", val: "+1", active: false, manual: false, disabled: true });
+            modifiers.push({ label: localize("Encounter.Modifiers.LowerTierUsed"), val: "+1", active: false, manual: false, disabled: true });
         }
 
         if (this.encounterList.length > 0 && !hasSpecialType) {
             limit += 1;
-            modifiers.push({ label: "No Major Adversaries", val: "+1", active: true, manual: false });
+            modifiers.push({ label: localize("Encounter.Modifiers.NoMajorAdversaries"), val: "+1", active: true, manual: false });
         } else {
-            modifiers.push({ label: "No Major Adversaries", val: "+1", active: false, manual: false, disabled: true });
+            modifiers.push({ label: localize("Encounter.Modifiers.NoMajorAdversaries"), val: "+1", active: false, manual: false, disabled: true });
         }
 
         if (this.manualModifiers.harder) {
             limit += 2;
-            modifiers.push({ label: "Harder/Longer", val: "+2", active: true, manual: true, key: 'harder' });
+            modifiers.push({ label: localize("Encounter.Modifiers.HarderLonger"), val: "+2", active: true, manual: true, key: 'harder' });
         } else {
-            modifiers.push({ label: "Harder/Longer", val: "+2", active: false, manual: true, key: 'harder' });
+            modifiers.push({ label: localize("Encounter.Modifiers.HarderLonger"), val: "+2", active: false, manual: true, key: 'harder' });
         }
 
         const diff = currentCost - limit;
@@ -428,20 +430,20 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         level = Math.max(0, Math.min(5, level + shift));
 
-        let difficultyLabel = "Balanced";
+        let difficultyKey = "balanced";
         let difficultyClass = "diff-balanced";
 
         switch (level) {
-            case 0: difficultyLabel = "Very Easy"; difficultyClass = "diff-very-easy"; break;
-            case 1: difficultyLabel = "Easy"; difficultyClass = "diff-easy"; break;
-            case 2: difficultyLabel = "Balanced"; difficultyClass = "diff-balanced"; break;
-            case 3: difficultyLabel = "Challenging"; difficultyClass = "diff-challenging"; break;
-            case 4: difficultyLabel = "Hard"; difficultyClass = "diff-deadly"; break;
-            case 5: difficultyLabel = "Deadly"; difficultyClass = "diff-deadly"; break;
+            case 0: difficultyKey = "veryEasy"; difficultyClass = "diff-very-easy"; break;
+            case 1: difficultyKey = "easy"; difficultyClass = "diff-easy"; break;
+            case 2: difficultyKey = "balanced"; difficultyClass = "diff-balanced"; break;
+            case 3: difficultyKey = "challenging"; difficultyClass = "diff-challenging"; break;
+            case 4: difficultyKey = "hard"; difficultyClass = "diff-deadly"; break;
+            case 5: difficultyKey = "deadly"; difficultyClass = "diff-deadly"; break;
         }
 
         if (outOfTier) {
-            difficultyLabel = "Out of Tier";
+            difficultyKey = "outOfTier";
             difficultyClass = "diff-deadly";
         }
 
@@ -454,9 +456,23 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             remaining: limit - currentCost,
             modifiers: modifiers,
             statusColor: statusColor,
-            difficultyLabel: difficultyLabel,
+            difficultyKey: difficultyKey,
+            difficultyLabel: this._localizeDifficulty(difficultyKey),
             difficultyClass: difficultyClass
         };
+    }
+
+    _localizeDifficulty(key) {
+        const keys = {
+            veryEasy: "Encounter.Difficulty.VeryEasy",
+            easy: "Encounter.Difficulty.Easy",
+            balanced: "Encounter.Difficulty.Balanced",
+            challenging: "Encounter.Difficulty.Challenging",
+            hard: "Encounter.Difficulty.Hard",
+            deadly: "Encounter.Difficulty.Deadly",
+            outOfTier: "Encounter.Difficulty.OutOfTier"
+        };
+        return localize(keys[key] || keys.balanced);
     }
 
     // ... (rest of the file remains unchanged)
@@ -512,6 +528,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             name: actor.name,
             tier: Number(actor.system.tier) || 1,
             type: (actor.system.type || "standard").toLowerCase(),
+            typeLabel: localizeType(actor.system.type || "standard"),
             img: this._resolveImage(actor.img),
             isCompendium: false,
             packId: null,
@@ -526,6 +543,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             name: indexEntry.name,
             tier: Number(indexEntry.system?.tier) || 1,
             type: (indexEntry.system?.type || "standard").toLowerCase(),
+            typeLabel: localizeType(indexEntry.system?.type || "standard"),
             img: this._resolveImage(indexEntry.img),
             isCompendium: true,
             packId: packId,
@@ -539,7 +557,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
      */
     async _executeCreateEncounter(customName = null) {
         if (this.encounterList.length === 0) {
-            ui.notifications.warn("No adversaries in the encounter to create.");
+            ui.notifications.warn(localize("EncounterBuilder.NoAdversariesToCreate"));
             return [];
         }
 
@@ -550,7 +568,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             featureIndex = await featurePack.getIndex();
         }
 
-        const rootName = game.settings.get(MODULE_ID, SETTING_ENCOUNTER_FOLDER) || "💀 My Encounters";
+        const rootName = game.settings.get(MODULE_ID, SETTING_ENCOUNTER_FOLDER) || localize("Defaults.MyEncounters");
         
         // Ensure Root Folder Exists
         let rootFolder = game.folders.find(f => f.name === rootName && f.type === "Actor");
@@ -619,10 +637,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
                 let createdActor;
                 if (originalActor.compendium) {
-                    // Method 1: Robust Copy via toObject (Works reliably in V13)
-                    const data = originalActor.toObject();
-                    delete data._id; // Ensure new ID
-                    data.folder = subFolder.id;
+                    const data = prepareDocumentCreateData(originalActor, game.actors, { folder: subFolder.id });
                     createdActor = await Actor.create(data);
                 } else {
                     // Method 2: Clone for World Actors
@@ -646,7 +661,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
                         if (entry) {
                             const itemDoc = await featurePack.getDocument(entry._id);
                             if (itemDoc) {
-                                await createdActor.createEmbeddedDocuments("Item", [itemDoc.toObject()]);
+                                const itemData = prepareDocumentCreateData(itemDoc, game.items);
+                                await createdActor.createEmbeddedDocuments("Item", [itemData]);
                             }
                         }
                     }
@@ -673,20 +689,20 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         
         try {
             const result = await DialogV2.prompt({
-                window: { title: "Encounter Name" },
+                window: { title: localize("Windows.EncounterName") },
                 content: `
                     <div style="margin-bottom: 10px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px;" for="${inputId}">Folder Name:</label>
-                        <input type="text" id="${inputId}" placeholder="e.g., Boss Fight Room 3" autofocus required 
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px;" for="${inputId}">${localize("EncounterBuilder.FolderName")}</label>
+                        <input type="text" id="${inputId}" placeholder="${localize("EncounterBuilder.FolderPlaceholder")}" autofocus required
                                style="width: 100%; box-sizing: border-box; padding: 5px; background: #222; color: #fff; border: 1px solid #777;"/>
                     </div>
                 `,
                 ok: {
-                    label: "Create",
+                    label: localize("EncounterBuilder.Create"),
                     icon: "fas fa-check",
                     callback: (event, button, dialog) => {
                         const input = document.getElementById(inputId);
-                        return input ? input.value : "Untitled Encounter";
+                        return input ? input.value : localize("EncounterBuilder.UntitledEncounter");
                     }
                 },
                 rejectClose: false
@@ -712,11 +728,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             const result = await this._executeCreateEncounter(folderName);
             if (result && result.actors && result.actors.length > 0) {
                 this.lastCreatedActors = result.actors;
-                ui.notifications.info(`Encounter created in: "${result.folderName}". Check the Actor directory.`);
+                ui.notifications.info(localize("EncounterBuilder.EncounterCreated", { folder: result.folderName }));
             }
         } catch (err) {
             console.error(err);
-            ui.notifications.error("Failed to create encounter. Check console.");
+            ui.notifications.error(localize("EncounterBuilder.FailedCreate"));
         }
     }
 
@@ -738,7 +754,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             
             const scene = canvas.scene;
             if (!scene) {
-                ui.notifications.warn("No active scene to place tokens.");
+                ui.notifications.warn(localize("EncounterBuilder.NoActiveScene"));
                 return;
             }
 
@@ -768,11 +784,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             }
 
             await scene.createEmbeddedDocuments("Token", tokensData);
-            ui.notifications.info(`Encounter created and ${created.length} tokens placed on scene (Hidden).`);
+            ui.notifications.info(localize("EncounterBuilder.EncounterPlaced", { count: created.length }));
             
         } catch (err) {
             console.error(err);
-            ui.notifications.error("Failed to place encounter. Check console.");
+            ui.notifications.error(localize("EncounterBuilder.FailedPlace"));
         }
     }
 
@@ -1038,6 +1054,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             name: actor.name,
             tier: Number(actor.system.tier) || 1,
             type: (actor.system.type || "standard").toLowerCase(),
+            typeLabel: localizeType(actor.system.type || "standard"),
             img: this._resolveImage(actor.img),
             isCompendium: false,
             packId: null,

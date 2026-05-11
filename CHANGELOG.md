@@ -1,3 +1,8 @@
+# 0.2.8
+- Foundry VTT v14 compatibility updates
+- Fixed Daggerheart v14 keyed damage parts handling
+- Safer compendium document cloning for v14 document validation
+
 # 0.2.7
 - Last release for v13
 

@@ -1,14 +1,14 @@
 <!-- Left Column: Current State -->
 <div class="preview-column current-column current-column-start">
     <h3 class="col-header">
-        Current (T{{currentStats.tier}})
+        {{localize "DAGGERHEART.UI.Chat.damageRoll.currentTarget"}} (T{{currentStats.tier}})
         {{#if linkData}}
             <i class="fas {{linkData.icon}} {{linkData.cssClass}} lm-link-icon" title="{{linkData.label}}"></i>
         {{/if}}
     </h3>
 
     <div class="stat-row">
-        <span class="stat-label">Difficulty</span>
+        <span class="stat-label">{{localize "DAGGERHEART.GENERAL.difficulty"}}</span>
         <span class="stat-value">
             {{#if currentStats.hitChanceAgainst}}
                 <span class="lm-hit-chance-hint" title="{{currentStats.hitChanceAgainst.tooltip}}">{{currentStats.hitChanceAgainst.text}}</span>
@@ -20,22 +20,22 @@
     <!-- HP & STRESS ROW (CURRENT) -->
     <div class="stat-row-dual">
         <div class="stat-col-half">
-            <span class="stat-label">HP</span>
+            <span class="stat-label">{{localize "DAGGERHEART.GENERAL.HitPoints.short"}}</span>
             <span class="stat-value">{{currentStats.hp}}</span>
         </div>
         <div class="stat-separator"></div>
         <div class="stat-col-half">
-            <span class="stat-label">Stress</span>
+            <span class="stat-label">{{localize "DAGGERHEART.GENERAL.stress"}}</span>
             <span class="stat-value">{{currentStats.stress}}</span>
         </div>
     </div>
 
     <div class="stat-row">
-        <span class="stat-label">Thresholds</span>
+        <span class="stat-label">{{localize "DHAM.Common.Thresholds"}}</span>
         <span class="stat-value">{{currentStats.thresholds}}</span>
     </div>
     <div class="stat-row">
-        <span class="stat-label">Attack Bonus</span>
+        <span class="stat-label">{{localize "DHAM.Common.AttackBonus"}}</span>
         <span class="stat-value">
             {{#if currentStats.hitChance}}
                 <span class="lm-hit-chance-hint" title="{{currentStats.hitChance.tooltip}}">{{currentStats.hitChance.text}}</span>
@@ -44,7 +44,7 @@
         </span>
     </div>
     <div class="stat-row">
-        <span class="stat-label">Critical Threshold</span>
+        <span class="stat-label">{{localize "DAGGERHEART.ACTIONS.Settings.criticalThreshold"}}</span>
         <span class="stat-value">
             <span class="lm-crit-chance-hint">{{currentStats.critChance}}</span>
             {{currentStats.critical}}
@@ -54,7 +54,7 @@
     <div class="stat-group">
         <div class="lm-stat-group-header">
             <span class="stat-label">
-                Attack Damage
+                {{localize "DHAM.Common.AttackDamage"}}
                 {{#if currentStats.damageTypesLabel}}
                     <span class="current-hint-text">{{currentStats.damageTypesLabel}}</span>
                 {{/if}}
@@ -69,7 +69,7 @@
     {{#if isHorde}}
         {{#if currentStats.halvedDamage}}
         <div class="stat-group">
-            <span class="stat-label">Halved Damage (Horde)</span>
+            <span class="stat-label">{{localize "DHAM.Common.HalvedDamageHorde"}}</span>
             <div class="stat-block">{{currentStats.halvedDamage}} <span class="current-hint-text">{{currentStats.halvedDamageStats}}</span></div>
         </div>
         {{/if}}
@@ -77,7 +77,7 @@
 
     {{#if currentStats.experiences.length}}
         <div class="stat-group">
-            <span class="stat-label">Experiences</span>
+            <span class="stat-label">{{localize "DAGGERHEART.GENERAL.Experience.plural"}}</span>
             <div class="stat-block stat-block-auto">
                 {{#each currentStats.experiences}}
                     {{this.name}} {{this.value}}{{#unless @last}}, {{/unless}}
@@ -97,7 +97,7 @@
         </div>
     </div>
     <div class="preview-note lm-portrait-note">
-        <i class="fas fa-external-link-alt"></i> Click image to open sheet
+        <i class="fas fa-external-link-alt"></i> {{localize "DHAM.LiveManager.ClickImageOpenSheet"}}
     </div>
     {{/if}}
 
