@@ -1,4 +1,4 @@
-import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor } from "./damage-engine.js";
+import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor, getDamagePartsArray } from "./damage-engine.js";
 import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SETTING_OVERWRITE_WORLD_ACTOR, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
@@ -515,7 +515,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 if (previewDamageTypes === null) {
                     const actorData = actor.toObject();
-                    const mainPart = actorData.system.attack?.damage?.parts?.[0];
+                    const mainPart = getDamagePartsArray(actorData.system.attack?.damage?.parts)[0];
                     
                     if (mainPart) {
                         if (Array.isArray(mainPart.type)) {

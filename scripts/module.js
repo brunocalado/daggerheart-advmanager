@@ -1,6 +1,7 @@
 import "./damage-engine.js";
 import { Manager } from "./manager.js";
 import { LiveManager } from "./live-manager.js";
+import { findApplicationById } from "./foundry-compat.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js";
@@ -67,7 +68,7 @@ function manage() {
         .filter(a => a && a.type === "adversary");
 
     // CHECK FOR EXISTING WINDOW
-    const existingApp = Object.values(ui.windows).find(w => w.id === "daggerheart-live-preview");
+    const existingApp = findApplicationById("daggerheart-live-preview", LiveManager);
     
     if (existingApp) {
         if (validActors.length === 1) {
@@ -231,7 +232,7 @@ Hooks.on("controlToken", (token, controlled) => {
     const actor = tokens[0].actor;
     if (!actor || actor.type !== "adversary") return;
 
-    const app = Object.values(ui.windows).find(w => w.id === "daggerheart-live-preview");
+    const app = findApplicationById("daggerheart-live-preview", LiveManager);
     if (app) {
         app.updateSelectedActor(actor);
     }
@@ -241,6 +242,7 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
     if (!game.user.isGM) return;
 
     const element = (html instanceof HTMLElement) ? html : html[0];
+    if (element.querySelector(".dh-adv-tools")) return;
 
     const createBtn = (text, icon, onClick) => {
         const btn = document.createElement("button");
@@ -261,19 +263,23 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
     const fieldset = element.querySelector("fieldset");
     if (fieldset) {
         const newFieldset = document.createElement("fieldset");
+        newFieldset.classList.add("dh-adv-tools");
         const legend = document.createElement("legend");
         legend.innerText = "Adversary Tools";
         newFieldset.appendChild(legend);
         newFieldset.appendChild(btnManage);
         newFieldset.appendChild(btnBuilder);
         newFieldset.appendChild(btnStats);
-        newFieldset.appendChild(btnProb); 
+        newFieldset.appendChild(btnProb);
         fieldset.after(newFieldset);
     } else {
-        element.appendChild(btnManage);
-        element.appendChild(btnBuilder);
-        element.appendChild(btnStats);
-        element.appendChild(btnProb);
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("dh-adv-tools");
+        wrapper.appendChild(btnManage);
+        wrapper.appendChild(btnBuilder);
+        wrapper.appendChild(btnStats);
+        wrapper.appendChild(btnProb);
+        element.appendChild(wrapper);
     }
 });
 
@@ -284,9 +290,11 @@ Hooks.on("renderActorDirectory", (app, html) => {
     const actionButtons = element.querySelector(".header-actions");
     
     if (actionButtons) {
+        if (actionButtons.querySelector(".dh-adv-directory-btn")) return;
+
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.classList.add("create-actor");
+        btn.classList.add("create-actor", "dh-adv-directory-btn");
         btn.style.flex = "0 0 100%";
         btn.style.maxWidth = "100%";
         btn.style.marginTop = "6px";
