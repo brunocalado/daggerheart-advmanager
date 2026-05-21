@@ -200,7 +200,9 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
                 // --- Damage ---
                 if (sys.attack?.damage?.parts) {
-                    sys.attack.damage.parts.forEach(part => {
+                    const rawParts = sys.attack.damage.parts;
+                    const normParts = Array.isArray(rawParts) ? rawParts : Object.values(rawParts);
+                    normParts.forEach(part => {
                         let formula = this._extractFormula(part.value);
                         if (formula) data[actorTier].damageRolls.add(formula);
 

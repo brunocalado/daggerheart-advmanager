@@ -1103,8 +1103,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
             if (this.overrides.damageTypes) {
                 const actorData = freshActor.toObject();
-                const parts = actorData.system.attack?.damage?.parts ? foundry.utils.deepClone(actorData.system.attack.damage.parts) : [];
-                
+                const rawParts = actorData.system.attack?.damage?.parts ? foundry.utils.deepClone(actorData.system.attack.damage.parts) : null;
+                const parts = rawParts ? (Array.isArray(rawParts) ? rawParts : Object.values(rawParts)) : [];
+
                 if (parts && parts.length > 0) {
                     parts[0].type = this.overrides.damageTypes; 
                     manualUpdates["system.attack.damage.parts"] = parts;
@@ -1395,7 +1396,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let damageTypesLabel = "";
         
         if (sys.attack?.damage?.parts) {
-            sys.attack.damage.parts.forEach((p, idx) => {
+            const rawParts = sys.attack.damage.parts;
+            const normParts = Array.isArray(rawParts) ? rawParts : Object.values(rawParts);
+            normParts.forEach((p, idx) => {
                 if(p.value) {
                     let formula = p.value.custom?.enabled ? p.value.custom.formula : 
                         (p.value.dice ? `${p.value.flatMultiplier || 1}${p.value.dice}${p.value.bonus ? (p.value.bonus > 0 ? '+'+p.value.bonus : p.value.bonus) : ''}` : p.value.flatMultiplier);
@@ -1637,7 +1640,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let mainHalvedDamageRaw = ""; 
 
         if (actorData.system.attack?.damage?.parts) {
-            const tempParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
+            const rawParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
+            const tempParts = Array.isArray(rawParts) ? rawParts : Object.values(rawParts);
             tempParts.forEach((part, index) => {
                 
                 let rawVal = "";
