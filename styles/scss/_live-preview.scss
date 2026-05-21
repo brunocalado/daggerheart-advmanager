@@ -619,6 +619,16 @@
     white-space: normal;
 }
 
+.lm-readonly-text {
+    font-size: 0.9em;
+    line-height: 1.5;
+    overflow-y: auto;
+    max-height: 120px;
+
+    p { margin: 0 0 4px; }
+    p:last-child { margin-bottom: 0; }
+}
+
 .lm-portrait-note { margin-top: 5px; }
 
 .lm-preview-header {

@@ -1457,16 +1457,18 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             thresholds: `${sys.damageThresholds?.major} / ${sys.damageThresholds?.severe}`,
             attackMod: sys.attack?.roll?.bonus,
             damage: damageParts.join(", ") || "None",
-            damageTypesLabel: damageTypesLabel, 
-            damageStats: this._calculateDamageStats(firstDamageFormula), 
+            damageTypesLabel: damageTypesLabel,
+            damageStats: this._calculateDamageStats(firstDamageFormula),
             halvedDamage: halvedParts.join(", ") || null,
-            halvedDamageStats: this._calculateDamageStats(firstHalvedFormula), 
+            halvedDamageStats: this._calculateDamageStats(firstHalvedFormula),
             hitChance: hitChance,
             hitChanceAgainst: hitChanceAgainst,
             experiences: expList,
-            critical: critical, 
-            critChance: critChance, 
-            directLabel: directLabel 
+            critical: critical,
+            critChance: critChance,
+            directLabel: directLabel,
+            motivesAndTactics: sys.motivesAndTactics || "",
+            description: sys.description || ""
         };
     }
 

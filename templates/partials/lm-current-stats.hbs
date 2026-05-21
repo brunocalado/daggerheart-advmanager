@@ -86,6 +86,20 @@
         </div>
     {{/if}}
 
+    {{#if currentStats.motivesAndTactics}}
+        <div class="stat-group">
+            <span class="stat-label">Motives &amp; Tactics</span>
+            <div class="stat-block stat-block-auto lm-readonly-text">{{{currentStats.motivesAndTactics}}}</div>
+        </div>
+    {{/if}}
+
+    {{#if currentStats.description}}
+        <div class="stat-group">
+            <span class="stat-label">Description</span>
+            <div class="stat-block stat-block-auto lm-readonly-text">{{{currentStats.description}}}</div>
+        </div>
+    {{/if}}
+
     <div class="actor-preview-name lm-actor-name-margin">
         {{actorName}} ({{actorTypeLabel}})
     </div>

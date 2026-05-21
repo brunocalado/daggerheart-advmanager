@@ -1,6 +1,7 @@
 # 0.2.8
 
 - v14
+- https://github.com/brunocalado/daggerheart-advmanager/issues/7
 
 
 # 0.2.7
