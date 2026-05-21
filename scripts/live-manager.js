@@ -1097,7 +1097,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
 
             // If overwrite is OFF and actor is a world actor, duplicate it first
-            if (!actor.compendium && !actor.pack && !this.overwriteWorldActor) {
+            if (!actor.compendium && !actor.pack && this.overwriteWorldActor) {
                 const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
                 let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
                 if (!folder) {

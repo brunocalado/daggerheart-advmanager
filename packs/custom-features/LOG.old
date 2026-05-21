@@ -1,5 +1,3 @@
-2026/05/21-16:15:38.787 4bcc Log #1640: 0 ops saved to Table #1643 OK
-2026/05/21-16:15:38.788 4bcc Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\custom-features/001640.log: OK
-2026/05/21-16:15:38.788 4bcc Table #1642: 12 entries OK
-2026/05/21-16:15:38.789 4bcc Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\custom-features/MANIFEST-001638: OK
-2026/05/21-16:15:38.792 4bcc **** Repaired leveldb C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\custom-features; recovered 1 files; 4511 bytes. Some data may have been lost. ****
+2026/05/21-19:42:35.580 579c Recovering log #1653
+2026/05/21-19:42:35.583 579c Delete type=0 #1653
+2026/05/21-19:42:35.583 579c Delete type=3 #1651

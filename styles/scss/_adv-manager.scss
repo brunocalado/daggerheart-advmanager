@@ -221,7 +221,7 @@
 .sheet-footer {
     margin-top: 10px;
 
-    button {
+    button:not(.open-sheet-toggle):not(.overwrite-actor-toggle) {
         width: 100%;
         padding: 8px;
         font-size: 1.2em;

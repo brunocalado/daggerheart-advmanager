@@ -465,6 +465,14 @@
     display: flex;
     gap: 6px;
     align-items: stretch;
+
+    // Force toggle buttons to fill the container height regardless of
+    // Foundry's global button height rule, which prevents align-items: stretch.
+    .open-sheet-toggle,
+    .overwrite-actor-toggle {
+        height: auto;
+        min-height: 0;
+    }
 }
 
 .apply-btn {
@@ -477,30 +485,56 @@
     text-shadow: $shadow-text;
 }
 
-.open-sheet-toggle,
-.overwrite-actor-toggle {
+.open-sheet-toggle {
     flex: 0 0 38px;
     width: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: $bg-medium;
+    background: $bg-dark;
     border: 1px solid $border-darker;
-    color: $text-faint;
+    color: $text-muted;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.15s ease;
     font-size: 0.9em;
-    opacity: 0.5;
 
     &:hover {
-        opacity: 0.8;
         border-color: $border-dark;
+        color: $text-secondary;
+        background: $bg-medium;
     }
 
     &.active {
         @include purple-gradient-btn;
-        opacity: 1;
+        outline: none;
+    }
+}
+
+.overwrite-actor-toggle {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: $bg-dark;
+    border: 1px solid $border-darker;
+    color: $text-muted;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 0.9em;
+    white-space: nowrap;
+
+    &:hover {
+        border-color: $border-dark;
+        color: $text-secondary;
+        background: $bg-medium;
+    }
+
+    &.active {
+        @include purple-gradient-btn;
         outline: none;
     }
 }

@@ -1,5 +1,3 @@
-2026/05/21-16:15:38.833 4bcc Log #1787: 0 ops saved to Table #1790 OK
-2026/05/21-16:15:38.834 4bcc Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\macros/001787.log: OK
-2026/05/21-16:15:38.834 4bcc Table #1789: 5 entries OK
-2026/05/21-16:15:38.835 4bcc Archiving C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\macros/MANIFEST-001785: OK
-2026/05/21-16:15:38.837 4bcc **** Repaired leveldb C:\Users\Bruno\Documents\VTT\fvttdev\Data\modules\daggerheart-advmanager\packs\macros; recovered 1 files; 1131 bytes. Some data may have been lost. ****
+2026/05/21-19:42:35.602 6de0 Recovering log #1800
+2026/05/21-19:42:35.605 6de0 Delete type=0 #1800
+2026/05/21-19:42:35.605 6de0 Delete type=3 #1798

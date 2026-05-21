@@ -39,11 +39,11 @@
                     <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
                 {{/if}}
             </button>
+            <button type="button" data-action="toggleOverwriteActor" class="overwrite-actor-toggle {{#if overwriteWorldActor}}active{{/if}}" title="{{#if overwriteWorldActor}}Will create a copy instead of overwriting{{else}}Will overwrite world actor in place{{/if}}">
+                <i class="fas fa-copy"></i> Copy
+            </button>
             <button type="button" data-action="toggleOpenSheet" class="open-sheet-toggle {{#if openAfterApply}}active{{/if}}" title="Open sheet after applying">
                 <i class="fas fa-external-link-alt"></i>
-            </button>
-            <button type="button" data-action="toggleOverwriteActor" class="overwrite-actor-toggle {{#if overwriteWorldActor}}active{{/if}}" title="{{#if overwriteWorldActor}}Overwriting world actor in place{{else}}Creating a copy instead of overwriting{{/if}}">
-                <i class="fas fa-copy"></i>
             </button>
         </div>
     </footer>
