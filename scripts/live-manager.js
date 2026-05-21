@@ -1,6 +1,6 @@
 import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor } from "./damage-engine.js";
 import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
-import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SKULL_IMAGE_PATH } from "./module.js";
+import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SETTING_OVERWRITE_WORLD_ACTOR, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js"; 
@@ -51,6 +51,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         /** @type {boolean} Whether to open the actor sheet after applying changes */
         this.openAfterApply = game.settings.get(MODULE_ID, SETTING_OPEN_SHEET_AFTER_APPLY);
+
+        /** @type {boolean} Whether to overwrite the world actor in place when applying changes */
+        this.overwriteWorldActor = game.settings.get(MODULE_ID, SETTING_OVERWRITE_WORLD_ACTOR);
     }
 
     /**
@@ -104,7 +107,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             addExperience: LiveManager.prototype._onAddExperience,
             deleteExperience: LiveManager.prototype._onDeleteExperience,
             rollExperienceName: LiveManager.prototype._onRollExperienceName,
-            toggleOpenSheet: LiveManager.prototype._onToggleOpenSheet
+            toggleOpenSheet: LiveManager.prototype._onToggleOpenSheet,
+            toggleOverwriteActor: LiveManager.prototype._onToggleOverwriteActor
         },
         form: {
             handler: LiveManager.prototype.submitHandler,
@@ -928,7 +932,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             criticalOptions,
             directOptions,
             previewActorName: previewActorName,
-            openAfterApply: this.openAfterApply
+            openAfterApply: this.openAfterApply,
+            overwriteWorldActor: this.overwriteWorldActor
         };
     }
 
@@ -1089,6 +1094,20 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     this.selectedActorId = actor.id;
                     await game.settings.set(MODULE_ID, SETTING_LAST_SOURCE, "world");
                 }
+            }
+
+            // If overwrite is OFF and actor is a world actor, duplicate it first
+            if (!actor.compendium && !actor.pack && !this.overwriteWorldActor) {
+                const folderName = game.settings.get(MODULE_ID, SETTING_IMPORT_FOLDER) || "Imported Adversaries";
+                let folder = game.folders.find(f => f.name === folderName && f.type === "Actor");
+                if (!folder) {
+                    folder = await Folder.create({ name: folderName, type: "Actor", color: "#430047" });
+                }
+                const actorData = actor.toObject();
+                delete actorData._id;
+                actorData.folder = folder.id;
+                actor = await Actor.implementation.create(actorData);
+                this.selectedActorId = actor.id;
             }
 
             const result = await updateSingleActor(actor, this.targetTier, this.overrides);
@@ -1293,6 +1312,17 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         this.openAfterApply = !this.openAfterApply;
         target.closest(".open-sheet-toggle").classList.toggle("active", this.openAfterApply);
         game.settings.set(MODULE_ID, SETTING_OPEN_SHEET_AFTER_APPLY, this.openAfterApply);
+    }
+
+    /**
+     * Toggles whether world actors are overwritten in place or duplicated on apply.
+     * Triggered by the toggleOverwriteActor action button in the footer.
+     * Persists the preference via client-scoped setting.
+     */
+    _onToggleOverwriteActor(event, target) {
+        this.overwriteWorldActor = !this.overwriteWorldActor;
+        target.closest(".overwrite-actor-toggle").classList.toggle("active", this.overwriteWorldActor);
+        game.settings.set(MODULE_ID, SETTING_OVERWRITE_WORLD_ACTOR, this.overwriteWorldActor);
     }
 
     _onOverrideChange(event, target) {

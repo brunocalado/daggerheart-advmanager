@@ -25,6 +25,7 @@ export const SKULL_IMAGE_PATH = "modules/daggerheart-advmanager/assets/images/sk
 export const SETTING_LAST_SOURCE = "lastSource";
 export const SETTING_LAST_FILTER_TIER = "lastFilterTier";
 export const SETTING_OPEN_SHEET_AFTER_APPLY = "openSheetAfterApply";
+export const SETTING_OVERWRITE_WORLD_ACTOR = "overwriteWorldActor";
 
 // --- Main Logic ---
 
@@ -194,6 +195,13 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_OPEN_SHEET_AFTER_APPLY, {
+        scope: "client",
+        config: false,
+        type: Boolean,
+        default: false
+    });
+
+    game.settings.register(MODULE_ID, SETTING_OVERWRITE_WORLD_ACTOR, {
         scope: "client",
         config: false,
         type: Boolean,

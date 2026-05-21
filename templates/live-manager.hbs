@@ -42,6 +42,9 @@
             <button type="button" data-action="toggleOpenSheet" class="open-sheet-toggle {{#if openAfterApply}}active{{/if}}" title="Open sheet after applying">
                 <i class="fas fa-external-link-alt"></i>
             </button>
+            <button type="button" data-action="toggleOverwriteActor" class="overwrite-actor-toggle {{#if overwriteWorldActor}}active{{/if}}" title="{{#if overwriteWorldActor}}Overwriting world actor in place{{else}}Creating a copy instead of overwriting{{/if}}">
+                <i class="fas fa-copy"></i>
+            </button>
         </div>
     </footer>
 

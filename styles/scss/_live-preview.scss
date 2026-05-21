@@ -477,7 +477,8 @@
     text-shadow: $shadow-text;
 }
 
-.open-sheet-toggle {
+.open-sheet-toggle,
+.overwrite-actor-toggle {
     flex: 0 0 38px;
     width: 38px;
     display: flex;
