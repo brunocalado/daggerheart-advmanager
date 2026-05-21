@@ -1,5 +1,6 @@
 {
   "id": "daggerheart-advmanager",
+  "type": "module",
   "title": "Daggerheart: Adversary Manager",
   "version": "0.2.8",
   

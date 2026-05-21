@@ -1,6 +1,7 @@
 import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING_LAST_SOURCE } from "./module.js";
 import { POWERFUL_FEATURES } from "./rules.js";
-import { LiveManager } from "./live-manager.js"; 
+import { LiveManager } from "./live-manager.js";
+import { prepareDocumentCreateData } from "./foundry-compat.js";
 
 // Import DialogV2 to fix deprecation warning
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
@@ -244,14 +245,14 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         // --- Determine Skull Image ---
         let skullImg = "";
-        switch (bpData.difficultyLabel) {
-            case "Very Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-very-easy.webp"; break;
-            case "Easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-easy.webp"; break;
-            case "Balanced": skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp"; break;
-            case "Challenging": skullImg = "modules/daggerheart-advmanager/assets/images/skull-challenging.webp"; break;
-            case "Hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break;
-            case "Deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
-            case "Out of Tier": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
+        switch (bpData.difficultyKey) {
+            case "veryEasy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-very-easy.webp"; break;
+            case "easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-easy.webp"; break;
+            case "balanced": skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp"; break;
+            case "challenging": skullImg = "modules/daggerheart-advmanager/assets/images/skull-challenging.webp"; break;
+            case "hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break;
+            case "deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
+            case "outOfTier": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
             default: skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp";
         }
 
@@ -428,22 +429,28 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         level = Math.max(0, Math.min(5, level + shift));
 
-        let difficultyLabel = "Balanced";
+        let difficultyKey = "balanced";
         let difficultyClass = "diff-balanced";
 
         switch (level) {
-            case 0: difficultyLabel = "Very Easy"; difficultyClass = "diff-very-easy"; break;
-            case 1: difficultyLabel = "Easy"; difficultyClass = "diff-easy"; break;
-            case 2: difficultyLabel = "Balanced"; difficultyClass = "diff-balanced"; break;
-            case 3: difficultyLabel = "Challenging"; difficultyClass = "diff-challenging"; break;
-            case 4: difficultyLabel = "Hard"; difficultyClass = "diff-deadly"; break;
-            case 5: difficultyLabel = "Deadly"; difficultyClass = "diff-deadly"; break;
+            case 0: difficultyKey = "veryEasy"; difficultyClass = "diff-very-easy"; break;
+            case 1: difficultyKey = "easy"; difficultyClass = "diff-easy"; break;
+            case 2: difficultyKey = "balanced"; difficultyClass = "diff-balanced"; break;
+            case 3: difficultyKey = "challenging"; difficultyClass = "diff-challenging"; break;
+            case 4: difficultyKey = "hard"; difficultyClass = "diff-deadly"; break;
+            case 5: difficultyKey = "deadly"; difficultyClass = "diff-deadly"; break;
         }
 
         if (outOfTier) {
-            difficultyLabel = "Out of Tier";
+            difficultyKey = "outOfTier";
             difficultyClass = "diff-deadly";
         }
+
+        const difficultyLabels = {
+            veryEasy: "Very Easy", easy: "Easy", balanced: "Balanced",
+            challenging: "Challenging", hard: "Hard", deadly: "Deadly", outOfTier: "Out of Tier"
+        };
+        const difficultyLabel = difficultyLabels[difficultyKey] ?? "Balanced";
 
         const statusColor = (currentCost > limit) ? "red" : (currentCost === limit ? "green" : "gold");
 
@@ -454,6 +461,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             remaining: limit - currentCost,
             modifiers: modifiers,
             statusColor: statusColor,
+            difficultyKey: difficultyKey,
             difficultyLabel: difficultyLabel,
             difficultyClass: difficultyClass
         };
@@ -619,10 +627,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
                 let createdActor;
                 if (originalActor.compendium) {
-                    // Method 1: Robust Copy via toObject (Works reliably in V13)
-                    const data = originalActor.toObject();
-                    delete data._id; // Ensure new ID
-                    data.folder = subFolder.id;
+                    const data = prepareDocumentCreateData(originalActor, game.actors, { folder: subFolder.id });
                     createdActor = await Actor.create(data);
                 } else {
                     // Method 2: Clone for World Actors
@@ -646,7 +651,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
                         if (entry) {
                             const itemDoc = await featurePack.getDocument(entry._id);
                             if (itemDoc) {
-                                await createdActor.createEmbeddedDocuments("Item", [itemDoc.toObject()]);
+                                const itemData = prepareDocumentCreateData(itemDoc, game.items);
+                                await createdActor.createEmbeddedDocuments("Item", [itemData]);
                             }
                         }
                     }
