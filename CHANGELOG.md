@@ -3,6 +3,8 @@
 - v14
 - https://github.com/brunocalado/daggerheart-advmanager/issues/7
 - https://github.com/brunocalado/daggerheart-advmanager/issues/6
+- Multiple fixes from PR https://github.com/brunocalado/daggerheart-advmanager/pull/5
+- Features updated to DH 2x
 
 # 0.2.7
 - Last release for v13
