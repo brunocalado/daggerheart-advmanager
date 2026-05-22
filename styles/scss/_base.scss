@@ -4,6 +4,23 @@
 
 @use 'variables' as *;
 
+// Remove Foundry's invasive focus outline from all interactive elements inside module apps.
+// Uses [id^="daggerheart-"] because DEFAULT_OPTIONS.classes is not set on all apps,
+// so .daggerheart-advmanager never reaches the DOM. !important wins over foundry2.css
+// which loads after module styles.
+[id^="daggerheart-"] {
+    a:focus,
+    a.button:focus,
+    button:focus,
+    input:focus,
+    select:focus,
+    textarea:focus,
+    [tabindex]:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+}
+
 // Enforce 9px spacing from window borders for all module apps
 #daggerheart-adv-manager .window-content,
 #daggerheart-live-preview .window-content,
