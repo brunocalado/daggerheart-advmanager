@@ -4,11 +4,12 @@
 
 @use 'variables' as *;
 
-// Remove Foundry's invasive focus outline from all interactive elements inside module apps.
-// Uses [id^="daggerheart-"] because DEFAULT_OPTIONS.classes is not set on all apps,
-// so .daggerheart-advmanager never reaches the DOM. !important wins over foundry2.css
-// which loads after module styles.
-[id^="daggerheart-"] {
+// All rules are scoped under the module-id class, which every Application now
+// carries via DEFAULT_OPTIONS.classes. This guarantees the module's styles can
+// never match elements belonging to other modules, systems, or Foundry core UI.
+.daggerheart-advmanager {
+    // Remove Foundry's invasive focus outline from interactive elements inside module apps.
+    // !important wins over foundry2.css, which loads after module styles.
     a:focus,
     a.button:focus,
     button:focus,
@@ -19,14 +20,10 @@
         outline: none !important;
         box-shadow: none !important;
     }
-}
 
-// Enforce 9px spacing from window borders for all module apps
-#daggerheart-adv-manager .window-content,
-#daggerheart-live-preview .window-content,
-#daggerheart-encounter-builder .window-content,
-#daggerheart-compendium-stats .window-content,
-#daggerheart-dice-prob .window-content {
-    padding: 9px;
-    overflow-x: hidden;
+    // Enforce 9px spacing from window borders for all module apps.
+    .window-content {
+        padding: 9px;
+        overflow-x: hidden;
+    }
 }

@@ -1,8 +1,6 @@
 # 💀 Adversary Manager 💀
 **for Daggerheart**
 
-<p align="center"><img width="500" src="assets/images/logo.webp"></p>
-
 The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries instantly, build balanced encounters.
 
 <video src="[https://github.com/user-attachments/assets/a875027b-eb4a-4637-a4f5-7c61064da22d](https://github.com/user-attachments/assets/a875027b-eb4a-4637-a4f5-7c61064da22d)" 
@@ -11,6 +9,8 @@ The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries 
        autoplay 
        loop 
        muted></video>
+
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Donate-red?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/mestredigital)
 
 ## 🌟 Overview & Features
 
@@ -120,7 +120,7 @@ You can read the full history of changes in the [CHANGELOG](CHANGELOG.md).
 
 ## ⚖️ Credits and License
 
-* **Code License:** GNU GPLv3.
+* **Code License:** [GNU GPLv3](LICENSE).
 
 **Disclaimer:** This module is an independent creation and is not affiliated with Darrington Press.
 
@@ -146,3 +146,10 @@ You can read the full history of changes in the [CHANGELOG](CHANGELOG.md).
 | 🧠 [**Stats Toolbox**](https://github.com/brunocalado/dh-statblock-importer) | Import using a statblock. |
 | 🛒 [**Store**](https://github.com/brunocalado/daggerheart-store) | A dynamic, interactive, and fully configurable store for Foundry VTT. |
 | 🔍 [**Unidentified**](https://github.com/brunocalado/dh-unidentified) | Obfuscates item names and descriptions until they are identified by the players. |
+
+# 🗺️ Adventures
+
+| Adventure | Description |
+| :--- | :--- |
+| ✨ [**I Wish**](https://github.com/brunocalado/i-wish-daggerheart-adventure) | A wealthy merchant is cursed; one final expedition may be the only hope. |
+| 💣 [**Suicide Squad**](https://github.com/brunocalado/suicide-squad-daggerheart-adventure) | Criminals forced to serve a ruthless master in a land on the brink of war. |

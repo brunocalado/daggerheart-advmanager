@@ -5,226 +5,225 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
-.dh-adv-manager-content {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    color: $text-primary;
-    height: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-    font-size: 1.05em;
-
-    .actor-name {
-        font-weight: bold;
-        font-size: 1.0em;
-        @include text-ellipsis;
-        max-width: 70%;
+.daggerheart-advmanager {
+    .dh-adv-manager-content {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
         color: $text-primary;
-    }
+        height: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        font-size: 1.05em;
 
-    select option {
-        background-color: $bg-dark;
-        color: $text-primary;
-        padding: 5px;
-    }
-
-    select:focus {
-        @include input-focus;
-    }
-}
-
-.status-header {
-    text-align: center;
-    border-bottom: 1px solid var(--color-border-light-2);
-    padding-bottom: 0.5rem;
-
-    h3 {
-        margin: 0;
-        font-size: 1.5em;
-        font-family: var(--font-primary);
-        color: $text-primary;
-    }
-}
-
-// Actor List Styles
-.actor-list-container {
-    max-height: 150px;
-    overflow-y: auto;
-    border: 1px solid $border-default;
-    background: $bg-overlay-heavy;
-    border-radius: 4px;
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.actor-item {
-    @include flex-between;
-    background: $bg-white-subtle;
-    padding: 6px 8px;
-    border-radius: 4px;
-    border-bottom: 1px solid $border-darker;
-}
-
-.actor-badges {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.badge-tier {
-    background: $bg-dark;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.9em;
-    border: 1px solid $border-light;
-    color: $text-primary;
-    font-weight: bold;
-
-    &.small {
-        font-size: 0.85em;
-        padding: 1px 6px;
-        margin-top: 0;
-        align-self: center;
-        height: fit-content;
-    }
-}
-
-.status-linked { color: $color-green-pale; font-weight: bold; }
-.status-unlinked { color: $color-gold-pure; font-weight: bold; }
-
-// Tier Selector Buttons
-.tier-selector {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 5px;
-}
-
-.tier-option {
-    flex: 1;
-
-    input[type="radio"] {
-        display: none;
-
-        &:checked + .tier-btn {
-            background: $purple-mid;
-            border-color: $accent;
+        .actor-name {
+            font-weight: bold;
+            font-size: 1.0em;
+            @include text-ellipsis;
+            max-width: 70%;
             color: $text-primary;
-            box-shadow: 0 0 8px $purple-glow-lg;
+        }
+
+        select option {
+            background-color: $bg-dark;
+            color: $text-primary;
+            padding: 5px;
+        }
+
+        select:focus {
+            @include input-focus;
         }
     }
-}
 
-.tier-btn {
-    @include flex-center;
-    width: 100%;
-    height: 40px;
-    background: $bg-overlay-heavy;
-    border: 1px solid $border-default;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.2em;
-    font-weight: bold;
-    transition: all 0.2s;
-    color: $text-secondary;
+    .status-header {
+        text-align: center;
+        border-bottom: 1px solid var(--color-border-light-2);
+        padding-bottom: 0.5rem;
 
-    &:hover {
-        background: $purple-glow-md;
+        h3 {
+            margin: 0;
+            font-size: 1.5em;
+            font-family: var(--font-primary);
+            color: $text-primary;
+        }
+    }
+
+    // Actor List Styles
+    .actor-list-container {
+        max-height: 150px;
+        overflow-y: auto;
+        border: 1px solid $border-default;
+        background: $bg-overlay-heavy;
+        border-radius: 4px;
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .actor-item {
+        @include flex-between;
+        background: $bg-white-subtle;
+        padding: 6px 8px;
+        border-radius: 4px;
+        border-bottom: 1px solid $border-darker;
+    }
+
+    .actor-badges {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .badge-tier {
+        background: $bg-dark;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.9em;
+        border: 1px solid $border-light;
+        color: $text-primary;
+        font-weight: bold;
+
+        &.small {
+            font-size: 0.85em;
+            padding: 1px 6px;
+            margin-top: 0;
+            align-self: center;
+            height: fit-content;
+        }
+    }
+
+    .status-linked { color: $color-green-pale; font-weight: bold; }
+    .status-unlinked { color: $color-gold-pure; font-weight: bold; }
+
+    // Tier Selector Buttons
+    .tier-selector {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 5px;
+    }
+
+    .tier-option { flex: 1; }
+
+    // Flattened from .tier-option > input > &:checked to keep nesting depth within limit.
+    .tier-option input[type="radio"] { display: none; }
+
+    .tier-option input[type="radio"]:checked + .tier-btn {
+        background: $purple-mid;
         border-color: $accent;
         color: $text-primary;
+        box-shadow: 0 0 8px $purple-glow-lg;
     }
 
-    &.current {
-        background: $purple-deep;
-        border-color: $bg-medium;
-        color: $text-disabled;
-        cursor: not-allowed;
-        opacity: 0.8;
-    }
-}
-
-// --- Compendium Stats Manager ---
-.csm-warning-box {
-    background: rgba(255, 152, 0, 0.1);
-    border: 1px solid $color-orange;
-    padding: 8px;
-    border-radius: 4px;
-    margin-top: 5px;
-    text-align: left;
-}
-
-.csm-warning-text {
-    font-size: 0.9em;
-    color: $color-gold;
-    margin: 0;
-}
-
-.csm-list-area {
-    height: 350px;
-    overflow-y: hidden;
-    display: flex;
-    flex-direction: column;
-    border-top: 1px solid $border-dark;
-    margin-top: 10px;
-}
-
-.csm-compendium-list {
-    border: none;
-    padding-top: 10px;
-}
-
-.csm-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 5px;
-    background: $bg-overlay-subtle;
-    border-bottom: 1px solid $border-darker;
-    margin-bottom: 2px;
-}
-
-.csm-checkbox { flex: 0 0 auto; }
-
-.csm-label {
-    flex: 1;
-    @include text-ellipsis;
-    cursor: pointer;
-
-    .pkg-name {
-        font-size: 0.8em;
-        color: $text-dim;
-    }
-}
-
-.csm-input-col {
-    display: flex;
-    flex-direction: column;
-}
-
-.csm-tag-col { flex: 0 0 140px; }
-.csm-folder-col { flex: 0 0 180px; }
-
-.csm-input {
-    background: $bg-dark;
-    color: $text-primary;
-    border: 1px solid $border-dark;
-    border-radius: 3px;
-    padding: 3px;
-    font-size: 0.85em;
-    width: 100%;
-}
-
-.sheet-footer {
-    margin-top: 10px;
-
-    button:not(.open-sheet-toggle):not(.overwrite-actor-toggle) {
+    .tier-btn {
+        @include flex-center;
         width: 100%;
-        padding: 8px;
+        height: 40px;
+        background: $bg-overlay-heavy;
+        border: 1px solid $border-default;
+        border-radius: 5px;
+        cursor: pointer;
         font-size: 1.2em;
-        @include purple-gradient-btn;
+        font-weight: bold;
+        transition: all 0.2s;
+        color: $text-secondary;
+
+        &:hover {
+            background: $purple-glow-md;
+            border-color: $accent;
+            color: $text-primary;
+        }
+
+        &.current {
+            background: $purple-deep;
+            border-color: $bg-medium;
+            color: $text-disabled;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+    }
+
+    // --- Compendium Stats Manager ---
+    .csm-warning-box {
+        background: rgba(255, 152, 0, 0.1);
+        border: 1px solid $color-orange;
+        padding: 8px;
+        border-radius: 4px;
+        margin-top: 5px;
+        text-align: left;
+    }
+
+    .csm-warning-text {
+        font-size: 0.9em;
+        color: $color-gold;
+        margin: 0;
+    }
+
+    .csm-list-area {
+        height: 350px;
+        overflow-y: hidden;
+        display: flex;
+        flex-direction: column;
+        border-top: 1px solid $border-dark;
+        margin-top: 10px;
+    }
+
+    .csm-compendium-list {
+        border: none;
+        padding-top: 10px;
+    }
+
+    .csm-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px;
+        background: $bg-overlay-subtle;
+        border-bottom: 1px solid $border-darker;
+        margin-bottom: 2px;
+    }
+
+    .csm-checkbox { flex: 0 0 auto; }
+
+    .csm-label {
+        flex: 1;
+        @include text-ellipsis;
+        cursor: pointer;
+
+        .pkg-name {
+            font-size: 0.8em;
+            color: $text-dim;
+        }
+    }
+
+    .csm-input-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .csm-tag-col { flex: 0 0 140px; }
+    .csm-folder-col { flex: 0 0 180px; }
+
+    .csm-input {
+        background: $bg-dark;
+        color: $text-primary;
+        border: 1px solid $border-dark;
+        border-radius: 3px;
+        padding: 3px;
+        font-size: 0.85em;
+        width: 100%;
+    }
+
+    .sheet-footer {
+        margin-top: 10px;
+
+        button:not(.open-sheet-toggle):not(.overwrite-actor-toggle) {
+            width: 100%;
+            padding: 8px;
+            font-size: 1.2em;
+            @include purple-gradient-btn;
+        }
     }
 }

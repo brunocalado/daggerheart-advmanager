@@ -1,4 +1,5 @@
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
+import { MODULE_ID } from "./constants.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -22,6 +23,7 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static DEFAULT_OPTIONS = {
         id: "daggerheart-feature-updater",
+        classes: [MODULE_ID],
         tag: "form",
         window: {
             title: "Feature Flag Updater",

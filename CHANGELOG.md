@@ -1,3 +1,8 @@
+# 0.3.1
+
+- [Fixed] Module CSS no longer leaks into other modules, systems, or Foundry UI — every style is now scoped under the module-id class (resolves conflict with daggerheart-store).
+- [Fixed] Module windows failing to open due to a circular-import error (`MODULE_ID` referenced before initialization).
+
 # 0.2.8
 
 - v14

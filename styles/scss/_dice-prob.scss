@@ -5,107 +5,109 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
-.probability-results .stat-row {
-    margin-bottom: 4px;
-}
-
-.roll-btn {
-    flex: 1;
-    background: $bg-medium;
-    color: $text-muted;
-    border: 1px solid $border-default;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1.0em;
-    font-weight: bold;
-    transition: all 0.2s;
-    height: 40px;
-
-    @include purple-hover;
-
-    &.active {
-        @include active-state;
+.daggerheart-advmanager {
+    .probability-results .stat-row {
+        margin-bottom: 4px;
     }
 
-    &.small {
-        font-size: 0.9em;
-        height: 30px;
-        padding: 2px 4px;
+    .roll-btn {
+        flex: 1;
+        background: $bg-medium;
+        color: $text-muted;
+        border: 1px solid $border-default;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1.0em;
+        font-weight: bold;
+        transition: all 0.2s;
+        height: 40px;
+
+        @include purple-hover;
+
+        &.active {
+            @include active-state;
+        }
+
+        &.small {
+            font-size: 0.9em;
+            height: 30px;
+            padding: 2px 4px;
+        }
     }
-}
 
-.die-btn-group {
-    width: 70%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2px;
-}
+    .die-btn-group {
+        width: 70%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+    }
 
-// --- Dice Probability layout classes ---
-.dp-mode-row {
-    margin-bottom: 15px;
-    border-bottom: 1px solid #C9A060;
-    padding-bottom: 10px;
-}
+    // --- Dice Probability layout classes ---
+    .dp-mode-row {
+        margin-bottom: 15px;
+        border-bottom: 1px solid #C9A060;
+        padding-bottom: 10px;
+    }
 
-.dp-mode-buttons {
-    width: 100%;
-    display: flex;
-    gap: 4px;
-}
+    .dp-mode-buttons {
+        width: 100%;
+        display: flex;
+        gap: 4px;
+    }
 
-.dp-roll-type {
-    width: 70%;
-    display: flex;
-    gap: 4px;
-}
+    .dp-roll-type {
+        width: 70%;
+        display: flex;
+        gap: 4px;
+    }
 
-.dp-disabled-row {
-    opacity: 0.3;
-    pointer-events: none;
-}
+    .dp-disabled-row {
+        opacity: 0.3;
+        pointer-events: none;
+    }
 
-.dp-select-wrapper { width: 70%; }
+    .dp-select-wrapper { width: 70%; }
 
-.dp-input-wrapper { width: 70%; }
+    .dp-input-wrapper { width: 70%; }
 
-.dp-modifier-input { text-align: center; }
+    .dp-modifier-input { text-align: center; }
 
-.dp-results {
-    margin-top: 15px;
-    background: $bg-overlay-subtle;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #C9A060;
-}
+    .dp-results {
+        margin-top: 15px;
+        background: $bg-overlay-subtle;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #C9A060;
+    }
 
-.dp-results-header {
-    color: #C9A060;
-    border-bottom: 1px solid $border-darker;
-    margin-bottom: 5px;
-    text-align: center;
-}
+    .dp-results-header {
+        color: #C9A060;
+        border-bottom: 1px solid $border-darker;
+        margin-bottom: 5px;
+        text-align: center;
+    }
 
-.dp-roll-notation { font-size: 0.9em; }
+    .dp-roll-notation { font-size: 0.9em; }
 
-.dp-result-row-border {
-    margin-top: 5px;
-    padding-top: 5px;
-    border-top: 1px solid $bg-white-subtle;
-}
+    .dp-result-row-border {
+        margin-top: 5px;
+        padding-top: 5px;
+        border-top: 1px solid $bg-white-subtle;
+    }
 
-.dp-result-bold { font-weight: bold; font-size: 1.1em; }
+    .dp-result-bold { font-weight: bold; font-size: 1.1em; }
 
-.dp-color-success { color: $color-green-pale; }
-.dp-color-fail { color: #ff6b6b; }
-.dp-color-crit { color: $accent; }
+    .dp-color-success { color: $color-green-pale; }
+    .dp-color-fail { color: #ff6b6b; }
+    .dp-color-crit { color: $accent; }
 
-.dp-footer {
-    margin-top: auto;
-    padding-top: 10px;
-}
+    .dp-footer {
+        margin-top: auto;
+        padding-top: 10px;
+    }
 
-.dp-chat-btn {
-    background: $bg-medium;
-    border: 1px solid #C9A060;
+    .dp-chat-btn {
+        background: $bg-medium;
+        border: 1px solid #C9A060;
+    }
 }

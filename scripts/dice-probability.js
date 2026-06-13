@@ -1,4 +1,5 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { MODULE_ID } from "./constants.js";
 import { SKULL_IMAGE_PATH } from "./module.js";
 
 export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -68,6 +69,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static DEFAULT_OPTIONS = {
         id: "daggerheart-dice-prob",
+        classes: [MODULE_ID],
         tag: "form",
         window: {
             title: "Dice Probability Calculator",

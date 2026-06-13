@@ -1,20 +1,20 @@
 {
   "id": "daggerheart-advmanager",
-  "type": "module",
   "title": "Daggerheart: Adversary Manager",
-  "version": "0.3.0",
-  
+  "version": "0.3.1",
   "description": "The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries instantly, build balanced encounters.",
-
-	"media": [{
-		"type": "setup",
-		"url": "modules/daggerheart-advmanager/assets/images/thumbnail.webp",
-		"thumbnail": "modules/daggerheart-advmanager/assets/images/thumbnail.webp"
-	}], 
-  
+  "media": [
+    {
+      "type": "setup",
+      "url": "modules/daggerheart-advmanager/assets/images/thumbnail.webp",
+      "thumbnail": "modules/daggerheart-advmanager/assets/images/thumbnail.webp",
+      "loop": false,
+      "flags": {}
+    }
+  ],
   "compatibility": {
-    "minimum": 14,
-    "verified": 14
+    "minimum": "14",
+    "verified": "14"
   },
   "authors": [
     {
@@ -23,7 +23,6 @@
       "flags": {}
     }
   ],
-  
   "relationships": {
     "systems": [
       {
@@ -34,8 +33,7 @@
         }
       }
     ]
-  },  
-
+  },
   "packs": [
     {
       "label": "Custom Features",
@@ -48,8 +46,8 @@
         "ASSISTANT": "OWNER"
       },
       "flags": {},
-      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
-    },    
+      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp"
+    },
     {
       "label": "All Features",
       "type": "Item",
@@ -61,7 +59,7 @@
         "ASSISTANT": "OWNER"
       },
       "flags": {},
-      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
+      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp"
     },
     {
       "label": "Macros",
@@ -74,7 +72,7 @@
         "ASSISTANT": "OWNER"
       },
       "flags": {},
-      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
+      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp"
     },
     {
       "label": "Templates",
@@ -87,30 +85,31 @@
         "ASSISTANT": "OWNER"
       },
       "flags": {},
-      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp" 
-    }    
-  ],  
-
+      "banner": "modules/daggerheart-advmanager/assets/images/banner.webp"
+    }
+  ],
   "packFolders": [
     {
       "name": "💀 Adversary Manager 💀",
       "sorting": "a",
       "color": "#5c0547",
-      "packs": [        
-        "custom-features",        
+      "packs": [
+        "custom-features",
         "all-features",
         "macros",
         "templates"
       ],
       "folders": []
     }
-  ],  
-  
-  "esmodules": ["scripts/module.js"],
-  "styles": ["styles/style.css"],
-  
+  ],
+  "esmodules": [
+    "scripts/module.js"
+  ],
+  "styles": [
+    "styles/style.css"
+  ],
   "url": "https://github.com/brunocalado/daggerheart-advmanager",
   "manifest": "https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json",
-  "download": "https://codeload.github.com/brunocalado/daggerheart-advmanager/zip/main"
-  
+  "download": "https://codeload.github.com/brunocalado/daggerheart-advmanager/zip/main",
+  "flags": {}
 }

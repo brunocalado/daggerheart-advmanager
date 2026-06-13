@@ -1,5 +1,6 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS } from "./module.js";
+import { MODULE_ID } from "./constants.js";
+import { SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS } from "./module.js";
 
 /**
  * Application to select which Actor and Item Compendiums should be available.
@@ -8,6 +9,7 @@ export class CompendiumManager extends HandlebarsApplicationMixin(ApplicationV2)
     
     static DEFAULT_OPTIONS = {
         id: "daggerheart-compendium-manager",
+        classes: [MODULE_ID],
         tag: "form",
         window: {
             title: "Manage Compendium Sources",

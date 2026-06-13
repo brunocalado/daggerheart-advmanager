@@ -1,6 +1,7 @@
 import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor, getDamagePartsArray } from "./damage-engine.js";
 import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
-import { MODULE_ID, SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SETTING_OVERWRITE_WORLD_ACTOR, SKULL_IMAGE_PATH } from "./module.js";
+import { MODULE_ID } from "./constants.js";
+import { SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SETTING_OVERWRITE_WORLD_ACTOR, SKULL_IMAGE_PATH } from "./module.js";
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js"; 
@@ -87,6 +88,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static DEFAULT_OPTIONS = {
         id: "daggerheart-live-preview",
+        classes: [MODULE_ID],
         tag: "form",
         window: {
             title: "Adversary Live Manager",

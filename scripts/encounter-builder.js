@@ -1,4 +1,5 @@
-import { MODULE_ID, SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING_LAST_SOURCE } from "./module.js";
+import { MODULE_ID } from "./constants.js";
+import { SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING_LAST_SOURCE } from "./module.js";
 import { POWERFUL_FEATURES } from "./rules.js";
 import { LiveManager } from "./live-manager.js";
 import { prepareDocumentCreateData } from "./foundry-compat.js";
@@ -51,6 +52,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
     static DEFAULT_OPTIONS = {
         id: "daggerheart-encounter-builder",
+        classes: [MODULE_ID],
         tag: "form",
         window: {
             title: "Encounter Builder",

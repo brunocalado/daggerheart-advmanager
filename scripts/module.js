@@ -10,7 +10,12 @@ import { FeatureUpdater } from "./feature-updater.js";
 import { importFeatures } from "./importer.js";
 
 // --- Settings Constants ---
-export const MODULE_ID = "daggerheart-advmanager";
+// MODULE_ID lives in the dependency-free constants.js leaf to avoid a circular
+// import (module.js imports the Application classes, which need MODULE_ID at
+// static-init time). Imported locally so this file can use it at runtime, and
+// re-exported so existing importers of `MODULE_ID` from "./module.js" keep working.
+import { MODULE_ID } from "./constants.js";
+export { MODULE_ID };
 export const SETTING_CHAT_LOG = "enableChatLog";
 export const SETTING_UPDATE_EXP = "autoUpdateExperiences";
 export const SETTING_ADD_FEATURES = "autoAddFeatures";

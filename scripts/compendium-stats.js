@@ -1,6 +1,7 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { CompendiumStatsManager } from "./compendium-stats-manager.js";
-import { MODULE_ID, SETTING_STATS_COMPENDIUMS } from "./module.js";
+import { MODULE_ID } from "./constants.js";
+import { SETTING_STATS_COMPENDIUMS } from "./module.js";
 
 export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
     
@@ -15,6 +16,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static DEFAULT_OPTIONS = {
         id: "daggerheart-compendium-stats",
+        classes: [MODULE_ID],
         tag: "div",
         window: {
             title: "Compendium Statistics",

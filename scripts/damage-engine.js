@@ -6,7 +6,8 @@
  * Used by: Manager (batch update), LiveManager (preview + apply), EncounterBuilder.
  */
 import { ADVERSARY_BENCHMARKS, PC_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
-import { MODULE_ID, SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SETTING_ADD_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
+import { MODULE_ID } from "./constants.js";
+import { SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SETTING_ADD_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
 import { prepareDocumentCreateData } from "./foundry-compat.js";
 
 // --- Utility Parsers ---

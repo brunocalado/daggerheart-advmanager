@@ -5,8 +5,10 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
-.feature-updater-container {
-    padding: 10px;
+.daggerheart-advmanager {
+    .feature-updater-container {
+        padding: 10px;
+    }
 
     .drop-zone {
         border: 2px dashed $border-dark;

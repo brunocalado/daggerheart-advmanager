@@ -1,6 +1,7 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
-import { MODULE_ID, SETTING_CHAT_LOG } from "./module.js";
+import { MODULE_ID } from "./constants.js";
+import { SETTING_CHAT_LOG } from "./module.js";
 import { updateSingleActor, sendBatchChatLog } from "./damage-engine.js";
 
 /**
@@ -22,6 +23,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static DEFAULT_OPTIONS = {
         id: "daggerheart-adv-manager",
+        classes: [MODULE_ID],
         tag: "form",
         window: {
             title: "Adversary Manager",
