@@ -216,6 +216,100 @@ export function getDamagePartsArray(parts) {
 }
 
 /**
+ * Reports whether an action's damage object still uses the pre-2.6 `parts` container.
+ * Daggerheart 2.6 replaced `damage.parts` with `damage.main` (the hitPoints part, which also
+ * carries `direct`/`includeBase`/`groupAttack`) plus `damage.resources` (every other applyTo).
+ * The system migrates `parts` away on load, so anything written to that path is silently
+ * dropped by schema cleaning — hence the explicit branch instead of writing both shapes.
+ * @param {Object|null|undefined} damage - An action's `damage` object.
+ * @returns {boolean} True when the legacy `parts` container is the one in use.
+ */
+export function isLegacyDamageSchema(damage) {
+    if (!damage) return false;
+    return damage.main === undefined && damage.resources === undefined && damage.parts !== undefined;
+}
+
+/**
+ * Resolves an action's damage container into a flat list of parts, main/hitPoints part first.
+ * Parts are returned by reference so callers can keep mutating them in place.
+ * @param {Object|null|undefined} damage - An action's `damage` object.
+ * @returns {Array} Damage part objects.
+ */
+export function getActionDamageParts(damage) {
+    if (!damage) return [];
+    if (isLegacyDamageSchema(damage)) return getDamagePartsArray(damage.parts);
+
+    const parts = [];
+    if (damage.main) parts.push(damage.main);
+    parts.push(...getDamagePartsArray(damage.resources));
+    return parts;
+}
+
+/**
+ * Returns the main (hitPoints) damage part of an action, or null when it has none.
+ * @param {Object|null|undefined} damage - An action's `damage` object.
+ * @returns {Object|null}
+ */
+export function getMainDamagePart(damage) {
+    return getActionDamageParts(damage)[0] ?? null;
+}
+
+/**
+ * Reads a damage part's type list. The system stores it in a SetField, so a live DataModel
+ * hands back a Set while source data hands back an array.
+ * @param {Object|null|undefined} part - A damage part.
+ * @returns {string[]} Damage type ids, as stored.
+ */
+export function getDamageTypeList(part) {
+    const type = part?.type;
+    if (!type) return [];
+    if (typeof type === "string") return [type];
+    if (Array.isArray(type) || type instanceof Set) return Array.from(type, t => String(t));
+    return [];
+}
+
+/**
+ * Reads the "direct damage" flag, which moved onto the main part in Daggerheart 2.6.
+ * @param {Object|null|undefined} damage - An action's `damage` object.
+ * @returns {boolean}
+ */
+export function getDamageDirect(damage) {
+    if (!damage) return false;
+    if (isLegacyDamageSchema(damage)) return damage.direct ?? false;
+    return damage.main?.direct ?? false;
+}
+
+/**
+ * Builds the update payload that writes a mutated damage container back to an actor's attack.
+ * `system.attack` is an ObjectField, so this merges rather than replacing sibling keys — which
+ * lets us submit the whole container and stay agnostic about which schema shape it holds.
+ * @param {Object|null|undefined} damage - The mutated `damage` object (from source data).
+ * @returns {Object} Partial update data keyed by document path.
+ */
+export function buildAttackDamageUpdate(damage) {
+    return damage ? { "system.attack.damage": damage } : {};
+}
+
+/**
+ * Sets the "direct damage" flag on a damage container, which moved onto the main part in
+ * Daggerheart 2.6. Mutates `damage` in place so the caller can submit it as one payload.
+ * @param {Object|null|undefined} damage - An action's `damage` object (from source data).
+ * @param {boolean} value - The flag to store.
+ * @returns {boolean} True when the flag had somewhere to go.
+ */
+export function applyDirectDamage(damage, value) {
+    if (!damage) return false;
+    if (isLegacyDamageSchema(damage)) {
+        damage.direct = value;
+        return true;
+    }
+    // A null `main` means the adversary has no hitPoints damage to mark as direct.
+    if (!damage.main) return false;
+    damage.main.direct = value;
+    return true;
+}
+
+/**
  * Selects the best matching damage formula from the benchmark list for the new tier.
  * @param {string|null} currentDie - Current die type (e.g. "d8") or null for flat damage.
  * @param {number} currentBonus - Current bonus value.
@@ -510,8 +604,9 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
     if (actionsRaw) {
         for (const actionId in actionsRaw) {
             const action = actionsRaw[actionId];
-            if (action.damage && action.damage.parts) {
-                const result = updateDamageParts(action.damage.parts, newTier, currentTier, benchmark, manualDamage);
+            const actionDamageParts = getActionDamageParts(action.damage);
+            if (actionDamageParts.length) {
+                const result = updateDamageParts(actionDamageParts, newTier, currentTier, benchmark, manualDamage);
                 if (result.hasChanges) {
                     hasChanges = true;
                 }
@@ -935,10 +1030,12 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
     // 3. Update Sheet Damage (Main Attack)
     let calculatedHalvedDamage = null;
 
-    if (actorData.system.attack && actorData.system.attack.damage && actorData.system.attack.damage.parts) {
-        const sheetDamageParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
-        const sheetDamagePartList = getDamagePartsArray(sheetDamageParts);
+    const sheetDamage = actorData.system.attack?.damage
+        ? foundry.utils.deepClone(actorData.system.attack.damage)
+        : null;
+    const sheetDamagePartList = getActionDamageParts(sheetDamage);
 
+    if (sheetDamagePartList.length > 0) {
         if (overrides.damageFormula && sheetDamagePartList.length > 0) {
             const parsed = parseDamageString(overrides.damageFormula);
             if (parsed) {
@@ -953,7 +1050,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                         part.value.dice = parsed.die;
                         part.value.bonus = parsed.bonus;
                     }
-                    updateData["system.attack.damage.parts"] = sheetDamageParts;
+                    Object.assign(updateData, buildAttackDamageUpdate(sheetDamage));
                     statsLog.push(`<strong>Sheet Dmg (Manual):</strong> ${overrides.damageFormula}`);
                 }
             }
@@ -978,9 +1075,9 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
              }
         }
 
-        const result = updateDamageParts(sheetDamageParts, newTier, currentTier, benchmark);
+        const result = updateDamageParts(sheetDamagePartList, newTier, currentTier, benchmark);
         if (result.hasChanges) {
-            updateData["system.attack.damage.parts"] = sheetDamageParts;
+            Object.assign(updateData, buildAttackDamageUpdate(sheetDamage));
             result.changes.forEach(c => {
                 statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
                 if (c.labelSuffix === " (Alt)" && !overrides.halvedDamageFormula) {
@@ -1013,7 +1110,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                     part.value.bonus = parsed.bonus;
                     if (part.value.custom) part.value.custom.enabled = false;
                  }
-                 updateData["system.attack.damage.parts"] = sheetDamageParts;
+                 Object.assign(updateData, buildAttackDamageUpdate(sheetDamage));
             }
         }
 
@@ -1034,7 +1131,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                     part.valueAlt.bonus = parsed.bonus;
                     if (part.valueAlt.custom) part.valueAlt.custom.enabled = false;
                  }
-                 updateData["system.attack.damage.parts"] = sheetDamageParts;
+                 Object.assign(updateData, buildAttackDamageUpdate(sheetDamage));
             }
         }
     }

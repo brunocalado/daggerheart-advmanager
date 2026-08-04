@@ -1,3 +1,17 @@
+# 0.3.2
+
+Daggerheart 2.6 restructured adversary attack damage: `system.attack.damage.parts` was replaced by
+`damage.main` (the hit-points part, which now also carries the direct flag) plus `damage.resources`.
+The module still read and wrote the old path, so it silently found nothing and had its writes
+discarded by the system — no console errors. All damage access now resolves either schema shape.
+
+- [Fixed] Live Manager: the Attack Damage field no longer starts empty and no longer clears itself after being edited.
+- [Fixed] Live Manager: the Current panel shows the adversary's attack damage again instead of `None`.
+- [Fixed] Live Manager: Direct damage reflects the adversary's real value again instead of always reading `No`, and changing it is saved.
+- [Fixed] Live Manager: the Phys/Mag checkboxes reflect the adversary's actual damage types again.
+- [Fixed] Feature damage (Horde/Minion) scales with the target tier again.
+- [Fixed] Compendium Stats collects damage and halved-damage rolls again.
+
 # 0.3.1
 
 - [Fixed] Module CSS no longer leaks into other modules, systems, or Foundry UI — every style is now scoped under the module-id class (resolves conflict with daggerheart-store).

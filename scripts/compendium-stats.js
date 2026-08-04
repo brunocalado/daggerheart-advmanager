@@ -2,6 +2,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { CompendiumStatsManager } from "./compendium-stats-manager.js";
 import { MODULE_ID } from "./constants.js";
 import { SETTING_STATS_COMPENDIUMS } from "./module.js";
+import { getActionDamageParts } from "./damage-engine.js";
 
 export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
     
@@ -201,17 +202,13 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
 
                 // --- Damage ---
-                if (sys.attack?.damage?.parts) {
-                    const rawParts = sys.attack.damage.parts;
-                    const normParts = Array.isArray(rawParts) ? rawParts : Object.values(rawParts);
-                    normParts.forEach(part => {
-                        let formula = this._extractFormula(part.value);
-                        if (formula) data[actorTier].damageRolls.add(formula);
+                getActionDamageParts(sys.attack?.damage).forEach(part => {
+                    let formula = this._extractFormula(part.value);
+                    if (formula) data[actorTier].damageRolls.add(formula);
 
-                        let halved = this._extractFormula(part.valueAlt);
-                        if (halved) data[actorTier].halvedDamageRolls.add(halved);
-                    });
-                }
+                    let halved = this._extractFormula(part.valueAlt);
+                    if (halved) data[actorTier].halvedDamageRolls.add(halved);
+                });
 
                 // --- Features (Updated Lookup Logic) ---
                 if (actor.items) {

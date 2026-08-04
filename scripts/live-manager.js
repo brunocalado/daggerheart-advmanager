@@ -1,4 +1,4 @@
-import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor, getDamagePartsArray } from "./damage-engine.js";
+import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor, getActionDamageParts, getMainDamagePart, getDamageDirect, getDamageTypeList, buildAttackDamageUpdate, applyDirectDamage } from "./damage-engine.js";
 import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID } from "./constants.js";
 import { SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SETTING_OVERWRITE_WORLD_ACTOR, SKULL_IMAGE_PATH } from "./module.js";
@@ -517,19 +517,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 if (previewDamageTypes === null) {
                     const actorData = actor.toObject();
-                    const mainPart = getDamagePartsArray(actorData.system.attack?.damage?.parts)[0];
-                    
-                    if (mainPart) {
-                        if (Array.isArray(mainPart.type)) {
-                            previewDamageTypes = mainPart.type;
-                        } else if (typeof mainPart.type === "string") {
-                            previewDamageTypes = [mainPart.type];
-                        } else {
-                            previewDamageTypes = [];
-                        }
-                    } else {
-                        previewDamageTypes = [];
-                    }
+                    const mainPart = getMainDamagePart(actorData.system.attack?.damage);
+                    previewDamageTypes = getDamageTypeList(mainPart);
                 }
                 
                 const activeTypes = (previewDamageTypes || []).map(t => String(t).toLowerCase());
@@ -582,7 +571,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     });
                 }
 
-                const currentDirect = actor.system.attack?.damage?.direct ?? false;
+                const currentDirect = getDamageDirect(actor.system.attack?.damage);
                 const previewDirect = this.overrides.directDamage !== undefined ? (this.overrides.directDamage === "true") : currentDirect;
                 
                 directOptions = [
@@ -1122,25 +1111,32 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const manualUpdates = {};
             let hasManualUpdates = false;
 
-            if (this.overrides.damageTypes) {
-                const actorData = freshActor.toObject();
-                const rawParts = actorData.system.attack?.damage?.parts ? foundry.utils.deepClone(actorData.system.attack.damage.parts) : null;
-                const parts = rawParts ? (Array.isArray(rawParts) ? rawParts : Object.values(rawParts)) : [];
+            // Damage type and the direct flag both live inside system.attack.damage, so they are
+            // collected on one source copy and submitted as a single merge.
+            const damageSource = freshActor.toObject().system.attack?.damage ?? null;
+            let hasDamageUpdate = false;
 
-                if (parts && parts.length > 0) {
-                    parts[0].type = this.overrides.damageTypes; 
-                    manualUpdates["system.attack.damage.parts"] = parts;
-                    hasManualUpdates = true;
+            if (this.overrides.damageTypes) {
+                const mainPart = getMainDamagePart(damageSource);
+                if (mainPart) {
+                    mainPart.type = this.overrides.damageTypes;
+                    hasDamageUpdate = true;
                 }
+            }
+
+            if (this.overrides.directDamage !== undefined) {
+                if (applyDirectDamage(damageSource, this.overrides.directDamage === "true")) {
+                    hasDamageUpdate = true;
+                }
+            }
+
+            if (hasDamageUpdate) {
+                Object.assign(manualUpdates, buildAttackDamageUpdate(damageSource));
+                hasManualUpdates = true;
             }
 
             if (this.overrides.criticalThreshold !== undefined) {
                 manualUpdates["system.criticalThreshold"] = parseInt(this.overrides.criticalThreshold);
-                hasManualUpdates = true;
-            }
-
-            if (this.overrides.directDamage !== undefined) {
-                manualUpdates["system.attack.damage.direct"] = (this.overrides.directDamage === "true");
                 hasManualUpdates = true;
             }
 
@@ -1427,38 +1423,30 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let firstHalvedFormula = null;
         let damageTypesLabel = "";
         
-        if (sys.attack?.damage?.parts) {
-            const rawParts = sys.attack.damage.parts;
-            const normParts = Array.isArray(rawParts) ? rawParts : Object.values(rawParts);
-            normParts.forEach((p, idx) => {
-                if(p.value) {
-                    let formula = p.value.custom?.enabled ? p.value.custom.formula : 
-                        (p.value.dice ? `${p.value.flatMultiplier || 1}${p.value.dice}${p.value.bonus ? (p.value.bonus > 0 ? '+'+p.value.bonus : p.value.bonus) : ''}` : p.value.flatMultiplier);
-                    
-                    damageParts.push(formula); 
-                    if (idx === 0) {
-                        firstDamageFormula = formula;
-                        let types = [];
-                        if (p.type) {
-                            if (Array.isArray(p.type)) types = p.type;
-                            else if (typeof p.type === "string") types = [p.type];
-                        }
-                        
-                        if (types.length > 0) {
-                            const typeNames = types.map(t => t.charAt(0).toUpperCase() + t.slice(1));
-                            damageTypesLabel = `(${typeNames.join("/")})`;
-                        }
+        getActionDamageParts(sys.attack?.damage).forEach((p, idx) => {
+            if(p.value) {
+                let formula = p.value.custom?.enabled ? p.value.custom.formula : 
+                    (p.value.dice ? `${p.value.flatMultiplier || 1}${p.value.dice}${p.value.bonus ? (p.value.bonus > 0 ? '+'+p.value.bonus : p.value.bonus) : ''}` : p.value.flatMultiplier);
+                
+                damageParts.push(formula); 
+                if (idx === 0) {
+                    firstDamageFormula = formula;
+                    const types = getDamageTypeList(p);
+
+                    if (types.length > 0) {
+                        const typeNames = types.map(t => t.charAt(0).toUpperCase() + t.slice(1));
+                        damageTypesLabel = `(${typeNames.join("/")})`;
                     }
                 }
-                if (p.valueAlt) {
-                    let formula = p.valueAlt.custom?.enabled ? p.valueAlt.custom.formula : 
-                        (p.valueAlt.dice ? `${p.valueAlt.flatMultiplier || 1}${p.valueAlt.dice}${p.valueAlt.bonus ? (p.valueAlt.bonus > 0 ? '+'+p.valueAlt.bonus : p.valueAlt.bonus) : ''}` : p.valueAlt.flatMultiplier);
-                    halvedParts.push(formula);
-                    if (idx === 0) firstHalvedFormula = formula;
-                }
-            });
-        }
-        
+            }
+            if (p.valueAlt) {
+                let formula = p.valueAlt.custom?.enabled ? p.valueAlt.custom.formula : 
+                    (p.valueAlt.dice ? `${p.valueAlt.flatMultiplier || 1}${p.valueAlt.dice}${p.valueAlt.bonus ? (p.valueAlt.bonus > 0 ? '+'+p.valueAlt.bonus : p.valueAlt.bonus) : ''}` : p.valueAlt.flatMultiplier);
+                halvedParts.push(formula);
+                if (idx === 0) firstHalvedFormula = formula;
+            }
+        });
+
         const attackMod = Number(sys.attack?.roll?.bonus) || 0;
         const hitChance = calculateHitChance(attackMod, tier);
         const difficulty = Number(sys.difficulty) || 0;
@@ -1478,7 +1466,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
              });
         }
 
-        const isDirect = sys.attack?.damage?.direct ?? false;
+        const isDirect = getDamageDirect(sys.attack?.damage);
         const directLabel = isDirect ? "Direct: Yes" : "Direct: No";
 
         return {
@@ -1673,61 +1661,60 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let mainDamageRaw = ""; 
         let mainHalvedDamageRaw = ""; 
 
-        if (actorData.system.attack?.damage?.parts) {
-            const rawParts = foundry.utils.deepClone(actorData.system.attack.damage.parts);
-            const tempParts = Array.isArray(rawParts) ? rawParts : Object.values(rawParts);
-            tempParts.forEach((part, index) => {
-                
-                let rawVal = "";
-                if (this.overrides.damageFormula) {
-                    rawVal = this.overrides.damageFormula;
-                    damageParts.push(`<span class="stat-changed">${this.overrides.damageFormula}</span>`);
-                } else {
-                    if (frozenBenchmark.basic_attack_y && part.value) {
-                         const newVal = frozenBenchmark.basic_attack_y; 
-                         rawVal = String(newVal);
-                         damageParts.push(`<span class="stat-changed">${newVal}</span>`);
-                    } else if (part.value) {
-                        const result = processDamageValue(part.value, targetTier, currentTier, frozenBenchmark.damage_rolls);
-                        if (result) {
-                            rawVal = result.to;
-                            damageParts.push(`<span class="stat-changed">${result.to}</span>`);
-                        } else {
-                             let existing = "";
-                             if (part.value.custom?.enabled) existing = part.value.custom.formula;
-                             else if (part.value.dice) existing = `${part.value.flatMultiplier||1}${part.value.dice}${part.value.bonus ? (part.value.bonus>0?'+'+part.value.bonus:part.value.bonus):''}`;
-                             else existing = part.value.flatMultiplier;
-                             rawVal = existing;
-                             damageParts.push(existing);
-                        }
-                    }
-                }
-                
-                if (index === 0) mainDamageRaw = rawVal;
-
-                if (part.valueAlt && frozenBenchmark.halved_damage_x) {
-                    let rawHalved = "";
-                    if (this.overrides.halvedDamageFormula) {
-                        rawHalved = this.overrides.halvedDamageFormula;
-                        halvedParts.push(`<span class="stat-changed">${this.overrides.halvedDamageFormula}</span>`);
+        const simDamage = actorData.system.attack?.damage
+            ? foundry.utils.deepClone(actorData.system.attack.damage)
+            : null;
+        getActionDamageParts(simDamage).forEach((part, index) => {
+            
+            let rawVal = "";
+            if (this.overrides.damageFormula) {
+                rawVal = this.overrides.damageFormula;
+                damageParts.push(`<span class="stat-changed">${this.overrides.damageFormula}</span>`);
+            } else {
+                if (frozenBenchmark.basic_attack_y && part.value) {
+                     const newVal = frozenBenchmark.basic_attack_y; 
+                     rawVal = String(newVal);
+                     damageParts.push(`<span class="stat-changed">${newVal}</span>`);
+                } else if (part.value) {
+                    const result = processDamageValue(part.value, targetTier, currentTier, frozenBenchmark.damage_rolls);
+                    if (result) {
+                        rawVal = result.to;
+                        damageParts.push(`<span class="stat-changed">${result.to}</span>`);
                     } else {
-                        const result = processDamageValue(part.valueAlt, targetTier, currentTier, frozenBenchmark.halved_damage_x);
-                        if (result) {
-                            rawHalved = result.to;
-                            halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
-                        } else {
-                             let existing = "";
-                             if (part.valueAlt.custom?.enabled) existing = part.valueAlt.custom.formula;
-                             else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
-                             else existing = part.valueAlt.flatMultiplier;
-                             rawHalved = existing;
-                             halvedParts.push(existing);
-                        }
+                         let existing = "";
+                         if (part.value.custom?.enabled) existing = part.value.custom.formula;
+                         else if (part.value.dice) existing = `${part.value.flatMultiplier||1}${part.value.dice}${part.value.bonus ? (part.value.bonus>0?'+'+part.value.bonus:part.value.bonus):''}`;
+                         else existing = part.value.flatMultiplier;
+                         rawVal = existing;
+                         damageParts.push(existing);
                     }
-                    if (index === 0) mainHalvedDamageRaw = rawHalved;
                 }
-            });
-        }
+            }
+            
+            if (index === 0) mainDamageRaw = rawVal;
+
+            if (part.valueAlt && frozenBenchmark.halved_damage_x) {
+                let rawHalved = "";
+                if (this.overrides.halvedDamageFormula) {
+                    rawHalved = this.overrides.halvedDamageFormula;
+                    halvedParts.push(`<span class="stat-changed">${this.overrides.halvedDamageFormula}</span>`);
+                } else {
+                    const result = processDamageValue(part.valueAlt, targetTier, currentTier, frozenBenchmark.halved_damage_x);
+                    if (result) {
+                        rawHalved = result.to;
+                        halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
+                    } else {
+                         let existing = "";
+                         if (part.valueAlt.custom?.enabled) existing = part.valueAlt.custom.formula;
+                         else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
+                         else existing = part.valueAlt.flatMultiplier;
+                         rawHalved = existing;
+                         halvedParts.push(existing);
+                    }
+                }
+                if (index === 0) mainHalvedDamageRaw = rawHalved;
+            }
+        });
         sim.damage = damageParts.join(", ") || "None";
         sim.damageStats = this._calculateDamageStats(mainDamageRaw); 
 
