@@ -1,3 +1,7 @@
+# 0.3.3
+
+- removed ai assets
+
 # 0.3.2
 
 Daggerheart 2.6 restructured adversary attack damage: `system.attack.damage.parts` was replaced by

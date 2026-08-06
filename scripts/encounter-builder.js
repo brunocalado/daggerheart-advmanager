@@ -245,21 +245,6 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // --- Budget Calculation ---
         const bpData = this._calculateBP();
 
-        // --- Determine Skull Image ---
-        let skullImg = "";
-        switch (bpData.difficultyKey) {
-            case "veryEasy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-very-easy.webp"; break;
-            case "easy": skullImg = "modules/daggerheart-advmanager/assets/images/skull-easy.webp"; break;
-            case "balanced": skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp"; break;
-            case "challenging": skullImg = "modules/daggerheart-advmanager/assets/images/skull-challenging.webp"; break;
-            case "hard": skullImg = "modules/daggerheart-advmanager/assets/images/skull-hard.webp"; break;
-            case "deadly": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
-            case "outOfTier": skullImg = "modules/daggerheart-advmanager/assets/images/skull-deadly.webp"; break;
-            default: skullImg = "modules/daggerheart-advmanager/assets/images/skull-balanced.webp";
-        }
-
-        bpData.skullImage = skullImg;
-
         return {
             adversaries: filtered,
             encounterList: enrichedEncounterList, 
@@ -439,7 +424,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             case 1: difficultyKey = "easy"; difficultyClass = "diff-easy"; break;
             case 2: difficultyKey = "balanced"; difficultyClass = "diff-balanced"; break;
             case 3: difficultyKey = "challenging"; difficultyClass = "diff-challenging"; break;
-            case 4: difficultyKey = "hard"; difficultyClass = "diff-deadly"; break;
+            case 4: difficultyKey = "hard"; difficultyClass = "diff-hard"; break;
             case 5: difficultyKey = "deadly"; difficultyClass = "diff-deadly"; break;
         }
 

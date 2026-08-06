@@ -3,22 +3,15 @@
 
 The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries instantly, build balanced encounters.
 
-<video src="[https://github.com/user-attachments/assets/a875027b-eb4a-4637-a4f5-7c61064da22d](https://github.com/user-attachments/assets/a875027b-eb4a-4637-a4f5-7c61064da22d)" 
-       controls 
-       width="720"
-       autoplay 
-       loop 
-       muted></video>
+<p align="center"><img width="1400" src="docs/view-livemanager.webp"></p>
+
+<p align="center"><img width="1400" src="docs/view-livemanager2.webp"></p>
 
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-Donate-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/mestredigital) [![More Modules](https://img.shields.io/badge/Foundry%20VTT-More%20Modules-red?style=for-the-badge&logo=gamepad)](https://mestredigital.online/pages/projetos-en)
 
 ## 🌟 Overview & Features
 
 ### 🛠️ Adversary Scaling & Management
-
-<p align="center"><img width="1400" src="docs/view-livemanager.webp"></p>
-
-<p align="center"><img width="1400" src="docs/view-livemanager2.webp"></p>
 
 * **📈 Instant Tier Scaling:** Effortlessly scale any Adversary from Tier 1 to 4 using benchmarks.
 * **👀 Live Preview Dashboard:** Compare "Current" stats vs. "Target Tier" stats side-by-side before applying any changes.
@@ -121,6 +114,8 @@ You can read the full history of changes in the [CHANGELOG](CHANGELOG.md).
 ## ⚖️ Credits and License
 
 * **Code License:** [GNU GPLv3](LICENSE).
+
+* [skull](https://unsplash.com/license)
 
 **Disclaimer:** This module is an independent creation and is not affiliated with Darrington Press.
 
