@@ -1,3 +1,38 @@
+# 0.3.4
+
+Daggerheart 2.8 folded the Hope & Fear adversaries into the system compendium, taking it from 129
+to 264 stat blocks. The scaling benchmarks had been derived from the core rulebook alone, so every
+tier-up was measured against half the material — and four type/tier combinations the core book
+never printed had no data behind them at all.
+
+- [Changed] Benchmarks rebuilt from the whole system compendium (264 adversaries, core + Hope & Fear). Ranges come from the 15th-85th percentile where a type/tier has enough stat blocks, so a single outlier no longer widens a range.
+- [Added] Horde Tier 3, Skulk Tier 4, Social Tier 4 and Standard Tier 4 now rest on real numbers instead of interpolation.
+- [Fixed] Support Tier 2 listed its damage thresholds inverted (Major 23 / Severe 20).
+- [Added] Around 30 Experience names from the new material.
+- [Added] `tools/build-benchmarks.mjs`, which re-derives the benchmarks from the compendium, so they can be rebuilt whenever the system ships new adversaries.
+
+Hope & Fear also stores a flat attack differently: `flatMultiplier: 0` with the die string left in
+place. The module took the leftover die at face value.
+
+- [Fixed] A minion dealing 1 damage was displayed and re-tiered as 1d6+1; Temporal Enforcer's flat 40 read as 1d6+40. Affects the Live Manager, Compendium Statistics and the change log.
+- [Fixed] Re-tiering a minion left the old damage bonus behind, which resurfaced as NdX+bonus if the custom-damage box was ever unticked.
+
+Compendium Statistics read all 264 adversary documents on every open, which grew to over a minute.
+
+- [Changed] It now loads a pre-computed census that ships with the module (`data/compendium-stats-core.json`); opening the window went from ~70s to under a second. Extra compendiums you add are still read live and merged on top.
+- [Changed] The window paints immediately instead of staying blank while it loads.
+- [Added] The census is stamped with the system version and adversary count. When it no longer matches, the window says so and recalculates from the compendium rather than showing stale numbers.
+- [Added] `AM.BuildStatsSnapshot()` rebuilds the census inside a world and downloads it — run it once per Daggerheart release and save the file over `data/compendium-stats-core.json`.
+- [Changed] A recalculation caused by an out-of-date census is kept for the rest of the session, so a system patch release costs that load once instead of on every open.
+
+The module no longer has an opinion about which features suit a tier.
+
+- [Removed] Suggested Features: the curated per-tier lists, the ⭐ that marked them in the preview, and the "Auto-Add Features on Tier Up" setting that added one by itself when levelling up.
+- [Changed] The preview panel stays and is now plainly a picker: it lists every feature in your compendiums matching the target Tier and Type, and adds only what you tick. The setting that shows it is now called "Show New Features Panel".
+
+Note for anyone using the feature library: as shipped, the bundled `all-features` compendium covers
+634 of the 709 feature names the system now has. Re-import it (see the wiki) to pick up the rest and
+have them offered in the picker.
 # 0.3.3
 
 - removed ai assets

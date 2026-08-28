@@ -7,7 +7,7 @@
  */
 import { ADVERSARY_BENCHMARKS, PC_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID } from "./constants.js";
-import { SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SETTING_ADD_FEATURES, SKULL_IMAGE_PATH } from "./module.js";
+import { SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SKULL_IMAGE_PATH } from "./module.js";
 import { prepareDocumentCreateData } from "./foundry-compat.js";
 
 // --- Utility Parsers ---
@@ -86,35 +86,6 @@ export function parseDamageString(dmgString) {
         };
     }
     return null;
-}
-
-/**
- * Expands template feature names like "Relentless (X)" to "Relentless (2)" for the given tier.
- * @param {string} name - Feature name, possibly containing "(X)".
- * @param {number} tier - Target tier number.
- * @returns {string} Resolved feature name.
- */
-export function resolveFeatureName(name, tier) {
-    if (name.includes("Relentless (X)")) {
-        return `Relentless (${tier})`;
-    }
-    return name;
-}
-
-/**
- * Returns the list of suggested features from benchmarks for a given type and tier.
- * @param {string} typeKey - Adversary type key (e.g. "bruiser").
- * @param {number} tier - Tier number (1-4).
- * @returns {string[]} Array of resolved feature names.
- */
-export function getAvailableFeaturesForTier(typeKey, tier) {
-    const benchmarkRoot = ADVERSARY_BENCHMARKS[typeKey];
-    if (!benchmarkRoot) return [];
-    const tierBenchmark = benchmarkRoot.tiers[`tier_${tier}`];
-    if (!tierBenchmark || !tierBenchmark.suggested_features || !Array.isArray(tierBenchmark.suggested_features)) {
-        return [];
-    }
-    return tierBenchmark.suggested_features.map(name => resolveFeatureName(name, tier));
 }
 
 // --- Hit Probability ---
@@ -269,6 +240,48 @@ export function getDamageTypeList(part) {
 }
 
 /**
+ * Reports how many dice a damage value actually rolls.
+ * A flat attack is stored two ways in the system's own data: with no die at all, or — the shape
+ * the Hope & Fear adversaries use — as `flatMultiplier: 0` with the die string left in place.
+ * So the die count, never the presence of `dice`, is what decides whether anything is rolled.
+ * @param {Object|null|undefined} value - A damage part's `value` or `valueAlt`.
+ * @returns {number} Number of dice rolled; 0 for flat damage.
+ */
+export function getDiceCount(value) {
+    if (!value?.dice) return 0;
+    const count = value.flatMultiplier;
+    return (count === undefined || count === null) ? 1 : (Number(count) || 0);
+}
+
+/**
+ * Reads the flat damage number out of a value that rolls no dice. Pre-2.6 data keeps it in
+ * `flatMultiplier` with an empty die; Hope & Fear data keeps it in `bonus` with the die zeroed.
+ * @param {Object|null|undefined} value - A damage part's `value` or `valueAlt`.
+ * @returns {number} The flat damage dealt.
+ */
+export function getFlatDamage(value) {
+    if (!value) return 0;
+    return value.dice ? (Number(value.bonus) || 0) : (Number(value.flatMultiplier) || 0);
+}
+
+/**
+ * Renders a damage value as the formula string shown in the UI and in the change log.
+ * @param {Object|null|undefined} value - A damage part's `value` or `valueAlt`.
+ * @returns {string} Formula such as "2d10+4" or "12".
+ */
+export function formatDamageValue(value) {
+    if (!value) return "";
+    if (value.custom?.enabled && value.custom.formula) return String(value.custom.formula);
+
+    const count = getDiceCount(value);
+    if (count === 0) return String(getFlatDamage(value));
+
+    const bonus = Number(value.bonus) || 0;
+    const bonusStr = bonus ? (bonus > 0 ? `+${bonus}` : `${bonus}`) : "";
+    return `${count}${value.dice}${bonusStr}`;
+}
+
+/**
  * Reads the "direct damage" flag, which moved onto the main part in Daggerheart 2.6.
  * @param {Object|null|undefined} damage - An action's `damage` object.
  * @returns {boolean}
@@ -386,10 +399,10 @@ export function processDamageValue(val, newTier, currentTier, damageRolls) {
         }
     }
 
-    if (!isCustom && !val.dice) {
+    if (!isCustom && getDiceCount(val) === 0) {
             isFlatFixed = true;
             currentDie = null;
-            currentBonus = val.flatMultiplier || 0;
+            currentBonus = getFlatDamage(val);
             oldFormula = `${currentBonus}`;
     } else if (!isCustom) {
         const sign = (currentBonus && currentBonus >= 0) ? "+" : "";
@@ -420,9 +433,16 @@ export function processDamageValue(val, newTier, currentTier, damageRolls) {
 
     } else {
         if (newDmg.die === null) {
-            val.flatMultiplier = newDmg.bonus;
-            val.dice = "";
-            val.bonus = null;
+            // Written back in the shape it arrived in: pre-2.6 data carries the flat number in
+            // flatMultiplier with no die, Hope & Fear data keeps the die and carries it in bonus.
+            if (val.dice) {
+                val.flatMultiplier = 0;
+                val.bonus = newDmg.bonus;
+            } else {
+                val.flatMultiplier = newDmg.bonus;
+                val.dice = "";
+                val.bonus = null;
+            }
             newFormula = `${newDmg.bonus}`;
         } else {
             val.flatMultiplier = newDmg.count;
@@ -466,7 +486,7 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
         if (parsed) {
             const part = damageParts.find(p => p.value);
             if (part) {
-                let oldFormula = part.value.custom?.enabled ? part.value.custom.formula : (part.value.dice ? `${part.value.flatMultiplier}${part.value.dice}` : `${part.value.flatMultiplier}`);
+                let oldFormula = formatDamageValue(part.value);
 
                 if (parsed.die === null) {
                     if (!part.value.custom) part.value.custom = {};
@@ -493,7 +513,7 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
     damageParts.forEach(part => {
         // MINION CHECK: If benchmark has 'basic_attack_y', use it instead of scaling
         if (benchmark.basic_attack_y && part.value) {
-            const currentFormula = part.value.custom?.enabled ? part.value.custom.formula : `${part.value.flatMultiplier}`;
+            const currentFormula = formatDamageValue(part.value);
             const newVal = getRollFromRange(benchmark.basic_attack_y);
 
             if (newVal !== null) {
@@ -502,6 +522,9 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
                 part.value.custom.enabled = true;
                 part.value.custom.formula = String(newVal);
                 part.value.flatMultiplier = newVal;
+                // Hope & Fear minions carry their flat damage in `bonus` with the die zeroed.
+                // Left behind, that bonus resurfaces as NdX+bonus the moment custom is unticked.
+                part.value.bonus = null;
 
                 if (currentFormula !== String(newVal)) {
                     hasChanges = true;
@@ -514,17 +537,7 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
         }
 
         // Determine Current Formula for Lookup
-        let currentPartFormula = "";
-        if (part.value) {
-            if (part.value.custom?.enabled) currentPartFormula = part.value.custom.formula;
-            else {
-                const c = part.value.flatMultiplier || 1;
-                const d = part.value.dice || "";
-                const b = part.value.bonus ? (part.value.bonus >= 0 ? `+${part.value.bonus}` : part.value.bonus) : "";
-                if (!d) currentPartFormula = `${c}`;
-                else currentPartFormula = `${c}${d}${b}`;
-            }
-        }
+        const currentPartFormula = part.value ? formatDamageValue(part.value) : "";
 
         // Normal Adversary Logic
         if (part.value) {
@@ -844,38 +857,18 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
 /**
  * Finds features in module compendiums and prepares them for creation on an actor.
  * Handles Minion(X) template substitution and Relentless replacement logic.
+ * Only adds what was asked for by name — the module has no opinion about which features suit a
+ * tier, so nothing is ever added on its own.
  * @param {Actor} actor - The actor receiving new features.
- * @param {string} typeKey - Adversary type key.
- * @param {number} newTier - Target tier.
- * @param {number} currentTier - Current tier.
  * @param {Array} changeLog - Array to push change log messages into.
- * @param {string[]|null} specificFeatureNames - Specific features to add (manual mode), or null for auto.
+ * @param {string[]|null} featureNames - Features to add, by name.
  * @returns {Promise<{toCreate: Array, toDelete: Array}>}
  */
-export async function handleNewFeatures(actor, typeKey, newTier, currentTier, changeLog, specificFeatureNames = null) {
-    const isManual = specificFeatureNames && Array.isArray(specificFeatureNames);
-
-    if (!isManual && !game.settings.get(MODULE_ID, SETTING_ADD_FEATURES)) return { toCreate: [], toDelete: [] };
-    if (!isManual && newTier <= currentTier) return { toCreate: [], toDelete: [] };
+export async function handleNewFeatures(actor, changeLog, featureNames = null) {
+    if (!Array.isArray(featureNames) || featureNames.length === 0) return { toCreate: [], toDelete: [] };
 
     const currentItems = actor.items.contents || actor.items;
-    let featuresToAdd = [];
-
-    if (isManual) {
-        featuresToAdd = specificFeatureNames.filter(name => !currentItems.some(i => i.name === name));
-    } else {
-        const benchmarkRoot = ADVERSARY_BENCHMARKS[typeKey];
-        if (!benchmarkRoot) return { toCreate: [], toDelete: [] };
-
-        const possibleFeatures = getAvailableFeaturesForTier(typeKey, newTier);
-        if (possibleFeatures.length === 0) return { toCreate: [], toDelete: [] };
-
-        const candidates = possibleFeatures.filter(name => !currentItems.some(i => i.name === name));
-        if (candidates.length === 0) return { toCreate: [], toDelete: [] };
-
-        const pickedName = candidates[Math.floor(Math.random() * candidates.length)];
-        featuresToAdd.push(pickedName);
-    }
+    const featuresToAdd = featureNames.filter(name => !currentItems.some(i => i.name === name));
 
     if (featuresToAdd.length === 0) return { toCreate: [], toDelete: [] };
 
@@ -1088,8 +1081,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
 
         if (!calculatedHalvedDamage && sheetDamagePartList.length > 0 && sheetDamagePartList[0].valueAlt) {
             const part = sheetDamagePartList[0];
-            const altFormula = part.valueAlt.custom?.enabled ? part.valueAlt.custom.formula : (part.valueAlt.dice ? `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus?(part.valueAlt.bonus>0?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}` : `${part.valueAlt.flatMultiplier}`);
-            calculatedHalvedDamage = altFormula;
+            calculatedHalvedDamage = formatDamageValue(part.valueAlt);
         }
 
         // Apply Manual Overrides again to be safe
@@ -1300,15 +1292,8 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
         }
     }
 
-    // 6. Add Suggested Features
-    const newFeatures = await handleNewFeatures(
-        actor,
-        typeKey,
-        newTier,
-        currentTier,
-        featureLog,
-        overrides.suggestedFeatures
-    );
+    // 6. Add the features the user ticked in the preview
+    const newFeatures = await handleNewFeatures(actor, featureLog, overrides.newFeatures);
 
     await actor.update(updateData);
     if (itemsToUpdate.length > 0) await actor.updateEmbeddedDocuments("Item", itemsToUpdate);

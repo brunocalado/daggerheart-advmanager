@@ -1,4 +1,5 @@
 # 💀 Adversary Manager 💀
+
 **for Daggerheart**
 
 The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries instantly, build balanced encounters.
@@ -18,9 +19,9 @@ The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries 
 * **🎲 Smart Math & Probabilities:**
     * Automatically recalculates HP, Stress, Difficulty, and Damage Thresholds.
     * Scales Attack modifiers and Damage formulas.
-* **✨ Feature Automation:**
+* **✨ Features & Experiences:**
     * Auto-updates Experience values based on Tier difference.
-    * Suggests appropriate **Features** (e.g., *Relentless*, *Momentum*) for the target Tier.
+    * Lists the **Features** available for the target Tier and Type so you can tick the ones to add — nothing is added on its own.
 * **🔧 Manual Overrides:** Full control to manually tweak any specific stat (HP, Damage, etc) directly in the preview window.
 * **📦 Batch & Compendium Support:**
     * Update multiple selected tokens on the canvas simultaneously.
@@ -54,6 +55,7 @@ The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries 
 * **🧩 Feature Browser:** See a list of all features found in the compendium for each Tier.
 * **🖐️ Drag & Drop:** Click to view feature details or **drag them directly onto an actor sheet**.
 * **📦 Add your Compendium:** You can add more compendiuns.
+* **⚡ Opens instantly:** The system compendium ships pre-calculated, so the window no longer reads every adversary on each open. Your own compendiums are still read live and merged in.
 
 ### 🎲 Dice Probability Calculator
 
@@ -89,6 +91,13 @@ AM.CompendiumStats();
 ```js
 // Dice Probability
 AM.DiceProbability();
+```
+
+```js
+// Rebuild the pre-calculated statistics after a Daggerheart update, then save the
+// downloaded file over data/compendium-stats-core.json. The Compendium Stats window
+// tells you when this is needed.
+AM.BuildStatsSnapshot();
 ```
 
 ## ⚙️ Instructions
@@ -137,7 +146,7 @@ You can read the full history of changes in the [CHANGELOG](CHANGELOG.md).
 | 🎁 [**Mystery Box**](https://github.com/brunocalado/dh-mystery-box) | Introduces mystery box mechanics for random loot and surprises. |
 | ⚡ [**Quick Actions**](https://github.com/brunocalado/daggerheart-quickactions) | Quick access to common mechanics like Falling Damage, Downtime, etc. |
 | 📜 [**Quick Rules**](https://github.com/brunocalado/daggerheart-quickrules) | Fast and accessible reference guide for the core rules. |
-| 🤖 [**Resource Macros**](https://github.com/brunocalado/daggerheart-fear-macros) | Automatically executes macros when the Fear or Hope resources change. |
+| 🤖 [**Resource Macros**](https://github.com/brunocalado/daggerheart-fear-macros) | Automatically executes macros when the Fear, Hope, Stress, HP, or Armor resources change. |
 | 🎲 [**Stats**](https://github.com/brunocalado/daggerheart-stats) | Tracks dice rolls from GM and Players. |
 | 🧠 [**Stats Toolbox**](https://github.com/brunocalado/dh-statblock-importer) | Import actors using a statblock. |
 | 🛒 [**Store**](https://github.com/brunocalado/daggerheart-store) | A dynamic, interactive, and fully configurable in-game store. |

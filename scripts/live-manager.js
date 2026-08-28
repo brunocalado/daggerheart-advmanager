@@ -1,4 +1,4 @@
-import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor, getActionDamageParts, getMainDamagePart, getDamageDirect, getDamageTypeList, buildAttackDamageUpdate, applyDirectDamage } from "./damage-engine.js";
+import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor, getActionDamageParts, getMainDamagePart, getDamageDirect, getDamageTypeList, formatDamageValue, buildAttackDamageUpdate, applyDirectDamage } from "./damage-engine.js";
 import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID } from "./constants.js";
 import { SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SETTING_OVERWRITE_WORLD_ACTOR, SKULL_IMAGE_PATH } from "./module.js";
@@ -65,9 +65,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     _defaultOverrides() {
         return {
             features: { names: {}, damage: {} },
-            suggestedFeatures: null,
-            suggestedFeaturesType: "default",
-            suggestedFeaturesTier: "default",
+            newFeatures: null,
+            newFeaturesType: "default",
+            newFeaturesTier: "default",
             experiences: {},
             damageFormula: undefined,
             halvedDamageFormula: undefined,
@@ -464,7 +464,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let previewStats = null;
         let actor = null;
         let featurePreviewData = []; 
-        let allSuggestedFeatures = []; 
+        let allNewFeatures = []; 
         let linkData = null;
         let damageOptions = []; 
         let halvedDamageOptions = [];
@@ -474,8 +474,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         let isHorde = false;
         let actorTypeLabel = "";
         let portraitImg = null;
-        let suggestedFeaturesTypeOptions = []; 
-        let suggestedFeaturesTierOptions = [];
+        let newFeaturesTypeOptions = []; 
+        let newFeaturesTierOptions = [];
         let criticalOptions = []; 
         let directOptions = []; 
 
@@ -686,28 +686,28 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }));
 
                 let suggestionTypeKey = typeKey;
-                if (this.overrides.suggestedFeaturesType && this.overrides.suggestedFeaturesType !== "default") {
-                    suggestionTypeKey = this.overrides.suggestedFeaturesType;
+                if (this.overrides.newFeaturesType && this.overrides.newFeaturesType !== "default") {
+                    suggestionTypeKey = this.overrides.newFeaturesType;
                 }
 
                 let suggestionTier = this.targetTier; 
-                if (this.overrides.suggestedFeaturesTier && this.overrides.suggestedFeaturesTier !== "default") {
-                    suggestionTier = parseInt(this.overrides.suggestedFeaturesTier);
+                if (this.overrides.newFeaturesTier && this.overrides.newFeaturesTier !== "default") {
+                    suggestionTier = parseInt(this.overrides.newFeaturesTier);
                 }
 
-                suggestedFeaturesTypeOptions = []; 
+                newFeaturesTypeOptions = []; 
                 const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
                 typeKeys.forEach(k => {
-                    const isSelected = (this.overrides.suggestedFeaturesType === "default" && k === typeKey) ||
-                                       (this.overrides.suggestedFeaturesType === k);
-                    suggestedFeaturesTypeOptions.push({
+                    const isSelected = (this.overrides.newFeaturesType === "default" && k === typeKey) ||
+                                       (this.overrides.newFeaturesType === k);
+                    newFeaturesTypeOptions.push({
                         value: k,
                         label: k.charAt(0).toUpperCase() + k.slice(1),
                         selected: isSelected
                     });
                 });
 
-                suggestedFeaturesTierOptions = [1, 2, 3, 4].map(t => ({
+                newFeaturesTierOptions = [1, 2, 3, 4].map(t => ({
                     value: t,
                     label: `Tier ${t}`,
                     selected: t === suggestionTier
@@ -745,23 +745,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 };
 
                 let possibleMatches = [];
-                let ruleSuggestions = [];
-
-                const suggestionBenchmark = ADVERSARY_BENCHMARKS[suggestionTypeKey]?.tiers[`tier_${suggestionTier}`];
-                if (suggestionBenchmark && suggestionBenchmark.suggested_features) {
-                    if (Array.isArray(suggestionBenchmark.suggested_features)) {
-                        ruleSuggestions = [...suggestionBenchmark.suggested_features];
-                    } else if (typeof suggestionBenchmark.suggested_features === "string" && suggestionBenchmark.suggested_features !== "") {
-                        ruleSuggestions = [suggestionBenchmark.suggested_features];
-                    }
-                }
 
                 const extraFeaturePacks = game.settings.get(MODULE_ID, SETTING_FEATURE_COMPENDIUMS) || [];
                 // Changed: Removed "daggerheart-advmanager.custom-features" from hardcoded list
                 const packsToQuery = [...new Set(["daggerheart-advmanager.all-features", ...extraFeaturePacks])];
-                const enableSuggestions = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
+                const showNewFeatures = game.settings.get(MODULE_ID, SETTING_SUGGEST_FEATURES);
 
-                if (enableSuggestions) {
+                if (showNewFeatures) {
                     for (const packId of packsToQuery) {
                         const pack = game.packs.get(packId);
                         if (!pack) continue;
@@ -793,19 +783,18 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 possibleMatches.sort((a, b) => a.name.localeCompare(b.name));
 
-                allSuggestedFeatures = [];
+                allNewFeatures = [];
                 
                 const allItems = actor.items instanceof Array ? actor.items : actor.items.contents || [];
                 const isOwned = (name) => allItems.some(i => i.name === name);
 
-                if (this.overrides.suggestedFeatures === null) {
-                    this.overrides.suggestedFeatures = [];
+                if (this.overrides.newFeatures === null) {
+                    this.overrides.newFeatures = [];
                 }
 
                 const addedSet = new Set();
-                const isRuleSuggested = (name) => ruleSuggestions.includes(name);
 
-                const selectedNames = [...this.overrides.suggestedFeatures].sort((a, b) => a.localeCompare(b));
+                const selectedNames = [...this.overrides.newFeatures].sort((a, b) => a.localeCompare(b));
                 
                 for (const name of selectedNames) {
                     if (!isOwned(name)) {
@@ -822,10 +811,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                             };
                         }
 
-                        allSuggestedFeatures.push({
+                        allNewFeatures.push({
                             name: itemData.name,
                             checked: true,
-                            isRuleSuggestion: isRuleSuggested(itemData.name),
                             img: itemData.img,
                             uuid: itemData.uuid || itemData._id,
                             description: itemData.system?.description || "",
@@ -841,10 +829,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     if (addedSet.has(name)) continue;
 
                     if (!isOwned(name)) {
-                        allSuggestedFeatures.push({
+                        allNewFeatures.push({
                             name: item.name,
                             checked: false,
-                            isRuleSuggestion: isRuleSuggested(item.name),
                             img: item.img,
                             uuid: item.uuid || item._id,
                             description: item.system?.description || "",
@@ -902,7 +889,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             currentStats,
             previewStats,
             featurePreviewData,
-            allSuggestedFeatures,
+            allNewFeatures,
             tiers,
             linkData,
             sourceOptions,
@@ -916,8 +903,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             portraitImg: portraitImg,
             isHorde: isHorde,
             actorTypeLabel: actorTypeLabel,
-            suggestedFeaturesTypeOptions,
-            suggestedFeaturesTierOptions,
+            newFeaturesTypeOptions,
+            newFeaturesTierOptions,
             isPhysical,
             isMagical,
             criticalOptions,
@@ -1187,13 +1174,13 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     _onChangeSuggestedType(event, target) {
         event.preventDefault();
-        this.overrides.suggestedFeaturesType = target.value;
+        this.overrides.newFeaturesType = target.value;
         this.render();
     }
 
     _onChangeSuggestedTier(event, target) {
         event.preventDefault();
-        this.overrides.suggestedFeaturesTier = target.value;
+        this.overrides.newFeaturesTier = target.value;
         this.render();
     }
 
@@ -1334,16 +1321,16 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const featureName = target.dataset.feature;
         const isChecked = target.checked;
 
-        if (!this.overrides.suggestedFeatures) {
-            this.overrides.suggestedFeatures = [];
+        if (!this.overrides.newFeatures) {
+            this.overrides.newFeatures = [];
         }
 
         if (isChecked) {
-            if (!this.overrides.suggestedFeatures.includes(featureName)) {
-                this.overrides.suggestedFeatures.push(featureName);
+            if (!this.overrides.newFeatures.includes(featureName)) {
+                this.overrides.newFeatures.push(featureName);
             }
         } else {
-            this.overrides.suggestedFeatures = this.overrides.suggestedFeatures.filter(f => f !== featureName);
+            this.overrides.newFeatures = this.overrides.newFeatures.filter(f => f !== featureName);
         }
     }
 
@@ -1425,10 +1412,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         
         getActionDamageParts(sys.attack?.damage).forEach((p, idx) => {
             if(p.value) {
-                let formula = p.value.custom?.enabled ? p.value.custom.formula : 
-                    (p.value.dice ? `${p.value.flatMultiplier || 1}${p.value.dice}${p.value.bonus ? (p.value.bonus > 0 ? '+'+p.value.bonus : p.value.bonus) : ''}` : p.value.flatMultiplier);
-                
-                damageParts.push(formula); 
+                const formula = formatDamageValue(p.value);
+
+                damageParts.push(formula);
                 if (idx === 0) {
                     firstDamageFormula = formula;
                     const types = getDamageTypeList(p);
@@ -1440,8 +1426,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
             if (p.valueAlt) {
-                let formula = p.valueAlt.custom?.enabled ? p.valueAlt.custom.formula : 
-                    (p.valueAlt.dice ? `${p.valueAlt.flatMultiplier || 1}${p.valueAlt.dice}${p.valueAlt.bonus ? (p.valueAlt.bonus > 0 ? '+'+p.valueAlt.bonus : p.valueAlt.bonus) : ''}` : p.valueAlt.flatMultiplier);
+                const formula = formatDamageValue(p.valueAlt);
                 halvedParts.push(formula);
                 if (idx === 0) firstHalvedFormula = formula;
             }
@@ -1496,16 +1481,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorData = actor.toObject();
         const typeKey = (actorData.system.type || "standard").toLowerCase();
         
-        let suggestionTypeKey = typeKey;
-        if (this.overrides.suggestedFeaturesType && this.overrides.suggestedFeaturesType !== "default") {
-            suggestionTypeKey = this.overrides.suggestedFeaturesType;
-        }
-
-        let suggestionTier = targetTier;
-        if (this.overrides.suggestedFeaturesTier && this.overrides.suggestedFeaturesTier !== "default") {
-            suggestionTier = parseInt(this.overrides.suggestedFeaturesTier);
-        }
-
         if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: "Unknown Type" }, features: [], structuredFeatures: [] };
         
         const benchmark = ADVERSARY_BENCHMARKS[typeKey].tiers[`tier_${targetTier}`];
@@ -1794,7 +1769,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             stats: sim, 
             features: featureLog, 
             structuredFeatures: structuredFeatures,
-            suggestedFeatures: [] 
+            newFeatures: [] 
         };
     }
 }

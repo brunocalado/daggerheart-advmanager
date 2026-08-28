@@ -1,23 +1,23 @@
 <!-- NEW FEATURES SECTION -->
-{{#if allSuggestedFeatures.length}}
+{{#if allNewFeatures.length}}
 <div class="features-preview-section">
     <div class="lm-new-features-header">
         <h4 class="features-header lm-new-features-title">New Features</h4>
         <div class="feature-header-controls">
             <select class="suggestion-tier-select">
-                {{#each suggestedFeaturesTierOptions}}
+                {{#each newFeaturesTierOptions}}
                     <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
                 {{/each}}
             </select>
             <select class="suggestion-type-select">
-                {{#each suggestedFeaturesTypeOptions}}
+                {{#each newFeaturesTypeOptions}}
                     <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
                 {{/each}}
             </select>
         </div>
     </div>
     <div class="feature-changes-list">
-        {{#each allSuggestedFeatures}}
+        {{#each allNewFeatures}}
             <div class="feature-change-row new-feature-row" {{#if this.description}}data-tooltip="{{this.description}}"{{/if}}>
                 <label class="feature-label new-feature-label">
                     <input type="checkbox" class="feature-checkbox new-feature-checkbox" data-feature="{{this.name}}" {{#if this.checked}}checked{{/if}}>
@@ -39,10 +39,6 @@
                         {{/if}}
                         {{#if this.tags.homebrew}}
                             <span class="dh-tag tag-homebrew">{{this.tags.homebrew}}</span>
-                        {{/if}}
-
-                        {{#if this.isRuleSuggestion}}
-                            <i class="fas fa-star new-feature-star" title="Recommended"></i>
                         {{/if}}
                     </a>
                 </label>

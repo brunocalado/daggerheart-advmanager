@@ -18,8 +18,8 @@ import { MODULE_ID } from "./constants.js";
 export { MODULE_ID };
 export const SETTING_CHAT_LOG = "enableChatLog";
 export const SETTING_UPDATE_EXP = "autoUpdateExperiences";
-export const SETTING_ADD_FEATURES = "autoAddFeatures";
-export const SETTING_SUGGEST_FEATURES = "enableFeatureSuggestions"; 
+// Setting key kept as-is so worlds don't lose the value they already saved.
+export const SETTING_SUGGEST_FEATURES = "enableFeatureSuggestions";
 export const SETTING_IMPORT_FOLDER = "importFolderName";
 export const SETTING_ENCOUNTER_FOLDER = "encounterFolderName";
 export const SETTING_EXTRA_COMPENDIUMS = "extraCompendiums";
@@ -49,6 +49,27 @@ function gmOnly(fn) {
         }
         return fn.apply(this, args);
     };
+}
+
+/**
+ * Rebuilds the Compendium Statistics census and downloads it, to be committed as
+ * data/compendium-stats-core.json.
+ *
+ * Run it once per Daggerheart release. Until the bundled file matches the installed system, the
+ * statistics window falls back to reading every adversary document — about a minute of loading
+ * on each open — and says so.
+ * @returns {Promise<Object>} The snapshot that was downloaded.
+ */
+async function buildStatsSnapshot() {
+    ui.notifications.info("Adversary Manager | Building the adversary statistics snapshot...");
+
+    const snapshot = await CompendiumStats.buildCoreSnapshot();
+    foundry.utils.saveDataToFile(JSON.stringify(snapshot), "application/json", "compendium-stats-core.json");
+
+    const msg = `Adversary Manager | Snapshot built for ${snapshot.system} ${snapshot.systemVersion} (${snapshot.adversaryCount} adversaries). Save it into the module as data/compendium-stats-core.json.`;
+    ui.notifications.info(msg);
+    console.log(msg);
+    return snapshot;
 }
 
 function manage() {
@@ -124,18 +145,9 @@ Hooks.once("init", () => {
         default: true
     });
 
-    game.settings.register(MODULE_ID, SETTING_ADD_FEATURES, {
-        name: "Auto-Add Features on Tier Up",
-        hint: "If enabled, randomly suggests adding features when leveling up.",
-        scope: "world",
-        config: true,
-        type: Boolean,
-        default: true
-    });
-
     game.settings.register(MODULE_ID, SETTING_SUGGEST_FEATURES, {
-        name: "Enable Suggested Features",
-        hint: "If enabled, shows the 'New Suggested Features' section in the Live Manager preview.",
+        name: "Show New Features Panel",
+        hint: "If enabled, the Live Manager preview lists the features available for the target tier and type, so you can tick the ones to add.",
         scope: "world",
         config: true,
         type: Boolean,
@@ -225,7 +237,8 @@ Hooks.once("ready", () => {
         DiceProbability: () => new DiceProbability().render(true),
         EncounterBuilder: gmOnly(() => new EncounterBuilder().render(true)),
         ImportFeatures: importFeatures,
-        UpdateFeatures: gmOnly(() => new FeatureUpdater().render(true))
+        UpdateFeatures: gmOnly(() => new FeatureUpdater().render(true)),
+        BuildStatsSnapshot: gmOnly(buildStatsSnapshot)
     };
     console.log("Adversary Manager | Ready. Use AM.Manage() to start.");
 });
