@@ -8,7 +8,7 @@
 import { ADVERSARY_BENCHMARKS, PC_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID } from "./constants.js";
 import { SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SKULL_IMAGE_PATH } from "./module.js";
-import { prepareDocumentCreateData } from "./foundry-compat.js";
+import { prepareDocumentCreateData, getCompendiumSource } from "./foundry-compat.js";
 
 // --- Utility Parsers ---
 
@@ -660,7 +660,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
             const isHorde = newName.match(/^Horde\s*\((.+)\)$/i);
 
             let uiImg = itemData.img;
-            let uiUuid = itemData.flags?.core?.sourceId || "";
+            let uiUuid = getCompendiumSource(itemData);
             let type = "name_override";
 
             if (isMinion) {
@@ -740,7 +740,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
                         from: itemData.name,
                         to: newName,
                         img: templates.horde?.img || itemData.img,
-                        uuid: templates.hordeUuid || itemData.uuid || itemData.flags?.core?.sourceId || ""
+                        uuid: templates.hordeUuid || itemData.uuid || getCompendiumSource(itemData)
                     });
                 }
 
@@ -783,7 +783,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
                         from: itemData.name,
                         to: newName,
                         img: templates.minion?.img || itemData.img,
-                        uuid: templates.minionUuid || itemData.uuid || itemData.flags?.core?.sourceId || ""
+                        uuid: templates.minionUuid || itemData.uuid || getCompendiumSource(itemData)
                     });
                 }
             }
@@ -925,7 +925,10 @@ export async function handleNewFeatures(actor, changeLog, featureNames = null) {
             continue;
         }
 
-        if (sourceUuid) foundry.utils.setProperty(featureData, "flags.core.sourceId", sourceUuid);
+        // Record provenance in the v13+ location. prepareDocumentCreateData already carries it
+        // over from fromCompendium(); this also covers the Minion (X) template path, which is
+        // renamed after cloning. flags.core.sourceId is the deprecated spot the system ignores.
+        if (sourceUuid) foundry.utils.setProperty(featureData, "_stats.compendiumSource", sourceUuid);
 
         toCreate.push(featureData);
 

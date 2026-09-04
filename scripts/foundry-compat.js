@@ -46,7 +46,25 @@ export function prepareDocumentCreateData(document, collection = null, updateDat
 
     data = foundry.utils.deepClone(data);
     delete data._id;
+
+    // Drop the stale _stats block (timestamps, author, core/system versions) that v14 rejects on
+    // create — but keep compendiumSource. That is the provenance the system's "Update to latest
+    // compendium version" tool (Daggerheart 2.9+) and this module's change-log links read;
+    // fromCompendium() populates it, a plain toObject() carries whatever the source already had.
+    const compendiumSource = data._stats?.compendiumSource ?? null;
     delete data._stats;
+    if (compendiumSource) data._stats = { compendiumSource };
 
     return foundry.utils.mergeObject(data, updateData, { inplace: false });
+}
+
+/**
+ * Reads a document's compendium provenance, preferring the v13+ `_stats.compendiumSource` and
+ * falling back to the legacy `flags.core.sourceId` that older data — and older versions of this
+ * module — wrote. Returns "" when nothing is recorded.
+ * @param {Document|Object|null|undefined} data - A document or its source data.
+ * @returns {string} A compendium uuid, or "".
+ */
+export function getCompendiumSource(data) {
+    return data?._stats?.compendiumSource || data?.flags?.core?.sourceId || "";
 }

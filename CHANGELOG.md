@@ -1,3 +1,21 @@
+# 0.3.5
+
+Checked against Daggerheart 2.9.2. The module reads and writes adversary data paths and never
+calls the system's JavaScript API, so the 2.9.0–2.9.2 changes (custom/homebrew resources on
+features and actions, `1d12h + 1d12f` roll formulas, the `Loot` → `Item` label rename) leave it
+untouched — the adversary and feature schema the module depends on is unchanged. Verified in a
+live 2.9.2 world: a full tier-up, feature add and adversary import all run clean.
+
+- [Changed] Compendium Statistics census (`data/compendium-stats-core.json`) rebuilt against 2.9.2. The stat, damage and feature data is identical to the 2.8.2 census — only the version stamp moved — but matching it restores the instant-open path instead of the ~70s live recalculation.
+
+Foundry moved a document's "which compendium entry is this a copy of" marker from
+`flags.core.sourceId` to `_stats.compendiumSource` several releases ago. The module still wrote
+the old one, which v14 treats as deprecated and which the system's "Update to latest compendium
+version" tool (added in Daggerheart 2.9.0) does not read.
+
+- [Fixed] Features added on a tier-up now record their origin in `_stats.compendiumSource`. They show up correctly in the system's compendium-refresh tool, and the feature links in the change log keep working. Older features that still carry the legacy flag are read either way.
+- [Changed] Adversaries imported through the Encounter Builder now carry the same origin marker, so the system's compendium-refresh tool recognises them too.
+
 # 0.3.4
 
 Daggerheart 2.8 folded the Hope & Fear adversaries into the system compendium, taking it from 129

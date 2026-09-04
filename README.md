@@ -61,8 +61,10 @@ The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries 
 
 <p align="center"><img width="400" src="docs/view-diceprob.webp"></p>
 
-* **Live Analysis:** Instantly calculate success, failure, and critical hit chances for Duality Dice rolls.
+* **Live Analysis:** Instantly calculate success, failure, and critical hit chances.
+* **Two Modes:** Duality Dice (2d12, with doubles as criticals) or a straight D20 roll with a configurable critical threshold.
 * **Flexible Options:** Supports Advantage, Disadvantage, and flat numerical modifiers.
+* **Adversary-Aware:** Picks up the Difficulty from a selected Adversary token.
 * **Chat Integration:** Send detailed probability result cards to the chat log.
 
 ## ⚙️ Usage
