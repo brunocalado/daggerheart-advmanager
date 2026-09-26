@@ -1,3 +1,11 @@
+/*!
+ * Daggerheart: Adversary Manager
+ * 2025 https://github.com/brunocalado
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3.
+ */
+
 /**
  * Feature importer for Daggerheart Adversary Manager.
  * Reads Actor compendiums, extracts embedded items, and creates organized
@@ -5,7 +13,7 @@
  */
 
 // Items that should ALWAYS be imported, even if they exist in the folder
-const ALWAYS_DUPLICATE = [
+export const ALWAYS_DUPLICATE = [
     "Scapegoat",
     "From Above",
     "Mind Dance",
@@ -16,7 +24,7 @@ const ALWAYS_DUPLICATE = [
 ];
 
 // Colors for Daggerheart Adversary Types folders
-const TYPE_COLORS = {
+export const TYPE_COLORS = {
     "Bruiser": "#4a0404",      // Deep Blood Red
     "Horde": "#0f3d0f",        // Dark Forest Green
     "Leader": "#5c4905",       // Dark Bronze/Brown
@@ -38,6 +46,19 @@ const TYPE_COLORS = {
 function capitalize(str) {
     if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+/**
+ * Determines the feature category (Action, Reaction, Passive) based on featureForm.
+ * Shared with tools/build-features.mjs, which rebuilds the all-features compendium offline.
+ * @param {Object} item - The item document or its source data.
+ * @returns {string} Category name.
+ */
+export function getFeatureCategory(item) {
+    const form = String(item.system?.featureForm || "").toLowerCase().trim();
+    if (form.includes("reaction")) return "Reaction";
+    if (form.includes("action")) return "Action";
+    return "Passive";
 }
 
 /**
@@ -108,18 +129,6 @@ export async function importFeatures(compendiumId, rootFolderName, customTag) {
 
         folderCache[cacheKey] = folder;
         return folder;
-    }
-
-    /**
-     * Determines the feature category (Action, Reaction, Passive) based on featureForm.
-     * @param {Item} item - The item document.
-     * @returns {string} Category name.
-     */
-    function getFeatureCategory(item) {
-        const form = String(item.system?.featureForm || "").toLowerCase().trim();
-        if (form.includes("reaction")) return "Reaction";
-        if (form.includes("action")) return "Action";
-        return "Passive";
     }
 
     /**

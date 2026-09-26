@@ -187,20 +187,6 @@ export function getDamagePartsArray(parts) {
 }
 
 /**
- * Reports whether an action's damage object still uses the pre-2.6 `parts` container.
- * Daggerheart 2.6 replaced `damage.parts` with `damage.main` (the hitPoints part, which also
- * carries `direct`/`includeBase`/`groupAttack`) plus `damage.resources` (every other applyTo).
- * The system migrates `parts` away on load, so anything written to that path is silently
- * dropped by schema cleaning — hence the explicit branch instead of writing both shapes.
- * @param {Object|null|undefined} damage - An action's `damage` object.
- * @returns {boolean} True when the legacy `parts` container is the one in use.
- */
-export function isLegacyDamageSchema(damage) {
-    if (!damage) return false;
-    return damage.main === undefined && damage.resources === undefined && damage.parts !== undefined;
-}
-
-/**
  * Resolves an action's damage container into a flat list of parts, main/hitPoints part first.
  * Parts are returned by reference so callers can keep mutating them in place.
  * @param {Object|null|undefined} damage - An action's `damage` object.
@@ -208,7 +194,6 @@ export function isLegacyDamageSchema(damage) {
  */
 export function getActionDamageParts(damage) {
     if (!damage) return [];
-    if (isLegacyDamageSchema(damage)) return getDamagePartsArray(damage.parts);
 
     const parts = [];
     if (damage.main) parts.push(damage.main);
@@ -241,27 +226,24 @@ export function getDamageTypeList(part) {
 
 /**
  * Reports how many dice a damage value actually rolls.
- * A flat attack is stored two ways in the system's own data: with no die at all, or — the shape
- * the Hope & Fear adversaries use — as `flatMultiplier: 0` with the die string left in place.
- * So the die count, never the presence of `dice`, is what decides whether anything is rolled.
+ * The die field is required, so a flat attack is stored as `flatMultiplier: 0` with the die
+ * string left in place — the die count, never the presence of `dice`, decides what is rolled.
  * @param {Object|null|undefined} value - A damage part's `value` or `valueAlt`.
  * @returns {number} Number of dice rolled; 0 for flat damage.
  */
 export function getDiceCount(value) {
-    if (!value?.dice) return 0;
+    if (!value) return 0;
     const count = value.flatMultiplier;
     return (count === undefined || count === null) ? 1 : (Number(count) || 0);
 }
 
 /**
- * Reads the flat damage number out of a value that rolls no dice. Pre-2.6 data keeps it in
- * `flatMultiplier` with an empty die; Hope & Fear data keeps it in `bonus` with the die zeroed.
+ * Reads the flat damage number out of a value that rolls no dice: it lives in `bonus`.
  * @param {Object|null|undefined} value - A damage part's `value` or `valueAlt`.
  * @returns {number} The flat damage dealt.
  */
 export function getFlatDamage(value) {
-    if (!value) return 0;
-    return value.dice ? (Number(value.bonus) || 0) : (Number(value.flatMultiplier) || 0);
+    return Number(value?.bonus) || 0;
 }
 
 /**
@@ -282,20 +264,17 @@ export function formatDamageValue(value) {
 }
 
 /**
- * Reads the "direct damage" flag, which moved onto the main part in Daggerheart 2.6.
+ * Reads the "direct damage" flag, which lives on the main part.
  * @param {Object|null|undefined} damage - An action's `damage` object.
  * @returns {boolean}
  */
 export function getDamageDirect(damage) {
-    if (!damage) return false;
-    if (isLegacyDamageSchema(damage)) return damage.direct ?? false;
-    return damage.main?.direct ?? false;
+    return damage?.main?.direct ?? false;
 }
 
 /**
  * Builds the update payload that writes a mutated damage container back to an actor's attack.
- * `system.attack` is an ObjectField, so this merges rather than replacing sibling keys — which
- * lets us submit the whole container and stay agnostic about which schema shape it holds.
+ * `system.attack` is an ObjectField, so this merges rather than replacing sibling keys.
  * @param {Object|null|undefined} damage - The mutated `damage` object (from source data).
  * @returns {Object} Partial update data keyed by document path.
  */
@@ -304,18 +283,14 @@ export function buildAttackDamageUpdate(damage) {
 }
 
 /**
- * Sets the "direct damage" flag on a damage container, which moved onto the main part in
- * Daggerheart 2.6. Mutates `damage` in place so the caller can submit it as one payload.
+ * Sets the "direct damage" flag on a damage container's main part.
+ * Mutates `damage` in place so the caller can submit it as one payload.
  * @param {Object|null|undefined} damage - An action's `damage` object (from source data).
  * @param {boolean} value - The flag to store.
  * @returns {boolean} True when the flag had somewhere to go.
  */
 export function applyDirectDamage(damage, value) {
     if (!damage) return false;
-    if (isLegacyDamageSchema(damage)) {
-        damage.direct = value;
-        return true;
-    }
     // A null `main` means the adversary has no hitPoints damage to mark as direct.
     if (!damage.main) return false;
     damage.main.direct = value;
@@ -433,16 +408,9 @@ export function processDamageValue(val, newTier, currentTier, damageRolls) {
 
     } else {
         if (newDmg.die === null) {
-            // Written back in the shape it arrived in: pre-2.6 data carries the flat number in
-            // flatMultiplier with no die, Hope & Fear data keeps the die and carries it in bonus.
-            if (val.dice) {
-                val.flatMultiplier = 0;
-                val.bonus = newDmg.bonus;
-            } else {
-                val.flatMultiplier = newDmg.bonus;
-                val.dice = "";
-                val.bonus = null;
-            }
+            // The die field is required, so flat damage rolls zero of it and carries the number in bonus.
+            val.flatMultiplier = 0;
+            val.bonus = newDmg.bonus;
             newFormula = `${newDmg.bonus}`;
         } else {
             val.flatMultiplier = newDmg.count;
@@ -465,7 +433,7 @@ export function processDamageValue(val, newTier, currentTier, damageRolls) {
 
 /**
  * Iterates all damage parts of an attack, applying auto-scaling or forced overrides.
- * Handles Minion flat-damage and Horde halved-damage paths.
+ * Handles the Minion flat-damage path; Horde halved damage is scaled by scaleHordeDamage().
  * @param {Array|Object} parts - Damage part objects as an array or keyed object.
  * @param {number} newTier - Target tier.
  * @param {number} currentTier - Current tier.
@@ -493,7 +461,6 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
                     part.value.custom.enabled = true;
                     part.value.custom.formula = `${parsed.count}`;
                     part.value.flatMultiplier = parsed.count;
-                    part.value.dice = "";
                     part.value.bonus = null;
                 } else {
                     part.value.flatMultiplier = parsed.count;
@@ -559,7 +526,6 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
                         part.value.custom.enabled = true;
                         part.value.custom.formula = `${parsed.count}`;
                         part.value.flatMultiplier = parsed.count;
-                        part.value.dice = "";
                         part.value.bonus = null;
                     } else {
                         part.value.flatMultiplier = parsed.count;
@@ -579,20 +545,28 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
                 }
             }
         }
-        if (part.valueAlt && benchmark.halved_damage_x) {
-            const updateAlt = processDamageValue(part.valueAlt, newTier, currentTier, benchmark.halved_damage_x);
-            if (updateAlt) {
-                hasChanges = true;
-                changes.push({ ...updateAlt, labelSuffix: " (Alt)" });
-            }
-        }
     });
 
     return { hasChanges, changes };
 }
 
 /**
- * Processes a single feature item: scales damage actions, renames Horde/Minion features,
+ * Scales a horde's halved-attack formula. Since Daggerheart 2.10 it lives in
+ * `system.typeData.hordeDamage` as a plain formula string; the attack's `valueAlt` still sits in
+ * compendium data but the system no longer reads it.
+ * @param {string} formula - Current `typeData.hordeDamage`.
+ * @param {number} newTier - Target tier.
+ * @param {number} currentTier - Current tier.
+ * @param {string[]} halvedRolls - Benchmark `halved_damage_x` formulas.
+ * @returns {{from: string, to: string}|null} null when unchanged or not a dice formula.
+ */
+export function scaleHordeDamage(formula, newTier, currentTier, halvedRolls) {
+    if (!formula || !halvedRolls) return null;
+    return processDamageValue({ custom: { enabled: true, formula } }, newTier, currentTier, halvedRolls);
+}
+
+/**
+ * Processes a single feature item: scales damage actions, renames Minion features,
  * applies manual name/damage overrides. Returns update payload and structured change data.
  * @param {Object} itemData - The item data object.
  * @param {number} newTier - Target tier.
@@ -601,7 +575,7 @@ export function updateDamageParts(parts, newTier, currentTier, benchmark, forceF
  * @param {Array} changeLog - Array to push change log messages into.
  * @param {Object} nameOverrides - Map of itemId -> new name.
  * @param {Object} damageOverrides - Map of itemId -> damage formula override.
- * @param {Object} templates - Template data for Minion/Horde features.
+ * @param {Object} templates - Template data for the Minion feature.
  * @returns {{update: Object|null, structured: Array}|null}
  */
 export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, changeLog = [], nameOverrides = {}, damageOverrides = {}, templates = {}) {
@@ -644,7 +618,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
         }
     }
 
-    // 2. Process Name Updates (Horde/Minion)
+    // 2. Process Name Updates (Minion)
     let newName = itemData.name;
     let updateDesc = false;
     let minionVal = null;
@@ -657,7 +631,6 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
             hasChanges = true;
 
             const isMinion = newName.match(/^Minion\s*\((\d+)\)$/i);
-            const isHorde = newName.match(/^Horde\s*\((.+)\)$/i);
 
             let uiImg = itemData.img;
             let uiUuid = getCompendiumSource(itemData);
@@ -667,10 +640,6 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
                 type = "name_minion";
                 uiImg = templates.minion?.img || uiImg;
                 uiUuid = templates.minionUuid || uiUuid;
-            } else if (isHorde) {
-                type = "name_horde";
-                uiImg = templates.horde?.img || uiImg;
-                uiUuid = templates.hordeUuid || uiUuid;
             }
 
             structuredChanges.push({
@@ -689,82 +658,6 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
         }
     } else {
         // Automatic Calculation
-
-        // Horde Logic
-        const hordeMatch = itemData.name.trim().match(/^Horde(\s*\((.+)\))?$/i);
-        if (hordeMatch) {
-            let newDmgStr = null;
-
-            if (manualDamage) {
-                if (typeof manualDamage === 'string') {
-                    newDmgStr = manualDamage;
-                }
-            } else {
-                const oldDmgInName = hordeMatch[2];
-                if (oldDmgInName && oldDmgInName !== "X") {
-                    const parsed = parseDamageString(oldDmgInName);
-                    if (parsed) {
-                        let bonusInput = parsed.bonus;
-                        if (parsed.die === null) bonusInput = parsed.count;
-
-                        const newDmg = calculateNewDamage(
-                            parsed.die,
-                            bonusInput,
-                            newTier,
-                            currentTier,
-                            benchmark.damage_rolls
-                        );
-
-                        if (newDmg.die === null) {
-                            newDmgStr = `${newDmg.bonus}`;
-                        } else {
-                            const sign = newDmg.bonus >= 0 ? "+" : "";
-                            const bonusStr = newDmg.bonus !== 0 ? `${sign}${newDmg.bonus}` : "";
-                            newDmgStr = `${newDmg.count}${newDmg.die}${bonusStr}`;
-                        }
-                    }
-                } else if (benchmark.halved_damage_x) {
-                     newDmgStr = benchmark.halved_damage_x[0];
-                }
-            }
-
-            if (newDmgStr) {
-                newName = `Horde (${newDmgStr})`;
-                if (itemData.name !== newName) {
-                    changeLog.push(`<strong>Name Update:</strong> ${itemData.name} -> ${newName}`);
-                    hasChanges = true;
-                    structuredChanges.push({
-                        itemId: itemData._id,
-                        itemName: itemData.name,
-                        type: "name_horde",
-                        from: itemData.name,
-                        to: newName,
-                        img: templates.horde?.img || itemData.img,
-                        uuid: templates.hordeUuid || itemData.uuid || getCompendiumSource(itemData)
-                    });
-                }
-
-                // Replace [X] in description with new damage string
-                if (system.description) {
-                     if (system.description.includes("[X]")) {
-                         system.description = system.description.replace(/\[X\]/g, newDmgStr);
-                         hasChanges = true;
-                     } else if (system.description.includes("(X)")) {
-                         system.description = system.description.replace(/\(X\)/g, `(${newDmgStr})`);
-                         hasChanges = true;
-                     }
-                     else {
-                         const oldVal = hordeMatch[2];
-                         if (oldVal && oldVal !== "X" && system.description.includes(oldVal)) {
-                             const escaped = oldVal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                             const re = new RegExp(escaped, 'g');
-                             system.description = system.description.replace(re, newDmgStr);
-                             hasChanges = true;
-                         }
-                     }
-                }
-            }
-        }
 
         // Minion Logic (Renaming Feature)
         const minionMatch = itemData.name.trim().match(/^Minion(\s*\((\d+)\))?$/i);
@@ -925,9 +818,9 @@ export async function handleNewFeatures(actor, changeLog, featureNames = null) {
             continue;
         }
 
-        // Record provenance in the v13+ location. prepareDocumentCreateData already carries it
+        // Record provenance. prepareDocumentCreateData already carries it
         // over from fromCompendium(); this also covers the Minion (X) template path, which is
-        // renamed after cloning. flags.core.sourceId is the deprecated spot the system ignores.
+        // renamed after cloning.
         if (sourceUuid) foundry.utils.setProperty(featureData, "_stats.compendiumSource", sourceUuid);
 
         toCreate.push(featureData);
@@ -1024,8 +917,6 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
     }
 
     // 3. Update Sheet Damage (Main Attack)
-    let calculatedHalvedDamage = null;
-
     const sheetDamage = actorData.system.attack?.damage
         ? foundry.utils.deepClone(actorData.system.attack.damage)
         : null;
@@ -1039,7 +930,6 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                 if (part.value) {
                     if (parsed.die === null) {
                         part.value.flatMultiplier = parsed.count;
-                        part.value.dice = "";
                         part.value.bonus = null;
                     } else {
                         part.value.flatMultiplier = parsed.count;
@@ -1052,39 +942,12 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
             }
         }
 
-        if (overrides.halvedDamageFormula && sheetDamagePartList.length > 0) {
-             calculatedHalvedDamage = overrides.halvedDamageFormula;
-             const parsed = parseDamageString(overrides.halvedDamageFormula);
-             if (parsed && sheetDamagePartList[0].valueAlt) {
-                 const part = sheetDamagePartList[0];
-                 if (part.valueAlt) {
-                     if (parsed.die === null) {
-                        part.valueAlt.flatMultiplier = parsed.count;
-                        part.valueAlt.dice = "";
-                        part.valueAlt.bonus = null;
-                     } else {
-                        part.valueAlt.flatMultiplier = parsed.count;
-                        part.valueAlt.dice = parsed.die;
-                        part.valueAlt.bonus = parsed.bonus;
-                     }
-                 }
-             }
-        }
-
         const result = updateDamageParts(sheetDamagePartList, newTier, currentTier, benchmark);
         if (result.hasChanges) {
             Object.assign(updateData, buildAttackDamageUpdate(sheetDamage));
             result.changes.forEach(c => {
                 statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
-                if (c.labelSuffix === " (Alt)" && !overrides.halvedDamageFormula) {
-                     calculatedHalvedDamage = c.to;
-                }
             });
-        }
-
-        if (!calculatedHalvedDamage && sheetDamagePartList.length > 0 && sheetDamagePartList[0].valueAlt) {
-            const part = sheetDamagePartList[0];
-            calculatedHalvedDamage = formatDamageValue(part.valueAlt);
         }
 
         // Apply Manual Overrides again to be safe
@@ -1094,7 +957,6 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                  const part = sheetDamagePartList[0];
                  if (parsed.die === null) {
                     part.value.flatMultiplier = parsed.count;
-                    part.value.dice = "";
                     part.value.bonus = null;
                     if (!part.value.custom) part.value.custom = {};
                     part.value.custom.enabled = true;
@@ -1108,26 +970,16 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                  Object.assign(updateData, buildAttackDamageUpdate(sheetDamage));
             }
         }
+    }
 
-        if (overrides.halvedDamageFormula && sheetDamagePartList.length > 0) {
-            const parsed = parseDamageString(overrides.halvedDamageFormula);
-            if (parsed && sheetDamagePartList[0].valueAlt) {
-                 const part = sheetDamagePartList[0];
-                 if (parsed.die === null) {
-                    part.valueAlt.flatMultiplier = parsed.count;
-                    part.valueAlt.dice = "";
-                    part.valueAlt.bonus = null;
-                    if (!part.valueAlt.custom) part.valueAlt.custom = {};
-                    part.valueAlt.custom.enabled = true;
-                    part.valueAlt.custom.formula = String(parsed.count);
-                 } else {
-                    part.valueAlt.flatMultiplier = parsed.count;
-                    part.valueAlt.dice = parsed.die;
-                    part.valueAlt.bonus = parsed.bonus;
-                    if (part.valueAlt.custom) part.valueAlt.custom.enabled = false;
-                 }
-                 Object.assign(updateData, buildAttackDamageUpdate(sheetDamage));
-            }
+    const hordeDamage = actorData.system.typeData?.hordeDamage;
+    if (hordeDamage) {
+        const newHordeDamage = overrides.halvedDamageFormula
+            || scaleHordeDamage(hordeDamage, newTier, currentTier, benchmark.halved_damage_x)?.to
+            || hordeDamage;
+        if (newHordeDamage !== hordeDamage) {
+            updateData["system.typeData.hordeDamage"] = newHordeDamage;
+            statsLog.push(`<strong>Halved Dmg:</strong> ${hordeDamage} -> ${newHordeDamage}`);
         }
     }
 
@@ -1210,58 +1062,33 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
     // 5. Update Features (Items)
     const customPack = game.packs.get("daggerheart-advmanager.custom-features");
     let cleanMinion = null;
-    let cleanHorde = null;
     let minionUuid = null;
-    let hordeUuid = null;
 
     if (customPack) {
         const index = await customPack.getIndex();
         const minionIdx = index.find(i => i.name === "Minion (X)");
-        const hordeIdx = index.find(i => i.name === "Horde (X)");
 
         if (minionIdx) {
             const doc = await customPack.getDocument(minionIdx._id);
             cleanMinion = doc.toObject();
             minionUuid = doc.uuid;
         }
-        if (hordeIdx) {
-            const doc = await customPack.getDocument(hordeIdx._id);
-            cleanHorde = doc.toObject();
-            hordeUuid = doc.uuid;
-        }
     }
 
-    if (actorData.items) {
+    if (actorData.items && cleanMinion) {
         for (const item of actorData.items) {
-            const isMinion = item.name.trim().match(/^Minion(\s*\(.*\))?$/i);
-            const isHorde = item.name.trim().match(/^Horde(\s*\(.*\))?$/i);
-
-            if (isMinion && cleanMinion) {
-                const oldId = item._id;
-                foundry.utils.mergeObject(item, cleanMinion);
-                item._id = oldId;
-            } else if (isHorde && cleanHorde) {
-                const oldId = item._id;
-                foundry.utils.mergeObject(item, cleanHorde);
-                item._id = oldId;
-            }
+            if (!item.name.trim().match(/^Minion(\s*\(.*\))?$/i)) continue;
+            // The template brings the "[X]" description to fill in. Its "Minion (X)" name must not
+            // survive the merge: processFeatureUpdate only recognises "Minion (N)", and the change
+            // log should read from the actor's real threshold.
+            const { _id, name } = item;
+            foundry.utils.mergeObject(item, cleanMinion);
+            Object.assign(item, { _id, name });
         }
     }
 
     const featureNames = (overrides.features && overrides.features.names) ? overrides.features.names : {};
     const featureDamage = (overrides.features && overrides.features.damage) ? overrides.features.damage : {};
-
-    if (calculatedHalvedDamage) {
-        if (actorData.items) {
-            for (const item of actorData.items) {
-                if (item.name.trim().match(/^Horde(\s*\(.*\))?$/i)) {
-                    if (!featureDamage[item._id]) {
-                        if (!featureDamage[item._id]) featureDamage[item._id] = calculatedHalvedDamage;
-                    }
-                }
-            }
-        }
-    }
 
     if (overrides.minionThreshold) {
         if (actorData.items) {
@@ -1286,7 +1113,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                 featureLog,
                 featureNames,
                 featureDamage,
-                { minion: cleanMinion, horde: cleanHorde, minionUuid, hordeUuid }
+                { minion: cleanMinion, minionUuid }
             );
             if (result) {
                 if (result.update) itemsToUpdate.push(result.update);

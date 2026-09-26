@@ -75,19 +75,13 @@ function loadAdversaries(dirs) {
 }
 
 /**
- * Normalizes the damage container across schema versions. Daggerheart 2.6 replaced
- * `damage.parts` with `damage.main` plus a `damage.resources` map.
+ * Lists a damage container's parts: `damage.main` first, then the `damage.resources` map.
  * @param {Object|null} damage - Raw damage container.
  * @returns {Object[]} Damage part objects.
  */
 function damageParts(damage) {
     if (!damage || typeof damage !== "object") return [];
-    if (damage.main !== undefined || damage.resources !== undefined) {
-        const resources = damage.resources ?? {};
-        return [damage.main, ...Object.values(resources)].filter(p => p && typeof p === "object");
-    }
-    const parts = damage.parts ?? {};
-    return Object.values(parts).filter(p => p && typeof p === "object");
+    return [damage.main, ...Object.values(damage.resources ?? {})].filter(p => p && typeof p === "object");
 }
 
 /**
@@ -102,7 +96,7 @@ function formula(value) {
     // A flat attack is stored as flatMultiplier 0 with the die field left behind, so the die
     // count — not the presence of a `dice` string — is what decides whether anything is rolled.
     const count = value.flatMultiplier ?? 1;
-    if (!value.dice || count === 0) return bonus ? String(bonus) : null;
+    if (count === 0) return bonus ? String(bonus) : null;
     const sign = bonus > 0 ? `+${bonus}` : (bonus < 0 ? String(bonus) : "");
     return `${count}${value.dice}${sign}`;
 }
@@ -145,7 +139,7 @@ function project(doc) {
         stress: sys.resources?.stress?.max ?? null,
         attack: sys.attack?.roll?.bonus ?? null,
         damage: main ? formula(main.value) : null,
-        halved: main?.valueAlt ? formula(main.valueAlt) : null,
+        halved: sys.typeData?.hordeDamage ?? null,
         experienceCount: experiences.length,
         experienceValues: experiences.map(e => e.value).filter(v => typeof v === "number"),
         experienceNames: experiences.map(e => e.name).filter(Boolean),

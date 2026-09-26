@@ -355,7 +355,10 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         if (sys.damageThresholds?.severe) tierData.severe.push(Number(sys.damageThresholds.severe));
         if (sys.resources?.hitPoints?.max) tierData.hp.push(Number(sys.resources.hitPoints.max));
         if (sys.resources?.stress?.max) tierData.stress.push(Number(sys.resources.stress.max));
-        if (sys.attack?.roll?.bonus !== undefined) tierData.attackMod.push(Number(sys.attack.roll.bonus));
+        // A FormulaField since Daggerheart 2.10: "4" as a string, and occasionally dice ("2d4"),
+        // which has no single modifier and would turn the whole range into NaN.
+        const attackMod = Number(sys.attack?.roll?.bonus);
+        if (sys.attack?.roll?.bonus !== undefined && Number.isFinite(attackMod)) tierData.attackMod.push(attackMod);
 
         // --- Experiences ---
         if (sys.experiences) {
@@ -373,10 +376,8 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         getActionDamageParts(sys.attack?.damage).forEach(part => {
             const formula = formatDamageValue(part.value);
             if (formula) tierData.damageRolls.add(formula);
-
-            const halved = formatDamageValue(part.valueAlt);
-            if (halved) tierData.halvedDamageRolls.add(halved);
         });
+        if (sys.typeData?.hordeDamage) tierData.halvedDamageRolls.add(sys.typeData.hordeDamage);
 
         // --- Features ---
         for (const item of actor.items ?? []) {

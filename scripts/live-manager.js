@@ -1,4 +1,4 @@
-import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, calculateHitChance, calculateHitChanceAgainst, updateSingleActor, getActionDamageParts, getMainDamagePart, getDamageDirect, getDamageTypeList, formatDamageValue, buildAttackDamageUpdate, applyDirectDamage } from "./damage-engine.js";
+import { getRollFromRange, getRollFromSignedRange, parseThresholdPair, parseDamageString, processDamageValue, processFeatureUpdate, scaleHordeDamage, calculateHitChance, calculateHitChanceAgainst, updateSingleActor, getActionDamageParts, getMainDamagePart, getDamageDirect, getDamageTypeList, formatDamageValue, buildAttackDamageUpdate, applyDirectDamage } from "./damage-engine.js";
 import { ADVERSARY_BENCHMARKS, ADVERSARY_EXPERIENCES } from "./rules.js";
 import { MODULE_ID } from "./constants.js";
 import { SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPENDIUMS, SETTING_LAST_SOURCE, SETTING_LAST_FILTER_TIER, SETTING_SUGGEST_FEATURES, SETTING_OPEN_SHEET_AFTER_APPLY, SETTING_OVERWRITE_WORLD_ACTOR, SKULL_IMAGE_PATH } from "./module.js";
@@ -614,7 +614,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 featurePreviewData = await Promise.all(simResult.structuredFeatures.map(async f => {
                     let overrideVal = undefined;
-                    if (f.type === 'damage' || f.type === 'name_horde') {
+                    if (f.type === 'damage') {
                          overrideVal = this.overrides.features.damage[f.itemId];
                     } else {
                          overrideVal = this.overrides.features.names[f.itemId];
@@ -623,8 +623,6 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     let displayFrom = f.from;
                     if (f.type === 'damage' || f.type === 'damage_readonly') {
                         displayFrom = `<strong>${f.itemName}</strong> <span class="old-value-sub">(${f.from})</span>`;
-                    } else if (f.type === 'name_horde') {
-                        displayFrom = `<strong>${f.from}</strong>`;
                     } else {
                         displayFrom = `<strong>${f.from}</strong>`;
                     }
@@ -632,15 +630,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     let featureOptions = null;
                     let optionsTooltip = ""; 
                     let damageStats = "";
-                    let isHordeFeature = false;
                     let valueToShow = overrideVal !== undefined ? overrideVal : f.to;
 
-                    if (f.type === 'name_horde') {
-                        isHordeFeature = true;
-                        valueToShow = simResult.stats.mainHalvedDamageRaw || "0"; 
-                    }
-
-                    if ((f.type === 'damage') && !isHordeFeature) {
+                    if (f.type === 'damage') {
                          const currentVal = this.overrides.features.damage[f.itemId]?.[f.from] || f.to;
                          valueToShow = currentVal;
                          featureOptions = damageOptions.map(d => ({
@@ -671,11 +663,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         originalName: displayFrom,
                         originalFormula: f.from,
                         newName: valueToShow,
-                        isRenamed: f.type.startsWith("name_") && f.type !== 'name_horde' && f.type !== 'name_minion',
+                        isRenamed: f.type.startsWith("name_") && f.type !== 'name_minion',
                         options: featureOptions,
                         optionsTooltip: optionsTooltip,
                         isMinionFeature: isMinionFeature,
-                        isHordeFeature: isHordeFeature,
                         isDamageReadonly: isDamageReadonly,
                         minionValue: minionValue,
                         img: itemData.img,
@@ -1425,12 +1416,12 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     }
                 }
             }
-            if (p.valueAlt) {
-                const formula = formatDamageValue(p.valueAlt);
-                halvedParts.push(formula);
-                if (idx === 0) firstHalvedFormula = formula;
-            }
         });
+
+        if (sys.typeData?.hordeDamage) {
+            firstHalvedFormula = sys.typeData.hordeDamage;
+            halvedParts.push(firstHalvedFormula);
+        }
 
         const attackMod = Number(sys.attack?.roll?.bonus) || 0;
         const hitChance = calculateHitChance(attackMod, tier);
@@ -1667,29 +1658,19 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
             
             if (index === 0) mainDamageRaw = rawVal;
-
-            if (part.valueAlt && frozenBenchmark.halved_damage_x) {
-                let rawHalved = "";
-                if (this.overrides.halvedDamageFormula) {
-                    rawHalved = this.overrides.halvedDamageFormula;
-                    halvedParts.push(`<span class="stat-changed">${this.overrides.halvedDamageFormula}</span>`);
-                } else {
-                    const result = processDamageValue(part.valueAlt, targetTier, currentTier, frozenBenchmark.halved_damage_x);
-                    if (result) {
-                        rawHalved = result.to;
-                        halvedParts.push(`<span class="stat-changed">${result.to}</span>`);
-                    } else {
-                         let existing = "";
-                         if (part.valueAlt.custom?.enabled) existing = part.valueAlt.custom.formula;
-                         else if (part.valueAlt.dice) existing = `${part.valueAlt.flatMultiplier||1}${part.valueAlt.dice}${part.valueAlt.bonus ? (part.valueAlt.bonus?'+'+part.valueAlt.bonus:part.valueAlt.bonus):''}`;
-                         else existing = part.valueAlt.flatMultiplier;
-                         rawHalved = existing;
-                         halvedParts.push(existing);
-                    }
-                }
-                if (index === 0) mainHalvedDamageRaw = rawHalved;
-            }
         });
+
+        const hordeDamage = actorData.system.typeData?.hordeDamage;
+        if (hordeDamage && frozenBenchmark.halved_damage_x) {
+            if (this.overrides.halvedDamageFormula) {
+                mainHalvedDamageRaw = this.overrides.halvedDamageFormula;
+                halvedParts.push(`<span class="stat-changed">${mainHalvedDamageRaw}</span>`);
+            } else {
+                const result = scaleHordeDamage(hordeDamage, targetTier, currentTier, frozenBenchmark.halved_damage_x);
+                mainHalvedDamageRaw = result?.to ?? hordeDamage;
+                halvedParts.push(result ? `<span class="stat-changed">${result.to}</span>` : hordeDamage);
+            }
+        }
         sim.damage = damageParts.join(", ") || "None";
         sim.damageStats = this._calculateDamageStats(mainDamageRaw); 
 

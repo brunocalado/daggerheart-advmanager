@@ -1,3 +1,27 @@
+# 0.3.7
+
+Requires Daggerheart 2.10.6. Checked and verified live against 2.10.6 on Foundry 14.368.
+
+Daggerheart 2.10 moved a horde's halved attack out of the attack's alternate damage and into
+`system.typeData.hordeDamage`, read by an Active Effect on the system's own "Horde" feature. The
+module kept scaling the old field, which the system no longer reads — so a tier-up renamed the
+feature to the new value while the horde kept rolling the old one.
+
+- [Fixed] Tier-ups scale a horde's halved damage again, both from the Adversary Manager and the Live Manager, including a manual Halved Damage override.
+- [Changed] The system's "Horde" feature is left as it is: its text already follows the horde's damage, so it is no longer renamed to "Horde (X)" or replaced by the module's template.
+- [Fixed] The Live Manager and Compendium Statistics show a horde's real halved damage. Compendium Statistics no longer lists a phantom "1d6" halved damage for every other adversary type.
+
+- [Fixed] Re-tiering a minion from the Adversary Manager left its feature at the old "Minion (N)" value; it is renamed and its description updated, as the Live Manager already did.
+- [Fixed] The "Minion (X)" template read "If the … is defeated when they take any damage"; it now matches the system's wording.
+- [Fixed] An attack bonus is a formula since Daggerheart 2.10, and Outer Realms Abomination's "2d4" blanked the Bruiser Tier 4 attack range in Compendium Statistics.
+- [Changed] Compendium Statistics census rebuilt against 2.10.6, restoring the instant-open path.
+
+- [Changed] The bundled `all-features` compendium is rebuilt from the 2.10.6 system compendium: 801 features covering all 264 adversaries, up from 724 features from 2.8.1 covering 228. The re-import noted under 0.3.4 is no longer needed.
+- [Added] `tools/build-features.mjs`, which rebuilds `all-features` from the system compendium with the `fvtt` CLI, using the same folders, flags and duplicate rules as the in-world importer. Rebuilding against an unchanged system produces an identical pack.
+- [Changed] `tools/build-benchmarks.mjs` reads a horde's halved damage from its new location. The benchmarks come out unchanged, so `scripts/rules.js` was not regenerated; the one difference, a Ranged Tier 1 threshold of 4/0, comes from the Poltergeist shipping with a Severe threshold of 0 instead of 7.
+
+- [Removed] Support for data older than Daggerheart 2.10.6 and Foundry v14: the pre-2.6 `damage.parts` container, flat damage stored without a die (2.10.6 silently discards it), the legacy `flags.core.sourceId` origin marker, and the Foundry v13 window lookup.
+
 # 0.3.5
 
 Checked against Daggerheart 2.9.2. The module reads and writes adversary data paths and never
