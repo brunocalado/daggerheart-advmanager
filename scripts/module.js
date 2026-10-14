@@ -15,6 +15,7 @@ import { importFeatures } from "./importer.js";
 // static-init time). Imported locally so this file can use it at runtime, and
 // re-exported so existing importers of `MODULE_ID` from "./module.js" keep working.
 import { MODULE_ID } from "./constants.js";
+import { tr } from "./i18n.js";
 export { MODULE_ID };
 export const SETTING_CHAT_LOG = "enableChatLog";
 export const SETTING_UPDATE_EXP = "autoUpdateExperiences";
@@ -44,7 +45,7 @@ export const SETTING_OVERWRITE_WORLD_ACTOR = "overwriteWorldActor";
 function gmOnly(fn) {
     return function (...args) {
         if (!game.user.isGM) {
-            ui.notifications.warn("Only a GM can use this feature.");
+            ui.notifications.warn(tr("Notify.GMOnly"));
             return;
         }
         return fn.apply(this, args);
@@ -61,12 +62,12 @@ function gmOnly(fn) {
  * @returns {Promise<Object>} The snapshot that was downloaded.
  */
 async function buildStatsSnapshot() {
-    ui.notifications.info("Adversary Manager | Building the adversary statistics snapshot...");
+    ui.notifications.info(tr("Notify.BuildingSnapshot"));
 
     const snapshot = await CompendiumStats.buildCoreSnapshot();
     foundry.utils.saveDataToFile(JSON.stringify(snapshot), "application/json", "compendium-stats-core.json");
 
-    const msg = `Adversary Manager | Snapshot built for ${snapshot.system} ${snapshot.systemVersion} (${snapshot.adversaryCount} adversaries). Save it into the module as data/compendium-stats-core.json.`;
+    const msg = tr("Notify.SnapshotBuilt", { system: snapshot.system, version: snapshot.systemVersion, count: snapshot.adversaryCount });
     ui.notifications.info(msg);
     console.log(msg);
     return snapshot;
@@ -84,7 +85,7 @@ function manage() {
     });
 
     if (brokenToken) {
-        ui.notifications.error(`Error: The token "${brokenToken.name}" references an Actor that no longer exists in the directory.`);
+        ui.notifications.error(tr("Notify.BrokenToken", { name: brokenToken.name }));
         return;
     }
 
@@ -128,8 +129,8 @@ Hooks.once("init", () => {
     ]);
 
     game.settings.register(MODULE_ID, SETTING_CHAT_LOG, {
-        name: "Log Changes to Chat",
-        hint: "If enabled, sends a whisper to the GM whenever an Adversary is updated via the Manager.",
+        name: "DHAM.Settings.ChatLog.Name",
+        hint: "DHAM.Settings.ChatLog.Hint",
         scope: "world",
         config: true,
         type: Boolean,
@@ -137,8 +138,8 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_UPDATE_EXP, {
-        name: "Auto-Update Experiences",
-        hint: "If enabled, experiences will increase/decrease by 1 for each Tier change.",
+        name: "DHAM.Settings.UpdateExp.Name",
+        hint: "DHAM.Settings.UpdateExp.Hint",
         scope: "world",
         config: true,
         type: Boolean,
@@ -146,8 +147,8 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_SUGGEST_FEATURES, {
-        name: "Show New Features Panel",
-        hint: "If enabled, the Live Manager preview lists the features available for the target tier and type, so you can tick the ones to add.",
+        name: "DHAM.Settings.SuggestFeatures.Name",
+        hint: "DHAM.Settings.SuggestFeatures.Hint",
         scope: "world",
         config: true,
         type: Boolean,
@@ -155,8 +156,8 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_IMPORT_FOLDER, {
-        name: "Compendium Import Folder",
-        hint: "Name of the folder where adversaries imported from Compendiums will be created.",
+        name: "DHAM.Settings.ImportFolder.Name",
+        hint: "DHAM.Settings.ImportFolder.Hint",
         scope: "world",
         config: true,
         type: String,
@@ -164,8 +165,8 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_ENCOUNTER_FOLDER, {
-        name: "Encounter Folder Name",
-        hint: "Name of the root folder where encounters created by the builder will be stored.",
+        name: "DHAM.Settings.EncounterFolder.Name",
+        hint: "DHAM.Settings.EncounterFolder.Hint",
         scope: "world",
         config: true,
         type: String,
@@ -173,7 +174,7 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_EXTRA_COMPENDIUMS, {
-        name: "Extra Compendiums (Actors)",
+        name: "DHAM.Settings.ExtraCompendiums",
         scope: "world",
         config: false,
         type: Array,
@@ -181,7 +182,7 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_FEATURE_COMPENDIUMS, {
-        name: "Feature Compendiums",
+        name: "DHAM.Settings.FeatureCompendiums",
         scope: "world",
         config: false,
         type: Array,
@@ -190,7 +191,7 @@ Hooks.once("init", () => {
 
     // --- REGISTRO DA CONFIGURAÇÃO DE STATS ---
     game.settings.register(MODULE_ID, SETTING_STATS_COMPENDIUMS, {
-        name: "Stats Compendiums",
+        name: "DHAM.Settings.StatsCompendiums",
         scope: "world",
         config: false,
         type: Array,
@@ -273,17 +274,17 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
         return btn;
     };
 
-    const btnManage = createBtn("Manage Adversaries", "fa-skull", manage);
-    const btnStats = createBtn("Compendium Stats", "fa-chart-pie", () => new CompendiumStats().render(true));
-    const btnProb = createBtn("Dice Probability", "fa-dice-d20", () => new DiceProbability().render(true));
-    const btnBuilder = createBtn("Encounter Builder", "fa-dungeon", () => new EncounterBuilder().render(true));
+    const btnManage = createBtn(tr("Menu.ManageAdversaries"), "fa-skull", manage);
+    const btnStats = createBtn(tr("Menu.CompendiumStats"), "fa-chart-pie", () => new CompendiumStats().render(true));
+    const btnProb = createBtn(tr("Menu.DiceProbability"), "fa-dice-d20", () => new DiceProbability().render(true));
+    const btnBuilder = createBtn(tr("Menu.EncounterBuilder"), "fa-dungeon", () => new EncounterBuilder().render(true));
 
     const fieldset = element.querySelector("fieldset");
     if (fieldset) {
         const newFieldset = document.createElement("fieldset");
         newFieldset.classList.add("dh-adv-tools");
         const legend = document.createElement("legend");
-        legend.innerText = "Adversary Tools";
+        legend.innerText = tr("Menu.AdversaryTools");
         newFieldset.appendChild(legend);
         newFieldset.appendChild(btnManage);
         newFieldset.appendChild(btnBuilder);
@@ -316,7 +317,7 @@ Hooks.on("renderActorDirectory", (app, html) => {
         btn.style.flex = "0 0 100%";
         btn.style.maxWidth = "100%";
         btn.style.marginTop = "6px";
-        btn.innerHTML = `<i class="fas fa-skull"></i> Manage Adversaries`;
+        btn.innerHTML = `<i class="fas fa-skull"></i> ${tr("Menu.ManageAdversaries")}`;
         
         btn.addEventListener("click", (e) => {
             e.preventDefault();

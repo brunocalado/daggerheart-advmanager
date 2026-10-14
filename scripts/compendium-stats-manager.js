@@ -1,6 +1,7 @@
 import { MODULE_ID } from "./constants.js";
 import { SETTING_STATS_COMPENDIUMS } from "./module.js";
 import { findApplicationById } from "./foundry-compat.js";
+import { tr } from "./i18n.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
@@ -14,7 +15,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Manage Stat Sources",
+            title: "DHAM.StatsManager.Title",
             icon: "fas fa-chart-pie",
             resizable: false,
             width: 700, // Increased width to fit new inputs
@@ -102,7 +103,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
 
                     const finalFolder = customFolderInput && customFolderInput.trim() !== "" 
                         ? customFolderInput.trim() 
-                        : `Imported from ${defaultLabel}`;
+                        : tr("StatsManager.ImportedFrom", { label: defaultLabel });
                     
                     // Execute import using the exposed global function
                     if (globalThis.AM && globalThis.AM.ImportFeatures) {

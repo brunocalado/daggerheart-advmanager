@@ -5,6 +5,7 @@ import { SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPE
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js"; 
+import { tr, tierLabel, typeLabel } from "./i18n.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -91,7 +92,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Adversary Live Manager",
+            title: "DHAM.Live.Title",
             icon: "fas fa-eye",
             resizable: true,
             width: 1000,
@@ -261,9 +262,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     _getFeatureTypeLabel(type) {
         if (!type) return "";
         const t = type.toLowerCase();
-        if (t === "action") return "(A)";
-        if (t === "reaction") return "(R)";
-        if (t === "passive") return "(P)";
+        if (["action", "reaction", "passive"].includes(t)) return game.i18n.localize(`DHAM.FeatureFormsShort.${t}`);
         return "";
     }
 
@@ -297,7 +296,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 return list[Math.floor(Math.random() * list.length)];
             }
         }
-        return "New Experience"; 
+        return tr("Live.NewExperience"); 
     }
 
     _calculateCritChance(threshold) {
@@ -311,9 +310,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // --- Determine Source List ---
         const sourceOptions = [
-            { value: "all", label: "All Sources", selected: this.source === "all" }, 
-            { value: "world", label: "World", selected: this.source === "world" },
-            { value: "daggerheart.adversaries", label: "System Compendium", selected: this.source === "daggerheart.adversaries" }
+            { value: "all", label: tr("Common.AllSources"), selected: this.source === "all" }, 
+            { value: "world", label: tr("Common.World"), selected: this.source === "world" },
+            { value: "daggerheart.adversaries", label: tr("Common.SystemCompendium"), selected: this.source === "daggerheart.adversaries" }
         ];
 
         // --- NEW: Add Template Option (New Adversary) ---
@@ -322,7 +321,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (templatePack) {
             sourceOptions.push({
                 value: templatePackId,
-                label: "New Adversary",
+                label: tr("Common.NewAdversary"),
                 selected: this.source === templatePackId
             });
         }
@@ -386,7 +385,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     name: a.name, 
                     tier: Number(a.system.tier) || 1,
                     advType: (a.system.type || "standard").toLowerCase(),
-                    sourceLabel: "World"
+                    sourceLabel: tr("Common.World")
                 }));
             rawAdversaries.push(...worldAdvs);
 
@@ -401,7 +400,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                         name: i.name,
                         tier: Number(i.system?.tier) || 1,
                         advType: (i.system?.type || "standard").toLowerCase(),
-                        sourceLabel: "System"
+                        sourceLabel: tr("Common.System")
                     }));
                 rawAdversaries.push(...sysAdvs);
             }
@@ -491,7 +490,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const typeKey = (actor.system.type || "standard").toLowerCase();
                 isMinion = typeKey === "minion";
                 isHorde = typeKey === "horde"; 
-                actorTypeLabel = typeKey.charAt(0).toUpperCase() + typeKey.slice(1); 
+                actorTypeLabel = typeLabel(typeKey); 
                 
                 const rawImg = actor.img;
                 const defaultIcons = [
@@ -509,7 +508,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     isLinked: isLinked,
                     icon: isLinked ? "fa-link" : "fa-unlink",
                     cssClass: isLinked ? "status-linked" : "status-unlinked",
-                    label: isLinked ? "Linked" : "Unlinked"
+                    label: isLinked ? tr("Common.Linked") : tr("Common.Unlinked")
                 };
                 if (actor.compendium || actor.pack) linkData = null;
 
@@ -551,10 +550,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
                 
                 if (damageOptions.length > 0) {
-                    damageTooltip = "Suggested:<br>" + damageOptions.map(o => `• ${o.label}`).join("<br>");
+                    damageTooltip = tr("Live.Suggested") + "<br>" + damageOptions.map(o => `• ${o.label}`).join("<br>");
                 }
                 if (halvedDamageOptions.length > 0) {
-                    halvedDamageTooltip = "Suggested:<br>" + halvedDamageOptions.map(o => `• ${o.label}`).join("<br>");
+                    halvedDamageTooltip = tr("Live.Suggested") + "<br>" + halvedDamageOptions.map(o => `• ${o.label}`).join("<br>");
                 }
 
                 const currentCritical = currentStats.critical;
@@ -575,8 +574,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const previewDirect = this.overrides.directDamage !== undefined ? (this.overrides.directDamage === "true") : currentDirect;
                 
                 directOptions = [
-                    { value: "true", label: "Yes", selected: previewDirect === true },
-                    { value: "false", label: "No", selected: previewDirect === false }
+                    { value: "true", label: tr("Common.Yes"), selected: previewDirect === true },
+                    { value: "false", label: tr("Common.No"), selected: previewDirect === false }
                 ];
 
                 previewStats = {
@@ -593,7 +592,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     thresholdsDisplay: simResult.stats.thresholds,
                     attackModDisplay: simResult.stats.attackMod,
                     experiences: simResult.stats.previewExperiences || [],
-                    expTooltip: `Suggested:<br>Amount: ${simResult.stats.expAmountRange || "?"}<br>Modifier: ${simResult.stats.expModRange || "?"}`,
+                    expTooltip: tr("Live.SuggestedExp", { amount: simResult.stats.expAmountRange || "?", mod: simResult.stats.expModRange || "?" }),
                     damage: simResult.stats.damage,
                     damageStats: simResult.stats.damageStats, 
                     mainDamageFormula: simResult.stats.mainDamageRaw,
@@ -608,8 +607,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 };
 
                 if (isMinion) {
-                    previewStats.thresholdsDisplay = "None"; 
-                    previewStats.hpDisplay = "(Fixed)"; 
+                    previewStats.thresholdsDisplay = tr("Common.None"); 
+                    previewStats.hpDisplay = tr("Live.Fixed"); 
                 }
                 
                 featurePreviewData = await Promise.all(simResult.structuredFeatures.map(async f => {
@@ -641,7 +640,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                              selected: d.value === currentVal
                          }));
                          if (featureOptions.length > 0) {
-                             optionsTooltip = "Suggested:<br>" + featureOptions.map(o => `• ${o.label}`).join("<br>");
+                             optionsTooltip = tr("Live.Suggested") + "<br>" + featureOptions.map(o => `• ${o.label}`).join("<br>");
                          }
                          damageStats = this._calculateDamageStats(currentVal);
                     }
@@ -693,14 +692,14 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                                        (this.overrides.newFeaturesType === k);
                     newFeaturesTypeOptions.push({
                         value: k,
-                        label: k.charAt(0).toUpperCase() + k.slice(1),
+                        label: typeLabel(k),
                         selected: isSelected
                     });
                 });
 
                 newFeaturesTierOptions = [1, 2, 3, 4].map(t => ({
                     value: t,
-                    label: `Tier ${t}`,
+                    label: tierLabel(t),
                     selected: t === suggestionTier
                 }));
 
@@ -710,9 +709,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     let actionClass = "";
                     if (type) {
                         const t = type.toLowerCase();
-                        if (t === "action") { actionTag = "Action"; actionClass = "tag-action"; }
-                        else if (t === "reaction") { actionTag = "Reaction"; actionClass = "tag-reaction"; }
-                        else if (t === "passive") { actionTag = "Passive"; actionClass = "tag-passive"; }
+                        if (t === "action") { actionTag = tr("FeatureForms.action"); actionClass = "tag-action"; }
+                        else if (t === "reaction") { actionTag = tr("FeatureForms.reaction"); actionClass = "tag-reaction"; }
+                        else if (t === "passive") { actionTag = tr("FeatureForms.passive"); actionClass = "tag-passive"; }
                     }
 
                     const imported = flags?.importedFrom || {};
@@ -724,7 +723,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     if (customTag && customTag.trim() !== "") {
                          sourceLabel = customTag; 
                     } else if (isHomebrew) {
-                         sourceLabel = "Homebrew";
+                         sourceLabel = tr("Live.Homebrew");
                     }
                     
                     return {
@@ -836,25 +835,22 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const tiers = [1, 2, 3, 4].map(t => ({
             value: t,
-            label: `Tier ${t}`,
+            label: tierLabel(t),
             isCurrent: t === this.targetTier,
             cssClass: t === this.targetTier ? "active" : ""
         }));
 
         const filterOptions = [
-            { value: "all", label: "All Tiers", selected: this.filterTier === "all" },
-            { value: "1", label: "Tier 1", selected: this.filterTier === "1" },
-            { value: "2", label: "Tier 2", selected: this.filterTier === "2" },
-            { value: "3", label: "Tier 3", selected: this.filterTier === "3" },
-            { value: "4", label: "Tier 4", selected: this.filterTier === "4" }
+            { value: "all", label: tr("Common.AllTiers"), selected: this.filterTier === "all" },
+            ...[1, 2, 3, 4].map(n => ({ value: String(n), label: tierLabel(n), selected: this.filterTier === String(n) }))
         ];
 
         const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
         const typeOptions = [
-            { value: "all", label: "All Types", selected: this.filterType === "all" },
+            { value: "all", label: tr("Common.AllTypes"), selected: this.filterType === "all" },
             ...typeKeys.map(k => ({ 
                 value: k, 
-                label: k.charAt(0).toUpperCase() + k.slice(1), 
+                label: typeLabel(k), 
                 selected: this.filterType === k 
             }))
         ];
@@ -890,7 +886,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             halvedDamageOptions,
             damageTooltip,
             halvedDamageTooltip,
-            actorName: actor?.name || "None",
+            actorName: actor?.name || tr("Common.None"),
             portraitImg: portraitImg,
             isHorde: isHorde,
             actorTypeLabel: actorTypeLabel,
@@ -1131,7 +1127,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
 
             if (!result && !hasManualUpdates) {
-                ui.notifications.warn("No changes were necessary.");
+                ui.notifications.warn(tr("Notify.NoChanges"));
             }
 
             this.filterTier = String(this.targetTier); 
@@ -1159,7 +1155,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         } catch (e) {
             console.error(e);
-            ui.notifications.error("Error applying changes. Check console.");
+            ui.notifications.error(tr("Notify.ApplyError"));
         }
     }
 
@@ -1264,7 +1260,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (item && item.sheet) {
             item.sheet.render(true);
         } else {
-            ui.notifications.warn("Item not found or has no sheet.");
+            ui.notifications.warn(tr("Notify.ItemNotFound"));
         }
     }
 
@@ -1411,7 +1407,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     const types = getDamageTypeList(p);
 
                     if (types.length > 0) {
-                        const typeNames = types.map(t => t.charAt(0).toUpperCase() + t.slice(1));
+                        const typeNames = types.map(ty => game.i18n.has(`DHAM.Damage.${ty}`) ? game.i18n.localize(`DHAM.Damage.${ty}`) : ty.charAt(0).toUpperCase() + ty.slice(1));
                         damageTypesLabel = `(${typeNames.join("/")})`;
                     }
                 }
@@ -1443,7 +1439,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         const isDirect = getDamageDirect(sys.attack?.damage);
-        const directLabel = isDirect ? "Direct: Yes" : "Direct: No";
+        const directLabel = isDirect ? tr("Live.DirectYes") : tr("Live.DirectNo");
 
         return {
             tier,
@@ -1452,7 +1448,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             stress: sys.resources?.stress?.max,
             thresholds: `${sys.damageThresholds?.major} / ${sys.damageThresholds?.severe}`,
             attackMod: sys.attack?.roll?.bonus,
-            damage: damageParts.join(", ") || "None",
+            damage: damageParts.join(", ") || tr("Common.None"),
             damageTypesLabel: damageTypesLabel,
             damageStats: this._calculateDamageStats(firstDamageFormula),
             halvedDamage: halvedParts.join(", ") || null,
@@ -1671,7 +1667,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 halvedParts.push(result ? `<span class="stat-changed">${result.to}</span>` : hordeDamage);
             }
         }
-        sim.damage = damageParts.join(", ") || "None";
+        sim.damage = damageParts.join(", ") || tr("Common.None");
         sim.damageStats = this._calculateDamageStats(mainDamageRaw); 
 
         sim.mainDamageRaw = mainDamageRaw;

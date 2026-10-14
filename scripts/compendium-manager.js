@@ -12,7 +12,7 @@ export class CompendiumManager extends HandlebarsApplicationMixin(ApplicationV2)
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Manage Compendium Sources",
+            title: "DHAM.CompendiumManager.Title",
             icon: "fas fa-atlas",
             resizable: false,
             width: 450,

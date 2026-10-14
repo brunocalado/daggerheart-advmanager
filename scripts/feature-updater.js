@@ -1,5 +1,6 @@
 import { ADVERSARY_BENCHMARKS } from "./rules.js";
 import { MODULE_ID } from "./constants.js";
+import { tr, tierLabel, typeLabel } from "./i18n.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -26,7 +27,7 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Feature Flag Updater",
+            title: "DHAM.Updater.Title",
             icon: "fas fa-tags",
             resizable: false,
             width: 400,
@@ -49,7 +50,7 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
         // Prepare Tier Options
         const tiers = [1, 2, 3, 4].map(t => ({
             value: t,
-            label: `Tier ${t}`,
+            label: tierLabel(t),
             selected: t === this.formState.tier
         }));
 
@@ -61,7 +62,7 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
             const isSelected = capitalizedKey.toLowerCase() === (this.formState.type || "").toLowerCase();
             return {
                 value: capitalizedKey, 
-                label: capitalizedKey,
+                label: typeLabel(k),
                 selected: isSelected
             };
         });
@@ -106,13 +107,13 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
             const data = JSON.parse(event.dataTransfer.getData("text/plain"));
             
             if (data.type !== "Item") {
-                ui.notifications.warn("Please drop an Item.");
+                ui.notifications.warn(tr("Notify.DropItem"));
                 return;
             }
 
             const item = await fromUuid(data.uuid);
             if (!item) {
-                ui.notifications.error("Could not resolve Item UUID.");
+                ui.notifications.error(tr("Notify.UuidFailed"));
                 return;
             }
 
@@ -132,19 +133,19 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
 
         } catch (e) {
             console.error(e);
-            ui.notifications.error("Invalid drop data.");
+            ui.notifications.error(tr("Notify.InvalidDrop"));
         }
     }
 
     async _onSubmit(event, form, formData) {
         if (!this.selectedItemUuid) {
-            ui.notifications.warn("No item selected.");
+            ui.notifications.warn(tr("Notify.NoItemSelected"));
             return;
         }
 
         const item = await fromUuid(this.selectedItemUuid);
         if (!item) {
-            ui.notifications.error("Item no longer exists.");
+            ui.notifications.error(tr("Notify.ItemGone"));
             this.selectedItem = null;
             this.selectedItemUuid = null;
             this.render();
@@ -188,7 +189,7 @@ export class FeatureUpdater extends HandlebarsApplicationMixin(ApplicationV2) {
 
         } catch (err) {
             console.error(err);
-            ui.notifications.error("Failed to update item flags.");
+            ui.notifications.error(tr("Notify.FlagsFailed"));
         }
     }
 }

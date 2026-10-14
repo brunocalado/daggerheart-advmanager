@@ -114,5 +114,17 @@
   "url": "https://github.com/brunocalado/daggerheart-advmanager",
   "manifest": "https://raw.githubusercontent.com/brunocalado/daggerheart-advmanager/main/module.json",
   "download": "https://codeload.github.com/brunocalado/daggerheart-advmanager/zip/main",
-  "flags": {}
+  "flags": {},
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    }
+  ]
 }

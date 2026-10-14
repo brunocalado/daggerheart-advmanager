@@ -3,6 +3,7 @@ import { ADVERSARY_BENCHMARKS } from "./rules.js";
 import { MODULE_ID } from "./constants.js";
 import { SETTING_CHAT_LOG } from "./module.js";
 import { updateSingleActor, sendBatchChatLog } from "./damage-engine.js";
+import { tr, tierLabel } from "./i18n.js";
 
 /**
  * Batch-update application for Daggerheart Adversaries.
@@ -26,7 +27,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Adversary Manager",
+            title: "DHAM.Manager.Title",
             icon: "fas fa-skull",
             resizable: false,
             width: 420
@@ -73,7 +74,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const tiers = [1, 2, 3, 4].map(t => ({
             value: t,
-            label: `Tier ${t}`,
+            label: tierLabel(t),
             disabled: !isMixedTier && t === currentSharedTier,
             isCurrent: !isMixedTier && t === currentSharedTier
         }));
@@ -110,6 +111,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                 sendBatchChatLog(batchResults, newTier);
             }
             app.close();
-        } else { ui.notifications.info("No Adversaries updated."); }
+        } else { ui.notifications.info(tr("Notify.NoAdversariesUpdated")); }
     }
 }

@@ -3,6 +3,7 @@ import { SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING_LAST_SOURC
 import { POWERFUL_FEATURES } from "./rules.js";
 import { LiveManager } from "./live-manager.js";
 import { prepareDocumentCreateData } from "./foundry-compat.js";
+import { tr, tierLabel, typeLabel } from "./i18n.js";
 
 // Import DialogV2 to fix deprecation warning
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
@@ -55,7 +56,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Encounter Builder",
+            title: "DHAM.Encounter.Title",
             icon: "fas fa-dungeon",
             resizable: true,
             width: 1100,
@@ -126,9 +127,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // --- Source Options ---
         const extraPacks = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
         const sourceOptions = [
-            { value: "all", label: "All Sources", selected: this.filterSource === "all" },
-            { value: "world", label: "World (Actors)", selected: this.filterSource === "world" },
-            { value: "daggerheart.adversaries", label: "System Compendium", selected: this.filterSource === "daggerheart.adversaries" }
+            { value: "all", label: tr("Common.AllSources"), selected: this.filterSource === "all" },
+            { value: "world", label: tr("Common.WorldActors"), selected: this.filterSource === "world" },
+            { value: "daggerheart.adversaries", label: tr("Common.SystemCompendium"), selected: this.filterSource === "daggerheart.adversaries" }
         ];
 
         extraPacks.forEach(packId => {
@@ -189,18 +190,18 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         const typeSet = new Set(adversaries.map(a => a.type).filter(t => t));
         const typeOptions = Array.from(typeSet).sort().map(t => ({
             value: t,
-            label: t.charAt(0).toUpperCase() + t.slice(1),
+            label: typeLabel(t),
             selected: this.filterType === t
         }));
-        typeOptions.unshift({ value: "all", label: "All Types", selected: this.filterType === "all" });
+        typeOptions.unshift({ value: "all", label: tr("Common.AllTypes"), selected: this.filterType === "all" });
 
         // --- Fear Options ---
         const fearOptions = [
-            { value: "0-1", label: "Low (0–1 Fear)", selected: this.fearBudget === "0-1" },
-            { value: "1-3", label: "Moderate (1–3 Fear)", selected: this.fearBudget === "1-3" },
-            { value: "2-4", label: "High (2–4 Fear)", selected: this.fearBudget === "2-4" },
-            { value: "4-8", label: "Extreme (4–8 Fear)", selected: this.fearBudget === "4-8" },
-            { value: "6-12", label: "Insane (6–12 Fear)", selected: this.fearBudget === "6-12" }
+            { value: "0-1", label: tr("Encounter.Fear.low"), selected: this.fearBudget === "0-1" },
+            { value: "1-3", label: tr("Encounter.Fear.moderate"), selected: this.fearBudget === "1-3" },
+            { value: "2-4", label: tr("Encounter.Fear.high"), selected: this.fearBudget === "2-4" },
+            { value: "4-8", label: tr("Encounter.Fear.extreme"), selected: this.fearBudget === "4-8" },
+            { value: "6-12", label: tr("Encounter.Fear.insane"), selected: this.fearBudget === "6-12" }
         ];
 
         // --- PC Count Options ---
@@ -219,7 +220,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             
             return {
                 ...unit,
-                damageBoostTooltip: `Add +${die} Damage (Lowers Budget Limit)`
+                damageBoostTooltip: tr("Encounter.DamageBoost", { die })
             };
         });
 
@@ -262,7 +263,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             // BP Data
             pcCount: this.pcCount,
             pcTier: this.pcTier,
-            pcTierOptions: [1, 2, 3, 4].map(t => ({ value: t, label: `Tier ${t}`, selected: t === this.pcTier })),
+            pcTierOptions: [1, 2, 3, 4].map(t => ({ value: t, label: tierLabel(t), selected: t === this.pcTier })),
             bpData: bpData,
             manualModifiers: this.manualModifiers,
             
@@ -274,7 +275,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
             // Folder Mode State (NEW)
             useAutoFolder: this.useAutoFolder,
-            autoFolderTooltip: this.useAutoFolder ? "Mode: Auto-Generate Folder Name" : "Mode: Manual Folder Name"
+            autoFolderTooltip: this.useAutoFolder ? tr("Encounter.AutoFolder") : tr("Encounter.ManualFolder")
         };
     }
 
@@ -346,44 +347,44 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         if (this.manualModifiers.easier) {
             limit -= 1;
-            modifiers.push({ label: "Easier/Shorter", val: "-1", active: true, manual: true, key: 'easier' });
+            modifiers.push({ label: tr("Encounter.Modifiers.easier"), val: "-1", active: true, manual: true, key: 'easier' });
         } else {
-            modifiers.push({ label: "Easier/Shorter", val: "-1", active: false, manual: true, key: 'easier' });
+            modifiers.push({ label: tr("Encounter.Modifiers.easier"), val: "-1", active: false, manual: true, key: 'easier' });
         }
 
         if (soloCount >= 2) {
             limit -= 2;
-            modifiers.push({ label: "2+ Solos", val: "-2", active: true, manual: false });
+            modifiers.push({ label: tr("Encounter.Modifiers.solos"), val: "-2", active: true, manual: false });
         } else {
-            modifiers.push({ label: "2+ Solos", val: "-2", active: false, manual: false, disabled: true });
+            modifiers.push({ label: tr("Encounter.Modifiers.solos"), val: "-2", active: false, manual: false, disabled: true });
         }
 
         if (hasDamageBoost) {
             limit -= 2;
-            modifiers.push({ label: "Damage Boost", val: "-2", active: true, manual: false });
+            modifiers.push({ label: tr("Encounter.Modifiers.damageBoost"), val: "-2", active: true, manual: false });
         } else {
-            modifiers.push({ label: "Damage Boost", val: "-2", active: false, manual: false, disabled: true });
+            modifiers.push({ label: tr("Encounter.Modifiers.damageBoost"), val: "-2", active: false, manual: false, disabled: true });
         }
 
         if (hasLowerTier) {
             limit += 1;
-            modifiers.push({ label: "Lower Tier Used", val: "+1", active: true, manual: false });
+            modifiers.push({ label: tr("Encounter.Modifiers.lowerTier"), val: "+1", active: true, manual: false });
         } else {
-            modifiers.push({ label: "Lower Tier Used", val: "+1", active: false, manual: false, disabled: true });
+            modifiers.push({ label: tr("Encounter.Modifiers.lowerTier"), val: "+1", active: false, manual: false, disabled: true });
         }
 
         if (this.encounterList.length > 0 && !hasSpecialType) {
             limit += 1;
-            modifiers.push({ label: "No Major Adversaries", val: "+1", active: true, manual: false });
+            modifiers.push({ label: tr("Encounter.Modifiers.noMajor"), val: "+1", active: true, manual: false });
         } else {
-            modifiers.push({ label: "No Major Adversaries", val: "+1", active: false, manual: false, disabled: true });
+            modifiers.push({ label: tr("Encounter.Modifiers.noMajor"), val: "+1", active: false, manual: false, disabled: true });
         }
 
         if (this.manualModifiers.harder) {
             limit += 2;
-            modifiers.push({ label: "Harder/Longer", val: "+2", active: true, manual: true, key: 'harder' });
+            modifiers.push({ label: tr("Encounter.Modifiers.harder"), val: "+2", active: true, manual: true, key: 'harder' });
         } else {
-            modifiers.push({ label: "Harder/Longer", val: "+2", active: false, manual: true, key: 'harder' });
+            modifiers.push({ label: tr("Encounter.Modifiers.harder"), val: "+2", active: false, manual: true, key: 'harder' });
         }
 
         const diff = currentCost - limit;
@@ -433,11 +434,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             difficultyClass = "diff-deadly";
         }
 
-        const difficultyLabels = {
-            veryEasy: "Very Easy", easy: "Easy", balanced: "Balanced",
-            challenging: "Challenging", hard: "Hard", deadly: "Deadly", outOfTier: "Out of Tier"
-        };
-        const difficultyLabel = difficultyLabels[difficultyKey] ?? "Balanced";
+        const difficultyLabel = tr(`Encounter.Difficulties.${difficultyKey}`);
 
         const statusColor = (currentCost > limit) ? "red" : (currentCost === limit ? "green" : "gold");
 
@@ -534,7 +531,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
      */
     async _executeCreateEncounter(customName = null) {
         if (this.encounterList.length === 0) {
-            ui.notifications.warn("No adversaries in the encounter to create.");
+            ui.notifications.warn(tr("Notify.EmptyEncounter"));
             return [];
         }
 
@@ -666,20 +663,20 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         
         try {
             const result = await DialogV2.prompt({
-                window: { title: "Encounter Name" },
+                window: { title: tr("Encounter.NameTitle") },
                 content: `
                     <div style="margin-bottom: 10px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px;" for="${inputId}">Folder Name:</label>
-                        <input type="text" id="${inputId}" placeholder="e.g., Boss Fight Room 3" autofocus required 
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px;" for="${inputId}">${tr("Encounter.FolderName")}</label>
+                        <input type="text" id="${inputId}" placeholder="${tr("Encounter.FolderPlaceholder")}" autofocus required 
                                style="width: 100%; box-sizing: border-box; padding: 5px; background: #222; color: #fff; border: 1px solid #777;"/>
                     </div>
                 `,
                 ok: {
-                    label: "Create",
+                    label: tr("Common.Create"),
                     icon: "fas fa-check",
                     callback: (event, button, dialog) => {
                         const input = document.getElementById(inputId);
-                        return input ? input.value : "Untitled Encounter";
+                        return input ? input.value : tr("Encounter.Untitled");
                     }
                 },
                 rejectClose: false
@@ -705,11 +702,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             const result = await this._executeCreateEncounter(folderName);
             if (result && result.actors && result.actors.length > 0) {
                 this.lastCreatedActors = result.actors;
-                ui.notifications.info(`Encounter created in: "${result.folderName}". Check the Actor directory.`);
+                ui.notifications.info(tr("Notify.EncounterCreated", { folder: result.folderName }));
             }
         } catch (err) {
             console.error(err);
-            ui.notifications.error("Failed to create encounter. Check console.");
+            ui.notifications.error(tr("Notify.EncounterCreateFailed"));
         }
     }
 
@@ -731,7 +728,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             
             const scene = canvas.scene;
             if (!scene) {
-                ui.notifications.warn("No active scene to place tokens.");
+                ui.notifications.warn(tr("Notify.NoScene"));
                 return;
             }
 
@@ -761,11 +758,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             }
 
             await scene.createEmbeddedDocuments("Token", tokensData);
-            ui.notifications.info(`Encounter created and ${created.length} tokens placed on scene (Hidden).`);
+            ui.notifications.info(tr("Notify.EncounterPlaced", { count: created.length }));
             
         } catch (err) {
             console.error(err);
-            ui.notifications.error("Failed to place encounter. Check console.");
+            ui.notifications.error(tr("Notify.EncounterPlaceFailed"));
         }
     }
 

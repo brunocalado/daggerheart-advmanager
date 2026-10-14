@@ -3,6 +3,7 @@ import { CompendiumStatsManager } from "./compendium-stats-manager.js";
 import { MODULE_ID } from "./constants.js";
 import { SETTING_STATS_COMPENDIUMS } from "./module.js";
 import { getActionDamageParts, formatDamageValue } from "./damage-engine.js";
+import { tr, tierLabel, typeLabel } from "./i18n.js";
 
 const SYSTEM_ADVERSARY_PACK = "daggerheart.adversaries";
 const SNAPSHOT_PATH = `modules/${MODULE_ID}/data/compendium-stats-core.json`;
@@ -44,7 +45,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         classes: [MODULE_ID],
         tag: "div",
         window: {
-            title: "Compendium Statistics",
+            title: "DHAM.Stats.Title",
             icon: "fas fa-chart-bar",
             resizable: true,
             width: 900,
@@ -75,7 +76,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const typeOptions = Array.from(this.availableTypes).sort().map(t => ({
             value: t,
-            label: t.charAt(0).toUpperCase() + t.slice(1),
+            label: typeLabel(t),
             selected: t === this.selectedType
         }));
 
@@ -90,7 +91,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             loading: false,
             typeOptions: typeOptions,
             stats: statsData,
-            headers: ["Tier 1", "Tier 2", "Tier 3", "Tier 4"]
+            headers: [1, 2, 3, 4].map(n => tierLabel(n))
         };
     }
 
@@ -137,7 +138,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 // Fallback (apenas se UUID falhar)
                 const featureName = link.dataset.featureName;
-                ui.notifications.warn(`Could not find sheet for ${featureName}`);
+                ui.notifications.warn(tr("Notify.SheetNotFound", { name: featureName }));
             });
 
             link.addEventListener('dragstart', (e) => {
@@ -223,7 +224,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         console.warn(`Adversary Manager | Ignoring the bundled statistics because ${mismatch}. Reading the compendium instead.`);
         if (!staleSnapshotWarned) {
             staleSnapshotWarned = true;
-            ui.notifications.warn(`Adversary Manager | The bundled adversary statistics are out of date (${mismatch}), so they were recalculated from the compendium — which is why this took a while. A GM can refresh them by running AM.BuildStatsSnapshot() in the console.`);
+            ui.notifications.warn(tr("Notify.StaleStats", { mismatch }));
         }
         return null;
     }
@@ -387,7 +388,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
             data[itemTier].features.set(item.name, {
                 img: item.img || "icons/svg/item-bag.svg",
-                typeLabel: FEATURE_LABELS[item.system?.featureForm?.toLowerCase()] ?? "",
+                typeLabel: FEATURE_LABELS[item.system?.featureForm?.toLowerCase()] ? tr(`FeatureFormsShort.${item.system.featureForm.toLowerCase()}`) : "",
                 // Kept rather than resolved to a uuid here: which document the name should link
                 // to depends on the feature compendiums this world has, so it is settled at
                 // render time and a stored snapshot stays portable between worlds.
@@ -525,18 +526,18 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
     _formatStatsRows(data, type) {
         const rows = [
-            { label: "Difficulty", t1: this._getRange(data[1].difficulty), t2: this._getRange(data[2].difficulty), t3: this._getRange(data[3].difficulty), t4: this._getRange(data[4].difficulty) },
-            { label: "Threshold Min", t1: this._getRange(data[1].major), t2: this._getRange(data[2].major), t3: this._getRange(data[3].major), t4: this._getRange(data[4].major) },
-            { label: "Threshold Max", t1: this._getRange(data[1].severe), t2: this._getRange(data[2].severe), t3: this._getRange(data[3].severe), t4: this._getRange(data[4].severe) },
-            { label: "Hit Points", t1: this._getRange(data[1].hp), t2: this._getRange(data[2].hp), t3: this._getRange(data[3].hp), t4: this._getRange(data[4].hp) },
-            { label: "Stress", t1: this._getRange(data[1].stress), t2: this._getRange(data[2].stress), t3: this._getRange(data[3].stress), t4: this._getRange(data[4].stress) },
-            { label: "Attack Mod", t1: this._getSignedRange(data[1].attackMod), t2: this._getSignedRange(data[2].attackMod), t3: this._getSignedRange(data[3].attackMod), t4: this._getSignedRange(data[4].attackMod) },
-            { label: "Damage Rolls", t1: this._getList(data[1].damageRolls), t2: this._getList(data[2].damageRolls), t3: this._getList(data[3].damageRolls), t4: this._getList(data[4].damageRolls), isList: true }
+            { label: tr("Stats.Rows.Difficulty"), t1: this._getRange(data[1].difficulty), t2: this._getRange(data[2].difficulty), t3: this._getRange(data[3].difficulty), t4: this._getRange(data[4].difficulty) },
+            { label: tr("Stats.Rows.ThresholdMin"), t1: this._getRange(data[1].major), t2: this._getRange(data[2].major), t3: this._getRange(data[3].major), t4: this._getRange(data[4].major) },
+            { label: tr("Stats.Rows.ThresholdMax"), t1: this._getRange(data[1].severe), t2: this._getRange(data[2].severe), t3: this._getRange(data[3].severe), t4: this._getRange(data[4].severe) },
+            { label: tr("Stats.Rows.HitPoints"), t1: this._getRange(data[1].hp), t2: this._getRange(data[2].hp), t3: this._getRange(data[3].hp), t4: this._getRange(data[4].hp) },
+            { label: tr("Stats.Rows.Stress"), t1: this._getRange(data[1].stress), t2: this._getRange(data[2].stress), t3: this._getRange(data[3].stress), t4: this._getRange(data[4].stress) },
+            { label: tr("Stats.Rows.AttackMod"), t1: this._getSignedRange(data[1].attackMod), t2: this._getSignedRange(data[2].attackMod), t3: this._getSignedRange(data[3].attackMod), t4: this._getSignedRange(data[4].attackMod) },
+            { label: tr("Stats.Rows.DamageRolls"), t1: this._getList(data[1].damageRolls), t2: this._getList(data[2].damageRolls), t3: this._getList(data[3].damageRolls), t4: this._getList(data[4].damageRolls), isList: true }
         ];
 
         if (type === "horde") {
             rows.push({ 
-                label: "Halved Dmg", 
+                label: tr("Stats.Rows.HalvedDmg"), 
                 t1: this._getList(data[1].halvedDamageRolls), 
                 t2: this._getList(data[2].halvedDamageRolls), 
                 t3: this._getList(data[3].halvedDamageRolls), 
@@ -546,7 +547,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         rows.push({
-            label: "Experiences",
+            label: tr("Stats.Rows.Experiences"),
             t1: this._formatExpData(data[1]),
             t2: this._formatExpData(data[2]),
             t3: this._formatExpData(data[3]),
@@ -554,7 +555,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         });
 
         rows.push({
-            label: "Features",
+            label: tr("Stats.Rows.Features"),
             t1: this._getFeatureList(data[1].features),
             t2: this._getFeatureList(data[2].features),
             t3: this._getFeatureList(data[3].features),
@@ -613,7 +614,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             if (minVal === maxVal) valStr = fmt(minVal);
             else valStr = `${fmt(minVal)}/${fmt(maxVal)}`;
         }
-        const tooltip = "Quantity (Min-Max) +Value Range";
+        const tooltip = tr("Stats.ExpTooltip");
         return `<span data-tooltip="${tooltip}" style="cursor: help;">${countStr} ${valStr}</span>`;
     }
 
@@ -633,7 +634,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             const draggableAttr = uuid ? `draggable="true" data-uuid="${uuid}"` : "";
             const displayLabel = data.typeLabel ? `<span style="opacity: 0.7; margin-left: 4px;">${data.typeLabel}</span>` : "";
             
-            return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="Click to view, Drag to Sheet">
+            return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="${tr("Stats.FeatureTooltip")}">
                 <img src="${data.img}" class="feature-icon" alt="${name}"/>
                 <span class="feature-name">${name}${displayLabel}</span>
              </div>`

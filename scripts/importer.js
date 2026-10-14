@@ -1,4 +1,5 @@
 /*!
+import { tr } from "./i18n.js";
  * Daggerheart: Adversary Manager
  * 2025 https://github.com/brunocalado
  *
@@ -74,14 +75,14 @@ export async function importFeatures(compendiumId, rootFolderName, customTag) {
 
     const pack = game.packs.get(compendiumId);
     if (!pack) {
-        const msg = `Compendium "${compendiumId}" not found.`;
+        const msg = tr("Notify.CompendiumNotFound", { id: compendiumId });
         ui.notifications.error(msg);
         console.error(msg);
         return;
     }
 
     if (pack.documentName !== "Actor") {
-        ui.notifications.error(`Compendium "${compendiumId}" is not an Actor compendium.`);
+        ui.notifications.error(tr("Notify.NotActorCompendium", { id: compendiumId }));
         return;
     }
 

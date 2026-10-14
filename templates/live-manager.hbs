@@ -7,7 +7,7 @@
     <!-- Tier Selection Tabs -->
     <div class="tier-tabs">
         <div class="tier-control-row">
-            <label class="tier-control-label">Target Tier:</label>
+            <label class="tier-control-label">{{localize "DHAM.Live.TargetTier"}}</label>
             <div class="tier-buttons tier-buttons-flush">
                 {{#each tiers}}
                 <button type="button"
@@ -34,15 +34,15 @@
         <div class="footer-row">
             <button type="button" data-action="applyChanges" class="apply-btn">
                 {{#if (eq linkData null)}}
-                    <i class="fas fa-file-import"></i> Import & Apply Tier {{previewStats.tier}}
+                    <i class="fas fa-file-import"></i> {{localize "DHAM.Live.ImportApply" tier=previewStats.tier}}
                 {{else}}
-                    <i class="fas fa-bolt"></i> Apply Tier {{previewStats.tier}} to {{actorName}}
+                    <i class="fas fa-bolt"></i> {{localize "DHAM.Live.ApplyTo" tier=previewStats.tier actor=actorName}}
                 {{/if}}
             </button>
-            <button type="button" data-action="toggleOverwriteActor" class="overwrite-actor-toggle {{#if overwriteWorldActor}}active{{/if}}" title="{{#if overwriteWorldActor}}Will create a copy instead of overwriting{{else}}Will overwrite world actor in place{{/if}}">
-                <i class="fas fa-copy"></i> Copy
+            <button type="button" data-action="toggleOverwriteActor" class="overwrite-actor-toggle {{#if overwriteWorldActor}}active{{/if}}" title="{{#if overwriteWorldActor}}{{localize 'DHAM.Live.CopyTooltipOn'}}{{else}}{{localize 'DHAM.Live.CopyTooltipOff'}}{{/if}}">
+                <i class="fas fa-copy"></i> {{localize "DHAM.Live.Copy"}}
             </button>
-            <button type="button" data-action="toggleOpenSheet" class="open-sheet-toggle {{#if openAfterApply}}active{{/if}}" title="Open sheet after applying">
+            <button type="button" data-action="toggleOpenSheet" class="open-sheet-toggle {{#if openAfterApply}}active{{/if}}" title="{{localize 'DHAM.Live.OpenSheetAfter'}}">
                 <i class="fas fa-external-link-alt"></i>
             </button>
         </div>
@@ -51,7 +51,7 @@
     {{else}}
     <div class="empty-state">
         <i class="fas fa-skull empty-state-icon"></i>
-        <p>Select an Adversary from the list above to begin preview.</p>
+        <p>{{localize "DHAM.Live.Empty"}}</p>
     </div>
     {{/if}}
 
