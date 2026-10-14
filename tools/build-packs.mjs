@@ -12,7 +12,9 @@
  *   npm run pack     # packs/_source/<name>/*.json -> LevelDB at each pack's `path`
  *   npm run unpack   # LevelDB at each pack's `path` -> packs/_source/<name>/*.json
  *
- * Only the JSON source is committed. The LevelDB packs are build output: the release workflow
+ * Only the JSON source is committed: Foundry rewrites a LevelDB whenever a world that uses it
+ * opens, so a committed one dirtied the tree with nothing edited, diffed as binary and could not
+ * be merged between branches. The LevelDB packs are build output: the release workflow
  * compiles them, and locally Foundry reads and writes them. After editing a compendium in
  * Foundry, close the world (LevelDB opens in one process at a time) and run `unpack` before
  * committing; after pulling, run `pack`.
