@@ -1,0 +1,165 @@
+{
+  "_id": "0lxrJBo129t8HFbZ",
+  "name": "Blood Bath",
+  "type": "feature",
+  "img": "icons/skills/wounds/blood-cells-red.webp",
+  "system": {
+    "featureForm": "reaction",
+    "attribution": {},
+    "description": "<p>When the Hellwing takes Major or greater damage, the ground within Very Close range is covered with blood, dealing <strong>3d10</strong> magic damage to all other creatures in the area. When the Hellwing takes the spotlight on subsequent GM turns, all other creatures in that area take <strong>3d6</strong> magic damage.</p>",
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "7gk8icaFQhfat78F": {
+        "type": "damage",
+        "damage": {
+          "main": {
+            "base": false,
+            "applyTo": "hitPoints",
+            "resultBased": false,
+            "fullRestore": false,
+            "value": {
+              "multiplier": "flat",
+              "flatMultiplier": 3,
+              "dice": "d10",
+              "bonus": null,
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              }
+            },
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "type": [
+              "magical"
+            ],
+            "groupAttack": "",
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "_id": "7gk8icaFQhfat78F",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [
+          {
+            "name": "Blood Bath",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "hasHole": false,
+            "effects": []
+          }
+        ],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "Initial Damage",
+        "range": ""
+      },
+      "1LnUFjdkPBxd0l5e": {
+        "type": "damage",
+        "damage": {
+          "main": {
+            "base": false,
+            "applyTo": "hitPoints",
+            "resultBased": false,
+            "fullRestore": false,
+            "value": {
+              "multiplier": "flat",
+              "flatMultiplier": 3,
+              "dice": "d6",
+              "bonus": null,
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              }
+            },
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "type": [
+              "magical"
+            ],
+            "groupAttack": "",
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "_id": "1LnUFjdkPBxd0l5e",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "<p>When the Hellwing takes the spotlight on subsequent GM turns, all other creatures in that area take <strong>3d6</strong> magic damage.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "Continual Damage",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "nMRuaPQV1fMwZUNv",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Vampire Lord",
+      "tier": 3,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "EP1UikpG7sEXdcv1",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!0lxrJBo129t8HFbZ"
+}

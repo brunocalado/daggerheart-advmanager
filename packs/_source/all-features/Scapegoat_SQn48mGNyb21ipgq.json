@@ -1,0 +1,84 @@
+{
+  "_id": "SQn48mGNyb21ipgq",
+  "name": "Scapegoat",
+  "type": "feature",
+  "img": "icons/skills/social/diplomacy-unity-alliance.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> to convince a crowd or notable individual that one person or group is responsible for some problem facing the target. The target becomes hostile to the scapegoat until convinced of their innocence with a successful Presence Roll (17).</p><p>[[/dr trait=presence difficulty=17]]</p>",
+    "resource": null,
+    "actions": {
+      "6oaHwUVWTmF362vI": {
+        "type": "effect",
+        "_id": "6oaHwUVWTmF362vI",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "img": "icons/magic/unholy/orb-hands-pink.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "vdQUi76puEzcnHhX",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Royal Advisor",
+      "tier": 2,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "iwNrNBbvm3RMgSw5",
+      "isSpecialCase": true
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!SQn48mGNyb21ipgq"
+}

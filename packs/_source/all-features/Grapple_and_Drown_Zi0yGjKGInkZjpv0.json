@@ -1,0 +1,170 @@
+{
+  "_id": "Zi0yGjKGInkZjpv0",
+  "name": "Grapple and Drown",
+  "type": "feature",
+  "img": "icons/magic/water/orb-water-bubbles-blue.webp",
+  "system": {
+    "description": "<p>Make an attack roll against a target within Close range. On a success, <strong>mark a Stress</strong> to grab them with a tentacle and drag them beneath the water. The target is <em>Restrained</em> and <em>Vulnerable</em> until they break free with a successful Strength Roll or the @Lookup[@name] takes Major or greater damage. While <em>Restrained</em> and <em>Vulnerable</em> in this way, a target must mark a Stress when they make an action roll.</p>",
+    "resource": null,
+    "actions": {
+      "SX2Y4OapGEawl17j": {
+        "type": "attack",
+        "_id": "SX2Y4OapGEawl17j",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "consumeOnSuccess": true,
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [
+          {
+            "_id": "Xes6ZIE01CCN67KF",
+            "onSave": false
+          }
+        ],
+        "roll": {
+          "type": "attack",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Attack",
+        "img": "icons/magic/water/orb-water-bubbles-blue.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Grapple and Drown",
+      "img": "icons/magic/water/orb-water-bubbles-blue.webp",
+      "transfer": false,
+      "_id": "Xes6ZIE01CCN67KF",
+      "type": "base",
+      "system": {
+        "changes": [],
+        "duration": {
+          "type": "temporary",
+          "description": "<p>Until you break free with a successful Strength Roll or the Kraken takes Major or greater damage.</p>"
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>You are <em>Restrained</em> and <em>Vulnerable</em> until you break free with a successful Strength Roll or the Kraken takes Major or greater damage. While <em>Restrained</em> and <em>Vulnerable</em> in this way, you must mark a Stress when you make an action roll.</p>",
+      "tint": "#ffffff",
+      "statuses": [
+        "vulnerable",
+        "restrained"
+      ],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!Zi0yGjKGInkZjpv0.Xes6ZIE01CCN67KF"
+    }
+  ],
+  "folder": "zLNFldhRuRDfRN1W",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Kraken",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "vz2BWhispgR7mSWF",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!Zi0yGjKGInkZjpv0"
+}

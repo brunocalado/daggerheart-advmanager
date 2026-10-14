@@ -1,0 +1,84 @@
+{
+  "_id": "VMnIFLQ81dlSGTpX",
+  "name": "For the Realm!",
+  "type": "feature",
+  "img": "icons/environment/people/charge.webp",
+  "system": {
+    "description": "<p><strong>Mark a Stress</strong> to spotlight <strong>[[/r 1d4+1]]</strong> allies. Attacks they make while spotlighted in this way deal half damage.</p>",
+    "resource": null,
+    "actions": {
+      "V5fLHHdTOita6u9f": {
+        "type": "effect",
+        "_id": "V5fLHHdTOita6u9f",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "img": "icons/environment/people/charge.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Knight of the Realm",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "RoxNNIn0m9rHQDH8",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!VMnIFLQ81dlSGTpX"
+}

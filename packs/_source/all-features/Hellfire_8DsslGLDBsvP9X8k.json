@@ -1,0 +1,140 @@
+{
+  "_id": "8DsslGLDBsvP9X8k",
+  "name": "Hellfire",
+  "type": "feature",
+  "img": "icons/magic/fire/projectile-beams-salvo-red.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> to rain down hellfire within Far range. All targets within the area must make an Agility Reaction Roll. Targets who fail take <strong>1d20+3</strong> magic damage. Targets who succeed take half damage.</p>",
+    "resource": null,
+    "actions": {
+      "nOzLQ0NJzeB3vKiV": {
+        "type": "attack",
+        "_id": "nOzLQ0NJzeB3vKiV",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "flatMultiplier": 1,
+              "dice": "d20",
+              "bonus": 3,
+              "multiplier": "flat"
+            },
+            "applyTo": "hitPoints",
+            "type": [
+              "magical"
+            ],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "groupAttack": "",
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "agility",
+          "difficulty": null,
+          "damageMod": "half"
+        },
+        "name": "Spend Fear",
+        "img": "icons/magic/fire/projectile-beams-salvo-red.webp",
+        "range": "far",
+        "areas": [
+          {
+            "name": "Hellfire",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "far",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "zLNFldhRuRDfRN1W",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Minor Demon",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "lA7vcvS7oGT9NTSy",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!8DsslGLDBsvP9X8k"
+}

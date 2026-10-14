@@ -1,0 +1,83 @@
+{
+  "_id": "oY9GegvJRAfYmfrB",
+  "name": "Guard Dog",
+  "type": "feature",
+  "img": "icons/magic/defensive/shield-barrier-blue.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When a PC would deal damage to a creature within Close range, you can <strong>mark a Stress</strong> to have the @Lookup[@name] move to intercept the attack and take the damage instead. If the attacker is within Melee range of the @Lookup[@name]'s new position, you can immediately spotlight the @Lookup[@name] without spending Fear.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "VCqZXDcEJzs0vfLY": {
+        "type": "effect",
+        "_id": "VCqZXDcEJzs0vfLY",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "name": "Mark Stress",
+        "range": "close"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "eaP1x4bc1yUkBWsp",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Drake",
+      "tier": 3,
+      "type": "Skulk",
+      "customTag": "Core Rulebook",
+      "originalId": "Bbr3ZrCKZVkOBA0G",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!oY9GegvJRAfYmfrB"
+}

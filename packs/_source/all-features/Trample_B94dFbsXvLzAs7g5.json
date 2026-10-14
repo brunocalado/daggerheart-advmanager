@@ -1,0 +1,139 @@
+{
+  "_id": "B94dFbsXvLzAs7g5",
+  "name": "Trample",
+  "type": "feature",
+  "img": "icons/skills/movement/arrow-upward-yellow.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Mark a Stress</strong> to have the @Lookup[@name] charge up to Far range in a straight line. Each target in its path must succeed on an Agility Reaction Roll or take <strong>2d10+3</strong> physical damage.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "1OyOXhfX9jfCasOJ": {
+        "type": "attack",
+        "damage": {
+          "main": {
+            "base": false,
+            "applyTo": "hitPoints",
+            "resultBased": false,
+            "fullRestore": false,
+            "value": {
+              "multiplier": "flat",
+              "flatMultiplier": 2,
+              "dice": "d10",
+              "bonus": 3,
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              }
+            },
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "type": [
+              "physical"
+            ],
+            "groupAttack": "",
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "_id": "1OyOXhfX9jfCasOJ",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [
+          {
+            "name": "Trample",
+            "type": "placed",
+            "shape": "line",
+            "size": "far",
+            "hasHole": false,
+            "effects": []
+          }
+        ],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "agility",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Mark Stress",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "8lYVYjrfXTyDIDni",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Elephant",
+      "tier": 2,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "1VtSVY2AP3yzn9YA",
+      "isSpecialCase": true
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!B94dFbsXvLzAs7g5"
+}

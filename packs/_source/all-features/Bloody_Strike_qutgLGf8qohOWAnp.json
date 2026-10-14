@@ -1,0 +1,97 @@
+{
+  "_id": "qutgLGf8qohOWAnp",
+  "name": "Bloody Strike",
+  "type": "feature",
+  "img": "icons/skills/melee/strike-axe-red.webp",
+  "system": {
+    "featureForm": "passive",
+    "attribution": {},
+    "description": "<p>A PC who marks 3 or more HP from an attack made by the Cat Beast must mark an additional HP.</p>",
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "Vln4OMBjRwT6EGlA": {
+        "type": "damage",
+        "damage": {
+          "main": null,
+          "resources": {
+            "hitPoints": {
+              "base": false,
+              "applyTo": "hitPoints",
+              "resultBased": false,
+              "fullRestore": false,
+              "value": {
+                "multiplier": "flat",
+                "flatMultiplier": 0,
+                "dice": "d6",
+                "bonus": 1,
+                "custom": {
+                  "enabled": false,
+                  "formula": ""
+                }
+              },
+              "valueAlt": null,
+              "itemId": null
+            }
+          }
+        },
+        "_id": "Vln4OMBjRwT6EGlA",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Entombed Cat Beast",
+      "tier": 2,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "Wzuxw7ICPQD2mYpr",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!qutgLGf8qohOWAnp"
+}

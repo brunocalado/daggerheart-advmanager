@@ -1,0 +1,84 @@
+{
+  "_id": "Lh0SEgs30zIA6ulF",
+  "name": "Overwhelm",
+  "type": "feature",
+  "img": "icons/magic/death/blood-corruption-vomit-red.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name]s mark HP from an attack within Melee range, you can <strong>mark a Stress</strong> to make a standard attack against the attacker.</p>",
+    "resource": null,
+    "actions": {
+      "0Im5AEgp8gJaVJHh": {
+        "type": "effect",
+        "_id": "0Im5AEgp8gJaVJHh",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "img": "icons/magic/death/blood-corruption-vomit-red.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "bqVsG6smLMrzLkfi",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Zombie Pack",
+      "tier": 1,
+      "type": "Horde",
+      "customTag": "Core Rulebook",
+      "originalId": "jQmltra0ovHE33Nx",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!Lh0SEgs30zIA6ulF"
+}

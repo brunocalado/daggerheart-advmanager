@@ -1,0 +1,83 @@
+{
+  "_id": "tg4N0JL8Th540ZsL",
+  "name": "Double Strike",
+  "type": "feature",
+  "img": "icons/skills/melee/blood-slash-foam-red.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Mark a Stress</strong> to make two standard attacks. If both attacks succeed against the same target, combine the damage.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "1kH2FCO5AitgwBtF": {
+        "type": "effect",
+        "_id": "1kH2FCO5AitgwBtF",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "8lYVYjrfXTyDIDni",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Chicken-foot Hut",
+      "tier": 2,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "N9tz3fFJ5DFerV0u",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!tg4N0JL8Th540ZsL"
+}

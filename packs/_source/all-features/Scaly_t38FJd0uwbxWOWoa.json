@@ -1,0 +1,98 @@
+{
+  "_id": "t38FJd0uwbxWOWoa",
+  "name": "Scaly",
+  "type": "feature",
+  "img": "icons/commodities/biological/shell-ridged-green.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When the Gillbeast would mark any number of HP, roll a <strong>d6</strong>. On a result of 6, you can <strong>mark a Stress</strong> instead.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "XkIEJugE5JKNYNjt": {
+        "type": "attack",
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "_id": "XkIEJugE5JKNYNjt",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "diceSet",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "flat",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": "equal",
+            "treshold": 6
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Roll D6",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "WO43nKj8E0pZ0uci",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Sawtoothed Gillbeast",
+      "tier": 1,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "qufYjFc6S4uT7tkQ",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!t38FJd0uwbxWOWoa"
+}

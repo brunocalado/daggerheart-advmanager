@@ -1,0 +1,101 @@
+{
+  "_id": "3IizIvAn3W9TdCaX",
+  "name": "From Above",
+  "type": "feature",
+  "img": "icons/skills/movement/arrow-down-pink.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] succeeds on a standard attack from above a target, they deal <strong>3d12+3</strong> physical damage instead of their standard damage.</p>",
+    "resource": null,
+    "actions": {
+      "PZNJgyomR7MK2xUP": {
+        "type": "damage",
+        "_id": "PZNJgyomR7MK2xUP",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "flatMultiplier": 3,
+              "dice": "d12",
+              "bonus": 3,
+              "multiplier": "flat"
+            },
+            "applyTo": "hitPoints",
+            "type": [
+              "physical"
+            ],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "Damage",
+        "img": "icons/skills/movement/arrow-down-pink.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hLSuhAE5WnpIcfMB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Stag Knight",
+      "tier": 3,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "3Na2mDfKFB5Hqbqu",
+      "isSpecialCase": true
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!3IizIvAn3W9TdCaX"
+}

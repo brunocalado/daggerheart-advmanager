@@ -1,0 +1,106 @@
+{
+  "_id": "y5IenEKXJHX9KWpQ",
+  "name": "Brain Drain",
+  "type": "feature",
+  "img": "icons/magic/unholy/energy-smoke-pink.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Mark a Stress</strong> to choose a <em>Vulnerable</em> PC within Very Close range. The target marks <strong>1d4</strong> Stress, and the @Lookup[@name] clears an equal number of HP.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "VOEi2TIkP8Bqt5B9": {
+        "type": "damage",
+        "damage": {
+          "main": null,
+          "resources": {
+            "stress": {
+              "base": false,
+              "applyTo": "stress",
+              "resultBased": false,
+              "fullRestore": false,
+              "value": {
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d4",
+                "bonus": null,
+                "custom": {
+                  "enabled": false,
+                  "formula": ""
+                }
+              },
+              "valueAlt": null,
+              "itemId": null
+            }
+          }
+        },
+        "_id": "VOEi2TIkP8Bqt5B9",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "effects": [],
+        "name": "Mark Stress",
+        "range": "veryClose"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Deep Dweller",
+      "tier": 3,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "EJSZFUchXzCQqGfn",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!y5IenEKXJHX9KWpQ"
+}

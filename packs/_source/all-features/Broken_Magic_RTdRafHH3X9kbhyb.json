@@ -1,0 +1,305 @@
+{
+  "_id": "RTdRafHH3X9kbhyb",
+  "name": "Broken Magic",
+  "type": "feature",
+  "img": "icons/magic/symbols/rune-sigil-red-orange.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Mark a Stress</strong> to roll a <strong>[[/r d6]]</strong>. The Mage uses the corresponding move:</p><ul><li><p>1–2: Dimension Rift. Choose a target within Far range. The target teleports to a point you choose within Close range of their original position and takes <strong>2d6</strong> direct magic damage as their body and mind reassemble.</p></li><li><p>3–4: Time Dilation. Choose a group of PCs within Far range. Each target is Slowed until they roll with Hope. While Slowed, a target is <em>Vulnerable</em> and must mark a Stress when they move.</p></li><li><p>5–6: Discordant Visions. Make an attack against up to three targets within Close range. Targets the Mage succeeds against take <strong>2d8</strong> direct magic damage.</p></li></ul>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "gPSIHi1qLoEhOodY": {
+        "type": "effect",
+        "_id": "gPSIHi1qLoEhOodY",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "<p><strong>Mark a Stress</strong> to roll a <strong>[[/r d6]]</strong>. The Mage uses the corresponding move:</p><ul><li><p>1–2: Dimension Rift</p></li><li><p>3–4: Time Dilation</p></li><li><p>5–6: Discordant Visions</p></li></ul>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "range": ""
+      },
+      "JW4Q8WDDDRyUuSSv": {
+        "type": "damage",
+        "damage": {
+          "main": {
+            "base": false,
+            "applyTo": "hitPoints",
+            "resultBased": false,
+            "fullRestore": false,
+            "value": {
+              "multiplier": "flat",
+              "flatMultiplier": 2,
+              "dice": "d6",
+              "bonus": null,
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              }
+            },
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": true,
+            "type": [
+              "magical"
+            ],
+            "groupAttack": "",
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "_id": "JW4Q8WDDDRyUuSSv",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "<p>Choose a target within Far range. The target teleports to a point you choose within Close range of their original position and takes <strong>2d6</strong> direct magic damage as their body and mind reassemble.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "effects": [],
+        "name": "Dimension Rift",
+        "range": "far",
+        "img": "icons/magic/movement/portal-vortex-orange.webp"
+      },
+      "4BsOL1UvlgCXCB5P": {
+        "type": "effect",
+        "_id": "4BsOL1UvlgCXCB5P",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "<p>Choose a group of PCs within Far range. Each target is Slowed until they roll with Hope. While Slowed, a target is <em>Vulnerable</em> and must mark a Stress when they move.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [
+          {
+            "_id": "CUoOVC9YnIDuItcz",
+            "onSave": false
+          }
+        ],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Time Dilation",
+        "range": "far",
+        "img": "icons/magic/time/hourglass-tilted-gray.webp"
+      },
+      "dlfc8B2NMA8AX5NG": {
+        "type": "attack",
+        "damage": {
+          "main": {
+            "base": false,
+            "applyTo": "hitPoints",
+            "resultBased": false,
+            "fullRestore": false,
+            "value": {
+              "multiplier": "flat",
+              "flatMultiplier": 2,
+              "dice": "d8",
+              "bonus": null,
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              }
+            },
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": true,
+            "type": [
+              "magical"
+            ],
+            "groupAttack": "",
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "_id": "dlfc8B2NMA8AX5NG",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "<p>Make an attack against up to three targets within Close range. Targets the Mage succeeds against take <strong>2d8</strong> direct magic damage.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": 3
+        },
+        "effects": [],
+        "roll": {
+          "type": "attack",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Discordant Visions",
+        "range": "close",
+        "img": "icons/magic/perception/hand-eye-fire-blue.webp"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Slowed",
+      "disabled": false,
+      "img": "icons/magic/time/hourglass-tilted-gray.webp",
+      "description": "<p>You are Slowed until you roll with Hope. While Slowed, you are <em>Vulnerable</em> and must mark a Stress when you move.</p>",
+      "transfer": false,
+      "statuses": [
+        "vulnerable"
+      ],
+      "system": {
+        "changes": [],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "CUoOVC9YnIDuItcz",
+      "type": "base",
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "tint": "#ffffff",
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!RTdRafHH3X9kbhyb.CUoOVC9YnIDuItcz"
+    }
+  ],
+  "folder": "zLNFldhRuRDfRN1W",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Soul-shattered Mage",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "86ZXTdwwNOtDhkxp",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!RTdRafHH3X9kbhyb"
+}

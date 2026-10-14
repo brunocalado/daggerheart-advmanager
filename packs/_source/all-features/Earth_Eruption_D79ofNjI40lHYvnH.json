@@ -1,0 +1,178 @@
+{
+  "_id": "D79ofNjI40lHYvnH",
+  "name": "Earth Eruption",
+  "type": "feature",
+  "img": "icons/magic/earth/barrier-stone-explosion-red.webp",
+  "system": {
+    "description": "<p><strong>Mark a Stress</strong> to have the @Lookup[@name] burst out of the ground. All creatures within Very Close range must succeed on an Agility Reaction Roll or be knocked over, making them Vulnerable until they next act.</p>",
+    "resource": null,
+    "actions": {
+      "4ppSeiTdbqnMzWAs": {
+        "type": "attack",
+        "_id": "4ppSeiTdbqnMzWAs",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [
+          {
+            "_id": "9PsnogEPsp1OOK64",
+            "onSave": false
+          }
+        ],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "agility",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Roll Save",
+        "img": "icons/magic/earth/barrier-stone-explosion-red.webp",
+        "range": "veryClose",
+        "areas": [
+          {
+            "name": "Earth Eruption",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Earth Eruption",
+      "img": "icons/magic/earth/barrier-stone-explosion-red.webp",
+      "transfer": false,
+      "_id": "9PsnogEPsp1OOK64",
+      "type": "base",
+      "system": {
+        "changes": [],
+        "duration": {
+          "type": "act",
+          "description": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "",
+      "tint": "#ffffff",
+      "statuses": [
+        "vulnerable"
+      ],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!D79ofNjI40lHYvnH.9PsnogEPsp1OOK64"
+    }
+  ],
+  "folder": "zLNFldhRuRDfRN1W",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Acid Burrower",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "ctXYwil2D1zfsekT",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!D79ofNjI40lHYvnH"
+}

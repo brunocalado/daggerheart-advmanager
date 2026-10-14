@@ -1,0 +1,110 @@
+{
+  "_id": "a2LluubXfxehSay9",
+  "name": "Feel My Pain",
+  "type": "feature",
+  "img": "icons/magic/control/sihouette-hold-beam-green.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When the Mage marks HP, roll a number of <strong>d6s</strong> equal to the number of Stress the Mage has marked. The Mage deals direct magic damage equal to the total result to all PCs within Very Close range.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "ImLD2lQbTdzdgIpM": {
+        "type": "damage",
+        "damage": {
+          "main": {
+            "base": false,
+            "applyTo": "hitPoints",
+            "resultBased": false,
+            "fullRestore": false,
+            "value": {
+              "multiplier": "flat",
+              "flatMultiplier": 1,
+              "dice": "d6",
+              "bonus": null,
+              "custom": {
+                "enabled": true,
+                "formula": "@system.resources.hitPoints.valued6"
+              }
+            },
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": true,
+            "type": [
+              "magical"
+            ],
+            "groupAttack": "",
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "_id": "ImLD2lQbTdzdgIpM",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [
+          {
+            "name": "Feel My Pain",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "hasHole": false,
+            "effects": []
+          }
+        ],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "nMRuaPQV1fMwZUNv",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Soul-shattered Mage",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "z471ukb68Ffoza3k",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!a2LluubXfxehSay9"
+}

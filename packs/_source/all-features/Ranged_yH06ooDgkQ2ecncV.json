@@ -1,0 +1,16 @@
+{
+  "_id": "yH06ooDgkQ2ecncV",
+  "name": "Ranged",
+  "type": "Item",
+  "color": "#002366",
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "UH09kjtZCSLC2pHc",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!yH06ooDgkQ2ecncV"
+}

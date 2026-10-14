@@ -1,0 +1,144 @@
+{
+  "_id": "GDSJjeO5KRliFCCI",
+  "name": "Entangling Entrails",
+  "type": "feature",
+  "img": "icons/magic/unholy/projectile-helix-blood-red.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Spend a Fear</strong> to have the @Lookup[@name] latch onto a target within Very Close range, <em>Restrain</em>ing them until they escape with a successful Strength Roll (16).</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "k9a7IFMGF4VvOuXr": {
+        "type": "effect",
+        "_id": "k9a7IFMGF4VvOuXr",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [
+          {
+            "_id": "NUGvJQQ3xFB3xBPl",
+            "onSave": false
+          }
+        ],
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "name": "Spend Fear",
+        "range": "veryClose"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Entangling Entrails",
+      "disabled": false,
+      "img": "icons/magic/unholy/projectile-helix-blood-red.webp",
+      "description": "<p>You are <em>Restrained</em> them until you escape with a successful Strength Roll (16).</p>",
+      "transfer": false,
+      "statuses": [
+        "restrain"
+      ],
+      "system": {
+        "changes": [],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "NUGvJQQ3xFB3xBPl",
+      "type": "base",
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "tint": "#ffffff",
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!GDSJjeO5KRliFCCI.NUGvJQQ3xFB3xBPl"
+    }
+  ],
+  "folder": "kEU65CdFxzBLYeYL",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Viscera Sucker",
+      "tier": 3,
+      "type": "Skulk",
+      "customTag": "Core Rulebook",
+      "originalId": "JvUiFinQ8enXA8Pu",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!GDSJjeO5KRliFCCI"
+}

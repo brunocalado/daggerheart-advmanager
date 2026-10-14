@@ -1,0 +1,171 @@
+{
+  "_id": "zcgSbQApszsyzc2W",
+  "name": "Rampage",
+  "type": "feature",
+  "img": "icons/magic/movement/trail-streak-zigzag-yellow.webp",
+  "system": {
+    "description": "<p><em>Countdown (Loop 1d6)</em>. When the @Lookup[@name] is in the spotlight for the first time, activate the countdown. When it triggers, move the @Lookup[@name] in a straight line to a point within Far range and make an attack against all targets in their path. Targets the @Lookup[@name] succeeds against take <strong>2d8+2</strong> physical damage.</p>",
+    "resource": null,
+    "actions": {
+      "VjiFxuzfAaq5N1jy": {
+        "type": "attack",
+        "_id": "VjiFxuzfAaq5N1jy",
+        "systemPath": "actions",
+        "description": "<p>Move the @Lookup[@name] in a straight line to a point within Far range and make an attack against all targets in their path. Targets the @Lookup[@name] succeeds against take <strong>2d8+2</strong> physical damage.</p><p>@Template[type:ray|range:f]</p>",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "flatMultiplier": 2,
+              "dice": "d8",
+              "bonus": 2,
+              "multiplier": "flat"
+            },
+            "applyTo": "hitPoints",
+            "type": [
+              "physical"
+            ],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "groupAttack": "",
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "attack",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Attack",
+        "img": "icons/magic/movement/trail-streak-zigzag-yellow.webp",
+        "range": "far",
+        "areas": [
+          {
+            "name": "Rampage",
+            "type": "placed",
+            "shape": "line",
+            "size": "far",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      },
+      "BhA3vxCuMs4UbbQU": {
+        "type": "countdown",
+        "_id": "BhA3vxCuMs4UbbQU",
+        "systemPath": "actions",
+        "description": "<p><em>Countdown (Loop 1d6)</em>. When the @Lookup[@name] is in the spotlight for the first time, activate the countdown.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "countdown": [
+          {
+            "name": "Rampage",
+            "type": "encounter",
+            "img": "icons/magic/movement/trail-streak-zigzag-yellow.webp",
+            "progress": {
+              "looping": "looping",
+              "type": "actionRoll",
+              "start": 1,
+              "startFormula": "1d6",
+              "current": 1
+            },
+            "ownership": {},
+            "hidden": null
+          }
+        ],
+        "name": "Start Countdown",
+        "img": "icons/magic/movement/trail-streak-zigzag-yellow.webp",
+        "range": "",
+        "baseAction": false,
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Cab1928i08qIfSkO",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Mortal Hunter",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "IOCG3J20wUHvyvvh",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!zcgSbQApszsyzc2W"
+}

@@ -1,0 +1,99 @@
+{
+  "_id": "SorP5h9Rb7d5Lqjg",
+  "name": "Heavily Armored",
+  "type": "feature",
+  "img": "icons/equipment/chest/breastplate-cuirass-steel-grey.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] takes physical damage, reduce it by 3.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Heavily Armored",
+      "type": "base",
+      "system": {
+        "changes": [
+          {
+            "key": "system.resistance.physical.reduction",
+            "type": "add",
+            "value": 3,
+            "priority": null,
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "description": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "xZjvrNRRjskY3n3j",
+      "img": "icons/equipment/chest/breastplate-cuirass-steel-grey.webp",
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>When the Knight takes physical damage, reduce it by 3.</p>",
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": null,
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!SorP5h9Rb7d5Lqjg.xZjvrNRRjskY3n3j"
+    }
+  ],
+  "folder": "F8new8F1pedOrVWY",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Knight of the Realm",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "ErWO4lqni81aRo7k",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!SorP5h9Rb7d5Lqjg"
+}

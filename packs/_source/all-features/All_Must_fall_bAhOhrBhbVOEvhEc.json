@@ -1,0 +1,107 @@
+{
+  "_id": "bAhOhrBhbVOEvhEc",
+  "name": "All Must fall",
+  "type": "feature",
+  "img": "icons/magic/unholy/strike-hand-glow-pink.webp",
+  "system": {
+    "description": "<p>When a PC rolls a failure with Fear while within Close range of the @Lookup[@name], they lose a Hope.</p>",
+    "resource": null,
+    "actions": {
+      "XQ7QebA0iGvMti4A": {
+        "type": "damage",
+        "_id": "XQ7QebA0iGvMti4A",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {
+            "hope": {
+              "value": {
+                "custom": {
+                  "enabled": true,
+                  "formula": "1"
+                },
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d6",
+                "bonus": null
+              },
+              "applyTo": "hope",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "Hope Damage",
+        "img": "icons/magic/unholy/strike-hand-glow-pink.webp",
+        "range": "",
+        "areas": [
+          {
+            "name": "All Must fall",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "close",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Minor Demon",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "kD9kO92V7t3IqZu8",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!bAhOhrBhbVOEvhEc"
+}

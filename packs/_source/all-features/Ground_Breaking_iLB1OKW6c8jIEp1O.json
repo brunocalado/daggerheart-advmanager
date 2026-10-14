@@ -1,0 +1,139 @@
+{
+  "_id": "iLB1OKW6c8jIEp1O",
+  "name": "Ground-Breaking",
+  "type": "feature",
+  "img": "icons/magic/earth/explosion-lava-stone-yellow.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Spend a Fear</strong> to have the Warlord crack the earth with a downward swing of their maul and make an attack against a group within Close range. Targets the attack succeeds against take <strong>4d10+10</strong> direct damage. The area becomes rough terrain, and a PC must succeed on an Agility Reaction Roll (16) to move through it.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "JEcOJzlgx0cjztWq": {
+        "type": "attack",
+        "damage": {
+          "main": {
+            "base": false,
+            "applyTo": "hitPoints",
+            "resultBased": false,
+            "fullRestore": false,
+            "value": {
+              "multiplier": "flat",
+              "flatMultiplier": 4,
+              "dice": "d10",
+              "bonus": 10,
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              }
+            },
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": true,
+            "type": [
+              "physical"
+            ],
+            "groupAttack": "",
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "_id": "JEcOJzlgx0cjztWq",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [
+          {
+            "name": "Ground-Breaking",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "hasHole": false,
+            "effects": []
+          }
+        ],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "attack",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Spend Fear",
+        "range": "close"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fire Titan Warlord",
+      "tier": 4,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "vFO6Ikozm5LzM1eh",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!iLB1OKW6c8jIEp1O"
+}

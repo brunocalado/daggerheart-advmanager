@@ -1,0 +1,75 @@
+{
+  "_id": "EBuplzB01svQuXAQ",
+  "name": "Deadly Companion",
+  "type": "feature",
+  "img": "icons/creatures/mammals/ox-bull-horned-glowing-orange.webp",
+  "system": {
+    "description": "<p>Twice per scene, summon a Bear, Dire Wolf, or similar Tier 1 animal adversary under the @Lookup[@name]'s control. The adversary appears at Close range and is immediately spotlighted.</p>",
+    "resource": null,
+    "actions": {
+      "eSRUMqpQDPRG9leg": {
+        "type": "effect",
+        "_id": "eSRUMqpQDPRG9leg",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "2",
+          "recovery": "scene",
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Summon",
+        "img": "icons/creatures/mammals/ox-bull-horned-glowing-orange.webp",
+        "range": "close",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Giant Beastmaster",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "w1oHm0NoEavQgUzl",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!EBuplzB01svQuXAQ"
+}

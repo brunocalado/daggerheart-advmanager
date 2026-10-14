@@ -1,0 +1,165 @@
+{
+  "_id": "gItpBhDRIJMgnihP",
+  "name": "Alpha to Omega",
+  "type": "feature",
+  "img": "icons/magic/symbols/star-inverted-yellow.webp",
+  "system": {
+    "featureForm": "evolution",
+    "description": "<p>When Adonix is defeated, they resurrect in Omega form with all HP and Stress cleared. Each PC within Very Far range must succeed on a Presence Reaction Roll or lose a Hope. You gain a Fear for each Hope lost in this way.</p><section id=\"secret-kaHS0tXk5Kj9qy75\" class=\"secret\"><p>Adonix gains the Forsaken and Amrageddon features.</p></section>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "bhcAz9W4hd5fky6l": {
+        "type": "evolution",
+        "_id": "bhcAz9W4hd5fky6l",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "evolution": {
+          "active": false,
+          "evolutionFeatures": {
+            "AJicsX6t4G8r6pX9": "evolved",
+            "D56q8j9zqjTlkCPy": "evolved"
+          },
+          "resourceRefresh": {
+            "hitPoints": true,
+            "stress": true
+          },
+          "tokenOverride": {
+            "tokenImage": null,
+            "tokenScale": 1,
+            "dynamicToken": {
+              "image": null,
+              "scale": 1,
+              "ring": "#c7a600",
+              "background": null,
+              "effects": [
+                "RING_PULSE"
+              ]
+            }
+          }
+        },
+        "effects": [],
+        "name": "",
+        "range": ""
+      },
+      "bYTI3aiRNSi6puZh": {
+        "type": "attack",
+        "damage": {
+          "main": null,
+          "resources": {
+            "hope": {
+              "base": false,
+              "applyTo": "hope",
+              "resultBased": false,
+              "fullRestore": false,
+              "value": {
+                "multiplier": "flat",
+                "flatMultiplier": 0,
+                "dice": "d6",
+                "bonus": 1,
+                "custom": {
+                  "enabled": false,
+                  "formula": ""
+                }
+              },
+              "valueAlt": null,
+              "itemId": null
+            }
+          }
+        },
+        "_id": "bYTI3aiRNSi6puZh",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "presence",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Reaction Roll",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Supreme Demiurge Adonix",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "RQvkIhWDLNf1nruQ",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!gItpBhDRIJMgnihP"
+}

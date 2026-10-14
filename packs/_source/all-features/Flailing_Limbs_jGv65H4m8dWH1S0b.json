@@ -1,0 +1,83 @@
+{
+  "_id": "jGv65H4m8dWH1S0b",
+  "name": "Flailing Limbs",
+  "type": "feature",
+  "img": "icons/skills/melee/strike-slashes-orange.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] makes a standard attack, they can attack all targets within Very Close range.</p>",
+    "resource": null,
+    "actions": {
+      "ngl1xlJT4IOh3bkJ": {
+        "type": "effect",
+        "_id": "ngl1xlJT4IOh3bkJ",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [
+          {
+            "name": "Flailing Limbs",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "",
+        "range": ""
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Patchwork Zombie Hulk",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "0fn7rVLwBnyCyvTA",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!jGv65H4m8dWH1S0b"
+}

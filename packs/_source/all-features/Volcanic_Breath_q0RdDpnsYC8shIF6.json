@@ -1,0 +1,273 @@
+{
+  "_id": "q0RdDpnsYC8shIF6",
+  "name": "Volcanic Breath",
+  "type": "feature",
+  "img": "icons/magic/fire/blast-jet-stream-embers-orange.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] takes Major damage, roll a <strong>d10</strong>. On a result of 8 or higher, the @Lookup[@name] breathes a flow of lava in front of them within Far range. All targets in that area must make an Agility Reaction Roll. Targets who fail take <strong>2d10+4</strong> physical damage, mark <strong>1d4</strong> Stress, and are Vulnerable until they clear a Stress. Targets who succeed take half damage and must mark a Stress.</p>",
+    "resource": null,
+    "actions": {
+      "OhrssSQhmciZt1Rm": {
+        "type": "attack",
+        "_id": "OhrssSQhmciZt1Rm",
+        "systemPath": "actions",
+        "description": "<p>When the @Lookup[@name] takes Major damage, roll a <strong>d10</strong>. On a result of 8 or higher, the @Lookup[@name] breathes a flow of lava in front of them within Far range.</p>",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "diceSet",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "flat",
+            "flatMultiplier": 1,
+            "dice": "d10",
+            "compare": "aboveEqual",
+            "treshold": 8
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Roll d10",
+        "img": "icons/magic/fire/blast-jet-stream-embers-orange.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      },
+      "LBNvfABGWcrygpQM": {
+        "type": "attack",
+        "_id": "LBNvfABGWcrygpQM",
+        "systemPath": "actions",
+        "description": "<p>The @Lookup[@name] breathes a flow of lava in front of them within Far range. All targets in that area must make an Agility Reaction Roll. Targets who fail take 2d10+4 physical damage, mark 1d4 Stress, and are Vulnerable until they clear a Stress. Targets who succeed take half damage and must mark a Stress.</p>",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "flatMultiplier": 2,
+              "dice": "d10",
+              "bonus": 4,
+              "multiplier": "flat"
+            },
+            "applyTo": "hitPoints",
+            "type": [
+              "physical"
+            ],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "groupAttack": "",
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {
+            "stress": {
+              "value": {
+                "custom": {
+                  "enabled": false,
+                  "formula": ""
+                },
+                "flatMultiplier": 1,
+                "dice": "d4",
+                "bonus": null,
+                "multiplier": "flat"
+              },
+              "applyTo": "stress",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [
+          {
+            "_id": "xmzA6NC9zrulhzQs",
+            "onSave": false
+          }
+        ],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "agility",
+          "difficulty": null,
+          "damageMod": "half"
+        },
+        "name": "Roll Save",
+        "img": "icons/magic/fire/blast-jet-stream-embers-orange.webp",
+        "range": "far",
+        "areas": [
+          {
+            "name": "Volcanic Breath",
+            "type": "placed",
+            "shape": "inFront",
+            "size": "far",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Volcanic Breath",
+      "img": "icons/magic/fire/blast-jet-stream-embers-orange.webp",
+      "transfer": false,
+      "_id": "xmzA6NC9zrulhzQs",
+      "type": "base",
+      "system": {
+        "changes": [],
+        "duration": {
+          "type": "temporary",
+          "description": "<p>Until you clear a Stress.</p>"
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p><em>Vulnerable</em> until you clear a Stress.</p>",
+      "tint": "#ffffff",
+      "statuses": [
+        "vulnerable"
+      ],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!q0RdDpnsYC8shIF6.xmzA6NC9zrulhzQs"
+    }
+  ],
+  "folder": "nMRuaPQV1fMwZUNv",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Volcanic Dragon: Molten Scourge",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "2mK8kxfp2WBUeBri",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!q0RdDpnsYC8shIF6"
+}

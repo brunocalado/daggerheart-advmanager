@@ -1,0 +1,83 @@
+{
+  "_id": "isWXTimKHfCChUjn",
+  "name": "Den Mother",
+  "type": "feature",
+  "img": "icons/creatures/invertebrates/tick-cross-glowing-purple.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p>Once per scene, <strong>spend 2 Fear</strong> to summon up to two Darkweave adversaries (other than @Lookup[@name]s), who appear within Close range and immediately take the spotlight.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "Evpfh4Phbsiqv6wN": {
+        "type": "effect",
+        "_id": "Evpfh4Phbsiqv6wN",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 2,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "1",
+          "recovery": "scene",
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "zLNFldhRuRDfRN1W",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Darkweave Queen",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "X7Fa0Ur0otImyKGP",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!isWXTimKHfCChUjn"
+}

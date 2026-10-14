@@ -1,0 +1,45 @@
+{
+  "_id": "dwr5TuVKFI3beYUC",
+  "name": "Execute Them",
+  "type": "feature",
+  "img": "icons/commodities/treasure/crown-gold-satin-gems-red.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> per PC in the party to have the group condemned for crimes real or imagined. A PC who succeeds on a Presence Roll can demand trial by combat or another special form of trial.</p>",
+    "resource": null,
+    "actions": {},
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "vdQUi76puEzcnHhX",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Monarch",
+      "tier": 3,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "iYHCYTJzZbw5f0pF",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!dwr5TuVKFI3beYUC"
+}

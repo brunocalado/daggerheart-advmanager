@@ -1,0 +1,45 @@
+{
+  "_id": "ko61zNrLJmBGhOu3",
+  "name": "Minion (6)",
+  "type": "feature",
+  "img": "icons/magic/symbols/runes-carved-stone-yellow.webp",
+  "system": {
+    "description": "<p>The @Lookup[@name] is defeated when they take any damage. For every 6 damage a PC deals to the @Lookup[@name], defeat an additional Minion within range the attack would succeed against.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "c2h6VagAkIeUjj23",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Treant Sapling",
+      "tier": 3,
+      "type": "Minion",
+      "customTag": "Core Rulebook",
+      "originalId": "OlJpLaFanzspeShi",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!ko61zNrLJmBGhOu3"
+}

@@ -1,0 +1,98 @@
+{
+  "_id": "tDujb7lLRVqCtHD9",
+  "name": "Will-Shattering Touch",
+  "type": "feature",
+  "img": "icons/magic/unholy/hand-claw-fog-green.webp",
+  "system": {
+    "description": "<p>When a PC takes damage from the @Lookup[@name], they lose a Hope.</p>",
+    "resource": null,
+    "actions": {
+      "q2PUiGoUQqsMghtW": {
+        "type": "damage",
+        "_id": "q2PUiGoUQqsMghtW",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {
+            "hope": {
+              "value": {
+                "custom": {
+                  "enabled": true,
+                  "formula": "1"
+                },
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d6",
+                "bonus": null
+              },
+              "applyTo": "hope",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "Lose Hope",
+        "img": "icons/magic/unholy/hand-claw-fog-green.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "ROK7QAcI5E9K5mzX",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Outer Realms Corrupter",
+      "tier": 4,
+      "type": "Support",
+      "customTag": "Core Rulebook",
+      "originalId": "Z4R768thOzKWzqOo",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!tDujb7lLRVqCtHD9"
+}

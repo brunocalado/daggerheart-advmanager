@@ -1,0 +1,129 @@
+{
+  "_id": "Quvc3RvKPCTVnz1A",
+  "name": "Lifesuck",
+  "type": "feature",
+  "img": "icons/magic/unholy/strike-beam-blood-small-red-purple.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] is spotlighted, roll a <strong>d8</strong>. On a result of 6 or higher, all targets within Very Close range must mark a HP.</p>",
+    "resource": null,
+    "actions": {
+      "DA8qT2omBcG4oryX": {
+        "type": "attack",
+        "_id": "DA8qT2omBcG4oryX",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": true,
+                "formula": "1"
+              },
+              "multiplier": "flat",
+              "flatMultiplier": 1,
+              "dice": "d6",
+              "bonus": null
+            },
+            "applyTo": "hitPoints",
+            "type": [],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "groupAttack": "",
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "diceSet",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "flat",
+            "flatMultiplier": 1,
+            "dice": "d8",
+            "compare": "aboveEqual",
+            "treshold": 6
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Roll d8",
+        "img": "icons/magic/unholy/strike-beam-blood-small-red-purple.webp",
+        "range": "veryClose",
+        "areas": [
+          {
+            "name": "Lifesuck",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Cab1928i08qIfSkO",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Head Vampire",
+      "tier": 3,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "6FsQf339qGHnz3ZF",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!Quvc3RvKPCTVnz1A"
+}

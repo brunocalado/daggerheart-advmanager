@@ -1,0 +1,98 @@
+{
+  "_id": "t73yiO1Cey4uZNls",
+  "name": "Toxic Skin",
+  "type": "feature",
+  "img": "icons/magic/acid/dissolve-arm-flesh.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>A PC who comes into physical contact with the Abomination must roll a <strong>d6</strong>. On a result of 3 or lower, the PC must mark an Armor Slot or 2 HP.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "6AQOfcmdac8LuV6u": {
+        "type": "attack",
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "_id": "6AQOfcmdac8LuV6u",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "diceSet",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "flat",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": "belowEqual",
+            "treshold": 3
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Contact",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Cephilith Abomination",
+      "tier": 4,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "MFkY0BD2EhKp9lTo",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!t73yiO1Cey4uZNls"
+}

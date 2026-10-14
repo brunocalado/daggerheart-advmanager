@@ -1,0 +1,98 @@
+{
+  "_id": "xysvcUrbcZcwmgtH",
+  "name": "Petrifying Slash",
+  "type": "feature",
+  "img": "icons/magic/earth/strike-body-stone-crumble.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When the @Lookup[@name] deals damage, the target must succeed on a Strength Reaction Roll or become <em>Vulnerable</em>. If the target is already <em>Vulnerable</em>, they become <em>Restrained</em>. If the target is already <em>Vulnerable</em> and <em>Restrained</em>, they must make a death move. The PC can <strong>spend a Hope</strong> per condition to clear it.</p>",
+    "attribution": {},
+    "gmNotes": "<p>Manually advance the condition by swapping effects depending on the stage a character is currently in.</p>",
+    "resource": null,
+    "actions": {
+      "1bt0eRoNsc84J3Gv": {
+        "type": "attack",
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "_id": "1bt0eRoNsc84J3Gv",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "strength",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Reaction Roll",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "aJVAEUfH98q5Jd7m",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Gargoyle",
+      "tier": 2,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "tg3JWGZTcJKYUNyz",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!xysvcUrbcZcwmgtH"
+}

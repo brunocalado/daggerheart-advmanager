@@ -1,0 +1,92 @@
+{
+  "_id": "TD02JNlsaNWcfiVa",
+  "name": "Feeding Frenzy",
+  "type": "feature",
+  "img": "icons/creatures/abilities/mouth-teeth-rows-red.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When a creature marks HP, you can <strong>spend a Fear</strong> to spotlight all @Lookup[@name]s within Very Close range of them. Those Gillbeasts move into Melee range of the creature and each make a standard attack against them. If any attacks succeed, combine their damage.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "KQAEsAgWHAtpNeec": {
+        "type": "effect",
+        "_id": "KQAEsAgWHAtpNeec",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [
+          {
+            "name": "Feeding Frenzy",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "hasHole": false,
+            "effects": []
+          }
+        ],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "WO43nKj8E0pZ0uci",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Sawtoothed Gillbeast",
+      "tier": 1,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "ZBpUJaH6CBqiaJUV",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!TD02JNlsaNWcfiVa"
+}

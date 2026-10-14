@@ -1,0 +1,170 @@
+{
+  "_id": "CQowfMSoQhu37UaC",
+  "name": "Escape Plan",
+  "type": "feature",
+  "img": "icons/environment/traps/trap-jaw-tan.webp",
+  "system": {
+    "description": "<p><strong>Mark a Stress</strong> to reveal a snare trap set anywhere on the battlefield by the @Lookup[@name]. All targets within Very Close range of the trap must succeed on an Agility Reaction Roll (13) or be pulled off their feet and suspended upside down. A target is Restrained and Vulnerable until they break free, ending both conditions, with a successful Finesse or Strength Roll (13).</p>",
+    "resource": null,
+    "actions": {
+      "sq0q1l2Go4GduR3B": {
+        "type": "attack",
+        "_id": "sq0q1l2Go4GduR3B",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [
+          {
+            "_id": "zMut1PRphlwE0xOa",
+            "onSave": false
+          }
+        ],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "agility",
+          "difficulty": 13,
+          "damageMod": "none"
+        },
+        "name": "Roll Save",
+        "img": "icons/environment/traps/trap-jaw-tan.webp",
+        "range": "",
+        "areas": [
+          {
+            "name": "Escape Plan",
+            "type": "placed",
+            "shape": "circle",
+            "size": "veryClose",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Escape Plan",
+      "img": "icons/environment/traps/trap-jaw-tan.webp",
+      "transfer": false,
+      "_id": "zMut1PRphlwE0xOa",
+      "type": "base",
+      "system": {
+        "changes": [],
+        "duration": {
+          "type": "temporary",
+          "description": "<p>Until you break free with a successful Finesse or Strength Roll (13).</p>"
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>You are <em>Restrained</em> and <em>Vulnerable</em> until you break free, ending both conditions, with a successful Finesse or Strength Roll (13).</p><p>[[/dr trait=finesse difficulty=13]]<br>[[/dr trait=strength difficulty=13]]</p>",
+      "tint": "#ffffff",
+      "statuses": [
+        "vulnerable",
+        "restrained"
+      ],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!CQowfMSoQhu37UaC.zMut1PRphlwE0xOa"
+    }
+  ],
+  "folder": "kEU65CdFxzBLYeYL",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Masked Thief",
+      "tier": 2,
+      "type": "Skulk",
+      "customTag": "Core Rulebook",
+      "originalId": "tP2DD751nOLxFVps",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!CQowfMSoQhu37UaC"
+}

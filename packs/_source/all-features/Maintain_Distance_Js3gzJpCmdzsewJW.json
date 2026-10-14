@@ -1,0 +1,45 @@
+{
+  "_id": "Js3gzJpCmdzsewJW",
+  "name": "Maintain Distance",
+  "type": "feature",
+  "img": "icons/skills/movement/arrow-upward-blue.webp",
+  "system": {
+    "description": "<p>After making a standard attack, the @Lookup[@name] can move anywhere within Far range.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hLSuhAE5WnpIcfMB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Harrier",
+      "tier": 1,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "t9Fa5jKLhvjD8Ar2",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!Js3gzJpCmdzsewJW"
+}

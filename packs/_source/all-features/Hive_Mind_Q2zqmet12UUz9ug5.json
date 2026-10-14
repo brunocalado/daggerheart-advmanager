@@ -1,0 +1,45 @@
+{
+  "_id": "Q2zqmet12UUz9ug5",
+  "name": "Hive Mind",
+  "type": "feature",
+  "img": "icons/commodities/tech/electronics-tech-sensor-steel-blue.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The @Lookup[@name] gains a +1 bonus to their Difficulty for each other @Lookup[@name] within Close range.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hLSuhAE5WnpIcfMB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Mechanorb",
+      "tier": 1,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "nGj2O5gEwfZWJyYi",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!Q2zqmet12UUz9ug5"
+}

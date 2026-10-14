@@ -1,0 +1,45 @@
+{
+  "_id": "PMaxXi9yHESsBDUM",
+  "name": "Attracted to Wealth",
+  "type": "feature",
+  "img": "icons/commodities/currency/coins-plain-pouch-gold.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>PCs carrying at least a bag of gold gain advantage on Presence Rolls made to influence the @Lookup[@name].</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "3qIbZaW2RvhTABEY",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Catrin",
+      "tier": 3,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "bWCHZQfgYqwp0Rs9",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!PMaxXi9yHESsBDUM"
+}

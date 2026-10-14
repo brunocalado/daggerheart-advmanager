@@ -1,0 +1,45 @@
+{
+  "_id": "xrO9DtrWxDHI7kdj",
+  "name": "Bone Breaker",
+  "type": "feature",
+  "img": "icons/skills/wounds/bone-broken-marrow-red.webp",
+  "system": {
+    "description": "<p>The @Lookup[@name]'s attacks deal direct damage.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Cave Ogre",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "szu5YYQ6klkDbqAT",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!xrO9DtrWxDHI7kdj"
+}

@@ -1,0 +1,84 @@
+{
+  "_id": "97U8sN4lcAeRi6os",
+  "name": "Supreme Commander",
+  "type": "feature",
+  "img": "icons/magic/death/undead-skeleton-worn-blue.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p>Once per scene, <strong>spend a Fear</strong> to summon <strong>1d6</strong> Hallowed Soldiers within Close range and immediately spotlight one of them.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "lVMwHvsuX6Gn2PRl": {
+        "type": "summon",
+        "_id": "lVMwHvsuX6Gn2PRl",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "1",
+          "recovery": "scene",
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.VENwg7xEFcYObjmT",
+            "count": "1d6"
+          }
+        ],
+        "name": "Spend Fear",
+        "range": "close"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "8lYVYjrfXTyDIDni",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Harbinger Of War",
+      "tier": 4,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "TCJ1CG5eNfGuxrsG",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!97U8sN4lcAeRi6os"
+}

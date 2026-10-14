@@ -1,0 +1,95 @@
+{
+  "_id": "YxvNunpFLMkm6bkB",
+  "name": "On My Signal",
+  "type": "feature",
+  "img": "icons/skills/ranged/target-bullseye-arrow-blue.webp",
+  "system": {
+    "description": "<p><em>Countdown (5)</em>. When the @Lookup[@name] is in the spotlight for the first time, activate the countdown. It ticks down when a PC makes an attack roll. When it triggers, all Archer Guards within Far range make a standard attack with advantage against the nearest target within their range. If any attacks succeed on the same target, combine their damage.</p>",
+    "resource": null,
+    "actions": {
+      "xyhaCmPGiVMsTViH": {
+        "type": "countdown",
+        "_id": "xyhaCmPGiVMsTViH",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "reaction",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "countdown": [
+          {
+            "name": "On My Signal",
+            "type": "encounter",
+            "img": "icons/skills/ranged/target-bullseye-arrow-blue.webp",
+            "progress": {
+              "looping": "noLooping",
+              "type": "characterAttack",
+              "start": 1,
+              "startFormula": "5",
+              "current": 1
+            },
+            "ownership": {},
+            "hidden": null
+          }
+        ],
+        "name": "Start Countdown",
+        "img": "icons/skills/ranged/target-bullseye-arrow-blue.webp",
+        "range": "",
+        "areas": [
+          {
+            "name": "On My Signal",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "far",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "triggers": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Cab1928i08qIfSkO",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Head Guard",
+      "tier": 1,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "YeJ7eJVCKsRxG8mk",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!YxvNunpFLMkm6bkB"
+}

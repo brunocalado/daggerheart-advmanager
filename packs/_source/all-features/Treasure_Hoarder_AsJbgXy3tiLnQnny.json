@@ -1,0 +1,45 @@
+{
+  "_id": "AsJbgXy3tiLnQnny",
+  "name": "Treasure Hoarder",
+  "type": "feature",
+  "img": "icons/commodities/currency/coins-stitched-pouch-brown.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>When a PC would mark any number of HP from the @Lookup[@name]'s attack, the PC can choose instead to give the @Lookup[@name] an equal number of bags of gold.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hLSuhAE5WnpIcfMB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Griffin",
+      "tier": 4,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "7IcOsM4iR6s29pNS",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!AsJbgXy3tiLnQnny"
+}

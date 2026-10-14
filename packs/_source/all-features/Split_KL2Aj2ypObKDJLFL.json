@@ -1,0 +1,75 @@
+{
+  "_id": "KL2Aj2ypObKDJLFL",
+  "name": "Split",
+  "type": "feature",
+  "img": "icons/creatures/slimes/slime-movement-pseudopods-green.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] has 4 or more HP marked, you can <strong>spend a Fear</strong> to split them into two @UUID[Compendium.daggerheart.adversaries.Actor.SHXedd9zZPVfUgUa]{Green Oozes}(with no marked HP or Stress). Immediately spotlight both of them.</p>",
+    "resource": null,
+    "actions": {
+      "aeRdkiRsDNagTKhp": {
+        "type": "summon",
+        "_id": "aeRdkiRsDNagTKhp",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.SHXedd9zZPVfUgUa",
+            "count": "2"
+          }
+        ],
+        "name": "Spend Fear",
+        "range": "",
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "eaP1x4bc1yUkBWsp",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Huge Green Ooze",
+      "tier": 3,
+      "type": "Skulk",
+      "customTag": "Core Rulebook",
+      "originalId": "Mq90kFBM5ix2pzzh",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!KL2Aj2ypObKDJLFL"
+}

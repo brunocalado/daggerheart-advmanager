@@ -1,0 +1,45 @@
+{
+  "_id": "uNCLt7Z9WztOdT5o",
+  "name": "Intimidating",
+  "type": "feature",
+  "img": "icons/magic/death/skull-energy-light-purple.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>When you <strong>spend a Fear</strong> to spotlight the Dragon, all PCs within Close range must mark a Stress or lose a Hope.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Young Fire Dragon",
+      "tier": 3,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "AyOAvxE5ruRgzuTn",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!uNCLt7Z9WztOdT5o"
+}

@@ -1,0 +1,107 @@
+{
+  "_id": "OfJzkdWHnwuiVqIc",
+  "name": "The Beast Unleashed",
+  "type": "feature",
+  "img": "icons/creatures/abilities/dragon-breath-purple.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The Alebrujo gains a bonus to damage rolls equal to the number of Fear you have.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "The Beast Unleashed",
+      "type": "base",
+      "system": {
+        "changes": [
+          {
+            "key": "system.bonuses.damage.bonus",
+            "type": "add",
+            "value": "@fear",
+            "priority": null,
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "2hG4Ixf2gNDYz23K",
+      "img": "icons/creatures/abilities/dragon-breath-purple.webp",
+      "disabled": false,
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>The Alebrujo gains a bonus to damage rolls equal to the number of Fear you have.</p>",
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!OfJzkdWHnwuiVqIc.2hG4Ixf2gNDYz23K"
+    }
+  ],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Guahalan Alebrujo",
+      "tier": 2,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "xtquTtK1oGOWyQw8",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!OfJzkdWHnwuiVqIc"
+}

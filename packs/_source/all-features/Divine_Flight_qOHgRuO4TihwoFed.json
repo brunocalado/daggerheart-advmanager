@@ -1,0 +1,84 @@
+{
+  "_id": "qOHgRuO4TihwoFed",
+  "name": "Divine Flight",
+  "type": "feature",
+  "img": "icons/skills/movement/arrow-upward-yellow.webp",
+  "system": {
+    "description": "<p>While the @Lookup[@name] is flying, <strong>spend a Fear</strong> to move up to Far range instead of Close range before taking an action.</p>",
+    "resource": null,
+    "actions": {
+      "aCRmnQ5n7FrbQykj": {
+        "type": "effect",
+        "_id": "aCRmnQ5n7FrbQykj",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "img": "icons/skills/movement/arrow-upward-yellow.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "c2h6VagAkIeUjj23",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Hallowed Soldier",
+      "tier": 4,
+      "type": "Minion",
+      "customTag": "Core Rulebook",
+      "originalId": "6CvDtMEazJ35y2AA",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!qOHgRuO4TihwoFed"
+}

@@ -1,0 +1,45 @@
+{
+  "_id": "QgmL1SKD4BvLgfZq",
+  "name": "Many Tentacles",
+  "type": "feature",
+  "img": "icons/creatures/tentacles/tentacles-suctioncups-pink.webp",
+  "system": {
+    "description": "<p>While the @Lookup[@name] has 7 or fewer marked HP, they can make their standard attack against two targets within range.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Kraken",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "z01hq9CKFTupyRwT",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!QgmL1SKD4BvLgfZq"
+}

@@ -1,0 +1,84 @@
+{
+  "_id": "SBNYW0V6vvs6Y7J0",
+  "name": "Exile",
+  "type": "feature",
+  "img": "icons/commodities/currency/coin-embossed-skull-gold.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> and target a PC. The @Lookup[@name] proclaims that the target and their allies are exiled from the @Lookup[@name]'s territory. While exiled, the target and their allies have disadvantage during social situations within the @Lookup[@name]'s domain.</p>",
+    "resource": null,
+    "actions": {
+      "dAHzRxf0iztyc1mI": {
+        "type": "effect",
+        "_id": "dAHzRxf0iztyc1mI",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "img": "icons/commodities/currency/coin-embossed-skull-gold.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "vdQUi76puEzcnHhX",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Petty Noble",
+      "tier": 1,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "xN09fSsg33nURqpk",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!SBNYW0V6vvs6Y7J0"
+}

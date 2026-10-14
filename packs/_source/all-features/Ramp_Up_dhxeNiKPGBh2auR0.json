@@ -1,0 +1,84 @@
+{
+  "_id": "dhxeNiKPGBh2auR0",
+  "name": "Ramp Up",
+  "type": "feature",
+  "img": "icons/weapons/clubs/club-spiked-glowing.webp",
+  "system": {
+    "description": "<p>You must <strong>spend a Fear</strong> to spotlight the @Lookup[@name]. While spotlighted, they can make their standard attack against all targets within range.</p>",
+    "resource": null,
+    "actions": {
+      "UoZ6vXRXvWYjpJpZ": {
+        "type": "effect",
+        "_id": "UoZ6vXRXvWYjpJpZ",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "img": "icons/weapons/clubs/club-spiked-glowing.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Cave Ogre",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "ynuyMl1sMQYINfcQ",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!dhxeNiKPGBh2auR0"
+}

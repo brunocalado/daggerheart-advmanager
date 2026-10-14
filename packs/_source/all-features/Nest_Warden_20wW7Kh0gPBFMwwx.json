@@ -1,0 +1,95 @@
+{
+  "_id": "20wW7Kh0gPBFMwwx",
+  "name": "Nest Warden",
+  "type": "feature",
+  "img": "icons/creatures/birds/corvid-call-sound-blue.webp",
+  "system": {
+    "featureForm": "evolution",
+    "description": "<p>When the @Lookup[@name]'s eggs are threatened, it gains the following features:</p><p>Wrathful - Passive: The @Lookup[@name] gains a +2 bonus to its Difficulty and a bonus to damage rolls equal to the number of Stress it has marked.</p><p>Electrifying Aura - Passive: The @Lookup[@name] has resistance to magic damage. PCs who fail a roll within Very Close range must <strong>spend a Hope</strong> or mark <strong>1d4</strong> Stress.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "6BZzx8hgXBfPW7Sm": {
+        "type": "evolution",
+        "_id": "6BZzx8hgXBfPW7Sm",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "evolution": {
+          "active": false,
+          "evolutionFeatures": {
+            "QPzhKkqa0ZD50Zem": "evolved",
+            "BWJJE4K7vnmEYyE5": "evolved"
+          },
+          "resourceRefresh": {
+            "hitPoints": true,
+            "stress": true
+          },
+          "tokenOverride": {
+            "tokenImage": null,
+            "tokenScale": 1,
+            "dynamicToken": {
+              "image": null,
+              "scale": 1,
+              "ring": "#c11010",
+              "background": null,
+              "effects": [
+                "RING_PULSE",
+                "BKG_WAVE"
+              ]
+            }
+          }
+        },
+        "effects": [],
+        "name": "",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Roc",
+      "tier": 3,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "nrUpskylAzI4yuyF",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!20wW7Kh0gPBFMwwx"
+}

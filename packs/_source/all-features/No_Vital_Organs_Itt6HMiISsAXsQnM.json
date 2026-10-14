@@ -1,0 +1,45 @@
+{
+  "_id": "Itt6HMiISsAXsQnM",
+  "name": "No Vital Organs",
+  "type": "feature",
+  "img": "icons/creatures/magical/construct-stone-earth-gray.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The Creation doesn't take extra damage from attacks that critically succeed against it.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Waxwork Creation",
+      "tier": 1,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "cJWcBnIIzvlJJXXR",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!Itt6HMiISsAXsQnM"
+}

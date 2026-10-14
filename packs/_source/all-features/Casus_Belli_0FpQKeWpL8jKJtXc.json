@@ -1,0 +1,162 @@
+{
+  "_id": "0FpQKeWpL8jKJtXc",
+  "name": "Casus Belli",
+  "type": "feature",
+  "img": "icons/sundries/scrolls/scroll-bound-sealed-red-tan.webp",
+  "system": {
+    "description": "<p><em>Long-Term Countdown (8)</em>. <strong>Spend a Fear</strong> to activate after the @Lookup[@name]'s desire for war is first revealed. When it triggers, the @Lookup[@name] has a reason to rally the nation to war and the support to act on that reason. You gain [[/r 1d4]]<strong> </strong>Fear.</p>",
+    "resource": null,
+    "actions": {
+      "CNEOOdPI4xVJ2JeP": {
+        "type": "countdown",
+        "_id": "CNEOOdPI4xVJ2JeP",
+        "systemPath": "actions",
+        "description": "<p><em>Long-Term Countdown (8)</em>. <strong>Spend a Fear</strong> to activate after the @Lookup[@name]'s desire for war is first revealed.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "countdown": [
+          {
+            "name": "Casus Belli",
+            "type": "narrative",
+            "img": "icons/sundries/scrolls/scroll-bound-sealed-red-tan.webp",
+            "progress": {
+              "looping": "noLooping",
+              "type": "custom",
+              "start": 1,
+              "startFormula": "8",
+              "current": 1
+            },
+            "ownership": {},
+            "hidden": null
+          }
+        ],
+        "name": "Start Countdown",
+        "img": "icons/sundries/scrolls/scroll-bound-sealed-red-tan.webp",
+        "range": "",
+        "baseAction": false,
+        "triggers": [],
+        "areas": []
+      },
+      "QnZoH9LjJvKl5YcF": {
+        "type": "healing",
+        "_id": "QnZoH9LjJvKl5YcF",
+        "systemPath": "actions",
+        "description": "<p>The @Lookup[@name] has a reason to rally the nation to war and the support to act on that reason. You gain 1d4 Fear.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {
+            "fear": {
+              "value": {
+                "custom": {
+                  "enabled": false,
+                  "formula": ""
+                },
+                "flatMultiplier": 1,
+                "dice": "d4",
+                "bonus": null,
+                "multiplier": "flat"
+              },
+              "applyTo": "fear",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "name": "Gain Fear",
+        "img": "icons/sundries/scrolls/scroll-bound-sealed-red-tan.webp",
+        "range": "",
+        "baseAction": false,
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "WD3wrU8ieoI7aGsw",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Monarch",
+      "tier": 3,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "kA5NZTdiknsh7wxp",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!0FpQKeWpL8jKJtXc"
+}

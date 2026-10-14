@@ -1,0 +1,107 @@
+{
+  "_id": "hv4ZUj9zCWGkj0ud",
+  "name": "Fiendish Nature",
+  "type": "feature",
+  "img": "icons/creatures/unholy/demon-fire-horned-mask.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The Fiend has resistance to magic damage and can't be fooled by magic illusions.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Fiendish Nature",
+      "type": "base",
+      "system": {
+        "changes": [
+          {
+            "key": "system.resistance.magical.resistance",
+            "type": "override",
+            "value": 1,
+            "priority": null,
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "sPtaHnm0uxvSDpgi",
+      "img": "icons/creatures/unholy/demon-fire-horned-mask.webp",
+      "disabled": false,
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>The Fiend has resistance to magic damage and can't be fooled by magic illusions.</p>",
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!hv4ZUj9zCWGkj0ud.sPtaHnm0uxvSDpgi"
+    }
+  ],
+  "folder": "3qIbZaW2RvhTABEY",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Shapeshifting Fiend",
+      "tier": 3,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "pnMA6UWprfKjTu5m",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!hv4ZUj9zCWGkj0ud"
+}

@@ -1,0 +1,45 @@
+{
+  "_id": "LWUyzbILyiyK4Ul9",
+  "name": "Rending Jaws",
+  "type": "feature",
+  "img": "icons/creatures/abilities/mouth-teeth-long-red.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>When the @Lookup[@name] makes a successful attack against a PC, the target must mark 2 Armor Slots to reduce the severity by one threshold.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Chimera",
+      "tier": 3,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "E7QVs9GBQbV36xWM",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!LWUyzbILyiyK4Ul9"
+}

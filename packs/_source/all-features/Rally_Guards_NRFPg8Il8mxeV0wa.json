@@ -1,0 +1,117 @@
+{
+  "_id": "NRFPg8Il8mxeV0wa",
+  "name": "Rally Guards",
+  "type": "feature",
+  "img": "icons/skills/movement/arrows-up-trio-red.webp",
+  "system": {
+    "description": "<p><strong>Spend 2 Fear</strong> to spotlight the @Lookup[@name] and up to <strong>2d4</strong> allies within Far range.</p>",
+    "resource": null,
+    "actions": {
+      "lI0lnRb3xrUjqIYX": {
+        "type": "attack",
+        "_id": "lI0lnRb3xrUjqIYX",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 2,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "diceSet",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "flat",
+            "flatMultiplier": 2,
+            "dice": "d4",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Rally",
+        "img": "icons/skills/movement/arrows-up-trio-red.webp",
+        "range": "",
+        "areas": [
+          {
+            "name": "Rally Guards",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "far",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Head Guard",
+      "tier": 1,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "SsgN2qSYpQLR43Cz",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!NRFPg8Il8mxeV0wa"
+}

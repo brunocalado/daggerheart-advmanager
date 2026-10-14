@@ -1,0 +1,172 @@
+{
+  "_id": "6CXe4Dm7aMLkhQ0Q",
+  "name": "Bramble Patch",
+  "type": "feature",
+  "img": "icons/magic/nature/root-vines-grow-brown.webp",
+  "system": {
+    "description": "<p><strong>Mark a Stress</strong> to target a point within Far range. Create a patch of thorns that covers an area within Close range of that point. All targets within that area take <strong>2d6+2</strong> physical damage when they act. A target must succeed on a Finesse Roll or deal more than 20 damage to the @Lookup[@name] with an attack to leave the area.</p>",
+    "resource": null,
+    "actions": {
+      "iCJdIs57hfh5Cb0u": {
+        "type": "attack",
+        "_id": "iCJdIs57hfh5Cb0u",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "finesse",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Mark Stress",
+        "img": "icons/magic/nature/root-vines-grow-brown.webp",
+        "range": "",
+        "areas": [
+          {
+            "name": "Bramble Patch",
+            "type": "placed",
+            "shape": "circle",
+            "size": "close",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      },
+      "cpZ5c9d3opSA4BN9": {
+        "type": "damage",
+        "_id": "cpZ5c9d3opSA4BN9",
+        "systemPath": "actions",
+        "description": "<p>All targets within the area take <strong>2d6+2</strong> physical damage when they act.</p>",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "flatMultiplier": 2,
+              "dice": "d6",
+              "bonus": 2,
+              "multiplier": "flat"
+            },
+            "applyTo": "hitPoints",
+            "type": [
+              "physical"
+            ],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "Damage",
+        "img": "icons/magic/nature/root-vines-grow-brown.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Dryad",
+      "tier": 3,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "i9HbArl09dX2BvzY",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!6CXe4Dm7aMLkhQ0Q"
+}

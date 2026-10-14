@@ -1,0 +1,117 @@
+{
+  "_id": "wvGL5CUv1LEoYtgM",
+  "name": "Blade of the Forest",
+  "type": "feature",
+  "img": "icons/skills/melee/strike-blade-hooked-green-purple.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> to make an attack against all targets within Very Close range. Targets the @Lookup[@name] succeeds against take physical damage equal to <strong>[[/r 3d4]]</strong> + the target's Major threshold.</p>",
+    "resource": null,
+    "actions": {
+      "xPSVwVVOC5gc2KTi": {
+        "type": "attack",
+        "_id": "xPSVwVVOC5gc2KTi",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "attack",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Attack",
+        "img": "icons/skills/melee/strike-blade-hooked-green-purple.webp",
+        "range": "veryClose",
+        "areas": [
+          {
+            "name": "Blade of the Forest",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Vt3pFWHXB9jaAAn2",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Stag Knight",
+      "tier": 3,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "CYaSykD9BUxpiOxg",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!wvGL5CUv1LEoYtgM"
+}

@@ -1,0 +1,101 @@
+{
+  "_id": "xyH0d4zD9Q2Afubu",
+  "name": "Shallow Cuts",
+  "type": "feature",
+  "img": "icons/skills/melee/strikes-sword-triple-gray.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>When a PC fails a roll, they take 1 physical damage for each Skinner within Melee range of them. Combine this damage.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "RqwxpEhMvPEuONJQ": {
+        "type": "damage",
+        "damage": {
+          "main": {
+            "base": false,
+            "applyTo": "hitPoints",
+            "resultBased": false,
+            "fullRestore": false,
+            "value": {
+              "multiplier": "flat",
+              "flatMultiplier": 0,
+              "dice": "d6",
+              "bonus": 1,
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              }
+            },
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "type": [
+              "physical"
+            ],
+            "groupAttack": "melee",
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "_id": "RqwxpEhMvPEuONJQ",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "c2h6VagAkIeUjj23",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Redcap Skinner",
+      "tier": 1,
+      "type": "Minion",
+      "customTag": "Core Rulebook",
+      "originalId": "jaLGm9PxB6KvVTlI",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!xyH0d4zD9Q2Afubu"
+}

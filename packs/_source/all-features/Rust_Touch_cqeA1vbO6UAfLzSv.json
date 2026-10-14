@@ -1,0 +1,45 @@
+{
+  "_id": "cqeA1vbO6UAfLzSv",
+  "name": "Rust Touch",
+  "type": "feature",
+  "img": "icons/commodities/metal/ingot-stamped-copper.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The @Lookup[@name]'s carapace is coated in a corrosive acid that pits and rusts metal. When a PC within Melee range of the Rust Easter succeeds on an attack against it with a metal weapon, reduce the weapon's damage die by one step (for example, <strong>d8</strong> to <strong>d6</strong> or <strong>d6</strong> to <strong>d4</strong>). If a weapon's damage die is reduced below a <strong>d4</strong>, the weapon crumbles into rust. The @Lookup[@name] then devours the rust pile and clears a HP.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hLSuhAE5WnpIcfMB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Rust Eater",
+      "tier": 2,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "O8sBQYNMY0ZbYwgU",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!cqeA1vbO6UAfLzSv"
+}

@@ -1,0 +1,16 @@
+{
+  "_id": "Z1s0sZGY8XClkToB",
+  "name": "Social",
+  "type": "Item",
+  "color": "#660033",
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "UH09kjtZCSLC2pHc",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!Z1s0sZGY8XClkToB"
+}

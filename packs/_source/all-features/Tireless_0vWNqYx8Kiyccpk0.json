@@ -1,0 +1,45 @@
+{
+  "_id": "0vWNqYx8Kiyccpk0",
+  "name": "Tireless",
+  "type": "feature",
+  "img": "icons/creatures/magical/construct-golem-stone-blue.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The Armor can't be forced to mark Stress. When an effect would cause it to mark Stress, the Armor ignores that part of the effect.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Spellbound Armor",
+      "tier": 1,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "6mqb7HLSxw2jRXB5",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!0vWNqYx8Kiyccpk0"
+}

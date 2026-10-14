@@ -1,0 +1,189 @@
+{
+  "_id": "TzYfrPEqpfb1f8DT",
+  "name": "Serpent Strike",
+  "type": "feature",
+  "img": "icons/creatures/reptiles/serpent-horned-green.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When a PC within Close range targets the @Lookup[@name] with an attack, you can <strong>mark a Stress</strong> to attack the PC first. On a success, deal <strong>4d4+10</strong> physical damage and Poison them until their next rest or they succeed on a Knowledge Roll (20). While Poisoned, the target must roll a <strong>d6</strong> before they make an action roll. On a result of 3 or lower, they must mark a Stress.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "sqQugqX8JTZTAew5": {
+        "type": "attack",
+        "damage": {
+          "main": {
+            "base": false,
+            "applyTo": "hitPoints",
+            "resultBased": false,
+            "fullRestore": false,
+            "value": {
+              "multiplier": "flat",
+              "flatMultiplier": 4,
+              "dice": "d4",
+              "bonus": 10,
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              }
+            },
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "type": [
+              "physical"
+            ],
+            "groupAttack": "",
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "_id": "sqQugqX8JTZTAew5",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "effects": [
+          {
+            "_id": "Qh9Aso9z9OCoKCUO",
+            "onSave": false
+          }
+        ],
+        "roll": {
+          "type": "attack",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Mark Stress",
+        "range": "close"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Poisoned",
+      "disabled": false,
+      "img": "icons/skills/toxins/symbol-poison-drop-skull-green.webp",
+      "description": "<p>You are Poisoned until your next rest or you succeed on a Knowledge Roll (20).</p><p>While Poisoned, you must roll a <strong>d6</strong> before they make an action roll. On a result of 3 or lower, they must mark a Stress.</p>",
+      "transfer": false,
+      "statuses": [],
+      "system": {
+        "changes": [],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "Qh9Aso9z9OCoKCUO",
+      "type": "base",
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "tint": "#ffffff",
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!TzYfrPEqpfb1f8DT.Qh9Aso9z9OCoKCUO"
+    }
+  ],
+  "folder": "aJVAEUfH98q5Jd7m",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Chimera",
+      "tier": 3,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "dV6pQgDxmke0KpPH",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!TzYfrPEqpfb1f8DT"
+}

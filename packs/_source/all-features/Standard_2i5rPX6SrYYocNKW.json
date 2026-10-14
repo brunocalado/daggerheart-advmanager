@@ -1,0 +1,16 @@
+{
+  "_id": "2i5rPX6SrYYocNKW",
+  "name": "Standard",
+  "type": "Item",
+  "color": "#3b1e08",
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "UH09kjtZCSLC2pHc",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!2i5rPX6SrYYocNKW"
+}

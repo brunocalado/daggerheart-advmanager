@@ -1,0 +1,45 @@
+{
+  "_id": "fdz4ODl2VgWLYidk",
+  "name": "Ankle Weights",
+  "type": "feature",
+  "img": "icons/commodities/metal/fragments-steel-ring.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>A PC must mark a Stress to move out of the Biters' Melee range.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "s4tdHQ6aYU5Radj5",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Redcap Biters",
+      "tier": 1,
+      "type": "Horde",
+      "customTag": "Core Rulebook",
+      "originalId": "m1iwZJ8vLcN7LPei",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!fdz4ODl2VgWLYidk"
+}

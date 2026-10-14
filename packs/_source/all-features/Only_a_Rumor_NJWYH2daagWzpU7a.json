@@ -1,0 +1,45 @@
+{
+  "_id": "NJWYH2daagWzpU7a",
+  "name": "Only a Rumor",
+  "type": "feature",
+  "img": "icons/magic/perception/shadow-stealth-eyes-purple.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>While deep underwater, the @Lookup[@name] can't be located or targeted.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hLSuhAE5WnpIcfMB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Plesiosaurus",
+      "tier": 3,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "u1kUGcAPZGXfCTmT",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!NJWYH2daagWzpU7a"
+}

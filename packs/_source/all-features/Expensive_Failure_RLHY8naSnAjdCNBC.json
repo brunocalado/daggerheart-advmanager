@@ -1,0 +1,83 @@
+{
+  "_id": "RLHY8naSnAjdCNBC",
+  "name": "Expensive Failure",
+  "type": "feature",
+  "img": "icons/commodities/currency/coins-wheat-stack-copper.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When a PC within Melee range fails an action roll, you can <strong>mark a Stress</strong> to have the @Lookup[@name] brazenly steal a handful of gold from them.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "sf0EbTcIURgKJ3JV": {
+        "type": "effect",
+        "_id": "sf0EbTcIURgKJ3JV",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "WD3wrU8ieoI7aGsw",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Catrin",
+      "tier": 3,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "xv5ezYG0YFD4nrIq",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!RLHY8naSnAjdCNBC"
+}

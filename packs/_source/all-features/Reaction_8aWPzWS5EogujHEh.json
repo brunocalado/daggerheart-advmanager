@@ -1,0 +1,16 @@
+{
+  "_id": "8aWPzWS5EogujHEh",
+  "name": "Reaction",
+  "type": "Item",
+  "color": null,
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "yH06ooDgkQ2ecncV",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!8aWPzWS5EogujHEh"
+}

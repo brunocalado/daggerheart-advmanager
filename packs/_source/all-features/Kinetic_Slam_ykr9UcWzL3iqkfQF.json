@@ -1,0 +1,45 @@
+{
+  "_id": "ykr9UcWzL3iqkfQF",
+  "name": "Kinetic Slam",
+  "type": "feature",
+  "img": "icons/magic/movement/trail-streak-impact-blue.webp",
+  "system": {
+    "description": "<p>Targets who take damage from the @Lookup[@name]'s standard attack are knocked back to Very Close range.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Vault Guardian Sentinel",
+      "tier": 3,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "eXgcX8stbsTetuoU",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!ykr9UcWzL3iqkfQF"
+}

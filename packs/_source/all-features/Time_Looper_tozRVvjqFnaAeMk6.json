@@ -1,0 +1,85 @@
+{
+  "_id": "tozRVvjqFnaAeMk6",
+  "name": "Time Looper",
+  "type": "feature",
+  "img": "icons/magic/time/hourglass-tilted-glowing-gold.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>Countdown (Loop 2d6). When the Enforcer first appears, activate the countdown. It ticks down when the Enforcer is spotlighted. When it triggers, the Enforcer clears all HP, Stress, and conditions. Reroll the countdown when the Enforcer takes Severe damage.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "1Z0OyqCIS705TEIr": {
+        "type": "countdown",
+        "name": "Start Countdown",
+        "countdown": [
+          {
+            "name": "Time Looper",
+            "type": "encounter",
+            "hidden": false,
+            "img": "icons/magic/time/hourglass-tilted-glowing-gold.webp",
+            "progress": {
+              "looping": "looping",
+              "type": "custom",
+              "startFormula": "2d6",
+              "current": 1,
+              "start": 1
+            },
+            "ownership": {}
+          }
+        ],
+        "_id": "1Z0OyqCIS705TEIr",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Temporal Enforcer",
+      "tier": 4,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "wBfRwWNwBkJALC5s",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!tozRVvjqFnaAeMk6"
+}

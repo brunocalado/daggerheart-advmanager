@@ -1,0 +1,45 @@
+{
+  "_id": "UeLyqarL45uGWyY0",
+  "name": "My Land, My Rules",
+  "type": "feature",
+  "img": "icons/skills/social/diplomacy-writing-letter.webp",
+  "system": {
+    "description": "<p>All social actions made against the @Lookup[@name] on their land have disadvantage.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "3qIbZaW2RvhTABEY",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Petty Noble",
+      "tier": 1,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "Jbq36nElH6RDacLU",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!UeLyqarL45uGWyY0"
+}

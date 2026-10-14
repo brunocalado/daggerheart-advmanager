@@ -1,0 +1,129 @@
+{
+  "_id": "ZHnhbTycVe45j3Ha",
+  "name": "Supressing Fire",
+  "type": "feature",
+  "img": "icons/skills/ranged/arrows-flying-salvo-blue.webp",
+  "system": {
+    "description": "<p><strong>Mark a Stress</strong> to target a point within Far range. Until the next roll with Fear, a creature who moves within Close range of that point must make an Agility Reaction Roll. On a failure, they take <strong>2d6+3</strong> physical damage. On a success, they take half damage.</p>",
+    "resource": null,
+    "actions": {
+      "mH6mmJIMM1fwzePt": {
+        "type": "attack",
+        "_id": "mH6mmJIMM1fwzePt",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "flatMultiplier": 2,
+              "dice": "d6",
+              "bonus": 3,
+              "multiplier": "flat"
+            },
+            "applyTo": "hitPoints",
+            "type": [],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "groupAttack": "",
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "agility",
+          "difficulty": null,
+          "damageMod": "half"
+        },
+        "name": "Agility Roll",
+        "img": "icons/skills/ranged/arrows-flying-salvo-blue.webp",
+        "range": "",
+        "areas": [
+          {
+            "name": "Supressing Fire",
+            "type": "placed",
+            "shape": "circle",
+            "size": "close",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "5ocrErqSPtcvToyM",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Archer Squadron",
+      "tier": 2,
+      "type": "Horde",
+      "customTag": "Core Rulebook",
+      "originalId": "ayGHTtyjSuIR4BrV",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!ZHnhbTycVe45j3Ha"
+}

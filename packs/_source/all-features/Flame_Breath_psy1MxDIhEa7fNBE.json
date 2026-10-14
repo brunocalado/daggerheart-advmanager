@@ -1,0 +1,45 @@
+{
+  "_id": "psy1MxDIhEa7fNBE",
+  "name": "Flame Breath",
+  "type": "feature",
+  "img": "icons/creatures/abilities/dragon-fire-breath-orange.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Spend a Fear</strong> to have the Dragon unleash a blast of flame against all targets in front of it within Close range. Each target must make an Agility Reaction Roll. Targets who fail take <strong>4d8+3</strong> magic damage. Targets who succeed must mark a Stress or take half damage. A target who marks HP from this attack also becomes <em>Vulnerable</em> until they clear a HP.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "zLNFldhRuRDfRN1W",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Young Fire Dragon",
+      "tier": 3,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "XkdQ0bpcZvVAobY7",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!psy1MxDIhEa7fNBE"
+}

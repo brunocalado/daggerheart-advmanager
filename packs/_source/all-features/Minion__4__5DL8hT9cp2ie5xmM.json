@@ -1,0 +1,45 @@
+{
+  "_id": "5DL8hT9cp2ie5xmM",
+  "name": "Minion (4)",
+  "type": "feature",
+  "img": "icons/magic/symbols/runes-carved-stone-yellow.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The @Lookup[@name] is defeated when it takes any damage. For every 4 damage a PC deals to the Jack-o'- Lantern, the PC defeats an additional Minion within range the attack would succeed against.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "c2h6VagAkIeUjj23",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Jack-o'-lantern",
+      "tier": 2,
+      "type": "Minion",
+      "customTag": "Core Rulebook",
+      "originalId": "btKRKx9UWRN2crN1",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!5DL8hT9cp2ie5xmM"
+}

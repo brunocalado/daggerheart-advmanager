@@ -1,0 +1,110 @@
+{
+  "_id": "teB1e5CSfTrhFc9g",
+  "name": "Seed Barrage",
+  "type": "feature",
+  "img": "icons/consumables/nuts/nut-spiked-shell.webp",
+  "system": {
+    "description": "<p><strong>Mark a Stress</strong> and make an attack against up to three targets within Close range pummeling them with giant acorns. Targets the @Lookup[@name] succeeds against take <strong>2d10+5</strong> physical damage.</p>",
+    "resource": null,
+    "actions": {
+      "cM5BBUSFxOHBsV2G": {
+        "type": "damage",
+        "_id": "cM5BBUSFxOHBsV2G",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "consumeOnSuccess": false,
+            "itemId": null
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "flatMultiplier": 2,
+              "dice": "d10",
+              "bonus": 5,
+              "multiplier": "flat"
+            },
+            "applyTo": "hitPoints",
+            "type": [
+              "physical"
+            ],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": 3
+        },
+        "effects": [],
+        "name": "Mark Stress",
+        "img": "icons/consumables/nuts/nut-spiked-shell.webp",
+        "range": "close",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "8lYVYjrfXTyDIDni",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Oak Treant",
+      "tier": 3,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "Q2slH9qkBO5SPw43",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!teB1e5CSfTrhFc9g"
+}

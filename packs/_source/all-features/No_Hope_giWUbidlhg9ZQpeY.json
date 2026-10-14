@@ -1,0 +1,45 @@
+{
+  "_id": "giWUbidlhg9ZQpeY",
+  "name": "No Hope",
+  "type": "feature",
+  "img": "icons/magic/death/skull-energy-light-white.webp",
+  "system": {
+    "description": "<p>When a PC rolls with Fear while within Far range of the @Lookup[@name], they lose a Hope.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Young Ice Dragon",
+      "tier": 3,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "JkazCieIEBNqytiy",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!giWUbidlhg9ZQpeY"
+}

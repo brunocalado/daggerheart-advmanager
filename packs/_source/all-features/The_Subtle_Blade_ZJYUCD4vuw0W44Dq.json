@@ -1,0 +1,84 @@
+{
+  "_id": "ZJYUCD4vuw0W44Dq",
+  "name": "The Subtle Blade",
+  "type": "feature",
+  "img": "icons/skills/melee/strike-dagger-blood-red.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] successfully makes a standard attack against a <em>Vulnerable</em> target, you can <strong>spend a Fear</strong> to deal Severe damage instead of their standard damage.</p>",
+    "resource": null,
+    "actions": {
+      "tYkZ9BwjlOg61BhE": {
+        "type": "effect",
+        "_id": "tYkZ9BwjlOg61BhE",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "img": "icons/skills/melee/strike-dagger-blood-red.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Cab1928i08qIfSkO",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Master Assassin",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "s0WcpK43WN2ptqNc",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!ZJYUCD4vuw0W44Dq"
+}

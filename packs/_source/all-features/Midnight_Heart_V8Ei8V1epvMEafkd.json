@@ -1,0 +1,85 @@
+{
+  "_id": "V8Ei8V1epvMEafkd",
+  "name": "Midnight Heart",
+  "type": "feature",
+  "img": "icons/commodities/biological/organ-heart-black.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>Long-Term Countdown (6). The @Lookup[@name] keeps their heart hidden in a safe place. If it's destroyed, the @Lookup[@name] dies. Otherwise, when the @Lookup[@name] is defeated, activate the countdown. It ticks down each time the PCs finish a long rest. When it triggers, the @Lookup[@name] revives within Close range of the heart with all HP and Stress cleared.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "BUtoPUXMBzrKq1cJ": {
+        "type": "countdown",
+        "name": "Start Countdown",
+        "countdown": [
+          {
+            "name": "Midnight Heart",
+            "type": "narrative",
+            "hidden": true,
+            "img": "icons/commodities/biological/organ-heart-black.webp",
+            "progress": {
+              "looping": "noLooping",
+              "type": "custom",
+              "startFormula": "6",
+              "current": 1,
+              "start": 1
+            },
+            "ownership": {}
+          }
+        ],
+        "_id": "BUtoPUXMBzrKq1cJ",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Vampire Lord",
+      "tier": 3,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "tbA1nP2Q8TPBWpQx",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!V8Ei8V1epvMEafkd"
+}

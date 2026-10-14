@@ -1,0 +1,93 @@
+{
+  "_id": "52RYkBrMlRuvKIR0",
+  "name": "Move as a Unit",
+  "type": "feature",
+  "img": "icons/skills/movement/arrows-up-trio-red.webp",
+  "system": {
+    "description": "<p><strong>Spend 2 Fear</strong> to spotlight up to five allies within Far range.</p>",
+    "resource": null,
+    "actions": {
+      "N42NPEu7fcVDXEvl": {
+        "type": "effect",
+        "_id": "N42NPEu7fcVDXEvl",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 2,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "img": "icons/skills/movement/arrows-up-trio-red.webp",
+        "range": "",
+        "areas": [
+          {
+            "name": "Move as a Unit",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "far",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Spellblade",
+      "tier": 1,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "piyJhdHzztabmZ8I",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!52RYkBrMlRuvKIR0"
+}

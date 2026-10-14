@@ -1,0 +1,84 @@
+{
+  "_id": "MuYbRbuwabRVUkhM",
+  "name": "Reinforcements",
+  "type": "feature",
+  "img": "icons/environment/people/charge.webp",
+  "system": {
+    "description": "<p>Once per scene, <strong>mark a Stress</strong> to summon a @UUID[Compendium.daggerheart.adversaries.Actor.5YgEajn0wa4i85kC]{Pirate Raider Horde}, which appears at Far range.</p>",
+    "resource": null,
+    "actions": {
+      "nuYk5WeLLpIKa69q": {
+        "type": "summon",
+        "_id": "nuYk5WeLLpIKa69q",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.5YgEajn0wa4i85kC",
+            "count": "1"
+          }
+        ],
+        "name": "Mark Stress",
+        "range": "",
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Pirate Captain",
+      "tier": 1,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "WGEGO0DSOs5cF0EL",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!MuYbRbuwabRVUkhM"
+}

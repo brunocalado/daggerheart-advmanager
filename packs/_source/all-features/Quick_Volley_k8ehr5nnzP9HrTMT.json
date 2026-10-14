@@ -1,0 +1,83 @@
+{
+  "_id": "k8ehr5nnzP9HrTMT",
+  "name": "Quick Volley",
+  "type": "feature",
+  "img": "icons/skills/ranged/arrows-flying-salvo-purple.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When the Warden makes a standard attack, you can mark any number of Stress to target an equal number of additional creatures within range.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "ocFvxpgZGsfIEj8i": {
+        "type": "effect",
+        "_id": "ocFvxpgZGsfIEj8i",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": true,
+            "key": "stress",
+            "value": 1,
+            "step": 1,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spend Stress",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "8aWPzWS5EogujHEh",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Centaur Warden",
+      "tier": 2,
+      "type": "Ranged",
+      "customTag": "Core Rulebook",
+      "originalId": "iX7ofHjr4Cdk3PKE",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!k8ehr5nnzP9HrTMT"
+}

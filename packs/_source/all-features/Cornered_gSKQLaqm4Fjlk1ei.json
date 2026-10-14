@@ -1,0 +1,84 @@
+{
+  "_id": "gSKQLaqm4Fjlk1ei",
+  "name": "Cornered",
+  "type": "feature",
+  "img": "icons/magic/symbols/mask-metal-silver-white.webp",
+  "system": {
+    "description": "<p><strong>Mark a Stress</strong> instead of spending a Fear to spotlight the @Lookup[@name].</p>",
+    "resource": null,
+    "actions": {
+      "nIBoqkOFWx0vpbnj": {
+        "type": "effect",
+        "_id": "nIBoqkOFWx0vpbnj",
+        "systemPath": "actions",
+        "description": "<p><strong>Mark a Stress</strong> instead of spending a Fear to spotlight the Ashen Tyrant.</p>",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "img": "icons/magic/symbols/mask-metal-silver-white.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Volcanic Dragon: Ashen Tyrant",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "8d4bCyFvNq3NymUK",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!gSKQLaqm4Fjlk1ei"
+}

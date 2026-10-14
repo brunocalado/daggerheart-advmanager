@@ -1,0 +1,45 @@
+{
+  "_id": "8VdUdMOZFy6AI88s",
+  "name": "Gullible",
+  "type": "feature",
+  "img": "icons/magic/life/heart-shadow-red.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>PCs have advantage on action rolls to trick or emotionally manipulate the Titan.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Hill Titan",
+      "tier": 2,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "4Ujl7ftNG0ZGGRng",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!8VdUdMOZFy6AI88s"
+}

@@ -1,0 +1,74 @@
+{
+  "_id": "UHeVngwuBOfIEWWh",
+  "name": "Feral Form (Phase Change)",
+  "type": "feature",
+  "img": "icons/creatures/abilities/mouth-teeth-sharp.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When the Fang Lord marks their last HP, replace them with the Guahalan Alebrujo and immediately spotlight them.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "uSx3GC8d3W5DQV5L": {
+        "type": "transform",
+        "_id": "uSx3GC8d3W5DQV5L",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": null,
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "transform": {
+          "actorUUID": "Compendium.daggerheart.adversaries.Actor.AagRRy7uZr9k7tDH",
+          "resourceRefresh": {
+            "hitPoints": true,
+            "stress": true
+          }
+        }
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Cab1928i08qIfSkO",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Guahalan Fang Lord",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "bRC0lNqjPVIVMW1u",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!UHeVngwuBOfIEWWh"
+}

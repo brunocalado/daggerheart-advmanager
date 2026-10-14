@@ -1,0 +1,45 @@
+{
+  "_id": "wA2hnTVGs0y8Fpue",
+  "name": "Seven-Headed",
+  "type": "feature",
+  "img": "icons/creatures/reptiles/dragon-winged-blue.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When Mitera takes damage, roll a <strong>d8</strong>. Permanently remove the \"Elemental Breath\" option that corresponds to the result. On a result of 8, or if the corresponding option has already been removed, tick down the Diamond Hide countdown (see \"Diamond Hide\").</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "nMRuaPQV1fMwZUNv",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Dragon Mother Mitera",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "MfJHdOuuWXCZpiUx",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!wA2hnTVGs0y8Fpue"
+}

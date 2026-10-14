@@ -1,0 +1,97 @@
+{
+  "_id": "uzfqQ8PDgMWoLdd1",
+  "name": "Scare Tactic",
+  "type": "feature",
+  "img": "icons/magic/death/undead-ghost-strike-white.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p>Up to three times per scene, <strong>spend a Fear</strong> to have the @Lookup[@name] teleport up to Very Far range and scare a PC within Melee range. The PC marks <strong>1d4</strong> Stress. If this causes them to mark HP, they also lose a Hope.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "UgN1W593CzVy6sQB": {
+        "type": "damage",
+        "damage": {
+          "main": null,
+          "resources": {
+            "stress": {
+              "base": false,
+              "applyTo": "stress",
+              "resultBased": false,
+              "fullRestore": false,
+              "value": {
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d4",
+                "bonus": null,
+                "custom": {
+                  "enabled": false,
+                  "formula": ""
+                }
+              },
+              "valueAlt": null,
+              "itemId": null
+            }
+          }
+        },
+        "_id": "UgN1W593CzVy6sQB",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "3",
+          "recovery": "scene",
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "effects": [],
+        "name": "",
+        "range": "veryFar"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "kEU65CdFxzBLYeYL",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Banshee",
+      "tier": 2,
+      "type": "Skulk",
+      "customTag": "Core Rulebook",
+      "originalId": "eQiILqNE3mL82W3Z",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!uzfqQ8PDgMWoLdd1"
+}

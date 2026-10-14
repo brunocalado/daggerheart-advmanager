@@ -1,0 +1,84 @@
+{
+  "_id": "EifA97Yz4i2inRLP",
+  "name": "Never Just One",
+  "type": "feature",
+  "img": "icons/magic/symbols/question-stone-yellow.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Spend a Fear</strong> to reveal that another object on the battlefield has been a @Lookup[@name] the whole time, then immediately spotlight it.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "94KPvNOPX3gbYYa3": {
+        "type": "summon",
+        "_id": "94KPvNOPX3gbYYa3",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.Nj9E7DLb7UakiKz6",
+            "count": "1"
+          }
+        ],
+        "name": "Spend Fear",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Vt3pFWHXB9jaAAn2",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Ravenous Mockery",
+      "tier": 2,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "i2G6IPeYPxI5Yex6",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!EifA97Yz4i2inRLP"
+}

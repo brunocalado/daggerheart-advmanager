@@ -1,0 +1,16 @@
+{
+  "_id": "os2ZDCrCfb1ea9TC",
+  "name": "Solo",
+  "type": "Item",
+  "color": "#000000",
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "UH09kjtZCSLC2pHc",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!os2ZDCrCfb1ea9TC"
+}

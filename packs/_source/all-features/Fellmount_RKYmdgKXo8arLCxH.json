@@ -1,0 +1,107 @@
+{
+  "_id": "RKYmdgKXo8arLCxH",
+  "name": "Fellmount",
+  "type": "feature",
+  "img": "icons/creatures/fish/fish-bioluminous-blue.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>While the Shadow King is on his mount, he gains a +2 bonus to his Difficulty. When the Shadow King takes Severe damage, he's knocked from his mount. If the Shadow King is unmounted, his mount disappears until you mark a Stress to summon it again.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Mounted",
+      "type": "base",
+      "system": {
+        "changes": [
+          {
+            "key": "system.difficulty",
+            "type": "add",
+            "value": 2,
+            "priority": null,
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "aVCtG2x7n86Y2cmb",
+      "img": "icons/creatures/fish/fish-bioluminous-blue.webp",
+      "disabled": false,
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>While the Shadow King is on his mount, he gains a +2 bonus to his Difficulty. When the Shadow King takes Severe damage, he's knocked from his mount. If the Shadow King is unmounted, his mount disappears until you mark a Stress to summon it again.</p>",
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!RKYmdgKXo8arLCxH.aVCtG2x7n86Y2cmb"
+    }
+  ],
+  "folder": "ROK7QAcI5E9K5mzX",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fellmounted Shadow King",
+      "tier": 3,
+      "type": "Support",
+      "customTag": "Core Rulebook",
+      "originalId": "qGCf81nK10Og7mpt",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!RKYmdgKXo8arLCxH"
+}

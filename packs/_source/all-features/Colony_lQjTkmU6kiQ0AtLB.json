@@ -1,0 +1,83 @@
+{
+  "_id": "lQjTkmU6kiQ0AtLB",
+  "name": "Colony",
+  "type": "feature",
+  "img": "icons/magic/nature/mushrooms-fire-glow-blue.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p>Mark any number of Stress to have the Sporophore summon an equal number of @UUID[Compendium.daggerheart.adversaries.Actor.55oYzFQRmrXCqNxn]{Fungispunj Sporelings} within Close range.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "jPc8q0SPDQeBL7fx": {
+        "type": "effect",
+        "_id": "jPc8q0SPDQeBL7fx",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": true,
+            "key": "stress",
+            "value": 1,
+            "step": 1,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fungispunj Sporophore",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "CqMQsFGQ1GR6Auii",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!lQjTkmU6kiQ0AtLB"
+}

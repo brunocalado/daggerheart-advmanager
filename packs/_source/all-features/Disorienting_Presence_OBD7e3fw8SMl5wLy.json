@@ -1,0 +1,158 @@
+{
+  "_id": "OBD7e3fw8SMl5wLy",
+  "name": "Disorienting Presence",
+  "type": "feature",
+  "img": "icons/magic/perception/eye-slit-pink.webp",
+  "system": {
+    "description": "<p>When a target takes damage from the @Lookup[@name], they must make an Instinct Reaction Roll. On a failure, they gain disadvantage on their next action roll and you gain a Fear.</p>",
+    "resource": null,
+    "actions": {
+      "4diIu0AzPjitQ94k": {
+        "type": "attack",
+        "_id": "4diIu0AzPjitQ94k",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [
+          {
+            "_id": "rpkjVdlJYI5dB99B",
+            "onSave": false
+          }
+        ],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "instinct",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Roll Save",
+        "img": "icons/magic/perception/eye-slit-pink.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Disorienting Presence",
+      "img": "icons/magic/perception/eye-slit-pink.webp",
+      "transfer": false,
+      "_id": "rpkjVdlJYI5dB99B",
+      "type": "base",
+      "system": {
+        "changes": [
+          {
+            "key": "system.disadvantageSources",
+            "type": "add",
+            "value": "On your next action roll.",
+            "priority": null,
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "description": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>Disadvantage on your next action roll.</p>",
+      "tint": "#ffffff",
+      "statuses": [],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": null,
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!OBD7e3fw8SMl5wLy.rpkjVdlJYI5dB99B"
+    }
+  ],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Outer Realms Abomination",
+      "tier": 4,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "CoWjh12FkhDGYIie",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!OBD7e3fw8SMl5wLy"
+}

@@ -1,0 +1,45 @@
+{
+  "_id": "nr7GvvtfaTNeKJR3",
+  "name": "Blink Beast",
+  "type": "feature",
+  "img": "icons/magic/symbols/ring-circle-smoke-blue.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>When combat begins, place a duplicate within Close range of the @Lookup[@name]. The @Lookup[@name] occupies both its place and its duplicate's. The duplicate can move when the @Lookup[@name] is spotlighted, and the @Lookup[@name] can target enemies with attacks as if it were in its duplicate's place. When the @Lookup[@name] or duplicate is attacked, the attacker rolls a <strong>[[/r d6]]</strong>. On an even result, they target the @Lookup[@name]. On an odd result, they target the duplicate, and the attack fails. If an attack succeeds against the @Lookup[@name], the duplicate is dispelled until you <strong>spend a Fear</strong> to conjure it again.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "OWArd59gVR8MImSB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Doppelhound",
+      "tier": 2,
+      "type": "Skulk",
+      "customTag": "Core Rulebook",
+      "originalId": "HXfGSMFGXKcoizPW",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!nr7GvvtfaTNeKJR3"
+}

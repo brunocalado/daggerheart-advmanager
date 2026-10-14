@@ -1,0 +1,185 @@
+{
+  "_id": "RFLrUd8NuZcff6hB",
+  "name": "Hallucinatory Breath",
+  "type": "feature",
+  "img": "icons/magic/air/fog-gas-smoke-purple.webp",
+  "system": {
+    "description": "<p>Countdown (Loop 1d6). When the @Lookup[@name] takes damage for the first time, activate the countdown. When it triggers, the @Lookup[@name] breathes hallucinatory gas on all targets in front of them up to Far range. Targets must succeed on an Instinct Reaction Roll or be tormented by fearful hallucinations. Targets whose fears are known to the @Lookup[@name] have disadvantage on this roll. Targets who fail must mark a Stress and lose a Hope.</p>",
+    "resource": null,
+    "actions": {
+      "USEkCakSzYcZbBwY": {
+        "type": "attack",
+        "_id": "USEkCakSzYcZbBwY",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {
+            "stress": {
+              "value": {
+                "custom": {
+                  "enabled": true,
+                  "formula": "1"
+                },
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d6",
+                "bonus": null
+              },
+              "applyTo": "stress",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            },
+            "hope": {
+              "value": {
+                "custom": {
+                  "enabled": true,
+                  "formula": "1"
+                },
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d6",
+                "bonus": null
+              },
+              "applyTo": "hope",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "instinct",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Roll Save",
+        "img": "icons/magic/air/fog-gas-smoke-purple.webp",
+        "range": "far",
+        "areas": [
+          {
+            "name": "Hallucinatory Breath",
+            "type": "placed",
+            "shape": "inFront",
+            "size": "far",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      },
+      "n8ZuLjwTf2FJ7V6n": {
+        "type": "countdown",
+        "_id": "n8ZuLjwTf2FJ7V6n",
+        "systemPath": "actions",
+        "description": "<p>Countdown (Loop 1d6). When the @Lookup[@name] takes damage for the first time, activate the countdown.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "countdown": [
+          {
+            "name": "Hallucinatory Breath",
+            "type": "encounter",
+            "img": "icons/magic/air/fog-gas-smoke-purple.webp",
+            "progress": {
+              "looping": "looping",
+              "type": "actionRoll",
+              "start": 1,
+              "startFormula": "1d6",
+              "current": 1
+            },
+            "ownership": {},
+            "hidden": null
+          }
+        ],
+        "name": "Start Countdown",
+        "img": "icons/magic/air/fog-gas-smoke-purple.webp",
+        "range": "",
+        "baseAction": false,
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "nMRuaPQV1fMwZUNv",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Juvenile Flickerfly",
+      "tier": 2,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "EjfM83eVCdcVGC3c",
+      "isSpecialCase": true
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!RFLrUd8NuZcff6hB"
+}

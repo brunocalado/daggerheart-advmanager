@@ -1,0 +1,153 @@
+{
+  "_id": "INkIy5APZajCPm3s",
+  "name": "\"It's Here…\"",
+  "type": "feature",
+  "img": "icons/creatures/magical/spirit-poison-smoke-green.webp",
+  "system": {
+    "featureForm": "evolution",
+    "description": "<p>When the Titan has marked half its HP, they manifests in their full form, clearing all HP and losing the \"Merely a Projection\" feature. While the Titan is in this form, a creature who marks HP from the Titan's standard attack must mark an additional HP.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "Y2qht1TORFJFgqx8": {
+        "type": "evolution",
+        "_id": "Y2qht1TORFJFgqx8",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "evolution": {
+          "active": false,
+          "evolutionFeatures": {
+            "f5nHfI6lZtudtZ3j": "unevolved"
+          },
+          "resourceRefresh": {
+            "hitPoints": true,
+            "stress": false
+          },
+          "tokenOverride": {
+            "tokenImage": null,
+            "tokenScale": 1,
+            "dynamicToken": {
+              "image": null,
+              "scale": 1,
+              "ring": "#4d086d",
+              "background": null,
+              "effects": [
+                "RING_PULSE",
+                "BKG_WAVE"
+              ]
+            }
+          }
+        },
+        "effects": [
+          {
+            "_id": "thBjAMP3WaNYxyJp",
+            "onSave": false
+          }
+        ],
+        "name": "",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "It's Here…",
+      "disabled": false,
+      "img": "icons/creatures/magical/spirit-poison-smoke-green.webp",
+      "description": "<p>While the Titan is in this form, a creature who marks HP from the Titan's standard attack must mark an additional HP.</p>",
+      "transfer": false,
+      "statuses": [],
+      "system": {
+        "changes": [],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "thBjAMP3WaNYxyJp",
+      "type": "base",
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "tint": "#ffffff",
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!INkIy5APZajCPm3s.thBjAMP3WaNYxyJp"
+    }
+  ],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Cephilith Titan",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "SGaUcNeQ3Y7F0Tlf",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!INkIy5APZajCPm3s"
+}

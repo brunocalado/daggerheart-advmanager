@@ -1,0 +1,84 @@
+{
+  "_id": "x74yBQgvaaoD4Nqd",
+  "name": "Endless Legions",
+  "type": "feature",
+  "img": "icons/magic/death/undead-skeleton-worn-blue.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> to summon a number of @UUID[Compendium.daggerheart.adversaries.Actor.OsLG2BjaEdTZUJU9]{Fallen Shock Troops} equal to twice the number of PCs. The Shock Troops appear at Far range.</p>",
+    "resource": null,
+    "actions": {
+      "SrU7qbh8LcOgfozT": {
+        "type": "summon",
+        "_id": "SrU7qbh8LcOgfozT",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.OsLG2BjaEdTZUJU9",
+            "count": "@partySize*2"
+          }
+        ],
+        "name": "Spend Fear",
+        "range": "far",
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "zLNFldhRuRDfRN1W",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fallen Warlord: Undefeated Champion",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "AP7W9ruUCdTHO69S",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!x74yBQgvaaoD4Nqd"
+}

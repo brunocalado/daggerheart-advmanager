@@ -1,0 +1,45 @@
+{
+  "_id": "55sdUWhtawjXddrg",
+  "name": "Minion (13)",
+  "type": "feature",
+  "img": "icons/creatures/magical/humanoid-silhouette-aliens-green.webp",
+  "system": {
+    "description": "<p>The @Lookup[@name] is defeated when they take any damage. For every 13 damage a PC deals to the @Lookup[@name], defeat an additional Minion within range the attack would succeed against.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "c2h6VagAkIeUjj23",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Hallowed Soldier",
+      "tier": 4,
+      "type": "Minion",
+      "customTag": "Core Rulebook",
+      "originalId": "3QmaqgI6imRUvb7M",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!55sdUWhtawjXddrg"
+}

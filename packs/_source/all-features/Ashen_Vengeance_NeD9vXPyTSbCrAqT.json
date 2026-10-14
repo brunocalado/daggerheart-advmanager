@@ -1,0 +1,76 @@
+{
+  "_id": "NeD9vXPyTSbCrAqT",
+  "name": "Ashen Vengeance",
+  "type": "feature",
+  "img": "icons/magic/fire/flame-burning-eye.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] marks their last HP, replace them with the @UUID[Compendium.daggerheart.adversaries.Actor.pMuXGCSOQaxpi5tb]{Ashen Tyrant} and immediately spotlight them.</p>",
+    "resource": null,
+    "actions": {
+      "cFqFjemAfAjB0OB0": {
+        "type": "transform",
+        "_id": "cFqFjemAfAjB0OB0",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "transform": {
+          "actorUUID": "Compendium.daggerheart.adversaries.Actor.pMuXGCSOQaxpi5tb",
+          "resourceRefresh": {
+            "hitPoints": true,
+            "stress": true
+          }
+        },
+        "name": "Transform",
+        "range": "",
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "nMRuaPQV1fMwZUNv",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Volcanic Dragon: Molten Scourge",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "qYFoyDSdZ5X2h245",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!NeD9vXPyTSbCrAqT"
+}

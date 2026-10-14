@@ -1,0 +1,99 @@
+{
+  "_id": "meyavSekDDdy9wwy",
+  "name": "Injured Wings",
+  "type": "feature",
+  "img": "icons/commodities/biological/wing-green.webp",
+  "system": {
+    "description": "<p>While flying, the @Lookup[@name] gains a +1 bonus to their Difficulty.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Injured Wings",
+      "type": "base",
+      "system": {
+        "changes": [
+          {
+            "key": "system.difficulty",
+            "type": "add",
+            "value": 1,
+            "priority": null,
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "description": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "zCi90lgFAaA7yrJG",
+      "img": "icons/commodities/biological/wing-green.webp",
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>While flying, the Ashen Tyrant gains a +1 bonus to their Difficulty.</p>",
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": null,
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!meyavSekDDdy9wwy.zCi90lgFAaA7yrJG"
+    }
+  ],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Volcanic Dragon: Ashen Tyrant",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "jOojMjb779Kea1ZV",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!meyavSekDDdy9wwy"
+}

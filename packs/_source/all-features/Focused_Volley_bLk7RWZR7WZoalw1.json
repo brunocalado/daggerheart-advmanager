@@ -1,0 +1,138 @@
+{
+  "_id": "bLk7RWZR7WZoalw1",
+  "name": "Focused Volley",
+  "type": "feature",
+  "img": "icons/skills/ranged/arrows-flying-triple-brown.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> to target a point within Far range. Make an attack with advantage against all targets within Close range of that point. Targets the @Lookup[@name] succeeds against take <strong>1d10+4</strong> physical damage.</p>",
+    "resource": null,
+    "actions": {
+      "uG7Hl2DqaT69aNs1": {
+        "type": "attack",
+        "_id": "uG7Hl2DqaT69aNs1",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "flatMultiplier": 1,
+              "dice": "d10",
+              "bonus": 4,
+              "multiplier": "flat"
+            },
+            "applyTo": "hitPoints",
+            "type": [],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "groupAttack": "",
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "attack",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Attack",
+        "img": "icons/skills/ranged/arrows-flying-triple-brown.webp",
+        "range": "far",
+        "areas": [
+          {
+            "name": "Focused Volley",
+            "type": "placed",
+            "shape": "circle",
+            "size": "close",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "5ocrErqSPtcvToyM",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Archer Squadron",
+      "tier": 2,
+      "type": "Horde",
+      "customTag": "Core Rulebook",
+      "originalId": "Wuf5y9tJ88BwzLv2",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!bLk7RWZR7WZoalw1"
+}

@@ -1,0 +1,16 @@
+{
+  "_id": "BuKQOfaQjThuj1eF",
+  "name": "Support",
+  "type": "Item",
+  "color": "#004d40",
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "UH09kjtZCSLC2pHc",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!BuKQOfaQjThuj1eF"
+}

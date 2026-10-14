@@ -1,0 +1,169 @@
+{
+  "_id": "W4ff6bnZ2nz6T5np",
+  "name": "Hellwing",
+  "type": "feature",
+  "img": "icons/magic/unholy/hand-claw-glow-orange.webp",
+  "system": {
+    "featureForm": "evolution",
+    "description": "<p>When the @Lookup[@name] marks half their HP, they transform into the Hellwing: a towering, demonic bat creature.</p><section id=\"secret-mldoJSfzFIom3dyK\" class=\"secret\"><p>They gain the \"On Crimson Wings\" and \"Blood Bath\" features and replace their standard attack with the following standard attack: Claws: Close | <strong>3d12+6</strong> phy</p></section>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "wslydtWU8ADqeXWo": {
+        "type": "evolution",
+        "_id": "wslydtWU8ADqeXWo",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "evolution": {
+          "active": false,
+          "evolutionFeatures": {
+            "tg8gvbNWQu9jvbIV": "evolved",
+            "EP1UikpG7sEXdcv1": "evolved"
+          },
+          "resourceRefresh": {
+            "hitPoints": false,
+            "stress": false
+          },
+          "tokenOverride": {
+            "tokenImage": null,
+            "tokenScale": 1,
+            "dynamicToken": {
+              "image": null,
+              "scale": 1,
+              "ring": "#630303",
+              "background": null,
+              "effects": [
+                "RING_PULSE"
+              ]
+            }
+          }
+        },
+        "effects": [
+          {
+            "_id": "KZrki0gvST9mPV82",
+            "onSave": false
+          }
+        ],
+        "name": "Evolve",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Hellwing",
+      "disabled": false,
+      "img": "icons/magic/unholy/hand-claw-glow-orange.webp",
+      "description": "<p>Gains the \"On Crimson Wings\" and \"Blood Bath\" features and replace their standard attack with the following standard attack: Claws: Close | <strong>3d12+6</strong> phy</p>",
+      "transfer": false,
+      "statuses": [],
+      "system": {
+        "changes": [
+          {
+            "type": "standardAttack",
+            "phase": "initial",
+            "value": {
+              "name": "Claws",
+              "damageTypes": [
+                "physical"
+              ],
+              "attackRange": "close",
+              "trait": null,
+              "damageFormula": "3d12 + 6",
+              "img": "icons/magic/unholy/hand-claw-glow-orange.webp"
+            },
+            "priority": 0
+          }
+        ],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "KZrki0gvST9mPV82",
+      "type": "base",
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "tint": "#ffffff",
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!W4ff6bnZ2nz6T5np.KZrki0gvST9mPV82"
+    }
+  ],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Vampire Lord",
+      "tier": 3,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "UoKJYOQmLttCqn1v",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!W4ff6bnZ2nz6T5np"
+}

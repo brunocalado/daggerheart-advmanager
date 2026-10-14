@@ -1,0 +1,74 @@
+{
+  "_id": "UonE5Pu6BS94UW3R",
+  "name": "Final Transformation (Phase Change)",
+  "type": "feature",
+  "img": "icons/magic/death/skull-horned-goat-pentagram-red.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When the Empress marks her last HP, replace her with the @UUID[Compendium.daggerheart.adversaries.Actor.0QPn79SMU6C0b1qi]{Entombed Cat Beast} and immediately spotlight them.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "uqNbo4S4IXMQxofr": {
+        "type": "transform",
+        "_id": "uqNbo4S4IXMQxofr",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": null,
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "transform": {
+          "actorUUID": "Compendium.daggerheart.adversaries.Actor.0QPn79SMU6C0b1qi",
+          "resourceRefresh": {
+            "hitPoints": true,
+            "stress": true
+          }
+        }
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Cab1928i08qIfSkO",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Entombed Empress",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "GWeW9yte8xuvLfZ3",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!UonE5Pu6BS94UW3R"
+}

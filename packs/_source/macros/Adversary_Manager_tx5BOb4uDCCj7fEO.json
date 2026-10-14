@@ -1,0 +1,28 @@
+{
+  "name": "Adversary Manager",
+  "type": "script",
+  "command": "// Adversary Manager\nAM.Manage();",
+  "img": "icons/magic/death/skull-horned-worn-fire-blue.webp",
+  "author": "zWDd1mciIe4rp82O",
+  "scope": "global",
+  "folder": null,
+  "ownership": {
+    "default": 0,
+    "zWDd1mciIe4rp82O": 3
+  },
+  "flags": {},
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null,
+    "coreVersion": "13.351",
+    "systemId": "daggerheart",
+    "systemVersion": "1.4.1",
+    "createdTime": 1766687701926,
+    "modifiedTime": 1766687701926,
+    "lastModifiedBy": "zWDd1mciIe4rp82O"
+  },
+  "_id": "tx5BOb4uDCCj7fEO",
+  "sort": 0,
+  "_key": "!macros!tx5BOb4uDCCj7fEO"
+}

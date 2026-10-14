@@ -1,0 +1,84 @@
+{
+  "_id": "pdgJVAs2mGIPNKys",
+  "name": "Battle Teleport",
+  "type": "feature",
+  "img": "icons/magic/movement/pinwheel-turning-blue.webp",
+  "system": {
+    "description": "<p>Before or after making a standard attack, you can <strong>mark a Stress</strong> to teleport to a location within Far range.</p>",
+    "resource": null,
+    "actions": {
+      "39zC1I5DYozI47lP": {
+        "type": "effect",
+        "_id": "39zC1I5DYozI47lP",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "img": "icons/magic/movement/pinwheel-turning-blue.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "EeetyUn25U2zR7gP",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "War Wizard",
+      "tier": 2,
+      "type": "Ranged",
+      "customTag": "Core Rulebook",
+      "originalId": "PUUz48dsObawcSgp",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!pdgJVAs2mGIPNKys"
+}

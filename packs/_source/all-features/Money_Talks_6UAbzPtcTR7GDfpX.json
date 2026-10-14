@@ -1,0 +1,45 @@
+{
+  "_id": "6UAbzPtcTR7GDfpX",
+  "name": "Money Talks",
+  "type": "feature",
+  "img": "icons/commodities/currency/coin-engraved-skull-gold.webp",
+  "system": {
+    "description": "<p>Attacks against the @Lookup[@name] are made with disadvantage unless the attacker spends a handful of gold. This @Lookup[@name] starts with a number of handfuls equal to the number of PCs. When a target marks HP from the @Lookup[@name]'s standard attack, they can spend a handful of gold instead of marking HP (1 handful per HP). Add a handful of gold to the @Lookup[@name] for each handful of gold spent by PCs on this feature.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "ROK7QAcI5E9K5mzX",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Demon of Avarice",
+      "tier": 3,
+      "type": "Support",
+      "customTag": "Core Rulebook",
+      "originalId": "qoQinutpe4Itohp0",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!6UAbzPtcTR7GDfpX"
+}

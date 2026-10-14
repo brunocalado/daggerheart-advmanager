@@ -1,0 +1,16 @@
+{
+  "_id": "V3DUtFmrOg6qcmcq",
+  "name": "Action",
+  "type": "Item",
+  "color": null,
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "dL7t96HBSkfewTx0",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!V3DUtFmrOg6qcmcq"
+}

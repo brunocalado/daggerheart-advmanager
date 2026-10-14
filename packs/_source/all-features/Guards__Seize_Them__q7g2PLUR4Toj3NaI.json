@@ -1,0 +1,84 @@
+{
+  "_id": "q7g2PLUR4Toj3NaI",
+  "name": "Guards, Seize Them!",
+  "type": "feature",
+  "img": "icons/environment/people/infantry-armored.webp",
+  "system": {
+    "description": "<p>Once per scene, <strong>mark a Stress</strong> to summon <strong>1d4</strong> @UUID[Compendium.daggerheart.adversaries.Actor.B4LZcGuBAHzyVdzy]{Bladed Guards}, who appear at Far range to enforce the @Lookup[@name]'s will.</p>",
+    "resource": null,
+    "actions": {
+      "tioTtYfIGFIXRITN": {
+        "type": "summon",
+        "_id": "tioTtYfIGFIXRITN",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "1",
+          "recovery": "scene",
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.B4LZcGuBAHzyVdzy",
+            "count": "1d4"
+          }
+        ],
+        "name": "Summon Guards",
+        "range": "",
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "vdQUi76puEzcnHhX",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Petty Noble",
+      "tier": 1,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "ebdAPBso5ROmdFNO",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!q7g2PLUR4Toj3NaI"
+}

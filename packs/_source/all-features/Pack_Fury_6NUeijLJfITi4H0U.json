@@ -1,0 +1,45 @@
+{
+  "_id": "6NUeijLJfITi4H0U",
+  "name": "Pack Fury",
+  "type": "feature",
+  "img": "icons/creatures/abilities/bear-roar-bite-brown.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The Initiate gains a +1 bonus to their attack rolls for each ally within Very Close range of their attack's target.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hLSuhAE5WnpIcfMB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Berserker Initiate",
+      "tier": 2,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "OQOMsj3lpNIeJryN",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!6NUeijLJfITi4H0U"
+}

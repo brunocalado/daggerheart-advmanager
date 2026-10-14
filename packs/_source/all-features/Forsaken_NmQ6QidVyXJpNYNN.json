@@ -1,0 +1,94 @@
+{
+  "_id": "NmQ6QidVyXJpNYNN",
+  "name": "Forsaken",
+  "type": "feature",
+  "img": "icons/magic/light/orb-shadow-blue.webp",
+  "system": {
+    "featureForm": "action",
+    "attribution": {},
+    "description": "<p><strong>Spend a Fear</strong> to choose a PC and activate a Forsaken Countdown (1d8) for them. It ticks down when Adonix is spotlighted. When it triggers, the PC must mark all their HP. The countdown ends if Adonix takes Severe damage. You can have only one Forsaken Countdown active at a time.</p>",
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "T5bCqspBR1tmCUVi": {
+        "type": "countdown",
+        "name": "Start Countdown",
+        "countdown": [
+          {
+            "name": "Forsaken",
+            "type": "encounter",
+            "hidden": false,
+            "img": "icons/magic/light/orb-shadow-blue.webp",
+            "progress": {
+              "looping": "noLooping",
+              "type": "custom",
+              "startFormula": "1d8",
+              "current": 1,
+              "start": 1
+            },
+            "ownership": {}
+          }
+        ],
+        "_id": "T5bCqspBR1tmCUVi",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "zLNFldhRuRDfRN1W",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Supreme Demiurge Adonix",
+      "tier": 4,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "AJicsX6t4G8r6pX9",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!NmQ6QidVyXJpNYNN"
+}

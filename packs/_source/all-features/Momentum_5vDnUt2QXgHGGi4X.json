@@ -1,0 +1,45 @@
+{
+  "_id": "5vDnUt2QXgHGGi4X",
+  "name": "Momentum",
+  "type": "feature",
+  "img": "icons/skills/melee/strike-weapons-orange.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>When the Titan makes a successful attack against a PC, you gain a Fear.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fire Titan",
+      "tier": 3,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "aHGHtfEbItbHHGXa",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!5vDnUt2QXgHGGi4X"
+}

@@ -1,0 +1,75 @@
+{
+  "_id": "ruz6mAUnQMNNCBW0",
+  "name": "Fallen Hounds",
+  "type": "feature",
+  "img": "icons/creatures/unholy/demon-fire-horned-clawed.webp",
+  "system": {
+    "description": "<p>Once per scene, when the @Lookup[@name] marks 2 or more HP, you can <strong>mark a Stress</strong> to summon a @UUID[Compendium.daggerheart.adversaries.Actor.NoRZ1PqB8N5wcIw0]{Demonic Hound Pack}, which appears at Close range and is immediately spotlighted.</p>",
+    "resource": null,
+    "actions": {
+      "tfmY6HYkkY27NBaF": {
+        "type": "summon",
+        "_id": "tfmY6HYkkY27NBaF",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.NoRZ1PqB8N5wcIw0",
+            "count": "1"
+          }
+        ],
+        "name": "Mark Stress",
+        "range": "",
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Cab1928i08qIfSkO",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Secret-Keeper",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "Q28NPuSMccjzykib",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!ruz6mAUnQMNNCBW0"
+}

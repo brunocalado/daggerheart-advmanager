@@ -1,0 +1,75 @@
+{
+  "_id": "Ef8L7FqgNQO8DMU8",
+  "name": "Fireseed",
+  "type": "feature",
+  "img": "icons/magic/fire/elemental-fire-flying.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>The @Lookup[@name] bleeds magic fire. When the @Lookup[@name] marks a HP, summon one Minor Fire Elemental within Very Close range.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "s1fquzRZAhLqY7VW": {
+        "type": "summon",
+        "_id": "s1fquzRZAhLqY7VW",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.DscWkNVoHak6P4hh",
+            "count": "1"
+          }
+        ],
+        "name": "",
+        "range": "veryClose"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "8aWPzWS5EogujHEh",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Phoenix",
+      "tier": 3,
+      "type": "Ranged",
+      "customTag": "Core Rulebook",
+      "originalId": "FlcR2XWYcCedfLnM",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!Ef8L7FqgNQO8DMU8"
+}

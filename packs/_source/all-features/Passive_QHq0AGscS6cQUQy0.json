@@ -1,0 +1,16 @@
+{
+  "_id": "QHq0AGscS6cQUQy0",
+  "name": "Passive",
+  "type": "Item",
+  "color": null,
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "y8Ux9xgbM7feYdzb",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!QHq0AGscS6cQUQy0"
+}

@@ -1,0 +1,273 @@
+{
+  "_id": "3XjghEV6x5Fys9OT",
+  "name": "Spitter",
+  "type": "feature",
+  "img": "icons/magic/acid/projectile-needles-salvo-green.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> to introduce a <strong>d6</strong> Spitter Die. When the @Lookup[@name] is in the spotlight, roll this die. On a result of 5 or higher, all targets in front of the @Lookup[@name] within Far range must succeed on an Agility Reaction Roll or take <strong>1d4</strong> physical damage. The @Lookup[@name] can take the spotlight a second time this GM turn.</p>",
+    "resource": null,
+    "actions": {
+      "yx5fjMLLwSnvSbqs": {
+        "type": "effect",
+        "_id": "yx5fjMLLwSnvSbqs",
+        "systemPath": "actions",
+        "description": "<p><strong>Spend a Fear</strong> to introduce a <strong>d6</strong> Spitter Die.</p>",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [
+          {
+            "_id": "Mchd23xNQ4nSWw9X",
+            "onSave": false
+          }
+        ],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "img": "icons/magic/acid/projectile-needles-salvo-green.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      },
+      "Ds6KlQKZCOhh5OMT": {
+        "type": "attack",
+        "_id": "Ds6KlQKZCOhh5OMT",
+        "systemPath": "actions",
+        "description": "<p>All targets in front of the @Lookup[@name] within Far range must succeed on an Agility Reaction Roll or take <strong>1d4</strong> physical damage.</p>",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "flatMultiplier": 1,
+              "dice": "d4",
+              "bonus": null,
+              "multiplier": "flat"
+            },
+            "applyTo": "hitPoints",
+            "type": [
+              "physical"
+            ],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "groupAttack": "",
+            "fullRestore": false,
+            "itemId": null
+          },
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "attack",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "agility",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Spit Attack",
+        "img": "icons/magic/acid/projectile-needles-salvo-green.webp",
+        "range": "far",
+        "areas": [
+          {
+            "name": "Spitter",
+            "type": "placed",
+            "shape": "inFront",
+            "size": "far",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      },
+      "xccwknU2xHUwQSdn": {
+        "type": "attack",
+        "_id": "xccwknU2xHUwQSdn",
+        "systemPath": "actions",
+        "description": "<p>When the @Lookup[@name] is in the spotlight, roll the spitter die. On a result of 5 or higher, do a spit Attack.</p>",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": "diceSet",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "flat",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": "aboveEqual",
+            "treshold": 5
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Roll d6",
+        "img": "icons/magic/acid/projectile-needles-salvo-green.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Spitter Die",
+      "img": "icons/magic/acid/projectile-needles-salvo-green.webp",
+      "transfer": false,
+      "_id": "Mchd23xNQ4nSWw9X",
+      "type": "base",
+      "system": {
+        "changes": [],
+        "duration": {
+          "description": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>You have a <strong>d6</strong> Spitter Die. When the Snake is in the spotlight, roll this die. On a result of 5 or higher, all targets in front of the Snake within Far range must succeed on an Agility Reaction Roll or take <strong>1d4</strong> physical damage. The Snake can take the spotlight a second time this GM turn.</p>",
+      "tint": "#ffffff",
+      "statuses": [],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": null,
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!3XjghEV6x5Fys9OT.Mchd23xNQ4nSWw9X"
+    }
+  ],
+  "folder": "Vt3pFWHXB9jaAAn2",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Glass Snake",
+      "tier": 1,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "LR5XHauNtWcl18CY",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!3XjghEV6x5Fys9OT"
+}

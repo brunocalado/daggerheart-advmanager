@@ -1,0 +1,34 @@
+{
+  "name": "Minion (X)",
+  "type": "feature",
+  "system": {
+    "description": "<p>The @Lookup[@name] is defeated when they take any damage. For every [X] damage a PC deals to the @Lookup[@name], defeat an additional Minion within range the attack would succeed against.</p>",
+    "resource": null,
+    "actions": {},
+    "originItemType": null,
+    "attribution": {},
+    "multiclassOrigin": false,
+    "featureForm": "passive"
+  },
+  "img": "icons/magic/symbols/runes-carved-stone-yellow.webp",
+  "effects": [],
+  "folder": null,
+  "flags": {},
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null,
+    "coreVersion": "14.368",
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "createdTime": 1767360908883,
+    "modifiedTime": 1790433620267,
+    "lastModifiedBy": "A1cwCW7bPTYuaV1r"
+  },
+  "_id": "AzEJqUAnlfac2THg",
+  "ownership": {
+    "default": 0
+  },
+  "sort": 0,
+  "_key": "!items!AzEJqUAnlfac2THg"
+}

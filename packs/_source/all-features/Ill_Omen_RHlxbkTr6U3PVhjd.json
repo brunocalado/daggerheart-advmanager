@@ -1,0 +1,45 @@
+{
+  "_id": "RHlxbkTr6U3PVhjd",
+  "name": "Ill Omen",
+  "type": "feature",
+  "img": "icons/magic/symbols/rune-sigil-black-pink.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>When a PC within Close range makes an action roll, their Fear Die gains a bonus equal to the amount of Fear you have.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "ROK7QAcI5E9K5mzX",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Owl Witch",
+      "tier": 4,
+      "type": "Support",
+      "customTag": "Core Rulebook",
+      "originalId": "oiBhMfUNn9bCEdmX",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!RHlxbkTr6U3PVhjd"
+}

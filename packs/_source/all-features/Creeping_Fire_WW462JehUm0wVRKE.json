@@ -1,0 +1,45 @@
+{
+  "_id": "WW462JehUm0wVRKE",
+  "name": "Creeping Fire",
+  "type": "feature",
+  "img": "icons/magic/fire/flame-burning-embers-yellow.webp",
+  "system": {
+    "description": "<p>The @Lookup[@name] can only move within Very Close range as their normal movement. They light any flammable object they touch on fi re.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "OWArd59gVR8MImSB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Red Ooze",
+      "tier": 1,
+      "type": "Skulk",
+      "customTag": "Core Rulebook",
+      "originalId": "QGQTLWXIMMLUvm7c",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!WW462JehUm0wVRKE"
+}

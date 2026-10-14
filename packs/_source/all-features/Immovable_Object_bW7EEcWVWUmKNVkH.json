@@ -1,0 +1,99 @@
+{
+  "_id": "bW7EEcWVWUmKNVkH",
+  "name": "Immovable Object",
+  "type": "feature",
+  "img": "icons/magic/defensive/shield-barrier-glowing-triangle-green.webp",
+  "system": {
+    "description": "<p>An attack that would move the @Lookup[@name] moves them two fewer ranges (for example, Far becomes Very Close). When the @Lookup[@name] takes physical damage, reduce it by 7.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Immovable Object",
+      "type": "base",
+      "system": {
+        "changes": [
+          {
+            "key": "system.resistance.physical.reduction",
+            "type": "add",
+            "value": 7,
+            "priority": null,
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "description": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "7V7qMq9in3AArwiM",
+      "img": "icons/magic/defensive/shield-barrier-glowing-triangle-green.webp",
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>When the Elemental takes physical damage, reduce it by 7.</p>",
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": null,
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!bW7EEcWVWUmKNVkH.7V7qMq9in3AArwiM"
+    }
+  ],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Greater Earth Elemental",
+      "tier": 3,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "PVdHySLhIJ8uDrmg",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!bW7EEcWVWUmKNVkH"
+}

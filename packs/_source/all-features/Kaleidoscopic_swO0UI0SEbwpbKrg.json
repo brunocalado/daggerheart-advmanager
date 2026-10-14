@@ -1,0 +1,143 @@
+{
+  "_id": "swO0UI0SEbwpbKrg",
+  "name": "Kaleidoscopic",
+  "type": "feature",
+  "img": "icons/magic/light/explosion-glow-spiral-teal.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The @Lookup[@name] pulse and dance in hypnotic, color-changing patterns that entrance any creature who looks upon them. All targets within Very Close range of the @Lookup[@name] are <em>Vulnerable</em>.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "5cIdrU9CbFa7o9i4": {
+        "type": "effect",
+        "_id": "5cIdrU9CbFa7o9i4",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [
+          {
+            "name": "Kaleidoscopic",
+            "type": "attached",
+            "shape": "emanation",
+            "size": "veryClose",
+            "hasHole": false,
+            "effects": [
+              "m85gM6jedURrqbFJ"
+            ]
+          }
+        ],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Activate",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Entranced",
+      "disabled": true,
+      "img": "icons/magic/light/explosion-glow-spiral-teal.webp",
+      "description": "",
+      "transfer": false,
+      "statuses": [
+        "vulnerable"
+      ],
+      "system": {
+        "changes": [],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [
+          1
+        ],
+        "conditionals": []
+      },
+      "_id": "m85gM6jedURrqbFJ",
+      "type": "base",
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "tint": "#ffffff",
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!swO0UI0SEbwpbKrg.m85gM6jedURrqbFJ"
+    }
+  ],
+  "folder": "s4tdHQ6aYU5Radj5",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Will-o'-the-wisps",
+      "tier": 1,
+      "type": "Horde",
+      "customTag": "Core Rulebook",
+      "originalId": "lKtZDU4j2FDWtF38",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!swO0UI0SEbwpbKrg"
+}

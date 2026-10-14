@@ -1,0 +1,158 @@
+{
+  "_id": "lGDluNGfUnP0YHdw",
+  "name": "Shroud of the Fallen",
+  "type": "feature",
+  "img": "icons/magic/unholy/orb-contained-pink.webp",
+  "system": {
+    "description": "<p><strong>Mark a Stress</strong> to wrap an ally within Close range in a shroud of Protection until the @Lookup[@name] marks their last HP. While Protected, the target has resistance to all damage.</p>",
+    "resource": null,
+    "actions": {
+      "8yRj7EpEI4PlKNhl": {
+        "type": "effect",
+        "_id": "8yRj7EpEI4PlKNhl",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [
+          {
+            "_id": "U9lWz1LgeAiK5L85",
+            "onSave": false
+          }
+        ],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Protect",
+        "img": "icons/magic/unholy/orb-contained-pink.webp",
+        "range": "close",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Shroud of the Fallen",
+      "img": "icons/magic/unholy/orb-contained-pink.webp",
+      "transfer": false,
+      "_id": "U9lWz1LgeAiK5L85",
+      "type": "base",
+      "system": {
+        "changes": [
+          {
+            "key": "system.resistance.magical.resistance",
+            "value": 1,
+            "priority": null,
+            "type": "override",
+            "phase": "initial"
+          },
+          {
+            "key": "system.resistance.physical.resistance",
+            "value": 1,
+            "priority": null,
+            "type": "override",
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "type": "temporary",
+          "description": "<p>Until the Cult Adept marks their last HP.</p>"
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>Resistance to all damage until the Adept marks their last HP</p>",
+      "tint": "#ffffff",
+      "statuses": [],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!lGDluNGfUnP0YHdw.U9lWz1LgeAiK5L85"
+    }
+  ],
+  "folder": "tIC7MmRdnVCpcGAV",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Cult Adept",
+      "tier": 2,
+      "type": "Support",
+      "customTag": "Core Rulebook",
+      "originalId": "IHWDn097sRgjlZXO",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!lGDluNGfUnP0YHdw"
+}

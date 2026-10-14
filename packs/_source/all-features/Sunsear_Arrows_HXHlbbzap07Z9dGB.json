@@ -1,0 +1,142 @@
+{
+  "_id": "HXHlbbzap07Z9dGB",
+  "name": "Sunsear Arrows",
+  "type": "feature",
+  "img": "icons/magic/light/explosion-star-glow-orange.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] makes a successful standard attack, the target Glows until the end of the scene and can't become <em>Hidden</em>. Attack rolls made against a Glowing target have advantage.</p>",
+    "resource": null,
+    "actions": {
+      "fnTd5BjBAK46vRRk": {
+        "type": "effect",
+        "_id": "fnTd5BjBAK46vRRk",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [
+          {
+            "_id": "bYBrgiSwHwYfQyjn",
+            "onSave": false
+          }
+        ],
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "name": "Glow",
+        "img": "icons/magic/light/explosion-star-glow-orange.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Glowing",
+      "img": "icons/magic/light/explosion-star-glow-orange.webp",
+      "transfer": false,
+      "_id": "bYBrgiSwHwYfQyjn",
+      "type": "base",
+      "system": {
+        "changes": [
+          {
+            "key": "system.rules.conditionImmunities.hidden",
+            "value": 1,
+            "priority": null,
+            "type": "override",
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "type": "scene",
+          "description": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>You Glow until the end of the scene and can't become <em>Hidden</em>. Attack rolls made against you have advantage.</p>",
+      "tint": "#ffffff",
+      "statuses": [],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!HXHlbbzap07Z9dGB.bYBrgiSwHwYfQyjn"
+    }
+  ],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Gorgon",
+      "tier": 2,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "NepVGKOo1lHYjA1F",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!HXHlbbzap07Z9dGB"
+}

@@ -1,0 +1,45 @@
+{
+  "_id": "MCl7oOi4UTtLOUPT",
+  "name": "Minion (3)",
+  "type": "feature",
+  "img": "icons/magic/symbols/runes-carved-stone-yellow.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The Crawler is defeated when it takes any damage. For every 3 damage a PC deals to the Crawler, the PC defeats an additional Minion within range the attack would succeed against.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "c2h6VagAkIeUjj23",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Darkweave Crawler",
+      "tier": 1,
+      "type": "Minion",
+      "customTag": "Core Rulebook",
+      "originalId": "Ll43t7pvzXc4MX8g",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!MCl7oOi4UTtLOUPT"
+}

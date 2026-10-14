@@ -1,0 +1,16 @@
+{
+  "_id": "UH09kjtZCSLC2pHc",
+  "name": "Core Features",
+  "type": "Item",
+  "color": "#000000",
+  "sorting": "a",
+  "sort": 100000,
+  "description": "",
+  "folder": null,
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!UH09kjtZCSLC2pHc"
+}

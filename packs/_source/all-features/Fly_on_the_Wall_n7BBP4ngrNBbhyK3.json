@@ -1,0 +1,151 @@
+{
+  "_id": "n7BBP4ngrNBbhyK3",
+  "name": "Fly on the Wall",
+  "type": "feature",
+  "img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+  "system": {
+    "description": "<p>When a PC or group is discussing something sensitive, you can <strong>mark a Stress</strong> to reveal that the @Lookup[@name] is present in the scene, observing them. If the @Lookup[@name] escapes the scene to report their findings, you gain <strong>1d4</strong> Fear.</p>",
+    "resource": null,
+    "actions": {
+      "Ml8nt7SPNFc2iQno": {
+        "type": "effect",
+        "_id": "Ml8nt7SPNFc2iQno",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      },
+      "qCA2hTMIYGW0FhGy": {
+        "type": "healing",
+        "_id": "qCA2hTMIYGW0FhGy",
+        "systemPath": "actions",
+        "description": "<p>If the @Lookup[@name] escapes the scene to report their findings, you gain <strong>1d4</strong> Fear.</p>",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {
+            "fear": {
+              "value": {
+                "custom": {
+                  "enabled": false,
+                  "formula": ""
+                },
+                "flatMultiplier": 1,
+                "dice": "d4",
+                "bonus": null,
+                "multiplier": "flat"
+              },
+              "applyTo": "fear",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "name": "Gain Fear",
+        "img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "WD3wrU8ieoI7aGsw",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Spy",
+      "tier": 2,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "UvgVDn0YjISLdKE4",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!n7BBP4ngrNBbhyK3"
+}

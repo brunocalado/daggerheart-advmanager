@@ -1,0 +1,16 @@
+{
+  "_id": "1dhoHZkgW0WSQrpG",
+  "name": "Leader",
+  "type": "Item",
+  "color": "#5c4905",
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "UH09kjtZCSLC2pHc",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!1dhoHZkgW0WSQrpG"
+}

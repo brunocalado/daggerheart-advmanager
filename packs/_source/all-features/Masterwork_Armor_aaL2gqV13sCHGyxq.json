@@ -1,0 +1,195 @@
+{
+  "_id": "aaL2gqV13sCHGyxq",
+  "name": "Masterwork Armor",
+  "type": "feature",
+  "img": "icons/equipment/chest/breastplate-layered-steel-black.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>Countdown (3). When the Titan first appears, activate the countdown. It ticks down when the Titan takes Major or Severe damage. Until the countdown triggers, reduce incoming damage by <strong>1d12</strong>. When it triggers, the Titan gains a +1 bonus to their Difficulty and attack rolls.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "OF01PgCtbYidpp9i": {
+        "type": "countdown",
+        "name": "Start Countdown",
+        "countdown": [
+          {
+            "name": "Masterwork Armor",
+            "type": "encounter",
+            "hidden": false,
+            "img": "icons/equipment/chest/breastplate-layered-steel-black.webp",
+            "progress": {
+              "looping": "noLooping",
+              "type": "custom",
+              "startFormula": "3",
+              "current": 1,
+              "start": 1
+            },
+            "ownership": {}
+          }
+        ],
+        "_id": "OF01PgCtbYidpp9i",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "range": ""
+      },
+      "wjxg7DKqkTMMZQG6": {
+        "type": "effect",
+        "_id": "wjxg7DKqkTMMZQG6",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "<p>When it triggers, the Titan gains a +1 bonus to their Difficulty and attack rolls.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [
+          {
+            "_id": "HTFoLFgErxndgm3a",
+            "onSave": false
+          }
+        ],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Trigger Countdown",
+        "range": "self"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Broken Armor",
+      "disabled": false,
+      "img": "icons/skills/melee/shield-damaged-broken-gold.webp",
+      "description": "<p>The Titan gains a +1 bonus to their Difficulty and attack rolls.</p>",
+      "transfer": false,
+      "statuses": [],
+      "system": {
+        "changes": [
+          {
+            "key": "system.difficulty",
+            "type": "add",
+            "value": 1,
+            "priority": null,
+            "phase": "initial"
+          },
+          {
+            "key": "system.bonuses.roll.bonus",
+            "type": "add",
+            "value": 1,
+            "priority": null,
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": [
+          {
+            "type": "actionType",
+            "actionTypes": [
+              "attack"
+            ],
+            "traits": []
+          }
+        ]
+      },
+      "_id": "HTFoLFgErxndgm3a",
+      "type": "base",
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "tint": "#ffffff",
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!aaL2gqV13sCHGyxq.HTFoLFgErxndgm3a"
+    }
+  ],
+  "folder": "NGVQVvqf6ncoSU4E",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fire Titan",
+      "tier": 3,
+      "type": "Solo",
+      "customTag": "Core Rulebook",
+      "originalId": "YUMQEamNAhygXnBu",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!aaL2gqV13sCHGyxq"
+}

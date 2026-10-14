@@ -1,0 +1,179 @@
+{
+  "_id": "glzENQd3P5VDPCSP",
+  "name": "Drowning Embrace",
+  "type": "feature",
+  "img": "icons/magic/water/vortex-water-whirlpool-blue.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> to make an attack against all targets within Very Close range. Targets the @Lookup[@name] succeeds against become <em>Restrained</em> and <em>Vulnerable</em> as they begin drowning. A target can break free, ending both conditions, with a successful Strength or Instinct Roll.</p>",
+    "resource": null,
+    "actions": {
+      "ooYbiLrYjoWXIfe9": {
+        "type": "attack",
+        "_id": "ooYbiLrYjoWXIfe9",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [
+          {
+            "_id": "X8NF2OB23mSpDvlx",
+            "onSave": false
+          }
+        ],
+        "roll": {
+          "type": "attack",
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": null,
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Attack",
+        "img": "icons/magic/water/vortex-water-whirlpool-blue.webp",
+        "range": "veryClose",
+        "areas": [
+          {
+            "name": "Drowning Embrace",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Drowning Embrace",
+      "img": "icons/magic/water/vortex-water-whirlpool-blue.webp",
+      "transfer": true,
+      "_id": "X8NF2OB23mSpDvlx",
+      "type": "base",
+      "system": {
+        "changes": [],
+        "duration": {
+          "type": "temporary",
+          "description": "<p>You can break free with a successful Strength or Instinct Roll.</p>"
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p>You are<em> Restrained</em> and <em>Vulnerable</em> as you are drowning. You can break free, ending both conditions, with a successful Strength or Instinct Roll.</p>",
+      "tint": "#ffffff",
+      "statuses": [
+        "vulnerable",
+        "restrained"
+      ],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!glzENQd3P5VDPCSP.X8NF2OB23mSpDvlx"
+    }
+  ],
+  "folder": "tIC7MmRdnVCpcGAV",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Greater Water Elemental",
+      "tier": 3,
+      "type": "Support",
+      "customTag": "Core Rulebook",
+      "originalId": "bcwFQeuU6ZfIGjau",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!glzENQd3P5VDPCSP"
+}

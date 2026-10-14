@@ -1,0 +1,99 @@
+{
+  "_id": "UmRMYSesLaEmalo9",
+  "name": "Look into My Eyes",
+  "type": "feature",
+  "img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+  "system": {
+    "description": "<p>A creature who moves into Melee range of the @Lookup[@name] must make an Instinct Reaction Roll. On a failure, you gain <strong>[[/r 1d4]]</strong> Fear.</p>",
+    "resource": null,
+    "actions": {
+      "lOgkZTR1hybc6bnJ": {
+        "type": "attack",
+        "_id": "lOgkZTR1hybc6bnJ",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "instinct",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Roll Save",
+        "img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+        "range": "melee",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "F8new8F1pedOrVWY",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Head Vampire",
+      "tier": 3,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "1RfqKn7gYbWbSl0A",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!UmRMYSesLaEmalo9"
+}

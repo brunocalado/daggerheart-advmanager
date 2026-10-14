@@ -1,0 +1,83 @@
+{
+  "_id": "c20xceQVHDBLKQfs",
+  "name": "Plague Bringer",
+  "type": "feature",
+  "img": "icons/magic/death/undead-zombie-grave-green.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p>Mark any number of Stress up to the number of PCs in the scene. For each Stress you mark, the Harbinger summons <strong>1d4</strong> @UUID[Compendium.daggerheart.adversaries.Actor.YhJrP7rTBiRdX5Fp]{Contagious Zombie Legions} within Far range and immediately spotlights one of them.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "pXOB1GZh2FwvU4hS": {
+        "type": "effect",
+        "_id": "pXOB1GZh2FwvU4hS",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": true,
+            "key": "stress",
+            "value": 1,
+            "step": 1,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "range": "far"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Harbinger Of Pestilence",
+      "tier": 4,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "aQQZlLwA8OOXCJPW",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!c20xceQVHDBLKQfs"
+}

@@ -1,0 +1,16 @@
+{
+  "_id": "dL7t96HBSkfewTx0",
+  "name": "Minion",
+  "type": "Item",
+  "color": "#2f3f4f",
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "UH09kjtZCSLC2pHc",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!dL7t96HBSkfewTx0"
+}

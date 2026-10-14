@@ -1,0 +1,45 @@
+{
+  "_id": "cas9PmFcaiqYW8y6",
+  "name": "Slippery",
+  "type": "feature",
+  "img": "icons/magic/symbols/ring-circle-smoke-blue.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] takes damage from an attack, they can teleport up to Far range.</p>",
+    "resource": null,
+    "actions": {},
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "3mefR0eNC5A3lkpI",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fallen Sorcerer",
+      "tier": 4,
+      "type": "Support",
+      "customTag": "Core Rulebook",
+      "originalId": "C74czwNeWF5vS1DZ",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!cas9PmFcaiqYW8y6"
+}

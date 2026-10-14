@@ -1,0 +1,107 @@
+{
+  "_id": "0y4wegfxmDitH3Op",
+  "name": "You Pale in Comparison",
+  "type": "feature",
+  "img": "icons/magic/control/fear-fright-shadow-monster-red.webp",
+  "system": {
+    "description": "<p>When a PC fails a roll within Close range of the @Lookup[@name], they must mark a Stress.</p>",
+    "resource": null,
+    "actions": {
+      "kuCPWb9cu3pZdAhh": {
+        "type": "damage",
+        "_id": "kuCPWb9cu3pZdAhh",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {
+            "stress": {
+              "value": {
+                "custom": {
+                  "enabled": true,
+                  "formula": "1"
+                },
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d6",
+                "bonus": null
+              },
+              "applyTo": "stress",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "effects": [],
+        "name": "Mark Stress",
+        "img": "icons/magic/control/fear-fright-shadow-monster-red.webp",
+        "range": "close",
+        "areas": [
+          {
+            "name": "You Pale in Comparison",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "close",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Cab1928i08qIfSkO",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Demon of Hubris",
+      "tier": 3,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "FLp1dPSJz1ezY0gD",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!0y4wegfxmDitH3Op"
+}

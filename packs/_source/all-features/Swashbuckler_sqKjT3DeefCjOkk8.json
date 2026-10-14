@@ -1,0 +1,98 @@
+{
+  "_id": "sqKjT3DeefCjOkk8",
+  "name": "Swashbuckler",
+  "type": "feature",
+  "img": "icons/magic/control/mouth-smile-deception-purple.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] mark 2 or fewer HP from an attack within Melee range, the attacker must mark a Stress.</p>",
+    "resource": null,
+    "actions": {
+      "ejadA9jjMnVNVczS": {
+        "type": "damage",
+        "_id": "ejadA9jjMnVNVczS",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {
+            "stress": {
+              "value": {
+                "custom": {
+                  "enabled": true,
+                  "formula": "1"
+                },
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d6",
+                "bonus": null
+              },
+              "applyTo": "stress",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "Damage Stress",
+        "img": "icons/magic/control/mouth-smile-deception-purple.webp",
+        "range": "melee",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "s4tdHQ6aYU5Radj5",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Pirate Raiders",
+      "tier": 1,
+      "type": "Horde",
+      "customTag": "Core Rulebook",
+      "originalId": "N401rF937fLXMuMA",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!sqKjT3DeefCjOkk8"
+}

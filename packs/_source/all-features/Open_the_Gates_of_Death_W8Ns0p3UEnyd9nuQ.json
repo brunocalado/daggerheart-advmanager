@@ -1,0 +1,75 @@
+{
+  "_id": "W8Ns0p3UEnyd9nuQ",
+  "name": "Open the Gates of Death",
+  "type": "feature",
+  "img": "icons/magic/death/undead-zombie-grave-green.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> to summon a @UUID[Compendium.daggerheart.adversaries.Actor.YhJrP7rTBiRdX5Fp]{Zombie Legion}, which appears at Close range and immediately takes the spotlight.</p>",
+    "resource": null,
+    "actions": {
+      "qSuWxC8xQOhnbBx9": {
+        "type": "summon",
+        "_id": "qSuWxC8xQOhnbBx9",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.YhJrP7rTBiRdX5Fp",
+            "count": "1"
+          }
+        ],
+        "name": "Spend Fear",
+        "range": "",
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Arch-Necromancer",
+      "tier": 4,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "XxXOrFovbCz9zFxR",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!W8Ns0p3UEnyd9nuQ"
+}

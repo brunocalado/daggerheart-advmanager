@@ -1,0 +1,84 @@
+{
+  "_id": "ucqIZlGgh8uvFPQY",
+  "name": "Bloodsucker",
+  "type": "feature",
+  "img": "icons/skills/wounds/blood-drip-droplet-red.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name]'s attack causes a target to mark HP, you can <strong>mark a Stress</strong> to force the target to mark an additional HP.</p>",
+    "resource": null,
+    "actions": {
+      "7ee6IhkKYDehjLmg": {
+        "type": "effect",
+        "_id": "7ee6IhkKYDehjLmg",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "img": "icons/skills/wounds/blood-drip-droplet-red.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "bqVsG6smLMrzLkfi",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Giant Mosquitoes",
+      "tier": 1,
+      "type": "Horde",
+      "customTag": "Core Rulebook",
+      "originalId": "BTlMLjG65KQs0Jk2",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!ucqIZlGgh8uvFPQY"
+}

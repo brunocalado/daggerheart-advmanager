@@ -1,0 +1,168 @@
+{
+  "_id": "vFJMiqgqC0CIiXSO",
+  "name": "Searing Glance",
+  "type": "feature",
+  "img": "icons/magic/perception/eye-slit-orange.webp",
+  "system": {
+    "description": "<p>When a PC within Close range makes a Presence Roll, you can <strong>mark a Stress</strong> to cast a gaze toward the aftermath. On the target's failure, they must mark 2 Stress and are <em>Vulnerable</em> until the scene ends or they succeed on a social action against the @Lookup[@name]. On the target's success, they must mark a Stress.</p>",
+    "resource": null,
+    "actions": {
+      "dRtDCrAPLc1GYqBs": {
+        "type": "damage",
+        "_id": "dRtDCrAPLc1GYqBs",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {
+            "stress": {
+              "value": {
+                "custom": {
+                  "enabled": true,
+                  "formula": "2"
+                },
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d6",
+                "bonus": null
+              },
+              "applyTo": "stress",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [
+          {
+            "_id": "blcRqns0PHqiuPac",
+            "onSave": false
+          }
+        ],
+        "name": "Spend Stress",
+        "img": "icons/magic/perception/eye-slit-orange.webp",
+        "range": "close",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Searing Glance",
+      "img": "icons/magic/perception/eye-slit-orange.webp",
+      "transfer": false,
+      "_id": "blcRqns0PHqiuPac",
+      "type": "base",
+      "system": {
+        "changes": [],
+        "duration": {
+          "type": "temporary",
+          "description": "<p>Until the scene ends or they succeed on a social action against the Courtesan.</p>"
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "disabled": false,
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "description": "<p><em>Vulnerable</em> until the scene ends or they succeed on a social action against the Courtesan.</p>",
+      "tint": "#ffffff",
+      "statuses": [
+        "vulnerable"
+      ],
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "showIcon": 1,
+      "folder": null,
+      "origin": null,
+      "_key": "!items.effects!vFJMiqgqC0CIiXSO.blcRqns0PHqiuPac"
+    }
+  ],
+  "folder": "WD3wrU8ieoI7aGsw",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Courtesan",
+      "tier": 2,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "rSMUPC5GhR982ifg",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!vFJMiqgqC0CIiXSO"
+}

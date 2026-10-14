@@ -1,0 +1,74 @@
+{
+  "_id": "m1QDQJ3T8sgQ4Icb",
+  "name": "Exposed! (Phase Change)",
+  "type": "feature",
+  "img": "icons/creatures/unholy/demon-fire-horned-winged-roar.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When the Fiend is defeated or the PCs discover its true identity, replace the Fiend with @Lookup[@name] Revealed and immediately spotlight them.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "MymVTgMNkwdkt2Ja": {
+        "type": "transform",
+        "_id": "MymVTgMNkwdkt2Ja",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": null,
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "transform": {
+          "actorUUID": "Compendium.daggerheart.adversaries.Actor.fa50qKab3hPt9gkV",
+          "resourceRefresh": {
+            "hitPoints": true,
+            "stress": true
+          }
+        }
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "WD3wrU8ieoI7aGsw",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Shapeshifting Fiend",
+      "tier": 3,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "KejigtjcSGCBpGh3",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!m1QDQJ3T8sgQ4Icb"
+}

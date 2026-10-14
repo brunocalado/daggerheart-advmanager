@@ -1,0 +1,150 @@
+{
+  "_id": "DbsJQe8Orutkpglp",
+  "name": "Clutch",
+  "type": "feature",
+  "img": "icons/creatures/claws/claw-talons-glowing-orange.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When the @Lookup[@name] makes a successful attack against a PC, you can <strong>spend a Fear</strong> to have the @Lookup[@name] <em>Restrain</em> the target in its claws until the PC succeeds on a Strength Roll (18) or the @Lookup[@name] takes Major or greater damage. While <em>Restrained</em> in this way, the PC has disadvantage on attack rolls.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "Cl5dsNGTOVsU7d5F": {
+        "type": "effect",
+        "_id": "Cl5dsNGTOVsU7d5F",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [
+          {
+            "_id": "IRN9xFgqn91fgjag",
+            "onSave": false
+          }
+        ],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [
+    {
+      "name": "Clutched",
+      "disabled": false,
+      "img": "icons/creatures/claws/claw-talons-glowing-orange.webp",
+      "description": "<p>You are <em>Restrained</em> in the Wyvern's claws until you succeed on a Strength Roll (18) or the Wyvern takes Major or greater damage.</p><p>While Restrained in this way, you have disadvantage on attack rolls.</p>",
+      "transfer": false,
+      "statuses": [],
+      "system": {
+        "changes": [
+          {
+            "key": "system.disadvantageSources",
+            "type": "add",
+            "value": "Attack Rolls",
+            "priority": null,
+            "phase": "initial"
+          }
+        ],
+        "duration": {
+          "description": "",
+          "type": ""
+        },
+        "rangeDependence": null,
+        "stacking": null,
+        "targetDispositions": [],
+        "conditionals": []
+      },
+      "_id": "IRN9xFgqn91fgjag",
+      "type": "base",
+      "start": {
+        "time": 0,
+        "combat": null,
+        "combatant": null,
+        "initiative": null,
+        "round": null,
+        "turn": null
+      },
+      "duration": {
+        "value": null,
+        "units": "seconds",
+        "expiry": null,
+        "expired": false
+      },
+      "tint": "#ffffff",
+      "showIcon": 1,
+      "folder": null,
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.368",
+        "systemId": "daggerheart",
+        "systemVersion": "2.10.6",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "origin": null,
+      "_key": "!items.effects!DbsJQe8Orutkpglp.IRN9xFgqn91fgjag"
+    }
+  ],
+  "folder": "WO43nKj8E0pZ0uci",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Wyvern",
+      "tier": 3,
+      "type": "Standard",
+      "customTag": "Core Rulebook",
+      "originalId": "ERw6SnOIhJA2wWdH",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!DbsJQe8Orutkpglp"
+}

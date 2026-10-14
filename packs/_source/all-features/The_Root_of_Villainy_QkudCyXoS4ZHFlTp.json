@@ -1,0 +1,84 @@
+{
+  "_id": "QkudCyXoS4ZHFlTp",
+  "name": "The Root of Villainy",
+  "type": "feature",
+  "img": "icons/creatures/unholy/demon-fire-horned-winged-roar.webp",
+  "system": {
+    "description": "<p><strong>Spend a Fear</strong> to spotlight two other Demons within Far range.</p>",
+    "resource": null,
+    "actions": {
+      "ozGST8UY2MJnrd3w": {
+        "type": "effect",
+        "_id": "ozGST8UY2MJnrd3w",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spotlight Demons",
+        "img": "icons/creatures/unholy/demon-fire-horned-winged-roar.webp",
+        "range": "far",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Demon of Hubris",
+      "tier": 3,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "6BKWOTuxQWJd5RP5",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!QkudCyXoS4ZHFlTp"
+}

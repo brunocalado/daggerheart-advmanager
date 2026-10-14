@@ -1,0 +1,115 @@
+{
+  "_id": "nOfHNL0j4qza9rCu",
+  "name": "Colossus Crafter",
+  "type": "feature",
+  "img": "icons/creatures/magical/construct-iron-stomping-yellow.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>Countdown (6). When the Warlord enters the scene, activate the countdown. It ticks down when the Warlord is spotlighted. When it triggers, summon the Gargantuan War Machine, which appears at the edge of the battlefield and immediately takes the spotlight.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "XCZQJSvp4yPO1rCh": {
+        "type": "countdown",
+        "name": "Start Countdown",
+        "countdown": [
+          {
+            "name": "Colossus Crafter",
+            "type": "encounter",
+            "hidden": false,
+            "img": "icons/creatures/magical/construct-iron-stomping-yellow.webp",
+            "progress": {
+              "looping": "noLooping",
+              "type": "custom",
+              "startFormula": "6",
+              "current": 1,
+              "start": 1
+            },
+            "ownership": {}
+          }
+        ],
+        "_id": "XCZQJSvp4yPO1rCh",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "range": ""
+      },
+      "nFtxBG44eEjAF9uk": {
+        "type": "summon",
+        "_id": "nFtxBG44eEjAF9uk",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "<p>When it triggers, summon the Gargantuan War Machine, which appears at the edge of the battlefield and immediately takes the spotlight.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.iCiRtuBhVfojXOj5",
+            "count": "1"
+          }
+        ],
+        "name": "Trigger Countdown",
+        "range": "",
+        "img": "icons/weapons/artillery/trebuchet-simple.webp"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "F8new8F1pedOrVWY",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fire Titan Warlord",
+      "tier": 4,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "y23ZdtLiSn0pN2g8",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!nOfHNL0j4qza9rCu"
+}

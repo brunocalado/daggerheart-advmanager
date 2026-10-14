@@ -1,0 +1,45 @@
+{
+  "_id": "TqCOrddFgwgu3ihR",
+  "name": "Stonestrider",
+  "type": "feature",
+  "img": "icons/commodities/stone/stone-pile-grey.webp",
+  "system": {
+    "description": "<p>The @Lookup[@name] can move through stone and earth as easily as air. While within stone or earth, they are Hidden and immune to all damage.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "OWArd59gVR8MImSB",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Stonewraith",
+      "tier": 2,
+      "type": "Skulk",
+      "customTag": "Core Rulebook",
+      "originalId": "SL5JOOefJEeWJCSz",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!TqCOrddFgwgu3ihR"
+}

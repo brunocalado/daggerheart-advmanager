@@ -1,0 +1,70 @@
+{
+  "folder": null,
+  "name": "Sudden Lunge",
+  "type": "feature",
+  "_id": "gkyJsNVoE3kYJWoe",
+  "img": "icons/skills/movement/feet-winged-sandals-tan.webp",
+  "system": {
+    "attribution": {},
+    "description": "<p>Mark a Stress to move up to Far range and make a standard attack.</p>",
+    "resource": null,
+    "actions": {
+      "qM99erWmE2vXLOkT": {
+        "type": "effect",
+        "_id": "qM99erWmE2vXLOkT",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "range": ""
+      }
+    },
+    "originItemType": null,
+    "multiclassOrigin": false,
+    "featureForm": "action"
+  },
+  "effects": [],
+  "flags": {},
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null,
+    "coreVersion": "13.351",
+    "systemId": "daggerheart",
+    "systemVersion": "1.4.4",
+    "createdTime": 1767360908883,
+    "modifiedTime": 1767787408025,
+    "lastModifiedBy": "zWDd1mciIe4rp82O"
+  },
+  "ownership": {
+    "default": 0
+  },
+  "sort": 0,
+  "_key": "!items!gkyJsNVoE3kYJWoe"
+}

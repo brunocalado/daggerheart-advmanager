@@ -1,0 +1,45 @@
+{
+  "_id": "UYossA2DMZh9EEVv",
+  "name": "Telepathic",
+  "type": "feature",
+  "img": "icons/magic/perception/third-eye-blue-red.webp",
+  "system": {
+    "featureForm": "passive",
+    "description": "<p>The @Lookup[@name] can mentally communicate with creatures within Very Far range.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {},
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "3qIbZaW2RvhTABEY",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Yufo",
+      "tier": 1,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "YBQ9BpaOeef4iBms",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!UYossA2DMZh9EEVv"
+}

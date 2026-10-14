@@ -1,0 +1,16 @@
+{
+  "_id": "y8Ux9xgbM7feYdzb",
+  "name": "Bruiser",
+  "type": "Item",
+  "color": "#4a0404",
+  "sorting": "a",
+  "sort": 0,
+  "description": "",
+  "folder": "UH09kjtZCSLC2pHc",
+  "flags": {},
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6"
+  },
+  "_key": "!folders!y8Ux9xgbM7feYdzb"
+}

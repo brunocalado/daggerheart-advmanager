@@ -1,0 +1,45 @@
+{
+  "_id": "mC95srkxZfyuhX2a",
+  "name": "Just a Tree",
+  "type": "feature",
+  "img": "icons/environment/wilderness/tree-spruce-green.webp",
+  "system": {
+    "description": "<p>Before they make their first attack in a fight or after they become Hidden the @Lookup[@name] is indistinguishable from other trees until they next act or a PC succeeds on an Instinct Roll to identify them.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Oak Treant",
+      "tier": 3,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "ERco8urSuHgrtnzL",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!mC95srkxZfyuhX2a"
+}

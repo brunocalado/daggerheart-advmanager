@@ -1,0 +1,45 @@
+{
+  "_id": "aafhP2SsdjfJqoKC",
+  "name": "Overwhelming Force",
+  "type": "feature",
+  "img": "icons/skills/melee/strike-slashes-orange.webp",
+  "system": {
+    "description": "<p>Targets who mark HP from the @Lookup[@name]'s standard attack are knocked back to Very Close range.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Bear",
+      "tier": 1,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "2fXzhh2qil8dw3vw",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!aafhP2SsdjfJqoKC"
+}

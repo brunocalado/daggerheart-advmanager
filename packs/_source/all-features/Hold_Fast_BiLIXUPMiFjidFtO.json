@@ -1,0 +1,84 @@
+{
+  "_id": "BiLIXUPMiFjidFtO",
+  "name": "Hold Fast",
+  "type": "feature",
+  "img": "icons/magic/defensive/shield-barrier-flaming-diamond-teal.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name]'s Spectral allies are forced to make a reaction roll, you can <strong>mark a Stress</strong> to give those allies a +2 bonus to the roll.</p>",
+    "resource": null,
+    "actions": {
+      "aRg1bcPGUn69GPyB": {
+        "type": "effect",
+        "_id": "aRg1bcPGUn69GPyB",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "self",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "img": "icons/magic/defensive/shield-barrier-flaming-diamond-teal.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "Cab1928i08qIfSkO",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Spectral Captain",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "X0vtV30ACVVZ6NfF",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!BiLIXUPMiFjidFtO"
+}

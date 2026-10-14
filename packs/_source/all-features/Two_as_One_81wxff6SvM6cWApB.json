@@ -1,0 +1,45 @@
+{
+  "_id": "81wxff6SvM6cWApB",
+  "name": "Two as One",
+  "type": "feature",
+  "img": "icons/creatures/mammals/bull-horned-blue.webp",
+  "system": {
+    "description": "<p>When the @Lookup[@name] is spotlighted, you can also spotlight a Tier 1 animal adversary currently under their control.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "F8new8F1pedOrVWY",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Giant Beastmaster",
+      "tier": 2,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "oUuUwtHMJidzLN6q",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!81wxff6SvM6cWApB"
+}

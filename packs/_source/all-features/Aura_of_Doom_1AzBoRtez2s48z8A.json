@@ -1,0 +1,98 @@
+{
+  "_id": "1AzBoRtez2s48z8A",
+  "name": "Aura of Doom",
+  "type": "feature",
+  "img": "icons/magic/death/skull-flames-white-blue.webp",
+  "system": {
+    "description": "<p>When a PC marks HP from an attack by the @Lookup[@name], they lose a Hope.</p>",
+    "resource": null,
+    "actions": {
+      "HcGa2nD0WziA0lFP": {
+        "type": "damage",
+        "_id": "HcGa2nD0WziA0lFP",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {
+            "hope": {
+              "value": {
+                "custom": {
+                  "enabled": true,
+                  "formula": "1"
+                },
+                "multiplier": "flat",
+                "flatMultiplier": 1,
+                "dice": "d6",
+                "bonus": null
+              },
+              "applyTo": "hope",
+              "base": false,
+              "resultBased": false,
+              "valueAlt": null,
+              "fullRestore": false,
+              "itemId": null
+            }
+          }
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "name": "Lose Hope",
+        "img": "icons/magic/death/skull-flames-white-blue.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "c2h6VagAkIeUjj23",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fallen Shock Troop",
+      "tier": 4,
+      "type": "Minion",
+      "customTag": "Core Rulebook",
+      "originalId": "eW1Z3TTGlgvbgdCD",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!1AzBoRtez2s48z8A"
+}

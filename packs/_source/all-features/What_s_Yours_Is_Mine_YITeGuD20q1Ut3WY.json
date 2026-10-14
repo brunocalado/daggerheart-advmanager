@@ -1,0 +1,108 @@
+{
+  "_id": "YITeGuD20q1Ut3WY",
+  "name": "What's Yours Is Mine",
+  "type": "feature",
+  "img": "icons/magic/perception/hand-eye-black.webp",
+  "system": {
+    "description": "<p>When a PC takes Severe damage within Very Close range of the @Lookup[@name], you can <strong>spend a Fear</strong> to cause the target to make a Finesse Reaction Roll. On a failure, the @Lookup[@name] seizes one item or consumable of their choice from the target's inventory.</p>",
+    "resource": null,
+    "actions": {
+      "3cGZ2CofM9HUlELH": {
+        "type": "attack",
+        "_id": "3cGZ2CofM9HUlELH",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "finesse",
+          "difficulty": null,
+          "damageMod": "none"
+        },
+        "name": "Roll Save",
+        "img": "icons/magic/perception/hand-eye-black.webp",
+        "range": "veryClose",
+        "areas": [
+          {
+            "name": "What's Yours Is Mine",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "veryClose",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "8aWPzWS5EogujHEh",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Demon of Jealousy",
+      "tier": 3,
+      "type": "Ranged",
+      "customTag": "Core Rulebook",
+      "originalId": "589tCxFc8KZ3rdzP",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!YITeGuD20q1Ut3WY"
+}

@@ -1,0 +1,146 @@
+{
+  "_id": "UWGmd3IEeY2T1sDa",
+  "name": "Death Glare",
+  "type": "feature",
+  "img": "icons/magic/death/skull-humanoid-white-red.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Spend a Fear</strong> to choose a PC within Far range. The target must make an Presence Reaction Roll (19). On a success, they mark a Stress. On a failure, they mark a HP and activate a Doom Countdown (4). It ticks down when the @Lookup[@name] is spotlighted. When it triggers, the target makes a death move. If the @Lookup[@name] is defeated or the PCs take a rest, all Doom Countdowns end.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "Xv9H64VnMd1bqNOl": {
+        "type": "attack",
+        "damage": {
+          "main": null,
+          "resources": {}
+        },
+        "_id": "Xv9H64VnMd1bqNOl",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "target": {
+          "type": "any",
+          "amount": 1
+        },
+        "effects": [],
+        "roll": {
+          "type": null,
+          "trait": null,
+          "difficulty": null,
+          "bonus": null,
+          "advState": "neutral",
+          "diceRolling": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "compare": null,
+            "treshold": null
+          },
+          "useDefault": false
+        },
+        "save": {
+          "trait": "presence",
+          "difficulty": 19,
+          "damageMod": "none"
+        },
+        "name": "Spend Fear",
+        "range": "far"
+      },
+      "eqcmHs9mLhzxYPyG": {
+        "type": "countdown",
+        "name": "Start Countdown",
+        "countdown": [
+          {
+            "name": "Doom",
+            "type": "encounter",
+            "hidden": false,
+            "img": "icons/magic/death/skull-humanoid-white-red.webp",
+            "progress": {
+              "looping": "noLooping",
+              "type": "custom",
+              "startFormula": "4",
+              "current": 1,
+              "start": 1
+            },
+            "ownership": {}
+          }
+        ],
+        "_id": "eqcmHs9mLhzxYPyG",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "<p>Activate a Doom Countdown (4). It ticks down when the @Lookup[@name] is spotlighted. When it triggers, the target makes a death move. If the @Lookup[@name] is defeated or the PCs take a rest, all Doom Countdowns end.</p>",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "8lYVYjrfXTyDIDni",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Dullahan",
+      "tier": 3,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "7AqBPsOoK5KPCY2m",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!UWGmd3IEeY2T1sDa"
+}

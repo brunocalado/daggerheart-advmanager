@@ -1,0 +1,45 @@
+{
+  "_id": "gxA61mZCOskk7z8p",
+  "name": "I've Got 'Em",
+  "type": "feature",
+  "img": "icons/commodities/metal/chain-silver.webp",
+  "system": {
+    "description": "<p>Creatures <em>Restrained</em> by the @Lookup[@name] take double damage from attacks by other adversaries.</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "QHq0AGscS6cQUQy0",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Jagged Knife Kneebreaker",
+      "tier": 1,
+      "type": "Bruiser",
+      "customTag": "Core Rulebook",
+      "originalId": "vipYd2zMFs0i4Ock",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!gxA61mZCOskk7z8p"
+}

@@ -1,0 +1,84 @@
+{
+  "_id": "9dISbiy7QDWb84zH",
+  "name": "Relentless (2)",
+  "type": "feature",
+  "img": "icons/magic/unholy/silhouette-evil-horned-giant.webp",
+  "system": {
+    "description": "<p>The @Lookup[@name] can be spotlighted up to two times per GM turn. Spend Fear as usual to spotlight them.</p>",
+    "resource": null,
+    "actions": {
+      "IACoLeO6VmnK0qkW": {
+        "type": "effect",
+        "_id": "IACoLeO6VmnK0qkW",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "passive",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "step": null,
+            "consumeOnSuccess": false,
+            "itemId": null
+          }
+        ],
+        "uses": {
+          "value": 0,
+          "max": "1",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spotlight: Relentless",
+        "img": "icons/magic/unholy/silhouette-evil-horned-giant.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "s4tdHQ6aYU5Radj5",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Zombie Legion",
+      "tier": 4,
+      "type": "Horde",
+      "customTag": "Core Rulebook",
+      "originalId": "fCYLZKeTn0YSpVDI",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!9dISbiy7QDWb84zH"
+}

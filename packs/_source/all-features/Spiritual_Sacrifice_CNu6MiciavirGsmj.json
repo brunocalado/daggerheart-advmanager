@@ -1,0 +1,83 @@
+{
+  "_id": "CNu6MiciavirGsmj",
+  "name": "Spiritual Sacrifice",
+  "type": "feature",
+  "img": "icons/creatures/magical/spirit-undead-masked-blue.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>When the Spirit Singer would take damage while within Very Close range of a Guahalan Spirit Beast, you can <strong>spend a Fear</strong> to sacrifice the Spirit Beast and negate the damage.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "2AUWa9djQNaz85fL": {
+        "type": "effect",
+        "_id": "2AUWa9djQNaz85fL",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "range": "veryClose"
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "3mefR0eNC5A3lkpI",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Guahalan Spirit Singer",
+      "tier": 2,
+      "type": "Support",
+      "customTag": "Core Rulebook",
+      "originalId": "IXX7AivO001xb0DP",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!CNu6MiciavirGsmj"
+}

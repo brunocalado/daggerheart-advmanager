@@ -1,0 +1,45 @@
+{
+  "_id": "BwzWN7Xwr9sxd02E",
+  "name": "Preferential Treatment",
+  "type": "feature",
+  "img": "icons/skills/social/diplomacy-handshake.webp",
+  "system": {
+    "description": "<p>A PC who succeeds on a Presence Roll against the @Lookup[@name] gains a discount on purchases. A PC who fails on a Presence Roll against the @Lookup[@name] must pay more and has disadvantage on future Presence Rolls against the @Lookup[@name].</p>",
+    "resource": null,
+    "actions": {},
+    "attribution": {},
+    "gmNotes": "",
+    "featureForm": "passive",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "3qIbZaW2RvhTABEY",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Merchant",
+      "tier": 1,
+      "type": "Social",
+      "customTag": "Core Rulebook",
+      "originalId": "3Fwj28UxUcdMifoi",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!BwzWN7Xwr9sxd02E"
+}

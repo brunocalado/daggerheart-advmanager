@@ -1,0 +1,84 @@
+{
+  "_id": "uYOI4BjEoNINkUzt",
+  "name": "Form Up",
+  "type": "feature",
+  "img": "icons/magic/nature/mushrooms-fire-glow-blue.webp",
+  "system": {
+    "featureForm": "action",
+    "description": "<p><strong>Spend a Fear</strong> to combine three Sporelings within a Close area and replace them with a Fungispunj Sporophore.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "61vmnHULWdWkOyZY": {
+        "type": "summon",
+        "_id": "61vmnHULWdWkOyZY",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "summon": [
+          {
+            "actorUUID": "Compendium.daggerheart.adversaries.Actor.5BKK7pDRjRAgN3Nm",
+            "count": "1"
+          }
+        ],
+        "name": "Spend Fear",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "V3DUtFmrOg6qcmcq",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Fungispunj Sporeling",
+      "tier": 2,
+      "type": "Minion",
+      "customTag": "Core Rulebook",
+      "originalId": "KjDHgxHRNrSov4e8",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!uYOI4BjEoNINkUzt"
+}

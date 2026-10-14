@@ -1,0 +1,93 @@
+{
+  "_id": "z6kfSdiFgowTXOoF",
+  "name": "Tactician",
+  "type": "feature",
+  "img": "icons/skills/movement/arrows-up-trio-red.webp",
+  "system": {
+    "description": "<p>When you spotlight the @Lookup[@name], <strong>mark a Stress</strong> to also spotlight two allies within Close range.</p>",
+    "resource": null,
+    "actions": {
+      "IfMFU67g4sfhSYtm": {
+        "type": "effect",
+        "_id": "IfMFU67g4sfhSYtm",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "friendly",
+          "amount": 2
+        },
+        "name": "Mark Stress",
+        "img": "icons/skills/movement/arrows-up-trio-red.webp",
+        "range": "close",
+        "areas": [
+          {
+            "name": "Tactician",
+            "type": "placed",
+            "shape": "emanation",
+            "size": "close",
+            "effects": [],
+            "hasHole": false
+          }
+        ],
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": []
+      }
+    },
+    "featureForm": "action",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "hnjvyNi0RHGpr4L9",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Jagged Knife Lieutenant",
+      "tier": 1,
+      "type": "Leader",
+      "customTag": "Core Rulebook",
+      "originalId": "LIAbel7pMzAHpgF3",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!z6kfSdiFgowTXOoF"
+}

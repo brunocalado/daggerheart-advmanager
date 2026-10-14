@@ -1,0 +1,83 @@
+{
+  "_id": "5IJOo7nUTWELNFQ8",
+  "name": "Ravenous",
+  "type": "feature",
+  "img": "icons/creatures/magical/spirit-poison-smoke-green.webp",
+  "system": {
+    "featureForm": "reaction",
+    "description": "<p>Once per GM turn when a PC marks a HP from an attack made by the @Lookup[@name], you can <strong>spend a Fear</strong> to spotlight the @Lookup[@name] again.</p>",
+    "attribution": {},
+    "gmNotes": "",
+    "resource": null,
+    "actions": {
+      "kqihDddZhb4VH6iO": {
+        "type": "effect",
+        "_id": "kqihDddZhb4VH6iO",
+        "systemPath": "actions",
+        "baseAction": false,
+        "description": "",
+        "chatDisplay": true,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "actionType": "action",
+        "triggers": [],
+        "areas": [],
+        "cost": [
+          {
+            "scalable": false,
+            "key": "fear",
+            "value": 1,
+            "itemId": null,
+            "step": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Spend Fear",
+        "range": ""
+      }
+    },
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "bqVsG6smLMrzLkfi",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Wyrmlings",
+      "tier": 4,
+      "type": "Horde",
+      "customTag": "Core Rulebook",
+      "originalId": "0V472TOtSicWIeo5",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!5IJOo7nUTWELNFQ8"
+}

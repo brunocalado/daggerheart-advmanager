@@ -1,0 +1,84 @@
+{
+  "_id": "NCx4FP3xpVCc5nZf",
+  "name": "Concentrate Fire",
+  "type": "feature",
+  "img": "icons/commodities/tech/cog-brass.webp",
+  "system": {
+    "description": "<p>When another adversary deals damage to a target within Far range of the @Lookup[@name], you can <strong>mark a Stress</strong> to add the @Lookup[@name]'s standard attack damage to the damage roll.</p>",
+    "resource": null,
+    "actions": {
+      "3cqPKBRtwxtLwDpN": {
+        "type": "effect",
+        "_id": "3cqPKBRtwxtLwDpN",
+        "systemPath": "actions",
+        "description": "",
+        "chatDisplay": true,
+        "actionType": "action",
+        "cost": [
+          {
+            "scalable": false,
+            "key": "stress",
+            "value": 1,
+            "step": null,
+            "itemId": null,
+            "consumeOnSuccess": false
+          }
+        ],
+        "uses": {
+          "value": null,
+          "max": "",
+          "recovery": null,
+          "consumeOnSuccess": false
+        },
+        "effects": [],
+        "target": {
+          "type": "any",
+          "amount": null
+        },
+        "name": "Mark Stress",
+        "img": "icons/commodities/tech/cog-brass.webp",
+        "range": "",
+        "baseAction": false,
+        "originItem": {
+          "type": "itemCollection"
+        },
+        "triggers": [],
+        "areas": []
+      }
+    },
+    "featureForm": "reaction",
+    "attribution": {},
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
+  },
+  "effects": [],
+  "folder": "8aWPzWS5EogujHEh",
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "importedFrom": {
+      "compendium": "daggerheart.adversaries",
+      "adversary": "Vault Guardian Turret",
+      "tier": 3,
+      "type": "Ranged",
+      "customTag": "Core Rulebook",
+      "originalId": "G7qZ9RHPyNns3axX",
+      "isSpecialCase": false
+    }
+  },
+  "_stats": {
+    "systemId": "daggerheart",
+    "systemVersion": "2.10.6",
+    "coreVersion": "14.368",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!items!NCx4FP3xpVCc5nZf"
+}
