@@ -808,33 +808,24 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
                 const addedSet = new Set();
 
-                const selectedNames = [...this.overrides.newFeatures].sort((a, b) => a.localeCompare(b));
-                
-                for (const name of selectedNames) {
-                    if (!isOwned(name)) {
-                        let itemData = possibleMatches.find(pm => pm.name === name);
-
-                        if (!itemData) {
-                            const found = await this._findFeatureItem(name);
-                            itemData = {
-                                name: name,
-                                img: found.img,
-                                uuid: found.uuid,
-                                system: { featureForm: found.type, description: found.description },
-                                flags: found.flags
-                            };
-                        }
-
-                        allNewFeatures.push({
-                            name: itemData.name,
-                            checked: true,
-                            img: itemData.img,
-                            uuid: itemData.uuid || itemData._id,
-                            description: itemData.system?.description || "",
-                            tags: getTags(itemData.system?.featureForm, itemData.flags, itemData.isHomebrew)
-                        });
-                        addedSet.add(name);
-                    }
+                const selected = [];
+                for (const uuid of this.overrides.newFeatures) {
+                    // A ticked feature stays listed when the tier/type filter moves away from it.
+                    const itemData = possibleMatches.find(pm => pm.uuid === uuid) ?? await foundry.utils.fromUuid(uuid);
+                    if (!itemData || isOwned(itemData.name)) continue;
+                    selected.push({
+                        name: itemData.name,
+                        checked: true,
+                        img: itemData.img,
+                        uuid,
+                        description: itemData.system?.description || "",
+                        tags: getTags(itemData.system?.featureForm, itemData.flags, itemData.isHomebrew)
+                    });
+                }
+                selected.sort((a, b) => a.name.localeCompare(b.name));
+                for (const entry of selected) {
+                    allNewFeatures.push(entry);
+                    addedSet.add(entry.name);
                 }
 
                 for (const item of possibleMatches) {
@@ -847,7 +838,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                             name: item.name,
                             checked: false,
                             img: item.img,
-                            uuid: item.uuid || item._id,
+                            uuid: item.uuid,
                             description: item.system?.description || "",
                             tags: getTags(item.system?.featureForm, item.flags, item.isHomebrew)
                         });
@@ -1332,7 +1323,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     _onFeatureCheckboxChange(event, target) {
-        const featureName = target.dataset.feature;
+        // By uuid, not name: several features share a name with different text, and a feature
+        // from a configured homebrew pack is only reachable through its uuid.
+        const uuid = target.dataset.uuid;
         const isChecked = target.checked;
 
         if (!this.overrides.newFeatures) {
@@ -1340,11 +1333,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         if (isChecked) {
-            if (!this.overrides.newFeatures.includes(featureName)) {
-                this.overrides.newFeatures.push(featureName);
+            if (!this.overrides.newFeatures.includes(uuid)) {
+                this.overrides.newFeatures.push(uuid);
             }
         } else {
-            this.overrides.newFeatures = this.overrides.newFeatures.filter(f => f !== featureName);
+            this.overrides.newFeatures = this.overrides.newFeatures.filter(f => f !== uuid);
         }
     }
 

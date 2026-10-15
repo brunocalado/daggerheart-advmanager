@@ -752,80 +752,42 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
 // --- Feature Management ---
 
 /**
- * Finds features in module compendiums and prepares them for creation on an actor.
- * Handles Minion(X) template substitution and Relentless replacement logic.
- * Only adds what was asked for by name — the module has no opinion about which features suit a
- * tier, so nothing is ever added on its own.
+ * Resolves the features the user ticked and prepares them for creation on an actor.
+ * Handles Relentless replacement logic.
+ * Only adds what was asked for — the module has no opinion about which features suit a tier, so
+ * nothing is ever added on its own.
+ * Takes uuids rather than names: several features share a name with different text (three
+ * Eruptions, two Relentless (X)), and a first-hit search by name picked the wrong one and never
+ * reached features in a configured homebrew compendium. Renaming the duplicates in all-features
+ * would break the match with the rulebook and the system, and matching on importedFrom flags
+ * fails for homebrew features, which carry none.
  * @param {Actor} actor - The actor receiving new features.
  * @param {Array} changeLog - Array to push change log messages into.
- * @param {string[]|null} featureNames - Features to add, by name.
+ * @param {string[]|null} featureUuids - Features to add, by uuid.
  * @returns {Promise<{toCreate: Array, toDelete: Array}>}
  */
-export async function handleNewFeatures(actor, changeLog, featureNames = null) {
-    if (!Array.isArray(featureNames) || featureNames.length === 0) return { toCreate: [], toDelete: [] };
+export async function handleNewFeatures(actor, changeLog, featureUuids = null) {
+    if (!Array.isArray(featureUuids) || featureUuids.length === 0) return { toCreate: [], toDelete: [] };
 
     const currentItems = actor.items.contents || actor.items;
-    const featuresToAdd = featureNames.filter(name => !currentItems.some(i => i.name === name));
-
-    if (featuresToAdd.length === 0) return { toCreate: [], toDelete: [] };
-
-    const packIds = ["daggerheart-advmanager.all-features", "daggerheart-advmanager.custom-features"];
 
     const toCreate = [];
     const toDelete = [];
 
-    for (const featureName of featuresToAdd) {
-        let featureData = null;
-        let sourceUuid = null;
-
-        for (const packId of packIds) {
-            const pack = game.packs.get(packId);
-            if (!pack) continue;
-
-            const index = await pack.getIndex();
-            const entry = index.find(e => e.name === featureName);
-
-            if (entry) {
-                const doc = await pack.getDocument(entry._id);
-                featureData = prepareDocumentCreateData(doc, game.items);
-                sourceUuid = doc.uuid;
-                break;
-            }
-        }
-
-        // Special Fallback: Minion (X) Logic
-        if (!featureData) {
-            const minionMatch = featureName.match(/^Minion\s*\((\d+)\)$/i);
-            if (minionMatch) {
-                const minionVal = minionMatch[1];
-                const customPack = game.packs.get("daggerheart-advmanager.custom-features");
-                if (customPack) {
-                    const index = await customPack.getIndex();
-                    const templateEntry = index.find(e => e.name === "Minion (X)");
-                    if (templateEntry) {
-                        const doc = await customPack.getDocument(templateEntry._id);
-                        featureData = prepareDocumentCreateData(doc, game.items);
-                        sourceUuid = doc.uuid;
-
-                        featureData.name = featureName;
-                        if (featureData.system.description) {
-                            featureData.system.description = featureData.system.description.replace(/\[X\]/g, minionVal);
-                            featureData.system.description = featureData.system.description.replace(/\(X\)/g, `(${minionVal})`);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!featureData) {
-            console.warn(`Adversary Manager | Could not find feature "${featureName}" in any configured compendium.`);
+    for (const uuid of featureUuids) {
+        const doc = await foundry.utils.fromUuid(uuid);
+        if (doc?.documentName !== "Item") {
+            console.warn(`Adversary Manager | Could not find feature ${uuid}.`);
             continue;
         }
 
-        // Record provenance. prepareDocumentCreateData already carries it
-        // over from fromCompendium(); this also covers the Minion (X) template path, which is
-        // renamed after cloning.
-        if (sourceUuid) foundry.utils.setProperty(featureData, "_stats.compendiumSource", sourceUuid);
+        const featureName = doc.name;
+        if (currentItems.some(i => i.name === featureName)) continue;
+
+        const featureData = prepareDocumentCreateData(doc, game.items);
+        // Record provenance. prepareDocumentCreateData already carries it over from
+        // fromCompendium(); the change-log links and the system's update tool depend on it.
+        foundry.utils.setProperty(featureData, "_stats.compendiumSource", doc.uuid);
 
         toCreate.push(featureData);
 

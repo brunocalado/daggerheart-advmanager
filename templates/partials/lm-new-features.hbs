@@ -20,7 +20,7 @@
         {{#each allNewFeatures}}
             <div class="feature-change-row new-feature-row" {{#if this.description}}data-tooltip="{{this.description}}"{{/if}}>
                 <label class="feature-label new-feature-label">
-                    <input type="checkbox" class="feature-checkbox new-feature-checkbox" data-feature="{{this.name}}" {{#if this.checked}}checked{{/if}}>
+                    <input type="checkbox" class="feature-checkbox new-feature-checkbox" data-uuid="{{this.uuid}}" {{#if this.checked}}checked{{/if}}>
                     <a class="feature-link new-feature-link" data-action="openFeature" data-uuid="{{this.uuid}}">
                         {{#if this.img}}
                             <img src="{{this.img}}" class="feature-icon-small" alt="{{this.name}}">
