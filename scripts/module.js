@@ -44,7 +44,7 @@ export const SETTING_OVERWRITE_WORLD_ACTOR = "overwriteWorldActor";
 function gmOnly(fn) {
     return function (...args) {
         if (!game.user.isGM) {
-            ui.notifications.warn("Only a GM can use this feature.");
+            ui.notifications.warn(game.i18n.localize("DH_ADVMANAGER.NOTIFY.gmOnly"));
             return;
         }
         return fn.apply(this, args);
@@ -61,12 +61,14 @@ function gmOnly(fn) {
  * @returns {Promise<Object>} The snapshot that was downloaded.
  */
 async function buildStatsSnapshot() {
-    ui.notifications.info("Adversary Manager | Building the adversary statistics snapshot...");
+    ui.notifications.info(game.i18n.localize("DH_ADVMANAGER.NOTIFY.snapshotBuilding"));
 
     const snapshot = await CompendiumStats.buildCoreSnapshot();
     foundry.utils.saveDataToFile(JSON.stringify(snapshot), "application/json", "compendium-stats-core.json");
 
-    const msg = `Adversary Manager | Snapshot built for ${snapshot.system} ${snapshot.systemVersion} (${snapshot.adversaryCount} adversaries). Save it into the module as data/compendium-stats-core.json.`;
+    const msg = game.i18n.localize("DH_ADVMANAGER.NOTIFY.snapshotBuilt", {
+        system: snapshot.system, version: snapshot.systemVersion, count: snapshot.adversaryCount
+    });
     ui.notifications.info(msg);
     console.log(msg);
     return snapshot;
@@ -84,7 +86,7 @@ function manage() {
     });
 
     if (brokenToken) {
-        ui.notifications.error(`Error: The token "${brokenToken.name}" references an Actor that no longer exists in the directory.`);
+        ui.notifications.error(game.i18n.localize("DH_ADVMANAGER.NOTIFY.brokenToken", { name: brokenToken.name }));
         return;
     }
 
@@ -128,8 +130,8 @@ Hooks.once("init", () => {
     ]);
 
     game.settings.register(MODULE_ID, SETTING_CHAT_LOG, {
-        name: "Log Changes to Chat",
-        hint: "If enabled, sends a whisper to the GM whenever an Adversary is updated via the Manager.",
+        name: "DH_ADVMANAGER.SETTINGS.logChanges.name",
+        hint: "DH_ADVMANAGER.SETTINGS.logChanges.hint",
         scope: "world",
         config: true,
         type: Boolean,
@@ -137,8 +139,8 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_UPDATE_EXP, {
-        name: "Auto-Update Experiences",
-        hint: "If enabled, experiences will increase/decrease by 1 for each Tier change.",
+        name: "DH_ADVMANAGER.SETTINGS.autoExperiences.name",
+        hint: "DH_ADVMANAGER.SETTINGS.autoExperiences.hint",
         scope: "world",
         config: true,
         type: Boolean,
@@ -146,8 +148,8 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_SUGGEST_FEATURES, {
-        name: "Show New Features Panel",
-        hint: "If enabled, the Live Manager preview lists the features available for the target tier and type, so you can tick the ones to add.",
+        name: "DH_ADVMANAGER.SETTINGS.suggestFeatures.name",
+        hint: "DH_ADVMANAGER.SETTINGS.suggestFeatures.hint",
         scope: "world",
         config: true,
         type: Boolean,
@@ -155,17 +157,19 @@ Hooks.once("init", () => {
     });
 
     game.settings.register(MODULE_ID, SETTING_IMPORT_FOLDER, {
-        name: "Compendium Import Folder",
-        hint: "Name of the folder where adversaries imported from Compendiums will be created.",
+        name: "DH_ADVMANAGER.SETTINGS.importFolder.name",
+        hint: "DH_ADVMANAGER.SETTINGS.importFolder.hint",
         scope: "world",
         config: true,
         type: String,
+        // Stays a literal, not a translation key: folders are found by name, so a
+        // localized default would create a second folder when the GM's language changes.
         default: "💀 Imported Adversaries"
     });
 
     game.settings.register(MODULE_ID, SETTING_ENCOUNTER_FOLDER, {
-        name: "Encounter Folder Name",
-        hint: "Name of the root folder where encounters created by the builder will be stored.",
+        name: "DH_ADVMANAGER.SETTINGS.encounterFolder.name",
+        hint: "DH_ADVMANAGER.SETTINGS.encounterFolder.hint",
         scope: "world",
         config: true,
         type: String,
@@ -273,17 +277,17 @@ Hooks.on("renderDaggerheartMenu", (app, html) => {
         return btn;
     };
 
-    const btnManage = createBtn("Manage Adversaries", "fa-skull", manage);
-    const btnStats = createBtn("Compendium Stats", "fa-chart-pie", () => new CompendiumStats().render(true));
-    const btnProb = createBtn("Dice Probability", "fa-dice-d20", () => new DiceProbability().render(true));
-    const btnBuilder = createBtn("Encounter Builder", "fa-dungeon", () => new EncounterBuilder().render(true));
+    const btnManage = createBtn(game.i18n.localize("DH_ADVMANAGER.MENU.manage"), "fa-skull", manage);
+    const btnStats = createBtn(game.i18n.localize("DH_ADVMANAGER.MENU.stats"), "fa-chart-pie", () => new CompendiumStats().render(true));
+    const btnProb = createBtn(game.i18n.localize("DH_ADVMANAGER.MENU.dice"), "fa-dice-d20", () => new DiceProbability().render(true));
+    const btnBuilder = createBtn(game.i18n.localize("DH_ADVMANAGER.MENU.builder"), "fa-dungeon", () => new EncounterBuilder().render(true));
 
     const fieldset = element.querySelector("fieldset");
     if (fieldset) {
         const newFieldset = document.createElement("fieldset");
         newFieldset.classList.add("dh-adv-tools");
         const legend = document.createElement("legend");
-        legend.innerText = "Adversary Tools";
+        legend.innerText = game.i18n.localize("DH_ADVMANAGER.MENU.legend");
         newFieldset.appendChild(legend);
         newFieldset.appendChild(btnManage);
         newFieldset.appendChild(btnBuilder);
@@ -316,7 +320,7 @@ Hooks.on("renderActorDirectory", (app, html) => {
         btn.style.flex = "0 0 100%";
         btn.style.maxWidth = "100%";
         btn.style.marginTop = "6px";
-        btn.innerHTML = `<i class="fas fa-skull"></i> Manage Adversaries`;
+        btn.innerHTML = `<i class="fas fa-skull"></i> ${game.i18n.localize("DH_ADVMANAGER.MENU.manage")}`;
         
         btn.addEventListener("click", (e) => {
             e.preventDefault();

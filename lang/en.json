@@ -1,0 +1,39 @@
+{
+  "DH_ADVMANAGER": {
+    "SETTINGS": {
+      "logChanges": {
+        "name": "Log Changes to Chat",
+        "hint": "If enabled, sends a whisper to the GM whenever an Adversary is updated via the Manager."
+      },
+      "autoExperiences": {
+        "name": "Auto-Update Experiences",
+        "hint": "If enabled, experiences will increase/decrease by 1 for each Tier change."
+      },
+      "suggestFeatures": {
+        "name": "Show New Features Panel",
+        "hint": "If enabled, the Live Manager preview lists the features available for the target tier and type, so you can tick the ones to add."
+      },
+      "importFolder": {
+        "name": "Compendium Import Folder",
+        "hint": "Name of the folder where adversaries imported from Compendiums will be created."
+      },
+      "encounterFolder": {
+        "name": "Encounter Folder Name",
+        "hint": "Name of the root folder where encounters created by the builder will be stored."
+      }
+    },
+    "MENU": {
+      "legend": "Adversary Tools",
+      "manage": "Manage Adversaries",
+      "stats": "Compendium Stats",
+      "dice": "Dice Probability",
+      "builder": "Encounter Builder"
+    },
+    "NOTIFY": {
+      "gmOnly": "Only a GM can use this feature.",
+      "brokenToken": "Error: The token \"{name}\" references an Actor that no longer exists in the directory.",
+      "snapshotBuilding": "Adversary Manager | Building the adversary statistics snapshot...",
+      "snapshotBuilt": "Adversary Manager | Snapshot built for {system} {version} ({count} adversaries). Save it into the module as data/compendium-stats-core.json."
+    }
+  }
+}

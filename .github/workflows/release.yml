@@ -65,9 +65,9 @@ jobs:
           # extractor (such as Sqyre) don't search subfolders for module.json the
           # way Foundry's installer does.
           # Every folder the module reads at runtime must be listed: data/ holds the
-          # compendium stats snapshot, and a lang/ added later goes here too. zip only
-          # warns about a missing folder, so a forgotten one ships silently broken.
-          zip -r module.zip module.json LICENSE scripts styles templates assets data packs -x "packs/_source/*"
+          # compendium stats snapshot, lang/ the translation files. zip only warns
+          # about a missing folder, so a forgotten one ships silently broken.
+          zip -r module.zip module.json LICENSE scripts styles templates assets data lang packs -x "packs/_source/*"
 
       - name: Create GitHub release
         if: steps.check.outputs.new == 'true'
