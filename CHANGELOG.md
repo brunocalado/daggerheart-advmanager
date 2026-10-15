@@ -1,3 +1,14 @@
+# 0.3.8
+
+Checked against Daggerheart 2.10.12.
+
+- [Added] The interface is localized: every label, message and tooltip comes from `lang/en.json`, and the manifest declares the language so translations can be contributed. The README explains how to send one.
+- [Added] Releases are built from the JSON source of the compendiums and published to GitHub and foundryvtt.com when a new version is pushed. The release fails if a translation key is missing or unused.
+- [Fixed] The Live Manager adds the exact feature that was ticked. Duplicated names (the three Eruptions, two Relentless (X)) used to give the wrong one, and features from a configured homebrew compendium were never added.
+- [Fixed] Relentless (X) replaces, and is replaced by, a numbered Relentless, instead of leaving the adversary with two.
+- [Fixed] Compendium Statistics lists features named in double quotes, like "Run Away!", correctly.
+- [Changed] The Compendium Statistics snapshot is rebuilt for Daggerheart 2.10.12, so the window opens instantly again on that version.
+
 # 0.3.7
 
 Requires Daggerheart 2.10.6. Checked and verified live against 2.10.6 on Foundry 14.368.
