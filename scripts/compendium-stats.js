@@ -641,10 +641,13 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             const draggableAttr = uuid ? `draggable="true" data-uuid="${uuid}"` : "";
             const formLabel = FEATURE_FORM_LABELS[data.typeLabel] ? game.i18n.localize(FEATURE_FORM_LABELS[data.typeLabel]) : data.typeLabel;
             const displayLabel = formLabel ? `<span style="opacity: 0.7; margin-left: 4px;">${formLabel}</span>` : "";
-            
-            return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="${game.i18n.localize("DH_ADVMANAGER.STATS.featureTooltip")}">
-                <img src="${data.img}" class="feature-icon" alt="${name}"/>
-                <span class="feature-name">${name}${displayLabel}</span>
+            // Several system features are named in double quotes ("Run Away!"), which would close
+            // the attribute and leave data-feature-name empty.
+            const safeName = foundry.utils.escapeHTML(name);
+
+            return `<div class="feature-entry feature-link" data-feature-name="${safeName}" ${draggableAttr} title="${game.i18n.localize("DH_ADVMANAGER.STATS.featureTooltip")}">
+                <img src="${data.img}" class="feature-icon" alt="${safeName}"/>
+                <span class="feature-name">${safeName}${displayLabel}</span>
              </div>`
         }).join("");
     }
