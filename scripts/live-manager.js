@@ -5,8 +5,30 @@ import { SETTING_IMPORT_FOLDER, SETTING_EXTRA_COMPENDIUMS, SETTING_FEATURE_COMPE
 import { CompendiumManager } from "./compendium-manager.js";
 import { CompendiumStats } from "./compendium-stats.js";
 import { DiceProbability } from "./dice-probability.js"; 
+import { adversaryTypeLabel } from "./helpers.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+const FEATURE_FORM_TAGS = {
+    action: "DH_ADVMANAGER.STATS.form.action",
+    reaction: "DH_ADVMANAGER.STATS.form.reaction",
+    passive: "DH_ADVMANAGER.STATS.form.passive"
+};
+
+const FEATURE_FORM_NAMES = {
+    action: "DH_ADVMANAGER.LIVE.form.action",
+    reaction: "DH_ADVMANAGER.LIVE.form.reaction",
+    passive: "DH_ADVMANAGER.LIVE.form.passive"
+};
+
+/**
+ * The "Suggested:" tooltip listing benchmark values, one per line.
+ * @param {string[]} lines
+ * @returns {string} HTML for a data-tooltip attribute.
+ */
+function suggestedTooltip(lines) {
+    return [game.i18n.localize("DH_ADVMANAGER.LIVE.suggested"), ...lines].join("<br>");
+}
 
 /**
  * Live Manager Application for Daggerheart Adversaries.
@@ -91,7 +113,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Adversary Live Manager",
+            title: "DH_ADVMANAGER.LIVE.title",
             icon: "fas fa-eye",
             resizable: true,
             width: 1000,
@@ -259,12 +281,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     _getFeatureTypeLabel(type) {
-        if (!type) return "";
-        const t = type.toLowerCase();
-        if (t === "action") return "(A)";
-        if (t === "reaction") return "(R)";
-        if (t === "passive") return "(P)";
-        return "";
+        const key = FEATURE_FORM_TAGS[type?.toLowerCase()];
+        return key ? game.i18n.localize(key) : "";
     }
 
     async updateSelectedActor(actor) {
@@ -311,9 +329,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // --- Determine Source List ---
         const sourceOptions = [
-            { value: "all", label: "All Sources", selected: this.source === "all" }, 
-            { value: "world", label: "World", selected: this.source === "world" },
-            { value: "daggerheart.adversaries", label: "System Compendium", selected: this.source === "daggerheart.adversaries" }
+            { value: "all", label: game.i18n.localize("DH_ADVMANAGER.COMMON.allSources"), selected: this.source === "all" },
+            { value: "world", label: game.i18n.localize("DH_ADVMANAGER.LIVE.source.world"), selected: this.source === "world" },
+            { value: "daggerheart.adversaries", label: game.i18n.localize("DH_ADVMANAGER.COMMON.systemCompendium"), selected: this.source === "daggerheart.adversaries" }
         ];
 
         // --- NEW: Add Template Option (New Adversary) ---
@@ -322,7 +340,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (templatePack) {
             sourceOptions.push({
                 value: templatePackId,
-                label: "New Adversary",
+                label: game.i18n.localize("DH_ADVMANAGER.LIVE.source.template"),
                 selected: this.source === templatePackId
             });
         }
@@ -367,7 +385,9 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const matchIndex = rawAdversaries.findIndex(a => a.id === this.initialActor.id);
                 const tokenData = {
                     id: this.initialActor.id,
-                    name: this.initialActor.name + (this.initialActor.isToken ? " (Token)" : ""),
+                    name: this.initialActor.isToken
+                        ? game.i18n.localize("DH_ADVMANAGER.LIVE.tokenName", { name: this.initialActor.name })
+                        : this.initialActor.name,
                     tier: Number(this.initialActor.system.tier) || 1,
                     advType: (this.initialActor.system.type || "standard").toLowerCase()
                 };
@@ -491,7 +511,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const typeKey = (actor.system.type || "standard").toLowerCase();
                 isMinion = typeKey === "minion";
                 isHorde = typeKey === "horde"; 
-                actorTypeLabel = typeKey.charAt(0).toUpperCase() + typeKey.slice(1); 
+                actorTypeLabel = adversaryTypeLabel(typeKey);
                 
                 const rawImg = actor.img;
                 const defaultIcons = [
@@ -509,7 +529,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     isLinked: isLinked,
                     icon: isLinked ? "fa-link" : "fa-unlink",
                     cssClass: isLinked ? "status-linked" : "status-unlinked",
-                    label: isLinked ? "Linked" : "Unlinked"
+                    label: game.i18n.localize(isLinked ? "DH_ADVMANAGER.COMMON.linked" : "DH_ADVMANAGER.COMMON.unlinked")
                 };
                 if (actor.compendium || actor.pack) linkData = null;
 
@@ -551,10 +571,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
                 
                 if (damageOptions.length > 0) {
-                    damageTooltip = "Suggested:<br>" + damageOptions.map(o => `• ${o.label}`).join("<br>");
+                    damageTooltip = suggestedTooltip(damageOptions.map(o => `• ${o.label}`));
                 }
                 if (halvedDamageOptions.length > 0) {
-                    halvedDamageTooltip = "Suggested:<br>" + halvedDamageOptions.map(o => `• ${o.label}`).join("<br>");
+                    halvedDamageTooltip = suggestedTooltip(halvedDamageOptions.map(o => `• ${o.label}`));
                 }
 
                 const currentCritical = currentStats.critical;
@@ -575,8 +595,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const previewDirect = this.overrides.directDamage !== undefined ? (this.overrides.directDamage === "true") : currentDirect;
                 
                 directOptions = [
-                    { value: "true", label: "Yes", selected: previewDirect === true },
-                    { value: "false", label: "No", selected: previewDirect === false }
+                    { value: "true", label: game.i18n.localize("DH_ADVMANAGER.LIVE.yes"), selected: previewDirect === true },
+                    { value: "false", label: game.i18n.localize("DH_ADVMANAGER.LIVE.no"), selected: previewDirect === false }
                 ];
 
                 previewStats = {
@@ -593,7 +613,10 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     thresholdsDisplay: simResult.stats.thresholds,
                     attackModDisplay: simResult.stats.attackMod,
                     experiences: simResult.stats.previewExperiences || [],
-                    expTooltip: `Suggested:<br>Amount: ${simResult.stats.expAmountRange || "?"}<br>Modifier: ${simResult.stats.expModRange || "?"}`,
+                    expTooltip: suggestedTooltip([
+                        game.i18n.localize("DH_ADVMANAGER.LIVE.expAmount", { range: simResult.stats.expAmountRange || "?" }),
+                        game.i18n.localize("DH_ADVMANAGER.LIVE.expModifier", { range: simResult.stats.expModRange || "?" })
+                    ]),
                     damage: simResult.stats.damage,
                     damageStats: simResult.stats.damageStats, 
                     mainDamageFormula: simResult.stats.mainDamageRaw,
@@ -608,8 +631,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 };
 
                 if (isMinion) {
-                    previewStats.thresholdsDisplay = "None"; 
-                    previewStats.hpDisplay = "(Fixed)"; 
+                    previewStats.thresholdsDisplay = game.i18n.localize("DH_ADVMANAGER.LIVE.none");
+                    previewStats.hpDisplay = game.i18n.localize("DH_ADVMANAGER.LIVE.fixed");
                 }
                 
                 featurePreviewData = await Promise.all(simResult.structuredFeatures.map(async f => {
@@ -641,7 +664,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                              selected: d.value === currentVal
                          }));
                          if (featureOptions.length > 0) {
-                             optionsTooltip = "Suggested:<br>" + featureOptions.map(o => `• ${o.label}`).join("<br>");
+                             optionsTooltip = suggestedTooltip(featureOptions.map(o => `• ${o.label}`));
                          }
                          damageStats = this._calculateDamageStats(currentVal);
                     }
@@ -686,21 +709,22 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     suggestionTier = parseInt(this.overrides.newFeaturesTier);
                 }
 
-                newFeaturesTypeOptions = []; 
-                const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
+                newFeaturesTypeOptions = [];
+                const typeKeys = Object.keys(ADVERSARY_BENCHMARKS);
                 typeKeys.forEach(k => {
                     const isSelected = (this.overrides.newFeaturesType === "default" && k === typeKey) ||
                                        (this.overrides.newFeaturesType === k);
                     newFeaturesTypeOptions.push({
                         value: k,
-                        label: k.charAt(0).toUpperCase() + k.slice(1),
+                        label: adversaryTypeLabel(k),
                         selected: isSelected
                     });
                 });
+                game.i18n.sortObjects(newFeaturesTypeOptions, "label");
 
                 newFeaturesTierOptions = [1, 2, 3, 4].map(t => ({
                     value: t,
-                    label: `Tier ${t}`,
+                    label: game.i18n.localize("DH_ADVMANAGER.COMMON.tier", { n: t }),
                     selected: t === suggestionTier
                 }));
 
@@ -708,23 +732,22 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 const getTags = (type, flags, isHomebrew) => {
                     let actionTag = "";
                     let actionClass = "";
-                    if (type) {
-                        const t = type.toLowerCase();
-                        if (t === "action") { actionTag = "Action"; actionClass = "tag-action"; }
-                        else if (t === "reaction") { actionTag = "Reaction"; actionClass = "tag-reaction"; }
-                        else if (t === "passive") { actionTag = "Passive"; actionClass = "tag-passive"; }
+                    const form = type?.toLowerCase();
+                    if (FEATURE_FORM_NAMES[form]) {
+                        actionTag = game.i18n.localize(FEATURE_FORM_NAMES[form]);
+                        actionClass = `tag-${form}`;
                     }
 
                     const imported = flags?.importedFrom || {};
-                    const tierTag = imported.tier ? `T${imported.tier}` : null; // <--- Changed from `Tier ${imported.tier}` to `T${imported.tier}`
-                    const typeTag = imported.type || null;
+                    const tierTag = imported.tier ? game.i18n.localize("DH_ADVMANAGER.COMMON.tierShort", { n: imported.tier }) : null;
+                    const typeTag = imported.type ? adversaryTypeLabel(imported.type) : null;
                     const customTag = imported.customTag || null; 
 
                     let sourceLabel = null;
                     if (customTag && customTag.trim() !== "") {
                          sourceLabel = customTag; 
                     } else if (isHomebrew) {
-                         sourceLabel = "Homebrew";
+                         sourceLabel = game.i18n.localize("DH_ADVMANAGER.LIVE.homebrew");
                     }
                     
                     return {
@@ -836,28 +859,26 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const tiers = [1, 2, 3, 4].map(t => ({
             value: t,
-            label: `Tier ${t}`,
+            label: game.i18n.localize("DH_ADVMANAGER.COMMON.tier", { n: t }),
             isCurrent: t === this.targetTier,
             cssClass: t === this.targetTier ? "active" : ""
         }));
 
         const filterOptions = [
-            { value: "all", label: "All Tiers", selected: this.filterTier === "all" },
-            { value: "1", label: "Tier 1", selected: this.filterTier === "1" },
-            { value: "2", label: "Tier 2", selected: this.filterTier === "2" },
-            { value: "3", label: "Tier 3", selected: this.filterTier === "3" },
-            { value: "4", label: "Tier 4", selected: this.filterTier === "4" }
+            { value: "all", label: game.i18n.localize("DH_ADVMANAGER.LIVE.allTiers"), selected: this.filterTier === "all" },
+            { value: "1", label: game.i18n.localize("DH_ADVMANAGER.COMMON.tier", { n: 1 }), selected: this.filterTier === "1" },
+            { value: "2", label: game.i18n.localize("DH_ADVMANAGER.COMMON.tier", { n: 2 }), selected: this.filterTier === "2" },
+            { value: "3", label: game.i18n.localize("DH_ADVMANAGER.COMMON.tier", { n: 3 }), selected: this.filterTier === "3" },
+            { value: "4", label: game.i18n.localize("DH_ADVMANAGER.COMMON.tier", { n: 4 }), selected: this.filterTier === "4" }
         ];
 
-        const typeKeys = Object.keys(ADVERSARY_BENCHMARKS).sort();
-        const typeOptions = [
-            { value: "all", label: "All Types", selected: this.filterType === "all" },
-            ...typeKeys.map(k => ({ 
-                value: k, 
-                label: k.charAt(0).toUpperCase() + k.slice(1), 
-                selected: this.filterType === k 
-            }))
-        ];
+        const typeOptions = Object.keys(ADVERSARY_BENCHMARKS).map(k => ({
+            value: k,
+            label: adversaryTypeLabel(k),
+            selected: this.filterType === k
+        }));
+        game.i18n.sortObjects(typeOptions, "label");
+        typeOptions.unshift({ value: "all", label: game.i18n.localize("DH_ADVMANAGER.COMMON.allTypes"), selected: this.filterType === "all" });
 
         // Generate preview actor name
         let previewActorName = "";
@@ -867,6 +888,8 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             const baseName = actor.name;
             const currentTier = Number(actor.system.tier) || 1;
             if (this.targetTier !== currentTier) {
+                // Stays English: it becomes the actor's name, and updateSingleActor matches the
+                // " (T<n>)" suffix to replace it on the next tier change.
                 previewActorName = `${baseName} (T${this.targetTier})`;
             } else {
                 previewActorName = baseName;
@@ -890,7 +913,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             halvedDamageOptions,
             damageTooltip,
             halvedDamageTooltip,
-            actorName: actor?.name || "None",
+            actorName: actor?.name || game.i18n.localize("DH_ADVMANAGER.LIVE.none"),
             portraitImg: portraitImg,
             isHorde: isHorde,
             actorTypeLabel: actorTypeLabel,
@@ -1131,7 +1154,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             }
 
             if (!result && !hasManualUpdates) {
-                ui.notifications.warn("No changes were necessary.");
+                ui.notifications.warn(game.i18n.localize("DH_ADVMANAGER.LIVE.notify.noChanges"));
             }
 
             this.filterTier = String(this.targetTier); 
@@ -1159,7 +1182,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         } catch (e) {
             console.error(e);
-            ui.notifications.error("Error applying changes. Check console.");
+            ui.notifications.error(game.i18n.localize("DH_ADVMANAGER.LIVE.notify.applyFailed"));
         }
     }
 
@@ -1264,7 +1287,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         if (item && item.sheet) {
             item.sheet.render(true);
         } else {
-            ui.notifications.warn("Item not found or has no sheet.");
+            ui.notifications.warn(game.i18n.localize("DH_ADVMANAGER.LIVE.notify.noSheet"));
         }
     }
 
@@ -1390,7 +1413,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             mean = Math.ceil(avg);
         }
 
-        return `(Min: ${min}, Mean: ${mean}, Max: ${max})`;
+        return game.i18n.localize("DH_ADVMANAGER.LIVE.damageStats", { min, mean, max });
     }
 
     _extractStats(actorData, tier) {
@@ -1411,7 +1434,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                     const types = getDamageTypeList(p);
 
                     if (types.length > 0) {
-                        const typeNames = types.map(t => t.charAt(0).toUpperCase() + t.slice(1));
+                        // The system's own damage-type labels, read as lang keys only.
+                        const typeNames = types.map(t => {
+                            const key = `DAGGERHEART.CONFIG.DamageType.${t}.name`;
+                            return game.i18n.has(key) ? game.i18n.localize(key) : t.charAt(0).toUpperCase() + t.slice(1);
+                        });
                         damageTypesLabel = `(${typeNames.join("/")})`;
                     }
                 }
@@ -1443,7 +1470,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         const isDirect = getDamageDirect(sys.attack?.damage);
-        const directLabel = isDirect ? "Direct: Yes" : "Direct: No";
+        const directLabel = game.i18n.localize(isDirect ? "DH_ADVMANAGER.LIVE.directYes" : "DH_ADVMANAGER.LIVE.directNo");
 
         return {
             tier,
@@ -1452,7 +1479,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
             stress: sys.resources?.stress?.max,
             thresholds: `${sys.damageThresholds?.major} / ${sys.damageThresholds?.severe}`,
             attackMod: sys.attack?.roll?.bonus,
-            damage: damageParts.join(", ") || "None",
+            damage: damageParts.join(", ") || game.i18n.localize("DH_ADVMANAGER.LIVE.none"),
             damageTypesLabel: damageTypesLabel,
             damageStats: this._calculateDamageStats(firstDamageFormula),
             halvedDamage: halvedParts.join(", ") || null,
@@ -1472,11 +1499,11 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorData = actor.toObject();
         const typeKey = (actorData.system.type || "standard").toLowerCase();
         
-        if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: "Unknown Type" }, features: [], structuredFeatures: [] };
+        if (!ADVERSARY_BENCHMARKS[typeKey]) return { stats: { error: game.i18n.localize("DH_ADVMANAGER.LIVE.error.unknownType") }, features: [], structuredFeatures: [] };
         
         const benchmark = ADVERSARY_BENCHMARKS[typeKey].tiers[`tier_${targetTier}`];
 
-        if (!benchmark) return { stats: { error: "Benchmark missing" }, features: [], structuredFeatures: [] };
+        if (!benchmark) return { stats: { error: game.i18n.localize("DH_ADVMANAGER.LIVE.error.noBenchmark") }, features: [], structuredFeatures: [] };
 
         if (!this._cachedValues) {
             this._cachedValues = {};
@@ -1671,7 +1698,7 @@ export class LiveManager extends HandlebarsApplicationMixin(ApplicationV2) {
                 halvedParts.push(result ? `<span class="stat-changed">${result.to}</span>` : hordeDamage);
             }
         }
-        sim.damage = damageParts.join(", ") || "None";
+        sim.damage = damageParts.join(", ") || game.i18n.localize("DH_ADVMANAGER.LIVE.none");
         sim.damageStats = this._calculateDamageStats(mainDamageRaw); 
 
         sim.mainDamageRaw = mainDamageRaw;

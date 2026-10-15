@@ -160,9 +160,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // --- Source Options ---
         const extraPacks = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
         const sourceOptions = [
-            { value: "all", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.source.all"), selected: this.filterSource === "all" },
+            { value: "all", label: game.i18n.localize("DH_ADVMANAGER.COMMON.allSources"), selected: this.filterSource === "all" },
             { value: "world", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.source.world"), selected: this.filterSource === "world" },
-            { value: "daggerheart.adversaries", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.source.system"), selected: this.filterSource === "daggerheart.adversaries" }
+            { value: "daggerheart.adversaries", label: game.i18n.localize("DH_ADVMANAGER.COMMON.systemCompendium"), selected: this.filterSource === "daggerheart.adversaries" }
         ];
 
         extraPacks.forEach(packId => {
@@ -228,7 +228,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             selected: this.filterType === t
         }));
         game.i18n.sortObjects(typeOptions, "label");
-        typeOptions.unshift({ value: "all", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.allTypes"), selected: this.filterType === "all" });
+        typeOptions.unshift({ value: "all", label: game.i18n.localize("DH_ADVMANAGER.COMMON.allTypes"), selected: this.filterType === "all" });
 
         // --- Fear Options ---
         const fearOptions = [

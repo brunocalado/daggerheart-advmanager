@@ -1,13 +1,13 @@
 <!-- FEATURES SECTION -->
 <div class="features-preview-section">
-    <h4 class="features-header">Feature Changes</h4>
+    <h4 class="features-header">{{localize "DH_ADVMANAGER.LIVE.featureChanges"}}</h4>
     {{#if featurePreviewData.length}}
         <div class="feature-changes-list">
             {{#each featurePreviewData}}
                 <div class="feature-change-row feature-change-row-layout">
                     <div class="feature-label feature-label-layout">
                         {{#if this.img}}
-                            <a class="feature-icon-link" data-action="openFeature" data-uuid="{{this.uuid}}" title="Open Item">
+                            <a class="feature-icon-link" data-action="openFeature" data-uuid="{{this.uuid}}" title="{{localize "DH_ADVMANAGER.LIVE.openItem"}}">
                                 <img src="{{this.img}}" class="feature-icon-img">
                             </a>
                         {{/if}}
@@ -41,7 +41,7 @@
                             </div>
                         {{else}}
                             {{#if this.isRenamed}}
-                                <input type="text" class="feature-override-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" title="Rename Feature">
+                                <input type="text" class="feature-override-input" data-itemid="{{this.itemId}}" value="{{this.newName}}" title="{{localize "DH_ADVMANAGER.LIVE.renameFeature"}}">
                             {{else}}
                                 <div class="feature-new-static">{{this.newName}}</div>
                             {{/if}}
@@ -51,6 +51,6 @@
             {{/each}}
         </div>
     {{else}}
-        <div class="no-changes">No modified features.</div>
+        <div class="no-changes">{{localize "DH_ADVMANAGER.LIVE.noFeatureChanges"}}</div>
     {{/if}}
 </div>

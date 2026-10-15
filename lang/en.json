@@ -39,13 +39,16 @@
     },
     "COMMON": {
       "tier": "Tier {n}",
-      "tierShort": "T{n}"
+      "tierShort": "T{n}",
+      "allSources": "All Sources",
+      "systemCompendium": "System Compendium",
+      "allTypes": "All Types",
+      "linked": "Linked",
+      "unlinked": "Unlinked"
     },
     "MANAGER": {
       "title": "Adversary Manager",
       "selected": "Selected Adversaries",
-      "linked": "Linked",
-      "unlinked": "Unlinked",
       "selectTier": "Select Target Tier:",
       "apply": "Apply Changes",
       "noneUpdated": "No Adversaries updated."
@@ -90,11 +93,8 @@
     "ENCOUNTER": {
       "title": "Encounter Builder",
       "source": {
-        "all": "All Sources",
-        "world": "World (Actors)",
-        "system": "System Compendium"
+        "world": "World (Actors)"
       },
-      "allTypes": "All Types",
       "budget": {
         "low": "Low (0–1 Fear)",
         "moderate": "Moderate (1–3 Fear)",
@@ -248,6 +248,113 @@
         "critDoubles": "Critical (Doubles):",
         "critThresholdResult": "Critical ({n}+):"
       }
+    },
+    "LIVE": {
+      "title": "Adversary Live Manager",
+      "source": {
+        "world": "World",
+        "template": "New Adversary"
+      },
+      "tokenName": "{name} (Token)",
+      "allTiers": "All Tiers",
+      "suggested": "Suggested:",
+      "expAmount": "Amount: {range}",
+      "expModifier": "Modifier: {range}",
+      "yes": "Yes",
+      "no": "No",
+      "directYes": "Direct: Yes",
+      "directNo": "Direct: No",
+      "none": "None",
+      "fixed": "(Fixed)",
+      "homebrew": "Homebrew",
+      "form": {
+        "action": "Action",
+        "reaction": "Reaction",
+        "passive": "Passive"
+      },
+      "damageStats": "(Min: {min}, Mean: {mean}, Max: {max})",
+      "hitChance": {
+        "range": "(Min: {min}% | Max: {max}%)",
+        "attackTooltip": "Vs PC Tier {tier} Evasion ({evasion}):\nMin Evasion: {max}% chance to hit.\nMax Evasion: {min}% chance to hit.",
+        "defenseTooltip": "PC Hit Chance (2d12 + Trait vs Diff {difficulty}):\nStandard Trait (+{standard}): {min}%\nMax Trait (+{maxTrait}): {max}%"
+      },
+      "error": {
+        "unknownType": "Unknown Type",
+        "noBenchmark": "Benchmark missing"
+      },
+      "notify": {
+        "noChanges": "No changes were necessary.",
+        "applyFailed": "Error applying changes. Check console.",
+        "noSheet": "Item not found or has no sheet."
+      },
+      "targetTier": "Target Tier:",
+      "importApply": "Import & Apply Tier {tier}",
+      "apply": "Apply Tier {tier} to {name}",
+      "copyOn": "Will create a copy instead of overwriting",
+      "copyOff": "Will overwrite world actor in place",
+      "copy": "Copy",
+      "openAfterApply": "Open sheet after applying",
+      "empty": "Select an Adversary from the list above to begin preview.",
+      "manageCompendiums": "Manage Compendiums",
+      "chooseAdversary": "-- Choose an Adversary --",
+      "current": "Current ({tier})",
+      "preview": "Preview ({tier})",
+      "stat": {
+        "difficulty": "Difficulty",
+        "hp": "HP",
+        "stress": "Stress",
+        "thresholds": "Thresholds",
+        "attackBonus": "Attack Bonus",
+        "critical": "Critical Threshold",
+        "attackDamage": "Attack Damage",
+        "halvedDamage": "Halved Damage (Horde)",
+        "experiences": "Experiences",
+        "motives": "Motives & Tactics",
+        "description": "Description"
+      },
+      "portraitHint": "Click image to open sheet",
+      "newNamePlaceholder": "New Actor Name",
+      "newNameHint": "Name for new actor",
+      "manualOverride": "Manual Override",
+      "majorShort": "Maj",
+      "major": "Major",
+      "severeShort": "Sev",
+      "severe": "Severe",
+      "damageType": "Damage Type:",
+      "physicalHint": "Physical Damage",
+      "physicalShort": "Phys",
+      "magicalHint": "Magical Damage",
+      "magicalShort": "Mag",
+      "direct": "Direct:",
+      "overrideHint": "Edit values to override random rolls.",
+      "addExperience": "Add Experience",
+      "experienceName": "Exp Name",
+      "rollName": "Roll Random Name",
+      "remove": "Remove",
+      "featureChanges": "Feature Changes",
+      "openItem": "Open Item",
+      "renameFeature": "Rename Feature",
+      "noFeatureChanges": "No modified features.",
+      "newFeatures": "New Features"
+    },
+    "CHAT": {
+      "difficulty": "Diff:",
+      "hp": "HP:",
+      "stress": "Stress:",
+      "thresholds": "Dmg Thresh:",
+      "attackMod": "Atk Mod:",
+      "sheetDamageManual": "Sheet Dmg (Manual):",
+      "sheetDamage": "Sheet Dmg:",
+      "halvedDamage": "Halved Dmg:",
+      "newExperience": "New Exp:",
+      "experiences": "Experiences:",
+      "adjusted": "Adjusted",
+      "custom": "(Custom)",
+      "nameOverride": "Name Override:",
+      "nameUpdate": "Name Update:",
+      "newFeature": "New Feature:",
+      "replaced": "{feature} (Replaced {old})",
+      "batchTitle": "Batch Update: Tier {tier}"
     }
   }
 }

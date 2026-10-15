@@ -123,8 +123,8 @@ export function calculateHitChance(attackBonus, tier) {
     const minChance = calculateChance(worstCaseTarget);
 
     return {
-        text: `(Min: ${minChance}% | Max: ${maxChance}%)`,
-        tooltip: `Vs PC Tier ${tier} Evasion (${pcStats.evasion}):\nMin Evasion: ${maxChance}% chance to hit.\nMax Evasion: ${minChance}% chance to hit.`
+        text: game.i18n.localize("DH_ADVMANAGER.LIVE.hitChance.range", { min: minChance, max: maxChance }),
+        tooltip: game.i18n.localize("DH_ADVMANAGER.LIVE.hitChance.attackTooltip", { tier, evasion: pcStats.evasion, min: minChance, max: maxChance })
     };
 }
 
@@ -163,8 +163,8 @@ export function calculateHitChanceAgainst(difficulty, tier) {
     const maxChance = calculate(maxBonus);
 
     return {
-        text: `(Min: ${minChance}% | Max: ${maxChance}%)`,
-        tooltip: `PC Hit Chance (2d12 + Trait vs Diff ${difficulty}):\nStandard Trait (+${minBonus}): ${minChance}%\nMax Trait (+${maxBonus}): ${maxChance}%`
+        text: game.i18n.localize("DH_ADVMANAGER.LIVE.hitChance.range", { min: minChance, max: maxChance }),
+        tooltip: game.i18n.localize("DH_ADVMANAGER.LIVE.hitChance.defenseTooltip", { difficulty, standard: minBonus, maxTrait: maxBonus, min: minChance, max: maxChance })
     };
 }
 
@@ -599,7 +599,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
                 }
                 result.changes.forEach(c => {
                     if (!c.unchanged) {
-                        const customLabel = c.isCustom ? " (Custom)" : "";
+                        const customLabel = c.isCustom ? ` ${game.i18n.localize("DH_ADVMANAGER.CHAT.custom")}` : "";
                         const altLabel = c.labelSuffix || "";
                         const logMsg = `<strong>${itemData.name}:</strong> ${c.from} -> ${c.to}${customLabel}${altLabel}`;
                         changeLog.push(logMsg);
@@ -627,7 +627,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
     if (nameOverrides && nameOverrides[itemData._id]) {
         newName = nameOverrides[itemData._id];
         if (newName !== itemData.name) {
-            changeLog.push(`<strong>Name Override:</strong> ${itemData.name} -> ${newName}`);
+            changeLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.nameOverride")}</strong> ${itemData.name} -> ${newName}`);
             hasChanges = true;
 
             const isMinion = newName.match(/^Minion\s*\((\d+)\)$/i);
@@ -667,7 +667,7 @@ export function processFeatureUpdate(itemData, newTier, currentTier, benchmark, 
                 newName = `Minion (${newVal})`;
                 minionVal = newVal;
                 if (itemData.name !== newName) {
-                    changeLog.push(`<strong>Name Update:</strong> ${itemData.name} -> ${newName}`);
+                    changeLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.nameUpdate")}</strong> ${itemData.name} -> ${newName}`);
                     hasChanges = true;
                     structuredChanges.push({
                         itemId: itemData._id,
@@ -831,12 +831,12 @@ export async function handleNewFeatures(actor, changeLog, featureNames = null) {
             const existingRelentless = currentItems.find(i => i.name.match(/^Relentless\s*\((\d+)\)$/i));
             if (existingRelentless) {
                 toDelete.push(existingRelentless.id);
-                changeLog.push(`<strong>New Feature:</strong> ${featureName} (Replaced ${existingRelentless.name})`);
+                changeLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.newFeature")}</strong> ${game.i18n.localize("DH_ADVMANAGER.CHAT.replaced", { feature: featureName, old: existingRelentless.name })}`);
             } else {
-                changeLog.push(`<strong>New Feature:</strong> ${featureName}`);
+                changeLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.newFeature")}</strong> ${featureName}`);
             }
         } else {
-            changeLog.push(`<strong>New Feature:</strong> ${featureName}`);
+            changeLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.newFeature")}</strong> ${featureName}`);
         }
     }
 
@@ -881,13 +881,13 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
 
     // 2. Update Stats (With Overrides)
     const diff = overrides.difficulty !== undefined ? Number(overrides.difficulty) : getRollFromRange(benchmark.difficulty);
-    if (diff) { updateData["system.difficulty"] = diff; statsLog.push(`<strong>Diff:</strong> ${actorData.system.difficulty} -> ${diff}`); }
+    if (diff) { updateData["system.difficulty"] = diff; statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.difficulty")}</strong> ${actorData.system.difficulty} -> ${diff}`); }
 
     const hp = overrides.hp !== undefined ? Number(overrides.hp) : getRollFromRange(benchmark.hp);
-    if (hp) { updateData["system.resources.hitPoints.max"] = hp; updateData["system.resources.hitPoints.value"] = 0; statsLog.push(`<strong>HP:</strong> ${actorData.system.resources.hitPoints.max} -> ${hp}`); }
+    if (hp) { updateData["system.resources.hitPoints.max"] = hp; updateData["system.resources.hitPoints.value"] = 0; statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.hp")}</strong> ${actorData.system.resources.hitPoints.max} -> ${hp}`); }
 
     const stress = overrides.stress !== undefined ? Number(overrides.stress) : getRollFromRange(benchmark.stress);
-    if (stress) { updateData["system.resources.stress.max"] = stress; statsLog.push(`<strong>Stress:</strong> ${actorData.system.resources.stress.max} -> ${stress}`); }
+    if (stress) { updateData["system.resources.stress.max"] = stress; statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.stress")}</strong> ${actorData.system.resources.stress.max} -> ${stress}`); }
 
     if (benchmark.threshold_min && benchmark.threshold_max) {
         let major, severe;
@@ -904,7 +904,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
         if (major && severe) {
             updateData["system.damageThresholds.major"] = major;
             updateData["system.damageThresholds.severe"] = severe;
-            statsLog.push(`<strong>Dmg Thresh:</strong> ${actorData.system.damageThresholds.major}/${actorData.system.damageThresholds.severe} -> ${major}/${severe}`);
+            statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.thresholds")}</strong> ${actorData.system.damageThresholds.major}/${actorData.system.damageThresholds.severe} -> ${major}/${severe}`);
         }
     }
 
@@ -913,7 +913,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
         updateData["system.attack.roll.bonus"] = atkMod;
         const oldAtk = actorData.system.attack.roll.bonus;
         const sign = atkMod >= 0 ? "+" : "";
-        statsLog.push(`<strong>Atk Mod:</strong> ${oldAtk} -> ${sign}${atkMod}`);
+        statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.attackMod")}</strong> ${oldAtk} -> ${sign}${atkMod}`);
     }
 
     // 3. Update Sheet Damage (Main Attack)
@@ -937,7 +937,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                         part.value.bonus = parsed.bonus;
                     }
                     Object.assign(updateData, buildAttackDamageUpdate(sheetDamage));
-                    statsLog.push(`<strong>Sheet Dmg (Manual):</strong> ${overrides.damageFormula}`);
+                    statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.sheetDamageManual")}</strong> ${overrides.damageFormula}`);
                 }
             }
         }
@@ -946,7 +946,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
         if (result.hasChanges) {
             Object.assign(updateData, buildAttackDamageUpdate(sheetDamage));
             result.changes.forEach(c => {
-                statsLog.push(`<strong>Sheet Dmg:</strong> ${c.from} -> ${c.to}`);
+                statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.sheetDamage")}</strong> ${c.from} -> ${c.to}`);
             });
         }
 
@@ -979,7 +979,7 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
             || hordeDamage;
         if (newHordeDamage !== hordeDamage) {
             updateData["system.typeData.hordeDamage"] = newHordeDamage;
-            statsLog.push(`<strong>Halved Dmg:</strong> ${hordeDamage} -> ${newHordeDamage}`);
+            statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.halvedDamage")}</strong> ${hordeDamage} -> ${newHordeDamage}`);
         }
     }
 
@@ -1047,15 +1047,17 @@ export async function updateSingleActor(actor, newTier, overrides = {}) {
                     availableNames.splice(idx, 1);
                 }
                 updateData[`system.experiences.${newId}`] = {
+                    // Name and description are written onto the actor, so they stay English like
+                    // the experience names from rules.js.
                     name: name,
                     value: targetMod,
                     description: "Auto-Added by Tier Scaling"
                 };
-                statsLog.push(`<strong>New Exp:</strong> ${name}`);
+                statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.newExperience")}</strong> ${name}`);
             }
         }
         if (currentCount !== keysToKeep.length || manualAddedCount > 0) {
-             statsLog.push(`<strong>Experiences:</strong> Adjusted`);
+             statsLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.experiences")}</strong> ${game.i18n.localize("DH_ADVMANAGER.CHAT.adjusted")}`);
         }
     }
 
@@ -1152,11 +1154,11 @@ export function sendBatchChatLog(results, targetTier) {
     const bgImage = SKULL_IMAGE_PATH;
     let consolidatedContent = "";
     results.forEach((res, index) => {
-        let actorBlock = `<div style="font-weight: bold; font-size: 1.1em; color: #ff9c5a; margin-bottom: 4px; text-transform: uppercase;">${res.actor.name} (T${res.currentTier} &rarr; T${targetTier})</div>`;
+        let actorBlock = `<div style="font-weight: bold; font-size: 1.1em; color: #ff9c5a; margin-bottom: 4px; text-transform: uppercase;">${res.actor.name} (${game.i18n.localize("DH_ADVMANAGER.COMMON.tierShort", { n: res.currentTier })} &rarr; ${game.i18n.localize("DH_ADVMANAGER.COMMON.tierShort", { n: targetTier })})</div>`;
         if (res.statsLog.length > 0) actorBlock += `<div style="font-size: 0.9em; margin-bottom: 4px; color: #ccc;">${res.statsLog.join(" | ")}</div>`;
         if (res.featureLog.length > 0) res.featureLog.forEach(log => { actorBlock += `<div style="font-size: 0.9em; margin-left: 5px;">• ${log}</div>`; });
         consolidatedContent += actorBlock + (index < results.length - 1 ? `<hr style="border: 0; border-top: 1px solid rgba(201, 160, 96, 0.5); margin: 8px 0;">` : "");
     });
-    const finalHtml = `<div class="chat-card" style="border: 2px solid #C9A060; border-radius: 8px; overflow: hidden;"><header class="card-header flexrow" style="background: #191919 !important; padding: 8px; border-bottom: 2px solid #C9A060;"><h3 class="noborder" style="margin: 0; font-weight: bold; color: #C9A060 !important; font-family: 'Aleo', serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 100%;">Batch Update: Tier ${targetTier}</h3></header><div class="card-content" style="background-image: url('${bgImage}'); background-repeat: no-repeat; background-position: center; background-size: cover; padding: 20px; min-height: 150px; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;"><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 0;"></div><span style="color: #ffffff !important; font-size: 1.0em; text-shadow: 0px 0px 8px #000000; position: relative; z-index: 1; font-family: 'Lato', sans-serif; line-height: 1.4; width: 100%; text-align: left;">${consolidatedContent}</span></div></div>`;
+    const finalHtml = `<div class="chat-card" style="border: 2px solid #C9A060; border-radius: 8px; overflow: hidden;"><header class="card-header flexrow" style="background: #191919 !important; padding: 8px; border-bottom: 2px solid #C9A060;"><h3 class="noborder" style="margin: 0; font-weight: bold; color: #C9A060 !important; font-family: 'Aleo', serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 100%;">${game.i18n.localize("DH_ADVMANAGER.CHAT.batchTitle", { tier: targetTier })}</h3></header><div class="card-content" style="background-image: url('${bgImage}'); background-repeat: no-repeat; background-position: center; background-size: cover; padding: 20px; min-height: 150px; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;"><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 0;"></div><span style="color: #ffffff !important; font-size: 1.0em; text-shadow: 0px 0px 8px #000000; position: relative; z-index: 1; font-family: 'Lato', sans-serif; line-height: 1.4; width: 100%; text-align: left;">${consolidatedContent}</span></div></div>`;
     ChatMessage.create({ content: finalHtml, whisper: ChatMessage.getWhisperRecipients("GM"), speaker: ChatMessage.getSpeaker({ alias: "Adversary Manager" }) });
 }
