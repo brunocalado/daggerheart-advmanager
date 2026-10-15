@@ -7,7 +7,8 @@
     "build": "sass styles/scss/style.scss styles/style.css --no-source-map --style=compressed",
     "watch": "sass styles/scss/style.scss styles/style.css --watch --no-source-map --style=expanded",
     "pack": "node tools/build-packs.mjs pack",
-    "unpack": "node tools/build-packs.mjs unpack"
+    "unpack": "node tools/build-packs.mjs unpack",
+    "check:i18n": "node tools/check-i18n.mjs"
   },
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "^3.0.5",

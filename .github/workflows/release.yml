@@ -35,6 +35,12 @@ jobs:
             echo "new=true" >> "$GITHUB_OUTPUT"
           fi
 
+      # A key used in code but missing from lang/en.json shows as a raw key in
+      # the UI, and one left in en.json is dead weight for every translator.
+      - name: Check translation keys
+        if: steps.check.outputs.new == 'true'
+        run: node tools/check-i18n.mjs
+
       # Fails before anything is published, so adding the section and pushing
       # again is enough to retry.
       - name: Extract release notes from CHANGELOG.md

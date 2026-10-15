@@ -110,6 +110,10 @@ AM.BuildStatsSnapshot();
 
 Learn more at [WIKI](https://github.com/brunocalado/daggerheart-advmanager/wiki).
 
+## Translations
+
+The module ships in English. To translate it, open an [issue](https://github.com/brunocalado/daggerheart-advmanager/issues) and attach a translated copy of [lang/en.json](lang/en.json), with the code of your language (for example `fr`, `de` or `pt-BR`). I add the file to the module in the next update. To update a translation later, do the same with the new file.
+
 ## 🚀 Installation
 
 Install via the Foundry VTT Module browser or use this manifest link:
