@@ -1,77 +1,73 @@
-# 💀 Adversary Manager 💀
+# 💀 Daggerheart: Adversary Manager
 
-**for Daggerheart**
+Moving an adversary from Tier 1 to Tier 3 means recalculating its HP, Stress, Difficulty, thresholds, attack and damage by hand, and then checking the features it should have at the new tier.
 
-The ultimate GM companion for **Daggerheart** in Foundry VTT. Scale adversaries instantly, build balanced encounters.
+Adversary Manager does that math for you. Select one or more adversary tokens, pick the target tier, compare the current and new stats side by side, adjust any value, and apply. The module also builds encounters within the Battle Point budget, shows the stat ranges of every adversary type in the compendium, and calculates dice odds.
 
-<p align="center"><img width="1400" src="docs/view-livemanager.webp"></p>
+<p align="center"><img width="1400" src="docs/view-livemanager.webp" alt="The Adversary Manager comparing an adversary's current stats with the target tier"></p>
 
-<p align="center"><img width="1400" src="docs/view-livemanager2.webp"></p>
+<p align="center"><img width="1400" src="docs/view-livemanager2.webp" alt="The Adversary Manager listing the features available at the target tier"></p>
 
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-Donate-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/mestredigital) [![More Modules](https://img.shields.io/badge/Foundry%20VTT-More%20Modules-red?style=for-the-badge&logo=gamepad)](https://mestredigital.online/pages/projetos-en)
 
-## 🌟 Overview & Features
+## What it does
 
-### 🛠️ Adversary Scaling & Management
+### Adversary scaling
 
-* **📈 Instant Tier Scaling:** Effortlessly scale any Adversary from Tier 1 to 4 using benchmarks.
-* **👀 Live Preview Dashboard:** Compare "Current" stats vs. "Target Tier" stats side-by-side before applying any changes.
-* **🎲 Smart Math & Probabilities:**
-    * Automatically recalculates HP, Stress, Difficulty, and Damage Thresholds.
-    * Scales Attack modifiers and Damage formulas.
-* **✨ Features & Experiences:**
-    * Auto-updates Experience values based on Tier difference.
-    * Lists the **Features** available for the target Tier and Type so you can tick the ones to add — nothing is added on its own.
-* **🔧 Manual Overrides:** Full control to manually tweak any specific stat (HP, Damage, etc) directly in the preview window.
-* **📦 Batch & Compendium Support:**
-    * Update multiple selected tokens on the canvas simultaneously.
-    * Import and auto-scale adversaries directly from Compendiums into your world.
+Any adversary can be moved to any tier from 1 to 4, using the benchmarks for its type. Before anything changes, the window shows the current stats next to the stats for the target tier.
 
-### 🏷️ Feature Management
+- HP, Stress, Difficulty and damage thresholds are recalculated.
+- Attack modifiers and damage formulas are scaled.
+- Experience values go up or down with the tier difference.
+- The features available for the target tier and type are listed, and you tick the ones to add. Nothing is added on its own.
+- Any value in the preview (HP, damage and so on) can be edited by hand before you apply.
+- With several tokens selected on the canvas, all of them are updated at once.
+- Adversaries can be imported from a compendium into your world and scaled in the same step.
 
-<p align="center"><img width="400" src="docs/view-flageditor.webp"></p>
+### Feature management
 
-* **Add your Homebrew:** You can add your homebrew features to the manager.
-* **Feature Flag Updater:** A drag-and-drop utility to manually configure scaling metadata (Tier, Adversary Type, Custom Tag) for feature items in your world.
-* **Import all Features:** You can import all features directly from adversaries in a compendium.
+<p align="center"><img width="400" src="docs/view-flageditor.webp" alt="The Feature Flag Updater window"></p>
 
-### ⚔️ Encounter Builder
+- Your homebrew features can be added to the manager, so it offers them when scaling.
+- The Feature Flag Updater is a drag-and-drop window where you set the tier, adversary type and a custom tag of the feature items in your world.
+- All the features of the adversaries in a compendium can be imported at once.
 
-<p align="center"><img width="1400" src="docs/view-encounterbuilder.webp"></p>
+### Encounter builder
 
-* **🔎 Search & Library:** Robust search across World actors and System Compendiums with filters for Tier and Type.
-* **🧮 Smart Budgeting:** Automatic **Battle Point (BP)** calculation based on Party Size and Tier. Tracks current cost vs budget limit.
-* **🧠 Synergy & Role Detection:** Automatically detects tactical roles like **Summoner**, **Spotlighter**, **Momentum/Terrifying**, and **Relentless**, adjusting the difficulty estimate based on enemy combinations.
-* **💀 Difficulty Estimator:** Real-time difficulty assessment (Balanced, Challenging, Deadly, Out of Tier).
-* **🔥 Custom Modifiers:** Apply **Damage Boosts** to specific units or toggle manual difficulty modifiers (Easier/Harder) to fine-tune the challenge.
-* **⚡ Quick Deployment:** Build your encounter list and **place tokens directly on the scene** (hidden by default) or organize them into folders.
+<p align="center"><img width="1400" src="docs/view-encounterbuilder.webp" alt="The Encounter Builder with a list of adversaries and the Battle Point budget"></p>
 
-### 📊 Compendium Statistics
+- Search world actors and the system compendiums, filtered by tier and type.
+- The Battle Point budget is calculated from the party size and tier, and the window shows the current cost against it.
+- Adversaries with Summoner, Spotlighter, Momentum, Terrifying or Relentless features are detected, and their combination changes the difficulty estimate.
+- The estimate updates as you build: Very Easy, Easy, Balanced, Challenging, Hard, Deadly or Out of Tier.
+- Damage boosts can be applied to individual units, and the difficulty can be adjusted by hand with Easier or Harder.
+- When the list is ready, place the tokens on the scene (hidden by default) or put the actors in a folder.
 
-<p align="center"><img width="1000" src="docs/view-compendiumstats.webp"></p>
+### Compendium statistics
 
-* **🔍 Stats Explorer:** Browse comprehensive statistics for every adversary type across all 4 Tiers.
-* **📋 Data Tables:** View calculated ranges for Difficulty, HP, Stress, Thresholds, Attack Modifiers, and Damage Rolls.
-* **🧩 Feature Browser:** See a list of all features found in the compendium for each Tier.
-* **🖐️ Drag & Drop:** Click to view feature details or **drag them directly onto an actor sheet**.
-* **📦 Add your Compendium:** You can add more compendiuns.
-* **⚡ Opens instantly:** The system compendium ships pre-calculated, so the window no longer reads every adversary on each open. Your own compendiums are still read live and merged in.
+<p align="center"><img width="1000" src="docs/view-compendiumstats.webp" alt="The Compendium Statistics window for one adversary type"></p>
 
-### 🎲 Dice Probability Calculator
+- For each adversary type, the window shows statistics across the four tiers.
+- The tables give the ranges of Difficulty, HP, Stress, thresholds, attack modifiers and damage rolls.
+- Each tier lists the features found in the compendium. Click one to open it, or drag it onto an actor sheet.
+- You can add more compendiums to the statistics.
+- The system compendium ships pre-calculated, so the window does not read every adversary each time it opens. Your own compendiums are still read live and merged in.
 
-<p align="center"><img width="400" src="docs/view-diceprob.webp"></p>
+### Dice probability calculator
 
-* **Live Analysis:** Instantly calculate success, failure, and critical hit chances.
-* **Two Modes:** Duality Dice (2d12, with doubles as criticals) or a straight D20 roll with a configurable critical threshold.
-* **Flexible Options:** Supports Advantage, Disadvantage, and flat numerical modifiers.
-* **Adversary-Aware:** Picks up the Difficulty from a selected Adversary token.
-* **Chat Integration:** Send detailed probability result cards to the chat log.
+<p align="center"><img width="400" src="docs/view-diceprob.webp" alt="The Dice Probability calculator"></p>
 
-## ⚙️ Usage
+- The chances of success, failure and a critical are calculated as you change the options.
+- Two modes: Duality Dice (2d12, with doubles as criticals), or a d20 roll with a critical threshold you choose.
+- Advantage, Disadvantage and flat modifiers are supported.
+- With an adversary token selected, its Difficulty is filled in.
+- The result can be sent to chat as a card.
 
-Access all functions (Adversary Manager, Encounter Builder, Compendium Stats, and Dice Probability) by clicking the buttons in the Daggerheart System Menu or Actor Directory.
+## Usage
 
-<p align="center"><img width="600" src="docs/system-button.webp"></p>
+Open each tool (Adversary Manager, Encounter Builder, Compendium Stats and Dice Probability) with its button in the Daggerheart system menu or in the Actors directory.
+
+<p align="center"><img width="600" src="docs/system-button.webp" alt="The module's buttons in the Daggerheart system menu"></p>
 
 You can also use macros to access the API:
 
@@ -102,7 +98,7 @@ AM.DiceProbability();
 AM.BuildStatsSnapshot();
 ```
 
-## ⚙️ Instructions
+## Instructions
 
 - [How to Import Features from an Adversary Compendium](https://github.com/brunocalado/daggerheart-advmanager/wiki/How-to-Import-Features-from-an-Adversary-Compendium).
 
@@ -114,7 +110,7 @@ Learn more at [WIKI](https://github.com/brunocalado/daggerheart-advmanager/wiki)
 
 The module ships in English. To translate it, open an [issue](https://github.com/brunocalado/daggerheart-advmanager/issues) and attach a translated copy of [lang/en.json](lang/en.json), with the code of your language (for example `fr`, `de` or `pt-BR`). I add the file to the module in the next update. To update a translation later, do the same with the new file.
 
-## 🚀 Installation
+## Installation
 
 Install via the Foundry VTT Module browser or use this manifest link:
 
@@ -122,7 +118,7 @@ Install via the Foundry VTT Module browser or use this manifest link:
 https://github.com/brunocalado/daggerheart-advmanager/releases/latest/download/module.json
 ```
 
-## 📜 Changelog
+## Changelog
 
 You can read the full history of changes in the [CHANGELOG](CHANGELOG.md).
 
