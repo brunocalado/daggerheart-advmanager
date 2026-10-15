@@ -74,14 +74,14 @@ export async function importFeatures(compendiumId, rootFolderName, customTag) {
 
     const pack = game.packs.get(compendiumId);
     if (!pack) {
-        const msg = `Compendium "${compendiumId}" not found.`;
+        const msg = game.i18n.localize("DH_ADVMANAGER.NOTIFY.packNotFound", { id: compendiumId });
         ui.notifications.error(msg);
         console.error(msg);
         return;
     }
 
     if (pack.documentName !== "Actor") {
-        ui.notifications.error(`Compendium "${compendiumId}" is not an Actor compendium.`);
+        ui.notifications.error(game.i18n.localize("DH_ADVMANAGER.NOTIFY.packNotActor", { id: compendiumId }));
         return;
     }
 

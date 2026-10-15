@@ -1,18 +1,18 @@
 <div class="dh-adv-manager-content">
     <div class="status-header">
-        <h3>Select Available Compendiums</h3>
+        <h3>{{localize "DH_ADVMANAGER.SOURCES.heading"}}</h3>
         <p style="font-size: 0.8em; color: #aaa; margin-top: 5px;">
-            Choose compendiums to be used as sources.
+            {{localize "DH_ADVMANAGER.SOURCES.hint"}}
         </p>
     </div>
 
     <!-- Navigation Tabs -->
     <nav class="dh-tabs">
         <a class="dh-tab-link active" data-tab="actors">
-            <i class="fas fa-users"></i> Actors
+            <i class="fas fa-users"></i> {{localize "DH_ADVMANAGER.SOURCES.actors"}}
         </a>
         <a class="dh-tab-link" data-tab="features">
-            <i class="fas fa-suitcase"></i> Features
+            <i class="fas fa-suitcase"></i> {{localize "DH_ADVMANAGER.SOURCES.features"}}
         </a>
     </nav>
 
@@ -33,7 +33,7 @@
                     </div>
                     {{/each}}
                 {{else}}
-                    <p class="empty-msg">No other Actor compendiums found.</p>
+                    <p class="empty-msg">{{localize "DH_ADVMANAGER.SOURCES.noActors"}}</p>
                 {{/if}}
             </div>
         </div>
@@ -52,7 +52,7 @@
                     </div>
                     {{/each}}
                 {{else}}
-                    <p class="empty-msg">No Item compendiums found.</p>
+                    <p class="empty-msg">{{localize "DH_ADVMANAGER.SOURCES.noItems"}}</p>
                 {{/if}}
             </div>
         </div>
@@ -61,7 +61,7 @@
 
     <footer class="sheet-footer">
         <button type="submit">
-            <i class="fas fa-save"></i> Save Selection
+            <i class="fas fa-save"></i> {{localize "DH_ADVMANAGER.SOURCES.save"}}
         </button>
     </footer>
 </div>

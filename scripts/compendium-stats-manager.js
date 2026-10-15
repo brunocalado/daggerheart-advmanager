@@ -14,7 +14,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Manage Stat Sources",
+            title: "DH_ADVMANAGER.SOURCES.stats.title",
             icon: "fas fa-chart-pie",
             resizable: false,
             width: 700, // Increased width to fit new inputs
@@ -100,6 +100,7 @@ export class CompendiumStatsManager extends HandlebarsApplicationMixin(Applicati
                         ? customTagInput.trim() 
                         : defaultLabel;
 
+                    // The default folder name stays English: importFeatures finds folders by name.
                     const finalFolder = customFolderInput && customFolderInput.trim() !== "" 
                         ? customFolderInput.trim() 
                         : `Imported from ${defaultLabel}`;

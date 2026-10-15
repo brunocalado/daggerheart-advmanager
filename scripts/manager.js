@@ -26,7 +26,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Adversary Manager",
+            title: "DH_ADVMANAGER.MANAGER.title",
             icon: "fas fa-skull",
             resizable: false,
             width: 420
@@ -73,7 +73,7 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const tiers = [1, 2, 3, 4].map(t => ({
             value: t,
-            label: `Tier ${t}`,
+            label: game.i18n.localize("DH_ADVMANAGER.COMMON.tier", { n: t }),
             disabled: !isMixedTier && t === currentSharedTier,
             isCurrent: !isMixedTier && t === currentSharedTier
         }));
@@ -110,6 +110,6 @@ export class Manager extends HandlebarsApplicationMixin(ApplicationV2) {
                 sendBatchChatLog(batchResults, newTier);
             }
             app.close();
-        } else { ui.notifications.info("No Adversaries updated."); }
+        } else { ui.notifications.info(game.i18n.localize("DH_ADVMANAGER.MANAGER.noneUpdated")); }
     }
 }

@@ -33,7 +33,58 @@
       "gmOnly": "Only a GM can use this feature.",
       "brokenToken": "Error: The token \"{name}\" references an Actor that no longer exists in the directory.",
       "snapshotBuilding": "Adversary Manager | Building the adversary statistics snapshot...",
-      "snapshotBuilt": "Adversary Manager | Snapshot built for {system} {version} ({count} adversaries). Save it into the module as data/compendium-stats-core.json."
+      "snapshotBuilt": "Adversary Manager | Snapshot built for {system} {version} ({count} adversaries). Save it into the module as data/compendium-stats-core.json.",
+      "packNotFound": "Compendium \"{id}\" not found.",
+      "packNotActor": "Compendium \"{id}\" is not an Actor compendium."
+    },
+    "COMMON": {
+      "tier": "Tier {n}"
+    },
+    "MANAGER": {
+      "title": "Adversary Manager",
+      "selected": "Selected Adversaries",
+      "linked": "Linked",
+      "unlinked": "Unlinked",
+      "selectTier": "Select Target Tier:",
+      "apply": "Apply Changes",
+      "noneUpdated": "No Adversaries updated."
+    },
+    "SOURCES": {
+      "title": "Manage Compendium Sources",
+      "heading": "Select Available Compendiums",
+      "hint": "Choose compendiums to be used as sources.",
+      "actors": "Actors",
+      "features": "Features",
+      "noActors": "No other Actor compendiums found.",
+      "noItems": "No Item compendiums found.",
+      "save": "Save Selection",
+      "stats": {
+        "title": "Manage Stat Sources",
+        "heading": "Select Stat Sources",
+        "important": "Important:",
+        "warning": "Selecting a new compendium will trigger an automated import process. Features from the selected actors will be copied to your world items.",
+        "wait": "Please wait for the import notification to finish.",
+        "tagPlaceholder": "Tag (Def: Label)",
+        "folderPlaceholder": "Folder (Def: Imported...)",
+        "save": "Save Selection & Import"
+      }
+    },
+    "FEATURE_UPDATER": {
+      "title": "Feature Flag Updater",
+      "dropLabel": "1. Drop Feature Here",
+      "dropHint": "Drag a Feature from the World",
+      "configure": "2. Configure Flags",
+      "targetTier": "Target Tier",
+      "type": "Adversary Type",
+      "customTag": "Custom Tag",
+      "customTagPlaceholder": "e.g. Core, Homebrew",
+      "submit": "Update Feature Flags",
+      "dropItem": "Please drop an Item.",
+      "unresolved": "Could not resolve Item UUID.",
+      "invalidDrop": "Invalid drop data.",
+      "noItem": "No item selected.",
+      "itemGone": "Item no longer exists.",
+      "updateFailed": "Failed to update item flags."
     }
   }
 }
