@@ -10,6 +10,10 @@ import { MODULE_ID } from "./constants.js";
 import { SETTING_CHAT_LOG, SETTING_UPDATE_EXP, SKULL_IMAGE_PATH } from "./module.js";
 import { prepareDocumentCreateData, getCompendiumSource } from "./foundry-compat.js";
 
+// An adversary has one Relentless, so adding any form replaces the one it has. "(X)" is a real
+// rulebook form (Hydra, Cephilith Titan), not a placeholder.
+const RELENTLESS_NAME = /^Relentless\s*\((\d+|X)\)$/i;
+
 // --- Utility Parsers ---
 
 /**
@@ -826,9 +830,8 @@ export async function handleNewFeatures(actor, changeLog, featureNames = null) {
         toCreate.push(featureData);
 
         // Handle Relentless Replacement Logic
-        const relentlessMatch = featureName.match(/^Relentless\s*\((\d+)\)$/i);
-        if (relentlessMatch) {
-            const existingRelentless = currentItems.find(i => i.name.match(/^Relentless\s*\((\d+)\)$/i));
+        if (RELENTLESS_NAME.test(featureName)) {
+            const existingRelentless = currentItems.find(i => RELENTLESS_NAME.test(i.name));
             if (existingRelentless) {
                 toDelete.push(existingRelentless.id);
                 changeLog.push(`<strong>${game.i18n.localize("DH_ADVMANAGER.CHAT.newFeature")}</strong> ${game.i18n.localize("DH_ADVMANAGER.CHAT.replaced", { feature: featureName, old: existingRelentless.name })}`);
