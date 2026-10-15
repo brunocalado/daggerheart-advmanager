@@ -2,6 +2,13 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 import { MODULE_ID } from "./constants.js";
 import { SKULL_IMAGE_PATH } from "./module.js";
 
+/** Display keys for rollType values: 1 advantage, 0 normal, -1 disadvantage. */
+const ROLL_TYPE_LABELS = {
+    "1": "DH_ADVMANAGER.DICE.rollType.advantage",
+    "0": "DH_ADVMANAGER.DICE.rollType.normal",
+    "-1": "DH_ADVMANAGER.DICE.rollType.disadvantage"
+};
+
 export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
 
     constructor(options = {}) {
@@ -72,7 +79,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Dice Probability Calculator",
+            title: "DH_ADVMANAGER.DICE.title",
             icon: "fas fa-dice-d20",
             resizable: false,
             width: 460,
@@ -148,7 +155,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
                 ...stats,
                 diceNotation,
                 difficulty: this.formData.difficulty,
-                rollTypeLabel: this.formData.rollType === 1 ? "Advantage" : (this.formData.rollType === -1 ? "Disadvantage" : "Normal")
+                rollTypeLabel: game.i18n.localize(ROLL_TYPE_LABELS[this.formData.rollType])
             };
         } else {
             // --- D20 Calculation ---
@@ -165,16 +172,15 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
                 ...stats,
                 diceNotation,
                 difficulty: this.d20Data.difficulty,
-                rollTypeLabel: this.d20Data.rollType === 1 ? "Advantage" : (this.d20Data.rollType === -1 ? "Disadvantage" : "Normal"),
+                rollTypeLabel: game.i18n.localize(ROLL_TYPE_LABELS[this.d20Data.rollType]),
                 criticalThreshold: this.d20Data.criticalThreshold
             };
         }
 
         // Determine dynamic label for the modifier die row (Duality mode only)
-        let advLabel = "Adv. Die";
-        if (this.formData.rollType === -1) {
-            advLabel = "Dis. Die";
-        }
+        const advLabel = game.i18n.localize(this.formData.rollType === -1
+            ? "DH_ADVMANAGER.DICE.disDie"
+            : "DH_ADVMANAGER.DICE.advDie");
 
         // Current data based on mode
         const currentData = isDualityMode ? this.formData : this.d20Data;
@@ -266,7 +272,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
 
     async _onSendToChat(event, target) {
         let stats, diceNotation, content;
-        const MESSAGE_TITLE = "Probability Analysis";
+        const MESSAGE_TITLE = game.i18n.localize("DH_ADVMANAGER.DICE.chat.title");
         const BACKGROUND_IMAGE = SKULL_IMAGE_PATH;
         const MIN_HEIGHT = "150px";
 
@@ -285,12 +291,12 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
             const { success, fail, crit } = stats;
             const commandContent = `
                 <div style="text-align: left; padding: 5px;">
-                    <p><strong>Dice:</strong> ${diceNotation}</p>
-                    <p><strong>Difficulty:</strong> ${this.formData.difficulty}</p>
+                    <p><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.dice")}</strong> ${diceNotation}</p>
+                    <p><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.difficulty")}</strong> ${this.formData.difficulty}</p>
                     <hr style="border-color: #C9A060; opacity: 0.5;">
-                    <p style="color: #98fb98;"><strong>Success:</strong> ${success}%</p>
-                    <p style="color: #ff6b6b;"><strong>Failure:</strong> ${fail}%</p>
-                    <p style="color: #ea80fc;"><strong>Critical (Doubles):</strong> ${crit}%</p>
+                    <p style="color: #98fb98;"><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.success")}</strong> ${success}%</p>
+                    <p style="color: #ff6b6b;"><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.failure")}</strong> ${fail}%</p>
+                    <p style="color: #ea80fc;"><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.critDoubles")}</strong> ${crit}%</p>
                 </div>
             `;
 
@@ -320,18 +326,18 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
 
             diceNotation = this._buildDiceNotation();
 
-            const rollTypeLabel = this.d20Data.rollType === 1 ? "Advantage" : (this.d20Data.rollType === -1 ? "Disadvantage" : "Normal");
+            const rollTypeLabel = game.i18n.localize(ROLL_TYPE_LABELS[this.d20Data.rollType]);
             const { success, fail, crit } = stats;
 
             const commandContent = `
                 <div style="text-align: left; padding: 5px;">
-                    <p><strong>Dice:</strong> ${diceNotation} (${rollTypeLabel})</p>
-                    <p><strong>Difficulty:</strong> ${this.d20Data.difficulty}</p>
-                    <p><strong>Critical Threshold:</strong> ${this.d20Data.criticalThreshold}+</p>
+                    <p><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.dice")}</strong> ${diceNotation} (${rollTypeLabel})</p>
+                    <p><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.difficulty")}</strong> ${this.d20Data.difficulty}</p>
+                    <p><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.critThreshold")}</strong> ${this.d20Data.criticalThreshold}+</p>
                     <hr style="border-color: #C9A060; opacity: 0.5;">
-                    <p style="color: #98fb98;"><strong>Success:</strong> ${success}%</p>
-                    <p style="color: #ff6b6b;"><strong>Failure:</strong> ${fail}%</p>
-                    <p style="color: #ea80fc;"><strong>Critical (${this.d20Data.criticalThreshold}+):</strong> ${crit}%</p>
+                    <p style="color: #98fb98;"><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.success")}</strong> ${success}%</p>
+                    <p style="color: #ff6b6b;"><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.failure")}</strong> ${fail}%</p>
+                    <p style="color: #ea80fc;"><strong>${game.i18n.localize("DH_ADVMANAGER.DICE.chat.critThresholdResult", { n: this.d20Data.criticalThreshold })}</strong> ${crit}%</p>
                 </div>
             `;
 
@@ -339,7 +345,7 @@ export class DiceProbability extends HandlebarsApplicationMixin(ApplicationV2) {
             <div class="chat-card" style="border: 2px solid #C9A060; border-radius: 8px; overflow: hidden;">
                 <header class="card-header flexrow" style="background: #191919 !important; padding: 8px; border-bottom: 2px solid #C9A060;">
                     <h3 class="noborder" style="margin: 0; font-weight: bold; color: #C9A060 !important; font-family: 'Aleo', serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 100%;">
-                        ${MESSAGE_TITLE} (D20)
+                        ${game.i18n.localize("DH_ADVMANAGER.DICE.chat.titleD20")}
                     </h3>
                 </header>
                 <div class="card-content" style="background-image: url('${BACKGROUND_IMAGE}'); background-repeat: no-repeat; background-position: center; background-size: cover; padding: 20px; min-height: ${MIN_HEIGHT}; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;">

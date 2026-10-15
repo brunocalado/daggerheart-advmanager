@@ -169,6 +169,85 @@
       "emptyEncounter": "Add units from the library.",
       "create": "Create Encounter",
       "place": "Create & Place Invisible"
+    },
+    "STATS": {
+      "title": "Compendium Statistics",
+      "loading": "Reading Compendium Data...",
+      "adversaryType": "Adversary Type:",
+      "refresh": "Refresh Stats",
+      "type": "Type",
+      "row": {
+        "difficulty": "Difficulty",
+        "thresholdMin": "Threshold Min",
+        "thresholdMax": "Threshold Max",
+        "hp": "Hit Points",
+        "stress": "Stress",
+        "attackMod": "Attack Mod",
+        "damageRolls": "Damage Rolls",
+        "halvedDamage": "Halved Dmg",
+        "experiences": "Experiences",
+        "features": "Features"
+      },
+      "form": {
+        "action": "(A)",
+        "passive": "(P)",
+        "reaction": "(R)"
+      },
+      "expTooltip": "Quantity (Min-Max) +Value Range",
+      "featureTooltip": "Click to view, Drag to Sheet",
+      "mismatch": {
+        "malformed": "the file is empty or malformed",
+        "system": "it was built for the \"{system}\" system",
+        "version": "it was built for Daggerheart {built}, but {installed} is installed",
+        "count": "the compendium holds {count} adversaries and the snapshot describes {expected}"
+      },
+      "notify": {
+        "noSheet": "Could not find sheet for {name}",
+        "stale": "Adversary Manager | The bundled adversary statistics are out of date ({reason}), so they were recalculated from the compendium — which is why this took a while. A GM can refresh them by running AM.BuildStatsSnapshot() in the console."
+      }
+    },
+    "DICE": {
+      "title": "Dice Probability Calculator",
+      "duality": "Duality Dice",
+      "dualityHint": "Duality Dice (2d12)",
+      "d20Hint": "D20 System",
+      "die1": "Die 1",
+      "die2": "Die 2",
+      "advDie": "Adv. Die",
+      "disDie": "Dis. Die",
+      "rollTypeLabel": "Roll Type",
+      "rollType": {
+        "advantage": "Advantage",
+        "normal": "Normal",
+        "disadvantage": "Disadvantage",
+        "d20Advantage": "Advantage (2d20 keep highest)",
+        "d20Normal": "Normal (1d20)",
+        "d20Disadvantage": "Disadvantage (2d20 keep lowest)",
+        "adv": "Adv",
+        "norm": "Norm",
+        "dis": "Dis"
+      },
+      "critThreshold": "Critical Threshold",
+      "modifier": "Modifier (+/-)",
+      "difficulty": "Difficulty",
+      "results": "Results",
+      "roll": "Roll",
+      "success": "Success Chance",
+      "failure": "Failure Chance",
+      "critDoubles": "Critical (Doubles)",
+      "critThresholdResult": "Critical ({n}+)",
+      "sendToChat": "Send to Chat",
+      "chat": {
+        "title": "Probability Analysis",
+        "titleD20": "Probability Analysis (D20)",
+        "dice": "Dice:",
+        "difficulty": "Difficulty:",
+        "critThreshold": "Critical Threshold:",
+        "success": "Success:",
+        "failure": "Failure:",
+        "critDoubles": "Critical (Doubles):",
+        "critThresholdResult": "Critical ({n}+):"
+      }
     }
   }
 }

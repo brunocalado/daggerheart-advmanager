@@ -7,14 +7,14 @@
                 data-action="setMode"
                 data-value="duality"
                 class="roll-btn {{#if isDualityMode}}active{{/if}}"
-                title="Duality Dice (2d12)">
-                <i class="fas fa-dice"></i> Duality Dice
+                title="{{localize "DH_ADVMANAGER.DICE.dualityHint"}}">
+                <i class="fas fa-dice"></i> {{localize "DH_ADVMANAGER.DICE.duality"}}
             </button>
             <button type="button"
                 data-action="setMode"
                 data-value="d20"
                 class="roll-btn {{#if isD20Mode}}active{{/if}}"
-                title="D20 System">
+                title="{{localize "DH_ADVMANAGER.DICE.d20Hint"}}">
                 <i class="fas fa-dice-d20"></i> D20
             </button>
         </div>
@@ -27,7 +27,7 @@
 
         <!-- Die 1 Buttons -->
         <div class="stat-row">
-            <span class="stat-label">Die 1</span>
+            <span class="stat-label">{{localize "DH_ADVMANAGER.DICE.die1"}}</span>
             <div class="die-btn-group">
                 {{#each die1Buttons}}
                 <button type="button"
@@ -42,7 +42,7 @@
 
         <!-- Die 2 Buttons -->
         <div class="stat-row">
-            <span class="stat-label">Die 2</span>
+            <span class="stat-label">{{localize "DH_ADVMANAGER.DICE.die2"}}</span>
             <div class="die-btn-group">
                 {{#each die2Buttons}}
                 <button type="button"
@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        {{> "modules/daggerheart-advmanager/templates/partials/dp-roll-type.hbs" disTitle="Disadvantage" normTitle="Normal" advTitle="Advantage"}}
+        {{> "modules/daggerheart-advmanager/templates/partials/dp-roll-type.hbs" disTitle=(localize "DH_ADVMANAGER.DICE.rollType.disadvantage") normTitle=(localize "DH_ADVMANAGER.DICE.rollType.normal") advTitle=(localize "DH_ADVMANAGER.DICE.rollType.advantage")}}
 
         <!-- Advantage Die Selection (Conditionally Visible or Disabled) -->
         <div class="stat-row {{#unless showAdvDie}}dp-disabled-row{{/unless}}">
@@ -75,11 +75,11 @@
         {{else}}
         <!-- ========== D20 MODE ========== -->
 
-        {{> "modules/daggerheart-advmanager/templates/partials/dp-roll-type.hbs" disTitle="Disadvantage (2d20 keep lowest)" normTitle="Normal (1d20)" advTitle="Advantage (2d20 keep highest)"}}
+        {{> "modules/daggerheart-advmanager/templates/partials/dp-roll-type.hbs" disTitle=(localize "DH_ADVMANAGER.DICE.rollType.d20Disadvantage") normTitle=(localize "DH_ADVMANAGER.DICE.rollType.d20Normal") advTitle=(localize "DH_ADVMANAGER.DICE.rollType.d20Advantage")}}
 
         <!-- Critical Threshold -->
         <div class="stat-row">
-            <span class="stat-label">Critical Threshold</span>
+            <span class="stat-label">{{localize "DH_ADVMANAGER.DICE.critThreshold"}}</span>
             <div class="select-wrapper dp-select-wrapper">
                 <select name="criticalThreshold" class="stats-type-select">
                     {{#each critOptions}}
@@ -96,7 +96,7 @@
 
         <!-- Modifier Input -->
         <div class="stat-row">
-            <span class="stat-label">Modifier (+/-)</span>
+            <span class="stat-label">{{localize "DH_ADVMANAGER.DICE.modifier"}}</span>
             <div class="dp-input-wrapper">
                 <input type="number" name="modifier" class="stats-type-select dp-modifier-input" value="{{currentModifier}}" placeholder="0">
             </div>
@@ -104,7 +104,7 @@
 
         <!-- Difficulty -->
         <div class="stat-row">
-            <span class="stat-label">Difficulty</span>
+            <span class="stat-label">{{localize "DH_ADVMANAGER.DICE.difficulty"}}</span>
             <div class="select-wrapper dp-select-wrapper">
                 <select name="difficulty" class="stats-type-select">
                     {{#each diffOptions}}
@@ -119,28 +119,28 @@
 
     <!-- Results Section -->
     <div class="probability-results dp-results">
-        <h3 class="dp-results-header">Results</h3>
+        <h3 class="dp-results-header">{{localize "DH_ADVMANAGER.DICE.results"}}</h3>
 
         <div class="stat-row">
-            <span class="stat-label">Roll</span>
+            <span class="stat-label">{{localize "DH_ADVMANAGER.DICE.roll"}}</span>
             <span class="stat-value dp-roll-notation">{{results.diceNotation}}</span>
         </div>
 
         <div class="stat-row dp-result-row-border">
-            <span class="stat-label dp-color-success">Success Chance</span>
+            <span class="stat-label dp-color-success">{{localize "DH_ADVMANAGER.DICE.success"}}</span>
             <span class="stat-value dp-color-success dp-result-bold">{{results.success}}%</span>
         </div>
 
         <div class="stat-row">
-            <span class="stat-label dp-color-fail">Failure Chance</span>
+            <span class="stat-label dp-color-fail">{{localize "DH_ADVMANAGER.DICE.failure"}}</span>
             <span class="stat-value dp-color-fail">{{results.fail}}%</span>
         </div>
 
         <div class="stat-row">
             {{#if isDualityMode}}
-            <span class="stat-label dp-color-crit">Critical (Doubles)</span>
+            <span class="stat-label dp-color-crit">{{localize "DH_ADVMANAGER.DICE.critDoubles"}}</span>
             {{else}}
-            <span class="stat-label dp-color-crit">Critical ({{results.criticalThreshold}}+)</span>
+            <span class="stat-label dp-color-crit">{{localize "DH_ADVMANAGER.DICE.critThresholdResult" n=results.criticalThreshold}}</span>
             {{/if}}
             <span class="stat-value dp-color-crit">{{results.crit}}%</span>
         </div>
@@ -148,7 +148,7 @@
 
     <footer class="sheet-footer dp-footer">
         <button type="button" data-action="sendToChat" class="dp-chat-btn">
-            <i class="fas fa-comment-dots"></i> Send to Chat
+            <i class="fas fa-comment-dots"></i> {{localize "DH_ADVMANAGER.DICE.sendToChat"}}
         </button>
     </footer>
 

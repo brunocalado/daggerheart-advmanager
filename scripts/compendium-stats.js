@@ -3,10 +3,18 @@ import { CompendiumStatsManager } from "./compendium-stats-manager.js";
 import { MODULE_ID } from "./constants.js";
 import { SETTING_STATS_COMPENDIUMS } from "./module.js";
 import { getActionDamageParts, formatDamageValue } from "./damage-engine.js";
+import { adversaryTypeLabel } from "./helpers.js";
 
 const SYSTEM_ADVERSARY_PACK = "daggerheart.adversaries";
 const SNAPSHOT_PATH = `modules/${MODULE_ID}/data/compendium-stats-core.json`;
+// The tag is stored in data/compendium-stats-core.json, so it stays an English code; the
+// display text comes from FEATURE_FORM_LABELS at render time.
 const FEATURE_LABELS = { action: "(A)", passive: "(P)", reaction: "(R)" };
+const FEATURE_FORM_LABELS = {
+    "(A)": "DH_ADVMANAGER.STATS.form.action",
+    "(P)": "DH_ADVMANAGER.STATS.form.passive",
+    "(R)": "DH_ADVMANAGER.STATS.form.reaction"
+};
 
 /**
  * The parsed core census, shared by every window in this session. `undefined` means it has not
@@ -44,7 +52,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         classes: [MODULE_ID],
         tag: "div",
         window: {
-            title: "Compendium Statistics",
+            title: "DH_ADVMANAGER.STATS.title",
             icon: "fas fa-chart-bar",
             resizable: true,
             width: 900,
@@ -75,7 +83,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const typeOptions = Array.from(this.availableTypes).sort().map(t => ({
             value: t,
-            label: t.charAt(0).toUpperCase() + t.slice(1),
+            label: adversaryTypeLabel(t),
             selected: t === this.selectedType
         }));
 
@@ -90,7 +98,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             loading: false,
             typeOptions: typeOptions,
             stats: statsData,
-            headers: ["Tier 1", "Tier 2", "Tier 3", "Tier 4"]
+            headers: [1, 2, 3, 4].map(n => game.i18n.localize("DH_ADVMANAGER.COMMON.tier", { n }))
         };
     }
 
@@ -137,7 +145,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
                 
                 // Fallback (apenas se UUID falhar)
                 const featureName = link.dataset.featureName;
-                ui.notifications.warn(`Could not find sheet for ${featureName}`);
+                ui.notifications.warn(game.i18n.localize("DH_ADVMANAGER.STATS.notify.noSheet", { name: featureName }));
             });
 
             link.addEventListener('dragstart', (e) => {
@@ -190,17 +198,17 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
      * @returns {string|null} The mismatch, or null when the snapshot is usable.
      */
     static _snapshotMismatch(snapshot, pack) {
-        if (!snapshot?.types) return "the file is empty or malformed";
-        if (snapshot.system !== game.system.id) return `it was built for the "${snapshot.system}" system`;
+        if (!snapshot?.types) return game.i18n.localize("DH_ADVMANAGER.STATS.mismatch.malformed");
+        if (snapshot.system !== game.system.id) return game.i18n.localize("DH_ADVMANAGER.STATS.mismatch.system", { system: snapshot.system });
         if (snapshot.systemVersion !== game.system.version) {
-            return `it was built for Daggerheart ${snapshot.systemVersion}, but ${game.system.version} is installed`;
+            return game.i18n.localize("DH_ADVMANAGER.STATS.mismatch.version", { built: snapshot.systemVersion, installed: game.system.version });
         }
 
         const entries = pack.index.contents ?? Array.from(pack.index);
         const typed = entries.filter(e => e.type !== undefined);
         const count = typed.length ? typed.filter(e => e.type === "adversary").length : entries.length;
         if (count !== snapshot.adversaryCount) {
-            return `the compendium holds ${count} adversaries and the snapshot describes ${snapshot.adversaryCount}`;
+            return game.i18n.localize("DH_ADVMANAGER.STATS.mismatch.count", { count, expected: snapshot.adversaryCount });
         }
 
         return null;
@@ -223,7 +231,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         console.warn(`Adversary Manager | Ignoring the bundled statistics because ${mismatch}. Reading the compendium instead.`);
         if (!staleSnapshotWarned) {
             staleSnapshotWarned = true;
-            ui.notifications.warn(`Adversary Manager | The bundled adversary statistics are out of date (${mismatch}), so they were recalculated from the compendium — which is why this took a while. A GM can refresh them by running AM.BuildStatsSnapshot() in the console.`);
+            ui.notifications.warn(game.i18n.localize("DH_ADVMANAGER.STATS.notify.stale", { reason: mismatch }));
         }
         return null;
     }
@@ -525,18 +533,18 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
 
     _formatStatsRows(data, type) {
         const rows = [
-            { label: "Difficulty", t1: this._getRange(data[1].difficulty), t2: this._getRange(data[2].difficulty), t3: this._getRange(data[3].difficulty), t4: this._getRange(data[4].difficulty) },
-            { label: "Threshold Min", t1: this._getRange(data[1].major), t2: this._getRange(data[2].major), t3: this._getRange(data[3].major), t4: this._getRange(data[4].major) },
-            { label: "Threshold Max", t1: this._getRange(data[1].severe), t2: this._getRange(data[2].severe), t3: this._getRange(data[3].severe), t4: this._getRange(data[4].severe) },
-            { label: "Hit Points", t1: this._getRange(data[1].hp), t2: this._getRange(data[2].hp), t3: this._getRange(data[3].hp), t4: this._getRange(data[4].hp) },
-            { label: "Stress", t1: this._getRange(data[1].stress), t2: this._getRange(data[2].stress), t3: this._getRange(data[3].stress), t4: this._getRange(data[4].stress) },
-            { label: "Attack Mod", t1: this._getSignedRange(data[1].attackMod), t2: this._getSignedRange(data[2].attackMod), t3: this._getSignedRange(data[3].attackMod), t4: this._getSignedRange(data[4].attackMod) },
-            { label: "Damage Rolls", t1: this._getList(data[1].damageRolls), t2: this._getList(data[2].damageRolls), t3: this._getList(data[3].damageRolls), t4: this._getList(data[4].damageRolls), isList: true }
+            { label: game.i18n.localize("DH_ADVMANAGER.STATS.row.difficulty"), t1: this._getRange(data[1].difficulty), t2: this._getRange(data[2].difficulty), t3: this._getRange(data[3].difficulty), t4: this._getRange(data[4].difficulty) },
+            { label: game.i18n.localize("DH_ADVMANAGER.STATS.row.thresholdMin"), t1: this._getRange(data[1].major), t2: this._getRange(data[2].major), t3: this._getRange(data[3].major), t4: this._getRange(data[4].major) },
+            { label: game.i18n.localize("DH_ADVMANAGER.STATS.row.thresholdMax"), t1: this._getRange(data[1].severe), t2: this._getRange(data[2].severe), t3: this._getRange(data[3].severe), t4: this._getRange(data[4].severe) },
+            { label: game.i18n.localize("DH_ADVMANAGER.STATS.row.hp"), t1: this._getRange(data[1].hp), t2: this._getRange(data[2].hp), t3: this._getRange(data[3].hp), t4: this._getRange(data[4].hp) },
+            { label: game.i18n.localize("DH_ADVMANAGER.STATS.row.stress"), t1: this._getRange(data[1].stress), t2: this._getRange(data[2].stress), t3: this._getRange(data[3].stress), t4: this._getRange(data[4].stress) },
+            { label: game.i18n.localize("DH_ADVMANAGER.STATS.row.attackMod"), t1: this._getSignedRange(data[1].attackMod), t2: this._getSignedRange(data[2].attackMod), t3: this._getSignedRange(data[3].attackMod), t4: this._getSignedRange(data[4].attackMod) },
+            { label: game.i18n.localize("DH_ADVMANAGER.STATS.row.damageRolls"), t1: this._getList(data[1].damageRolls), t2: this._getList(data[2].damageRolls), t3: this._getList(data[3].damageRolls), t4: this._getList(data[4].damageRolls), isList: true }
         ];
 
         if (type === "horde") {
             rows.push({ 
-                label: "Halved Dmg", 
+                label: game.i18n.localize("DH_ADVMANAGER.STATS.row.halvedDamage"), 
                 t1: this._getList(data[1].halvedDamageRolls), 
                 t2: this._getList(data[2].halvedDamageRolls), 
                 t3: this._getList(data[3].halvedDamageRolls), 
@@ -546,7 +554,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         rows.push({
-            label: "Experiences",
+            label: game.i18n.localize("DH_ADVMANAGER.STATS.row.experiences"),
             t1: this._formatExpData(data[1]),
             t2: this._formatExpData(data[2]),
             t3: this._formatExpData(data[3]),
@@ -554,7 +562,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
         });
 
         rows.push({
-            label: "Features",
+            label: game.i18n.localize("DH_ADVMANAGER.STATS.row.features"),
             t1: this._getFeatureList(data[1].features),
             t2: this._getFeatureList(data[2].features),
             t3: this._getFeatureList(data[3].features),
@@ -613,7 +621,7 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             if (minVal === maxVal) valStr = fmt(minVal);
             else valStr = `${fmt(minVal)}/${fmt(maxVal)}`;
         }
-        const tooltip = "Quantity (Min-Max) +Value Range";
+        const tooltip = game.i18n.localize("DH_ADVMANAGER.STATS.expTooltip");
         return `<span data-tooltip="${tooltip}" style="cursor: help;">${countStr} ${valStr}</span>`;
     }
 
@@ -631,9 +639,10 @@ export class CompendiumStats extends HandlebarsApplicationMixin(ApplicationV2) {
             // depends on the compendiums this world has and on what the GM imported.
             const uuid = this._findFeatureUuid(name, data.adversary);
             const draggableAttr = uuid ? `draggable="true" data-uuid="${uuid}"` : "";
-            const displayLabel = data.typeLabel ? `<span style="opacity: 0.7; margin-left: 4px;">${data.typeLabel}</span>` : "";
+            const formLabel = FEATURE_FORM_LABELS[data.typeLabel] ? game.i18n.localize(FEATURE_FORM_LABELS[data.typeLabel]) : data.typeLabel;
+            const displayLabel = formLabel ? `<span style="opacity: 0.7; margin-left: 4px;">${formLabel}</span>` : "";
             
-            return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="Click to view, Drag to Sheet">
+            return `<div class="feature-entry feature-link" data-feature-name="${name}" ${draggableAttr} title="${game.i18n.localize("DH_ADVMANAGER.STATS.featureTooltip")}">
                 <img src="${data.img}" class="feature-icon" alt="${name}"/>
                 <span class="feature-name">${name}${displayLabel}</span>
              </div>`
