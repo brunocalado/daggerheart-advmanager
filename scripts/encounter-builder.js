@@ -3,9 +3,43 @@ import { SETTING_EXTRA_COMPENDIUMS, SETTING_ENCOUNTER_FOLDER, SETTING_LAST_SOURC
 import { POWERFUL_FEATURES } from "./rules.js";
 import { LiveManager } from "./live-manager.js";
 import { prepareDocumentCreateData } from "./foundry-compat.js";
+import { adversaryTypeLabel } from "./helpers.js";
 
 // Import DialogV2 to fix deprecation warning
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
+
+// Display keys for the synergy tags. The tags themselves stay English because the budget and
+// synergy checks compare them by value; only what the template shows is translated.
+const SPECIAL_FEATURE_LABELS = {
+    Momentum: "DH_ADVMANAGER.ENCOUNTER.feature.momentum",
+    Terrifying: "DH_ADVMANAGER.ENCOUNTER.feature.terrifying",
+    Relentless: "DH_ADVMANAGER.ENCOUNTER.feature.relentless",
+    Summoner: "DH_ADVMANAGER.ENCOUNTER.feature.summoner",
+    Spotlighter: "DH_ADVMANAGER.ENCOUNTER.feature.spotlighter"
+};
+
+const DIFFICULTY_LABELS = {
+    veryEasy: "DH_ADVMANAGER.ENCOUNTER.difficulty.veryEasy",
+    easy: "DH_ADVMANAGER.ENCOUNTER.difficulty.easy",
+    balanced: "DH_ADVMANAGER.ENCOUNTER.difficulty.balanced",
+    challenging: "DH_ADVMANAGER.ENCOUNTER.difficulty.challenging",
+    hard: "DH_ADVMANAGER.ENCOUNTER.difficulty.hard",
+    deadly: "DH_ADVMANAGER.ENCOUNTER.difficulty.deadly",
+    outOfTier: "DH_ADVMANAGER.ENCOUNTER.difficulty.outOfTier"
+};
+
+/**
+ * Display fields shared by library rows and encounter units.
+ * @param {Object} unit  An entry from _getAllAdversaries or the encounter list.
+ * @returns {{typeLabel: string, tierLabel: string, featureLabels: string[]}}
+ */
+function displayLabels(unit) {
+    return {
+        typeLabel: adversaryTypeLabel(unit.type),
+        tierLabel: game.i18n.localize("DH_ADVMANAGER.COMMON.tierShort", { n: unit.tier }),
+        featureLabels: (unit.specialFeatures || []).map(f => game.i18n.localize(SPECIAL_FEATURE_LABELS[f]))
+    };
+}
 
 /**
  * Encounter Builder Application.
@@ -55,7 +89,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         classes: [MODULE_ID],
         tag: "form",
         window: {
-            title: "Encounter Builder",
+            title: "DH_ADVMANAGER.ENCOUNTER.title",
             icon: "fas fa-dungeon",
             resizable: true,
             width: 1100,
@@ -126,9 +160,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // --- Source Options ---
         const extraPacks = game.settings.get(MODULE_ID, SETTING_EXTRA_COMPENDIUMS) || [];
         const sourceOptions = [
-            { value: "all", label: "All Sources", selected: this.filterSource === "all" },
-            { value: "world", label: "World (Actors)", selected: this.filterSource === "world" },
-            { value: "daggerheart.adversaries", label: "System Compendium", selected: this.filterSource === "daggerheart.adversaries" }
+            { value: "all", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.source.all"), selected: this.filterSource === "all" },
+            { value: "world", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.source.world"), selected: this.filterSource === "world" },
+            { value: "daggerheart.adversaries", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.source.system"), selected: this.filterSource === "daggerheart.adversaries" }
         ];
 
         extraPacks.forEach(packId => {
@@ -173,6 +207,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
             return {
                 ...a,
+                ...displayLabels(a),
                 cost: costVal,
                 isMinionCost: a.type.toLowerCase() === "minion"
             };
@@ -181,26 +216,27 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         // --- UI Options ---
         const tiers = [1, 2, 3, 4].map(t => ({
             value: t,
-            label: `T${t}`,
+            label: game.i18n.localize("DH_ADVMANAGER.COMMON.tierShort", { n: t }),
             isCurrent: String(t) === String(this.filterTier),
             cssClass: String(t) === String(this.filterTier) ? "active" : ""
         }));
 
         const typeSet = new Set(adversaries.map(a => a.type).filter(t => t));
-        const typeOptions = Array.from(typeSet).sort().map(t => ({
+        const typeOptions = Array.from(typeSet).map(t => ({
             value: t,
-            label: t.charAt(0).toUpperCase() + t.slice(1),
+            label: adversaryTypeLabel(t),
             selected: this.filterType === t
         }));
-        typeOptions.unshift({ value: "all", label: "All Types", selected: this.filterType === "all" });
+        game.i18n.sortObjects(typeOptions, "label");
+        typeOptions.unshift({ value: "all", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.allTypes"), selected: this.filterType === "all" });
 
         // --- Fear Options ---
         const fearOptions = [
-            { value: "0-1", label: "Low (0–1 Fear)", selected: this.fearBudget === "0-1" },
-            { value: "1-3", label: "Moderate (1–3 Fear)", selected: this.fearBudget === "1-3" },
-            { value: "2-4", label: "High (2–4 Fear)", selected: this.fearBudget === "2-4" },
-            { value: "4-8", label: "Extreme (4–8 Fear)", selected: this.fearBudget === "4-8" },
-            { value: "6-12", label: "Insane (6–12 Fear)", selected: this.fearBudget === "6-12" }
+            { value: "0-1", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.budget.low"), selected: this.fearBudget === "0-1" },
+            { value: "1-3", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.budget.moderate"), selected: this.fearBudget === "1-3" },
+            { value: "2-4", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.budget.high"), selected: this.fearBudget === "2-4" },
+            { value: "4-8", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.budget.extreme"), selected: this.fearBudget === "4-8" },
+            { value: "6-12", label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.budget.insane"), selected: this.fearBudget === "6-12" }
         ];
 
         // --- PC Count Options ---
@@ -219,7 +255,8 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             
             return {
                 ...unit,
-                damageBoostTooltip: `Add +${die} Damage (Lowers Budget Limit)`
+                ...displayLabels(unit),
+                damageBoostTooltip: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.damageBoostTooltip", { die })
             };
         });
 
@@ -262,7 +299,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             // BP Data
             pcCount: this.pcCount,
             pcTier: this.pcTier,
-            pcTierOptions: [1, 2, 3, 4].map(t => ({ value: t, label: `Tier ${t}`, selected: t === this.pcTier })),
+            pcTierOptions: [1, 2, 3, 4].map(t => ({ value: t, label: game.i18n.localize("DH_ADVMANAGER.COMMON.tier", { n: t }), selected: t === this.pcTier })),
             bpData: bpData,
             manualModifiers: this.manualModifiers,
             
@@ -274,7 +311,9 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
             // Folder Mode State (NEW)
             useAutoFolder: this.useAutoFolder,
-            autoFolderTooltip: this.useAutoFolder ? "Mode: Auto-Generate Folder Name" : "Mode: Manual Folder Name"
+            autoFolderTooltip: this.useAutoFolder
+                ? game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.folderMode.auto")
+                : game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.folderMode.manual")
         };
     }
 
@@ -346,44 +385,44 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
 
         if (this.manualModifiers.easier) {
             limit -= 1;
-            modifiers.push({ label: "Easier/Shorter", val: "-1", active: true, manual: true, key: 'easier' });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.easier"), val: "-1", active: true, manual: true, key: 'easier' });
         } else {
-            modifiers.push({ label: "Easier/Shorter", val: "-1", active: false, manual: true, key: 'easier' });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.easier"), val: "-1", active: false, manual: true, key: 'easier' });
         }
 
         if (soloCount >= 2) {
             limit -= 2;
-            modifiers.push({ label: "2+ Solos", val: "-2", active: true, manual: false });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.twoSolos"), val: "-2", active: true, manual: false });
         } else {
-            modifiers.push({ label: "2+ Solos", val: "-2", active: false, manual: false, disabled: true });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.twoSolos"), val: "-2", active: false, manual: false, disabled: true });
         }
 
         if (hasDamageBoost) {
             limit -= 2;
-            modifiers.push({ label: "Damage Boost", val: "-2", active: true, manual: false });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.damageBoost"), val: "-2", active: true, manual: false });
         } else {
-            modifiers.push({ label: "Damage Boost", val: "-2", active: false, manual: false, disabled: true });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.damageBoost"), val: "-2", active: false, manual: false, disabled: true });
         }
 
         if (hasLowerTier) {
             limit += 1;
-            modifiers.push({ label: "Lower Tier Used", val: "+1", active: true, manual: false });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.lowerTier"), val: "+1", active: true, manual: false });
         } else {
-            modifiers.push({ label: "Lower Tier Used", val: "+1", active: false, manual: false, disabled: true });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.lowerTier"), val: "+1", active: false, manual: false, disabled: true });
         }
 
         if (this.encounterList.length > 0 && !hasSpecialType) {
             limit += 1;
-            modifiers.push({ label: "No Major Adversaries", val: "+1", active: true, manual: false });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.noMajor"), val: "+1", active: true, manual: false });
         } else {
-            modifiers.push({ label: "No Major Adversaries", val: "+1", active: false, manual: false, disabled: true });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.noMajor"), val: "+1", active: false, manual: false, disabled: true });
         }
 
         if (this.manualModifiers.harder) {
             limit += 2;
-            modifiers.push({ label: "Harder/Longer", val: "+2", active: true, manual: true, key: 'harder' });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.harder"), val: "+2", active: true, manual: true, key: 'harder' });
         } else {
-            modifiers.push({ label: "Harder/Longer", val: "+2", active: false, manual: true, key: 'harder' });
+            modifiers.push({ label: game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.modifier.harder"), val: "+2", active: false, manual: true, key: 'harder' });
         }
 
         const diff = currentCost - limit;
@@ -433,11 +472,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             difficultyClass = "diff-deadly";
         }
 
-        const difficultyLabels = {
-            veryEasy: "Very Easy", easy: "Easy", balanced: "Balanced",
-            challenging: "Challenging", hard: "Hard", deadly: "Deadly", outOfTier: "Out of Tier"
-        };
-        const difficultyLabel = difficultyLabels[difficultyKey] ?? "Balanced";
+        const difficultyLabel = game.i18n.localize(DIFFICULTY_LABELS[difficultyKey] ?? DIFFICULTY_LABELS.balanced);
 
         const statusColor = (currentCost > limit) ? "red" : (currentCost === limit ? "green" : "gold");
 
@@ -534,7 +569,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
      */
     async _executeCreateEncounter(customName = null) {
         if (this.encounterList.length === 0) {
-            ui.notifications.warn("No adversaries in the encounter to create.");
+            ui.notifications.warn(game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.notify.empty"));
             return [];
         }
 
@@ -666,16 +701,16 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
         
         try {
             const result = await DialogV2.prompt({
-                window: { title: "Encounter Name" },
+                window: { title: "DH_ADVMANAGER.ENCOUNTER.dialog.title" },
                 content: `
                     <div style="margin-bottom: 10px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px;" for="${inputId}">Folder Name:</label>
-                        <input type="text" id="${inputId}" placeholder="e.g., Boss Fight Room 3" autofocus required 
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px;" for="${inputId}">${game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.dialog.folderName")}</label>
+                        <input type="text" id="${inputId}" placeholder="${game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.dialog.placeholder")}" autofocus required 
                                style="width: 100%; box-sizing: border-box; padding: 5px; background: #222; color: #fff; border: 1px solid #777;"/>
                     </div>
                 `,
                 ok: {
-                    label: "Create",
+                    label: "DH_ADVMANAGER.ENCOUNTER.dialog.create",
                     icon: "fas fa-check",
                     callback: (event, button, dialog) => {
                         const input = document.getElementById(inputId);
@@ -705,11 +740,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             const result = await this._executeCreateEncounter(folderName);
             if (result && result.actors && result.actors.length > 0) {
                 this.lastCreatedActors = result.actors;
-                ui.notifications.info(`Encounter created in: "${result.folderName}". Check the Actor directory.`);
+                ui.notifications.info(game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.notify.created", { folder: result.folderName }));
             }
         } catch (err) {
             console.error(err);
-            ui.notifications.error("Failed to create encounter. Check console.");
+            ui.notifications.error(game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.notify.createFailed"));
         }
     }
 
@@ -731,7 +766,7 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             
             const scene = canvas.scene;
             if (!scene) {
-                ui.notifications.warn("No active scene to place tokens.");
+                ui.notifications.warn(game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.notify.noScene"));
                 return;
             }
 
@@ -761,11 +796,11 @@ export class EncounterBuilder extends HandlebarsApplicationMixin(ApplicationV2) 
             }
 
             await scene.createEmbeddedDocuments("Token", tokensData);
-            ui.notifications.info(`Encounter created and ${created.length} tokens placed on scene (Hidden).`);
+            ui.notifications.info(game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.notify.placed", { count: created.length }));
             
         } catch (err) {
             console.error(err);
-            ui.notifications.error("Failed to place encounter. Check console.");
+            ui.notifications.error(game.i18n.localize("DH_ADVMANAGER.ENCOUNTER.notify.placeFailed"));
         }
     }
 

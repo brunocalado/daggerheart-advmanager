@@ -38,7 +38,8 @@
       "packNotActor": "Compendium \"{id}\" is not an Actor compendium."
     },
     "COMMON": {
-      "tier": "Tier {n}"
+      "tier": "Tier {n}",
+      "tierShort": "T{n}"
     },
     "MANAGER": {
       "title": "Adversary Manager",
@@ -85,6 +86,89 @@
       "noItem": "No item selected.",
       "itemGone": "Item no longer exists.",
       "updateFailed": "Failed to update item flags."
+    },
+    "ENCOUNTER": {
+      "title": "Encounter Builder",
+      "source": {
+        "all": "All Sources",
+        "world": "World (Actors)",
+        "system": "System Compendium"
+      },
+      "allTypes": "All Types",
+      "budget": {
+        "low": "Low (0–1 Fear)",
+        "moderate": "Moderate (1–3 Fear)",
+        "high": "High (2–4 Fear)",
+        "extreme": "Extreme (4–8 Fear)",
+        "insane": "Insane (6–12 Fear)"
+      },
+      "modifier": {
+        "easier": "Easier/Shorter",
+        "twoSolos": "2+ Solos",
+        "damageBoost": "Damage Boost",
+        "lowerTier": "Lower Tier Used",
+        "noMajor": "No Major Adversaries",
+        "harder": "Harder/Longer"
+      },
+      "difficulty": {
+        "veryEasy": "Very Easy",
+        "easy": "Easy",
+        "balanced": "Balanced",
+        "challenging": "Challenging",
+        "hard": "Hard",
+        "deadly": "Deadly",
+        "outOfTier": "Out of Tier"
+      },
+      "feature": {
+        "momentum": "Momentum",
+        "terrifying": "Terrifying",
+        "relentless": "Relentless",
+        "summoner": "Summoner",
+        "spotlighter": "Spotlighter"
+      },
+      "damageBoostTooltip": "Add +{die} Damage (Lowers Budget Limit)",
+      "folderMode": {
+        "auto": "Mode: Auto-Generate Folder Name",
+        "manual": "Mode: Manual Folder Name"
+      },
+      "dialog": {
+        "title": "Encounter Name",
+        "folderName": "Folder Name:",
+        "placeholder": "e.g., Boss Fight Room 3",
+        "create": "Create"
+      },
+      "notify": {
+        "empty": "No adversaries in the encounter to create.",
+        "created": "Encounter created in: \"{folder}\". Check the Actor directory.",
+        "createFailed": "Failed to create encounter. Check console.",
+        "noScene": "No active scene to place tokens.",
+        "placed": "Encounter created and {count} tokens placed on scene (Hidden).",
+        "placeFailed": "Failed to place encounter. Check console."
+      },
+      "search": "Search adversaries...",
+      "library": "Library ({count})",
+      "add": "Add to Encounter",
+      "edit": "Edit in Live Manager",
+      "compendium": "Compendium",
+      "noResults": "No adversaries found.",
+      "pcCount": "# PCs:",
+      "partyTier": "Party Tier:",
+      "fearHint": "Spending more Fear increases the perceived difficulty level.",
+      "fearBudget": "Fear Budget:",
+      "budgetLimit": "Budget Limit",
+      "base": "Base: {n}",
+      "currentCost": "Current Cost",
+      "synergy": {
+        "summoner": "There are adversaries capable of summoning other adversaries.",
+        "spotlighter": "There are adversaries capable of spotlighting other adversaries.",
+        "momentum": "There are adversaries capable of gaining Fear.",
+        "relentless": "There are adversaries that can be spotlighted multiple times per GM turn."
+      },
+      "adversaries": "Adversaries ({count})",
+      "clearAll": "Clear All",
+      "emptyEncounter": "Add units from the library.",
+      "create": "Create Encounter",
+      "place": "Create & Place Invisible"
     }
   }
 }
