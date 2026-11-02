@@ -1,8 +1,20 @@
 # Unreleased
 
+Checked against Daggerheart 2.12.3.
+
+The compendiums the module ships were still in the data format of Daggerheart 1.4 to 2.10, and
+they loaded only because the system converts old data every time it reads it. That conversion
+is there for old worlds, and a later system cleanup can drop it without warning, the way
+`damage.parts` was already dropped. So every pack is now stored in the 2.12.3 format. It was
+taken from what the running system itself produced after converting each document, not edited
+by hand. The scaling benchmarks in `scripts/rules.js` were left alone: no adversary statistic
+changed between 2.10.6 and 2.12.3, and the 0.3.7 reason not to regenerate them still holds.
+
+- [Breaking][Changed] Requires Daggerheart 2.12.3.
 - [Fixed] The Horde template has its own halved damage, so a tier-up from it scales the damage the horde actually rolls.
 - [Changed] The templates and the More Damage features are stored in the Daggerheart 2.12.3 format.
 - [Changed] The All Features compendium is rebuilt from Daggerheart 2.12.3.
+- [Changed] The Compendium Statistics snapshot is rebuilt for Daggerheart 2.12.3, so the window opens instantly again.
 
 # 0.3.8
 
