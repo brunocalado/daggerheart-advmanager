@@ -8,35 +8,32 @@
     "description": "<p>Damage Boost: +1d10 damage</p>",
     "resource": null,
     "actions": {},
-    "originItemType": null,
-    "multiclassOrigin": false,
-    "featureForm": "passive"
+    "featureForm": "passive",
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
   },
   "effects": [
     {
       "name": "More Damage (1d10)",
       "type": "base",
       "system": {
-        "rangeDependence": {
-          "enabled": false,
-          "type": "withinRange",
-          "target": "hostile",
-          "range": "melee"
-        },
+        "rangeDependence": null,
         "changes": [
           {
-            "key": "system.bonuses.damage.physical.dice",
+            "key": "system.bonuses.damage.dice",
             "value": "+1d10",
             "priority": null,
-            "type": "add"
-          },
-          {
-            "key": "system.bonuses.damage.magical.dice",
-            "value": "+1d10",
-            "priority": null,
-            "type": "add"
+            "type": "add",
+            "phase": "initial"
           }
-        ]
+        ],
+        "conditionals": [],
+        "duration": {
+          "description": ""
+        },
+        "stacking": null,
+        "targetDispositions": []
       },
       "_id": "qjrgnUmYmWGr1q5W",
       "img": "icons/skills/melee/strike-axe-blood-red.webp",
@@ -60,7 +57,7 @@
         "exportSource": null,
         "coreVersion": "14.362",
         "systemId": "daggerheart",
-        "systemVersion": "1.4.4",
+        "systemVersion": "2.12.3",
         "lastModifiedBy": null,
         "createdTime": null,
         "modifiedTime": null
@@ -78,7 +75,7 @@
     "exportSource": null,
     "coreVersion": "14.362",
     "systemId": "daggerheart",
-    "systemVersion": "1.4.4",
+    "systemVersion": "2.12.3",
     "createdTime": 1767360908883,
     "modifiedTime": 1767787408025,
     "lastModifiedBy": "zWDd1mciIe4rp82O"

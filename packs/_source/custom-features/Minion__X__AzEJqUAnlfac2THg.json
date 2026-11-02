@@ -5,10 +5,11 @@
     "description": "<p>The @Lookup[@name] is defeated when they take any damage. For every [X] damage a PC deals to the @Lookup[@name], defeat an additional Minion within range the attack would succeed against.</p>",
     "resource": null,
     "actions": {},
-    "originItemType": null,
     "attribution": {},
-    "multiclassOrigin": false,
-    "featureForm": "passive"
+    "featureForm": "passive",
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
   },
   "img": "icons/magic/symbols/runes-carved-stone-yellow.webp",
   "effects": [],
@@ -20,7 +21,7 @@
     "exportSource": null,
     "coreVersion": "14.368",
     "systemId": "daggerheart",
-    "systemVersion": "2.10.6",
+    "systemVersion": "2.12.3",
     "createdTime": 1767360908883,
     "modifiedTime": 1790433620267,
     "lastModifiedBy": "A1cwCW7bPTYuaV1r"

@@ -7,10 +7,11 @@
     "description": "<p>When this horde has marked half or more of their HP, their standard attack deals <strong>[X]</strong> physical damage instead.</p>",
     "resource": null,
     "actions": {},
-    "originItemType": null,
     "attribution": {},
-    "multiclassOrigin": false,
-    "featureForm": "passive"
+    "featureForm": "passive",
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
   },
   "effects": [],
   "folder": null,
@@ -21,7 +22,7 @@
     "exportSource": null,
     "coreVersion": "13.351",
     "systemId": "daggerheart",
-    "systemVersion": "1.4.4",
+    "systemVersion": "2.12.3",
     "createdTime": 1767360908883,
     "modifiedTime": 1767787408025,
     "lastModifiedBy": "zWDd1mciIe4rp82O"

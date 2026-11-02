@@ -28,38 +28,30 @@
           "consumeOnSuccess": false
         },
         "damage": {
-          "parts": [
-            {
-              "value": {
-                "custom": {
-                  "enabled": false,
-                  "formula": ""
-                },
-                "multiplier": "flat",
-                "flatMultiplier": 1,
-                "dice": "d8",
-                "bonus": null
+          "main": {
+            "value": {
+              "custom": {
+                "enabled": false,
+                "formula": ""
               },
-              "applyTo": "hitPoints",
-              "type": [
-                "magical"
-              ],
-              "base": false,
-              "resultBased": false,
-              "valueAlt": {
-                "multiplier": "prof",
-                "flatMultiplier": 1,
-                "dice": "d6",
-                "bonus": null,
-                "custom": {
-                  "enabled": false,
-                  "formula": ""
-                }
-              }
-            }
-          ],
-          "includeBase": false,
-          "direct": false
+              "multiplier": "flat",
+              "flatMultiplier": 1,
+              "dice": "d8",
+              "bonus": null
+            },
+            "applyTo": "hitPoints",
+            "type": [
+              "magical"
+            ],
+            "base": false,
+            "resultBased": false,
+            "valueAlt": null,
+            "includeBase": false,
+            "direct": false,
+            "itemId": null,
+            "fullRestore": false
+          },
+          "resources": {}
         },
         "target": {
           "type": "any",
@@ -87,12 +79,15 @@
           "damageMod": "none"
         },
         "name": "Damage",
-        "range": ""
+        "range": "",
+        "triggers": [],
+        "areas": []
       }
     },
-    "originItemType": null,
-    "multiclassOrigin": false,
-    "featureForm": "reaction"
+    "featureForm": "reaction",
+    "gmNotes": "",
+    "granter": null,
+    "actorResources": []
   },
   "effects": [],
   "flags": {},
@@ -102,7 +97,7 @@
     "exportSource": null,
     "coreVersion": "13.351",
     "systemId": "daggerheart",
-    "systemVersion": "1.4.4",
+    "systemVersion": "2.12.3",
     "createdTime": 1767360908883,
     "modifiedTime": 1767787408025,
     "lastModifiedBy": "zWDd1mciIe4rp82O"

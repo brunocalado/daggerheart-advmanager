@@ -24,7 +24,6 @@
     "type": "standard",
     "notes": "",
     "difficulty": 1,
-    "hordeHp": 1,
     "criticalThreshold": 20,
     "damageThresholds": {
       "major": 0,
@@ -33,29 +32,11 @@
     "resources": {
       "hitPoints": {
         "value": 0,
-        "max": 0,
-        "isReversed": true
+        "max": 0
       },
       "stress": {
         "value": 0,
-        "max": 0,
-        "isReversed": true
-      }
-    },
-    "rules": {
-      "conditionImmunities": {
-        "hidden": false,
-        "restrained": false,
-        "vulnerable": false
-      },
-      "damageReduction": {
-        "thresholdImmunities": {
-          "minor": false
-        },
-        "reduceSeverity": {
-          "magical": 0,
-          "physical": 0
-        }
+        "max": 0
       }
     },
     "attack": {
@@ -86,38 +67,39 @@
         "useDefault": false
       },
       "damage": {
-        "parts": [
-          {
-            "type": [
-              "physical"
-            ],
-            "value": {
-              "multiplier": "flat",
-              "flatMultiplier": 1,
-              "dice": "d6",
-              "bonus": null,
-              "custom": {
-                "enabled": false,
-                "formula": ""
-              }
-            },
-            "applyTo": "hitPoints",
-            "resultBased": false,
-            "valueAlt": {
-              "multiplier": "prof",
-              "flatMultiplier": 1,
-              "dice": "d6",
-              "bonus": null,
-              "custom": {
-                "enabled": false,
-                "formula": ""
-              }
-            },
-            "base": false
-          }
-        ],
-        "includeBase": false,
-        "direct": false
+        "main": {
+          "type": [
+            "physical"
+          ],
+          "value": {
+            "multiplier": "flat",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "bonus": null,
+            "custom": {
+              "enabled": false,
+              "formula": ""
+            }
+          },
+          "applyTo": "hitPoints",
+          "resultBased": false,
+          "valueAlt": {
+            "multiplier": "prof",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "bonus": null,
+            "custom": {
+              "enabled": false,
+              "formula": ""
+            }
+          },
+          "base": false,
+          "includeBase": false,
+          "direct": false,
+          "itemId": null,
+          "fullRestore": false
+        },
+        "resources": {}
       },
       "baseAction": false,
       "description": "",
@@ -137,35 +119,14 @@
         "trait": null,
         "difficulty": null,
         "damageMod": "none"
-      }
+      },
+      "triggers": [],
+      "areas": []
     },
     "experiences": {},
-    "bonuses": {
-      "roll": {
-        "attack": {
-          "bonus": 0,
-          "dice": []
-        },
-        "action": {
-          "bonus": 0,
-          "dice": []
-        },
-        "reaction": {
-          "bonus": 0,
-          "dice": []
-        }
-      },
-      "damage": {
-        "physical": {
-          "bonus": 0,
-          "dice": []
-        },
-        "magical": {
-          "bonus": 0,
-          "dice": []
-        }
-      }
-    }
+    "advantageSources": [],
+    "disadvantageSources": [],
+    "typeData": null
   },
   "prototypeToken": {
     "name": "Standard",
@@ -268,7 +229,7 @@
     "exportSource": null,
     "coreVersion": "14.362",
     "systemId": "daggerheart",
-    "systemVersion": "1.4.4",
+    "systemVersion": "2.12.3",
     "createdTime": 1767958156364,
     "modifiedTime": 1767958156364,
     "lastModifiedBy": "zWDd1mciIe4rp82O"

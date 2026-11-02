@@ -24,7 +24,6 @@
     "type": "horde",
     "notes": "",
     "difficulty": 1,
-    "hordeHp": 1,
     "criticalThreshold": 20,
     "damageThresholds": {
       "major": 0,
@@ -33,29 +32,11 @@
     "resources": {
       "hitPoints": {
         "value": 0,
-        "max": 0,
-        "isReversed": true
+        "max": 0
       },
       "stress": {
         "value": 0,
-        "max": 0,
-        "isReversed": true
-      }
-    },
-    "rules": {
-      "conditionImmunities": {
-        "hidden": false,
-        "restrained": false,
-        "vulnerable": false
-      },
-      "damageReduction": {
-        "thresholdImmunities": {
-          "minor": false
-        },
-        "reduceSeverity": {
-          "magical": 0,
-          "physical": 0
-        }
+        "max": 0
       }
     },
     "attack": {
@@ -86,38 +67,30 @@
         "useDefault": false
       },
       "damage": {
-        "parts": [
-          {
-            "type": [
-              "physical"
-            ],
-            "value": {
-              "multiplier": "flat",
-              "flatMultiplier": 1,
-              "dice": "d6",
-              "bonus": null,
-              "custom": {
-                "enabled": false,
-                "formula": ""
-              }
-            },
-            "applyTo": "hitPoints",
-            "resultBased": false,
-            "valueAlt": {
-              "multiplier": "prof",
-              "flatMultiplier": 1,
-              "dice": "d6",
-              "bonus": null,
-              "custom": {
-                "enabled": false,
-                "formula": ""
-              }
-            },
-            "base": false
-          }
-        ],
-        "includeBase": false,
-        "direct": false
+        "main": {
+          "type": [
+            "physical"
+          ],
+          "value": {
+            "multiplier": "flat",
+            "flatMultiplier": 1,
+            "dice": "d6",
+            "bonus": null,
+            "custom": {
+              "enabled": false,
+              "formula": ""
+            }
+          },
+          "applyTo": "hitPoints",
+          "resultBased": false,
+          "valueAlt": null,
+          "base": false,
+          "includeBase": false,
+          "direct": false,
+          "itemId": null,
+          "fullRestore": false
+        },
+        "resources": {}
       },
       "baseAction": false,
       "description": "",
@@ -137,36 +110,19 @@
         "trait": null,
         "difficulty": null,
         "damageMod": "none"
-      }
+      },
+      "triggers": [],
+      "areas": []
     },
     "experiences": {},
-    "bonuses": {
-      "roll": {
-        "attack": {
-          "bonus": 0,
-          "dice": []
-        },
-        "action": {
-          "bonus": 0,
-          "dice": []
-        },
-        "reaction": {
-          "bonus": 0,
-          "dice": []
-        }
-      },
-      "damage": {
-        "physical": {
-          "bonus": 0,
-          "dice": []
-        },
-        "magical": {
-          "bonus": 0,
-          "dice": []
-        }
-      }
-    },
-    "motivesAndTactics": ""
+    "motivesAndTactics": "",
+    "advantageSources": [],
+    "disadvantageSources": [],
+    "typeData": {
+      "type": "horde",
+      "hordeHP": 1,
+      "hordeDamage": "1d4"
+    }
   },
   "prototypeToken": {
     "name": "Horde",
@@ -260,60 +216,123 @@
     "prependAdjective": false,
     "depth": 1
   },
-  "items": [],
-  "effects": [
+  "items": [
     {
-      "type": "horde",
+      "type": "feature",
       "name": "Horde",
-      "img": "icons/magic/movement/chevrons-down-yellow.webp",
-      "disabled": true,
-      "_id": "WJujmckn8GHjDASI",
+      "img": "icons/creatures/magical/humanoid-silhouette-aliens-green.webp",
       "system": {
-        "rangeDependence": {
-          "enabled": false,
-          "type": "withinRange",
-          "target": "hostile",
-          "range": "melee"
-        },
-        "changes": []
+        "description": "When the @Lookup[@name] have marked half or more of their HP, their standard attack deals @Lookup[@system.typeData.hordeDamage] @Lookup[@system.attackDamageType] damage instead.",
+        "attribution": {},
+        "gmNotes": "",
+        "resource": null,
+        "actions": {},
+        "granter": null,
+        "featureForm": "passive",
+        "actorResources": []
       },
-      "duration": {
-        "value": null,
-        "units": "seconds",
-        "expiry": null,
-        "expired": false
+      "flags": {
+        "daggerheart": {
+          "hordeFeature": true
+        }
       },
-      "description": "",
-      "origin": null,
-      "tint": "#ffffff",
-      "transfer": false,
-      "statuses": [],
+      "effects": [
+        {
+          "name": "Horde",
+          "img": "icons/magic/movement/chevrons-down-yellow.webp",
+          "showIcon": 2,
+          "system": {
+            "conditionals": [
+              {
+                "type": "dataCompare",
+                "key": "system.resources.hitPoints.value",
+                "comparator": "greaterEquals",
+                "value": "@system.resources.hitPoints.max / 2"
+              }
+            ],
+            "changes": [
+              {
+                "type": "standardAttack",
+                "value": {
+                  "name": "",
+                  "damageTypes": [],
+                  "attackRange": null,
+                  "trait": null,
+                  "damageFormula": "@system.typeData.hordeDamage",
+                  "img": null
+                },
+                "priority": 0,
+                "phase": "initial"
+              }
+            ],
+            "duration": {
+              "description": "",
+              "type": ""
+            },
+            "rangeDependence": null,
+            "stacking": null,
+            "targetDispositions": []
+          },
+          "_id": "kgteFEbgLTNgeDfR",
+          "type": "base",
+          "disabled": false,
+          "start": {
+            "time": 0,
+            "combat": null,
+            "combatant": null,
+            "initiative": null,
+            "round": null,
+            "turn": null
+          },
+          "duration": {
+            "value": null,
+            "units": "seconds",
+            "expiry": null,
+            "expired": false
+          },
+          "description": "",
+          "tint": "#ffffff",
+          "transfer": true,
+          "statuses": [],
+          "folder": null,
+          "sort": 0,
+          "flags": {},
+          "_stats": {
+            "compendiumSource": null,
+            "coreVersion": "14.364",
+            "systemId": "daggerheart",
+            "systemVersion": "2.12.3",
+            "createdTime": null,
+            "modifiedTime": null,
+            "lastModifiedBy": null,
+            "duplicateSource": null,
+            "exportSource": null
+          },
+          "origin": null,
+          "_key": "!actors.items.effects!yMO82g01P4RVB92T.3BxoYOESl2LVr9RU.kgteFEbgLTNgeDfR"
+        }
+      ],
+      "_id": "3BxoYOESl2LVr9RU",
+      "folder": null,
       "sort": 0,
-      "flags": {},
       "_stats": {
         "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null,
-        "coreVersion": "14.362",
+        "coreVersion": "14.369",
         "systemId": "daggerheart",
-        "systemVersion": "1.4.4",
-        "lastModifiedBy": null,
+        "systemVersion": "2.12.3",
         "createdTime": null,
-        "modifiedTime": null
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "duplicateSource": null,
+        "exportSource": null
       },
-      "start": {
-        "combat": null,
-        "round": 1,
-        "time": 0,
-        "turn": 0,
-        "combatant": null,
-        "initiative": null
+      "ownership": {
+        "default": 0
       },
-      "showIcon": 1,
-      "folder": null,
-      "_key": "!actors.effects!yMO82g01P4RVB92T.WJujmckn8GHjDASI"
+      "_key": "!actors.items!yMO82g01P4RVB92T.3BxoYOESl2LVr9RU"
     }
   ],
+  "effects": [],
   "flags": {},
   "_stats": {
     "compendiumSource": null,
@@ -321,7 +340,7 @@
     "exportSource": null,
     "coreVersion": "14.362",
     "systemId": "daggerheart",
-    "systemVersion": "1.4.4",
+    "systemVersion": "2.12.3",
     "createdTime": 1767958156364,
     "modifiedTime": 1767958156364,
     "lastModifiedBy": "zWDd1mciIe4rp82O"
