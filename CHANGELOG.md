@@ -2,6 +2,7 @@
 
 - [Fixed] The Horde template has its own halved damage, so a tier-up from it scales the damage the horde actually rolls.
 - [Changed] The templates and the More Damage features are stored in the Daggerheart 2.12.3 format.
+- [Changed] The All Features compendium is rebuilt from Daggerheart 2.12.3.
 
 # 0.3.8
 

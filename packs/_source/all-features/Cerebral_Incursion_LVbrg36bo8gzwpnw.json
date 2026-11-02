@@ -113,14 +113,7 @@
   },
   "_stats": {
     "systemId": "daggerheart",
-    "systemVersion": "2.10.6",
-    "coreVersion": "14.368",
-    "createdTime": null,
-    "modifiedTime": null,
-    "lastModifiedBy": null,
-    "compendiumSource": null,
-    "duplicateSource": null,
-    "exportSource": null
+    "systemVersion": "2.12.3"
   },
   "_key": "!items!LVbrg36bo8gzwpnw"
 }
