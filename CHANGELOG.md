@@ -1,4 +1,4 @@
-# Unreleased
+# 0.4.0
 
 Checked against Daggerheart 2.12.3.
 
