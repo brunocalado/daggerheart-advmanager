@@ -1,3 +1,9 @@
+# 0.4.1
+
+Checked against Daggerheart 2.12.8.
+
+- [Changed] Verified with Daggerheart 2.12.8. Its adversary data is identical to 2.12.3, so the compendiums and statistics need no rebuild.
+
 # 0.4.0
 
 Checked against Daggerheart 2.12.3.
