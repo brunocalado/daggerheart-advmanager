@@ -2,6 +2,8 @@
 
 - [Changed] Verified with Daggerheart 2.13.0. No data path the module reads or writes changed.
 - [Fixed] Drowning Embrace from the All Features compendium no longer drowns the adversary that has it.
+- [Breaking][Changed] Requires Daggerheart 2.13.0.
+- [Fixed] Compendium Statistics opens instantly again instead of warning that its data is stale.
 
 # 0.4.1
 

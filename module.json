@@ -30,7 +30,7 @@
         "id": "daggerheart",
         "type": "system",
         "compatibility": {
-          "minimum": "2.12.3",
+          "minimum": "2.13.0",
           "verified": "2.13.0"
         }
       }
