@@ -1,4 +1,6 @@
-# Unreleased
+# 0.5.0
+
+Checked against Daggerheart 2.13.0.
 
 - [Changed] Verified with Daggerheart 2.13.0. No data path the module reads or writes changed.
 - [Fixed] Drowning Embrace from the All Features compendium no longer drowns the adversary that has it.
