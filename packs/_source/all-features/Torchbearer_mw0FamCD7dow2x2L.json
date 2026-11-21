@@ -107,7 +107,7 @@
         "compendiumSource": null,
         "coreVersion": "14.364",
         "systemId": "daggerheart",
-        "systemVersion": "2.12.3"
+        "systemVersion": "2.13.0"
       },
       "_key": "!items.effects!mw0FamCD7dow2x2L.FRS0L5U1v6w72yju"
     }
@@ -130,7 +130,7 @@
   },
   "_stats": {
     "systemId": "daggerheart",
-    "systemVersion": "2.12.3"
+    "systemVersion": "2.13.0"
   },
   "_key": "!items!mw0FamCD7dow2x2L"
 }

@@ -183,7 +183,7 @@
         "compendiumSource": null,
         "coreVersion": "14.364",
         "systemId": "daggerheart",
-        "systemVersion": "2.12.3"
+        "systemVersion": "2.13.0"
       },
       "_key": "!items.effects!ER7GIqfRxdbnAIx5.jsSpZ9WaB1NdAhO4"
     },
@@ -257,7 +257,7 @@
         "compendiumSource": null,
         "coreVersion": "14.364",
         "systemId": "daggerheart",
-        "systemVersion": "2.12.3"
+        "systemVersion": "2.13.0"
       },
       "_key": "!items.effects!ER7GIqfRxdbnAIx5.iLgfMc5nYu56Cgqa"
     }
@@ -280,7 +280,7 @@
   },
   "_stats": {
     "systemId": "daggerheart",
-    "systemVersion": "2.12.3"
+    "systemVersion": "2.13.0"
   },
   "_key": "!items!ER7GIqfRxdbnAIx5"
 }

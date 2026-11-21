@@ -463,7 +463,7 @@
         "compendiumSource": null,
         "coreVersion": "14.364",
         "systemId": "daggerheart",
-        "systemVersion": "2.12.3"
+        "systemVersion": "2.13.0"
       },
       "_key": "!items.effects!bBx30GK4YqUdh9hK.LH8q1LvVSBuP0guY"
     },
@@ -512,7 +512,7 @@
         "compendiumSource": null,
         "coreVersion": "14.364",
         "systemId": "daggerheart",
-        "systemVersion": "2.12.3"
+        "systemVersion": "2.13.0"
       },
       "_key": "!items.effects!bBx30GK4YqUdh9hK.k6X7oa6QOsiY2d2R"
     }
@@ -535,7 +535,7 @@
   },
   "_stats": {
     "systemId": "daggerheart",
-    "systemVersion": "2.12.3"
+    "systemVersion": "2.13.0"
   },
   "_key": "!items!bBx30GK4YqUdh9hK"
 }

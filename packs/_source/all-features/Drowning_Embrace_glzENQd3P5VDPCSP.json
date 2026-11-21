@@ -94,7 +94,7 @@
     {
       "name": "Drowning Embrace",
       "img": "icons/magic/water/vortex-water-whirlpool-blue.webp",
-      "transfer": true,
+      "transfer": false,
       "_id": "X8NF2OB23mSpDvlx",
       "type": "base",
       "system": {
@@ -127,7 +127,7 @@
         "compendiumSource": null,
         "coreVersion": "14.364",
         "systemId": "daggerheart",
-        "systemVersion": "2.12.3"
+        "systemVersion": "2.13.0"
       },
       "start": {
         "time": 0,
@@ -160,7 +160,7 @@
   },
   "_stats": {
     "systemId": "daggerheart",
-    "systemVersion": "2.12.3"
+    "systemVersion": "2.13.0"
   },
   "_key": "!items!glzENQd3P5VDPCSP"
 }
