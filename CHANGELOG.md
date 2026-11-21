@@ -1,3 +1,7 @@
+# Unreleased
+
+- [Changed] Verified with Daggerheart 2.13.0. No data path the module reads or writes changed.
+
 # 0.4.1
 
 Checked against Daggerheart 2.12.8.
